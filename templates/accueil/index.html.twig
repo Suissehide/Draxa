@@ -1,0 +1,232 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block page_content %}
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-offset-2 col-md-8">
+                <div id="paginator"></div>
+            </div>
+        </div>
+
+        <div class="row accueil-wrapper">
+            <div class="box">
+                <div class="box-header">Prochains
+                    <b>rendez-vous</b>
+                </div>
+                <table id="rendezVous" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="patient_nom">Nom</th>
+                            <th data-column-id="patient_prenom">Prénom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if rendezVous is empty %}
+                            <tr class="disabled text-center">
+                                <td>
+                                    Aucun rendez-vous aujourd'hui
+                                </td>
+                                <td></td>
+                            </tr>
+                        {% else %}
+                            {% for patient in rendezVous %}
+                                <tr data-row-id="{{ patient.id }}">
+                                    <td>{{ patient.nom }}</td>
+                                    <td>{{ patient.prenom }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-header">Prochains
+                    <b>entretiens individuels</b>
+                </div>
+                <table id="entretiens" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="patient_nom">Nom</th>
+                            <th data-column-id="patient_prenom">Prénom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if entretiens is empty %}
+                            <tr class="disabled text-center">
+                                <td>
+                                    Aucun entretien aujourd'hui
+                                </td>
+                                <td></td>
+                            </tr>
+                        {% else %}
+                            {% for patient in entretiens %}
+                                <tr data-row-id="{{ patient.id }}">
+                                    <td>{{ patient.nom }}</td>
+                                    <td>{{ patient.prenom }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-header">Prochains
+                    <b>ateliers</b>
+                </div>
+                <table id="ateliers" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="patient_nom">Nom</th>
+                            <th data-column-id="patient_prenom">Prénom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if ateliers is empty %}
+                            <tr class="disabled text-center">
+                                <td>
+                                    Aucun atelier aujourd'hui
+                                </td>
+                                <td></td>
+                            </tr>
+                        {% else %}
+                            {% for patient in ateliers %}
+                                <tr data-row-id="{{ patient.id }}">
+                                    <td>{{ patient.nom }}</td>
+                                    <td>{{ patient.prenom }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-header">Prochains
+                    <b>rendez-vous téléphoniques</b>
+                </div>
+                <table id="telephoniques" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="patient_nom">Nom</th>
+                            <th data-column-id="patient_prenom">Prénom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if telephoniques is empty %}
+                            <tr class="disabled text-center">
+                                <td>
+                                    Aucun rendez-vous téléphonique aujourd'hui
+                                </td>
+                                <td></td>
+                            </tr>
+                        {% else %}
+                            {% for patient in telephoniques %}
+                                <tr data-row-id="{{ patient.id }}">
+                                    <td>{{ patient.nom }}</td>
+                                    <td>{{ patient.prenom }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row accueil-wrapper">
+            <div class="box-sm">
+                <span class="glyphicon glyphicon-user"></span>
+                <h1>Patients</h1>
+                <p>{{ nbPatients|number_format(0, ',', '.') }}</p>
+            </div>
+            <div class="box-sm">
+                <span class="glyphicon glyphicon-fire"></span>
+                <h1>Entretiens</h1>
+                <p>{{ nbEntretiens|number_format(0, ',', '.') }}</p>
+            </div>
+            <div class="box-sm">
+                <span class="glyphicon glyphicon-leaf"></span>
+                <h1>Stats</h1>
+                <p>{{ 42|number_format(0, ',', '.') }}</p>
+            </div>
+            <div class="box-sm">
+                <span class="glyphicon glyphicon-tint"></span>
+                <h1>Stats</h1>
+                <p>{{ 91768|number_format(0, ',', '.') }}</p>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block javascripts %}
+    <script>
+        var options = {
+            selectedDateFormat: 'DD-MM-YYYY',
+            selectedDate: '{{ date }}',
+            onSelectedDateChanged: function (event, date) {
+                var d = new Date(date);
+                $.ajax({
+                    url: "{{ path('accueil_ajax') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        "date": d.getFullYear() + '-' + (
+                        d.getMonth() + 1) + '-' + d.getDate()
+                    },
+                    success: function (resp) {
+                        $("tbody tr").remove();
+                        if (resp[0].length > 0) {
+                            $.each(resp[0], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .appendTo('#entretiens');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td>Aucun entretien aujourd\'hui</td><td></td>').appendTo('#entretiens');
+                        }
+                        if (resp[1].length > 0) {
+                            $.each(resp[1], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .appendTo('#ateliers');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td>Aucun atelier aujourd\'hui</td><td></td>').appendTo('#ateliers');
+                        }
+                        if (resp[2].length > 0) {
+                            $.each(resp[2], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .appendTo('#telephoniques');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous téléphonique aujourd\'hui</td><td></td>').appendTo('#telephoniques');
+                        }
+                        if (resp[3].length > 0) {
+                            $.each(resp[3], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .appendTo('#rendezVous');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous aujourd\'hui</td><td></td>').appendTo('#rendezVous');
+                        }
+                    }
+                });
+            },
+            language: 'fr'
+        }
+        $('#paginator').datepaginator(options);
+
+        $('tbody').on("click", "tr", function () {
+            if (!$(this).hasClass("disabled")) {
+                var npatient = $(this).attr('data-row-id');
+                var pathArray = window.location.pathname.split("/");
+                var url = window.location.protocol + "//" + window.location.host;
+                for (var i = 0; i < pathArray.length - 2; i++) {
+                    url += pathArray[i] + "/";
+                }
+                window.location.assign(url + "patient/vue/" + npatient);
+            }
+        });
+    </script>
+{% endblock %}

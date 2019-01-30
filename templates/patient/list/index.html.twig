@@ -1,0 +1,53 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Liste des patients{% endblock %}
+
+{% block page_content %}
+    <div class="wrapper">
+        <h1>Liste des patients</h1>
+        <div class="col-sm-16">
+            <div class="well clearfix">
+                <div class="pull-right">
+                    <a href="{{ path('patient_add') }}" class="btn btn-success" id="command-add" data-row-id="0">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Nouveau patient
+                    </a>
+                </div>
+                <div class="pull-left">
+                    <a href="{{ url('csv') }}" type="button" class="btn btn-primary" id="command-add" data-row-id="0">
+                        <span class="glyphicon glyphicon-save"></span>
+                        Exporter CSV
+                    </a>
+                </div>
+            </div>
+            <table id="patient_grid" class="table table-condensed table-hover table-striped" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">Id</th>
+                        <th data-column-id="nom">Nom</th>
+                        <th data-column-id="prenom">Prénom</th>
+                        <th data-column-id="date">Date d'entrée</th>
+                        <th data-column-id="etp">Point final parcours ETP</th>
+                        <th data-column-id="motif">Motif d'arrêt de programme</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+    <script>
+        var grid = $("#patient_grid").bootgrid({
+            rowCount: [
+                10, 25, 50, -1
+            ],
+            ajax: true,
+            requestHandler: function (request) {
+                return request;
+            },
+            url: "{{ path('patient') }}",
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Annexe{% endblock %}
+
+{% block body %}
+    <h1>Create new Annexe</h1>
+
+    {{ include('annexe/_form.html.twig') }}
+
+    <a href="{{ path('annexe_index') }}">back to list</a>
+{% endblock %}

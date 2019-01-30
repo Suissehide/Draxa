@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<nav class="barMenu">
+		<div id="sideMenu">
+			<a href="#" class="menu-trigger" id="sideMenuClosed">
+				<span></span>
+				<span></span>
+				<span></span>
+			</a>
+		</div>
+		<p id="page-title" class="colorchange">
+			{% block page_title %}{{ title }}
+			{% endblock %}
+			{# <span>Le meilleur du Web</span> #}
+		</p>
+		<div class="title">
+			WebApp CEPTA
+		</div>
+
+		<a href="{{ path('login') }}" id="userLink">
+			{{ app.user.username }}
+		</a>
+		<a href="{{ path('logout') }}">
+				<span class="glyphicon glyphicon-off"></span>
+		</a>
+	</nav>
+
+	<div id="sideMenuContainer">
+		<div class="logo-menu"></div>
+		<h2>Index</h2>
+		<a href="{{ path('accueil') }}" title="Accueil">
+			<span class="glyphicon glyphicon-home"></span></a>
+		<a href="{{ path('patient') }}" title="Patients">
+			<span class="glyphicon glyphicon-eye-open"></span></a>
+	</div>
+	<div class="container-fluid">
+		{% block page_content %}{% endblock %}
+	</div>
+
+	<a href="#0" class="cd-top js-cd-top">Top</a>
+
+	<!-- Footer -->
+	<div class="bas">
+		<section id="footer" class="footer-minimal footer-dark">
+			<div class="footer-inner">
+				<div class="footer-container tt-wrap">
+					<div class="row">
+						<div class="col-md-6 col-md-push-6"></div>
+						<div class="col-md-6 col-md-pull-6">
+							<!-- Begin footer copyright -->
+							<div class="footer-copyright">
+								<p>© Draxa 2018 / All rights reserved</p>
+								<p>Design by:
+									<a href="#">Léo</a>
+								</p>
+							</div>
+							<!-- End footer copyright -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+	<!-- Footer -->
+
+{% endblock %}
+
+{% block javascripts %}{% endblock %}

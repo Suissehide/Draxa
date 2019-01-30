@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annexe{% endblock %}
+
+{% block body %}
+    <h1>Annexe</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ annexe.id }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ annexe.date ? annexe.date|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Action</th>
+                <td>{{ annexe.action }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('annexe_index') }}">back to list</a>
+
+    <a href="{{ path('annexe_edit', {'id': annexe.id}) }}">edit</a>
+
+    {{ include('annexe/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,0 +1,1324 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/timeline.css') }}">
+{% endblock %}
+
+{% block title %}
+    Vue
+    {{ patient.nom }}
+{% endblock %}
+
+{% block page_content %}
+
+    <div class="wrapper">
+        <h1 id="top">Index |
+            {{ patient.nom }}</h1>
+        <div class="well nav-bar" id="navMenu">
+            <div class="btn-group btn-nav">
+                <a href="{{ url('patient') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    Retour
+                </a>
+                <a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-search"></span>
+                    Informations
+                </a>
+                <a href="#rdv" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-book"></span>
+                    Rendez-vous
+                </a>
+                <a href="#entretiens" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-bookmark"></span>
+                    Entretiens individuels
+                </a>
+                <a href="#ateliers" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-scissors"></span>
+                    Ateliers
+                </a>
+                <a href="#suivi" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-phone"></span>
+                    Suivi téléphonique
+                </a>
+                <a href="#activite" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-comment"></span>
+                    Activité
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            <div class="row">
+                <div class="col-md-11">
+                    {{ form_row(form.observ, {'required': false}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    {{ form_row(form.motif) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.etp) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.dentree) }}
+                </div>
+            </div>
+            <div class="separator">
+                <span id="details" class="separator-text">Détails</span>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ form_row(form.sexe) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.nom) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.prenom) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.date) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ form_row(form.tel1) }}
+                </div>
+                <div class="col-md-2">
+                    {{ form_row(form.tel2, {'required': false}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form_row(form.distance) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ form_row(form.etude) }}
+                </div>
+                <div class="col-md-6">
+                    {{ form_row(form.profession) }}
+                </div>
+                <div class="col-md-2">
+                    {{ form_row(form.activite) }}
+                </div>
+            </div>
+            <div class="separator">
+                <span class="separator-text">Médical</span>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ form_row(form.diagnostic) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.dedate) }}
+                </div>
+                <div class="col-md-5">
+                    {{ form_row(form.orientation, {'required': false}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                    {{ form_row(form.etpdecision) }}
+                </div>
+                <div class="col-md-3">
+                    {{ form_row(form.progetp) }}
+                </div>
+                <div class="col-md-5">
+                    {{ form_row(form.precisions, {'required': false}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-11">
+                    {{ form_row(form.precisionsperso, {'required': false}) }}
+                </div>
+            </div>
+            <div class="separator">
+                <span id="rdv" class="separator-text">Rendez-vous</span>
+            </div>
+
+            <section class="cd-horizontal-timeline row" id="timeline-rendezVous">
+                <div class="timeline">
+                    <div class="events-wrapper">
+                        <div class="events">
+                            <ol id="events-rendezVous">
+                                {% for rendezVousForm in form.rendezVous %}
+                                    <li>
+                                        <a href="#0" data-date="{{ rendezVousForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ rendezVousForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+
+                            <span class="filling-line" aria-hidden="true"></span>
+                        </div>
+                        <!-- .events -->
+                    </div>
+                    <!-- .events-wrapper -->
+
+                    <ul class="cd-timeline-navigation">
+                        <li>
+                            <a href="#0" class="prev inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a class="new" data-toggle="modal" data-target="#rendezVousModal">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <!-- .cd-timeline-navigation -->
+                </div>
+                <!-- .timeline -->
+
+                <div class="events-content">
+                    <ol id="events-content-rendezVous">
+                        {% for rendezVousForm in form.rendezVous %}
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ rendezVousForm.vars.value.date|date("d/m/Y") }}">
+                                <h2>
+                                    {{ rendezVousForm.vars.value.nom  }}
+                                </h2>
+                                <em>
+                                    {{ rendezVousForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
+                                </em>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.date) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.type) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.accompagnant, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.permission, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.choix, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.motifRefus, {'required': false}) }}
+                                </div>
+                                <div class="separator"></div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.date_repro) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.type_repro) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.accompagnant_repro, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.permission_repro, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.choix_repro, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.motifRefus_repro, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+
+                </div>
+                <!-- .events-content -->
+            </section>
+
+            <div class="separator">
+                <span id="entretiens" class="separator-text">Entretiens individuels</span>
+            </div>
+
+            <section class="cd-horizontal-timeline row" id="timeline-entretiens">
+                <div class="timeline">
+                    <div class="events-wrapper">
+                        <div class="events">
+                            <ol id="events-entretiens">
+                                {% for entretienForm in form.entretiens %}
+                                    <li>
+                                        <a href="#0" data-date="{{ entretienForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ entretienForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+
+                            <span class="filling-line" aria-hidden="true"></span>
+                        </div>
+                        <!-- .events -->
+                    </div>
+                    <!-- .events-wrapper -->
+
+                    <ul class="cd-timeline-navigation">
+                        <li>
+                            <a href="#0" class="prev inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a class="new" data-toggle="modal" data-target="#entretienModal">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <!-- .cd-timeline-navigation -->
+                </div>
+                <!-- .timeline -->
+
+                <div class="events-content">
+                    <ol id="events-content-entretiens">
+                        {% for entretienForm in form.entretiens %}
+                            {% set counter = (counter | default(0)) + 1 %}
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ entretienForm.vars.value.date|date("d/m/Y") }}">
+                                <h2>Entretien individuel
+                                    {{ counter }}
+                                </h2>
+                                <em>
+                                    {{ entretienForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y')  }}
+                                </em>
+                                <div class="row">
+                                    {{ form_row(entretienForm.date) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(entretienForm.type) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(entretienForm.accompagnant, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(entretienForm.motifRefus, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                <!-- .events-content -->
+            </section>
+
+            <div class="separator">
+                <span id="ateliers" class="separator-text">Ateliers</span>
+            </div>
+
+            <section class="cd-horizontal-timeline row" id="timeline-ateliers">
+                <div class="timeline">
+                    <div class="events-wrapper">
+                        <div class="events">
+                            <ol id="events-ateliers">
+                                {% for atelierForm in form.ateliers %}
+                                    <li>
+                                        <a href="#0" data-date="{{ atelierForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ atelierForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+
+                            <span class="filling-line" aria-hidden="true"></span>
+                        </div>
+                        <!-- .events -->
+                    </div>
+                    <!-- .events-wrapper -->
+
+                    <ul class="cd-timeline-navigation">
+                        <li>
+                            <a href="#0" class="prev inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a class="new" data-toggle="modal" data-target="#atelierModal">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <!-- .cd-timeline-navigation -->
+                </div>
+                <!-- .timeline -->
+
+                <div class="events-content">
+                    <ol id="events-content-ateliers">
+                        {% for atelierForm in form.ateliers %}
+                            {% set counter = (counter | default(0)) + 1 %}
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ atelierForm.vars.value.date|date("d/m/Y") }}">
+                                <h2>Ateliers
+                                    {{ counter }}
+                                </h2>
+                                <em>
+                                    {{ atelierForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y')  }}
+                                </em>
+                                <div class="row">
+                                    {{ form_row(atelierForm.date) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(atelierForm.type) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(atelierForm.accompagnant, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(atelierForm.motifRefus, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                <!-- .events-content -->
+            </section>
+
+            <div class="separator">
+                <span id="suivi" class="separator-text">Suivi téléphonique</span>
+            </div>
+
+            <section class="cd-horizontal-timeline row" id="timeline-telephoniques">
+                <div class="timeline">
+                    <div class="events-wrapper">
+                        <div class="events">
+                            <ol id="events-telephoniques">
+                                {% for telephoniqueForm in form.telephoniques %}
+                                    <li>
+                                        <a href="#0" data-date="{{ telephoniqueForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ telephoniqueForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+
+                            <span class="filling-line" aria-hidden="true"></span>
+                        </div>
+                        <!-- .events -->
+                    </div>
+                    <!-- .events-wrapper -->
+
+                    <ul class="cd-timeline-navigation">
+                        <li>
+                            <a href="#0" class="prev inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a class="new" data-toggle="modal" data-target="#telephoniqueModal">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <!-- .cd-timeline-navigation -->
+                </div>
+                <!-- .timeline -->
+
+                <div class="events-content">
+                    <ol id="events-content-telephoniques">
+                        {% for telephoniqueForm in form.telephoniques %}
+                            {% set counter = (counter | default(0)) + 1 %}
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ telephoniqueForm.vars.value.date|date("d/m/Y") }}">
+                                <h2>Rendez-vous téléphonique
+                                    {{ counter }}
+                                </h2>
+                                <em>
+                                    {{ telephoniqueForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y')  }}
+                                </em>
+                                <div class="row">
+                                    {{ form_row(telephoniqueForm.date) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(telephoniqueForm.type) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(telephoniqueForm.motifRefus, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                <!-- .events-content -->
+            </section>
+
+            <div class="separator">
+                <span id="activite" class="separator-text">Activité</span>
+            </div>
+
+            <div class="activity-wrapper">
+                <div class="card card-add">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </div>
+                <div class="scrollbar list-wrapper">
+                    <ul class="list-content annexes" data-prototype="{{ form_widget(form.annexes.vars.prototype)|e('html_attr') }}">
+                        {% for annexesForm in form.annexes | reverse %}
+                            <li class="card">
+                                {{ form_row(annexesForm.date) }}
+                                {{ form_row(annexesForm.action) }}
+                                <button type="button" class="btn btn-danger pull-left remove-tag annexe-old">Supprimer</button>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+            <div class="row form-inline">
+                <a href="{{ url('patient') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    Retour
+                </a>
+                <a href="#0" class="btn btn-danger" data-toggle="modal" data-target="#supprModal">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    Supprimer
+                </a>
+                {{ form_row(form.validation, {'attr': {'class': 'btn btn-primary'} }) }}
+            </div>
+
+            {{ form_row(form._token) }}
+            {{ form_end(form, {'render_rest' : false}) }}
+        </div>
+        <!-- End content -->
+
+        <!-- Modal supprPatient-->
+        <div id="supprModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-warning"></span>
+                            Suppression</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Êtes-vous sûr de vouloir supprimer ce patient ?</p>
+                        <form method="post" action="{{ path('patient_delete', {'id': patient.id}) }}">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ patient.id) }}">
+                            <button class="btn btn-primary btn-block-md">Oui</button>
+                            <button class="btn btn-danger btn-block-md" data-dismiss="modal">Non</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal addRendezVous-->
+        <div id="rendezVousModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un entretien</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formRendezVous) }}
+                        {{ form_errors(formRendezVous) }}
+                        {{ form_row(formRendezVous.nom) }}
+                        <div class="separator"></div>
+                        {{ form_row(formRendezVous.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formRendezVous.type) }}
+                        {{ form_row(formRendezVous.accompagnant, {'required': false}) }}
+                        {{ form_row(formRendezVous.permission, {'required': false}) }}
+                        {{ form_row(formRendezVous.choix, {'required': false}) }}
+                        {{ form_row(formRendezVous.motifRefus, {'required': false}) }}
+                        <div class="separator"></div>
+                        {{ form_row(formRendezVous.date_repro, {'attr': {'autocomplete': 'off'}, 'required': false }) }}
+                        {{ form_row(formRendezVous.type_repro, {'required': false}) }}
+                        {{ form_row(formRendezVous.accompagnant_repro, {'required': false}) }}
+                        {{ form_row(formRendezVous.permission_repro, {'required': false}) }}
+                        {{ form_row(formRendezVous.choix_repro, {'required': false}) }}
+                        {{ form_row(formRendezVous.motifRefus_repro, {'required': false}) }}
+                        
+                        {{ form_row(formRendezVous._token) }}
+                        {{ form_end(formRendezVous, {'render_rest' : false}) }}
+                        <button id="rendezVous_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal addEntretien-->
+        <div id="entretienModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un entretien</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formEntretien) }}
+                        {{ form_errors(formEntretien) }}
+                        {{ form_row(formEntretien.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formEntretien.type) }}
+                        {{ form_row(formEntretien.accompagnant, {'required': false}) }}
+                        {{ form_row(formEntretien.motifRefus, {'required': false}) }}
+                        {{ form_row(formEntretien._token) }}
+                        {{ form_end(formEntretien, {'render_rest' : false}) }}
+                        <button id="entretien_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal addAtelier-->
+        <div id="atelierModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un atelier</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formAtelier) }}
+                        {{ form_errors(formAtelier) }}
+                        {{ form_row(formAtelier.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formAtelier.type) }}
+                        {{ form_row(formAtelier.accompagnant, {'required': false}) }}
+                        {{ form_row(formAtelier.motifRefus, {'required': false}) }}
+                        {{ form_row(formAtelier._token) }}
+                        {{ form_end(formAtelier, {'render_rest' : false}) }}
+                        <button id="atelier_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal addTelephonique-->
+        <div id="telephoniqueModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un rendez-vous téléphonique</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formTelephonique) }}
+                        {{ form_errors(formTelephonique) }}
+                        {{ form_row(formTelephonique.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formTelephonique.type) }}
+                        {{ form_row(formTelephonique.motifRefus, {'required': false}) }}
+                        {{ form_row(formTelephonique._token) }}
+                        {{ form_end(formTelephonique, {'render_rest' : false}) }}
+                        <button id="telephonique_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Suppression-->
+        <div id="removeModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-warning"></span>
+                            Suppression</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
+                        <button class="btn btn-primary btn-block-md" data-dismiss="modal">Oui</button>
+                        <button class="btn btn-danger btn-block-md" data-dismiss="modal">Non</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <a id="timeline_update"></a>
+    </div>
+{% endblock page_content %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+    <script type="text/javascript">
+
+        alert_pos = {{ top }};
+
+        {# Delete #}
+
+        $('.cd-horizontal-timeline').on("click", ".btn-danger", function () {
+            $("#removeModal").modal()
+            var btn = $(this);
+            $('#removeModal .btn-primary').on('click', function () {
+                var num = btn.closest('li').index();
+                var timeline = btn.parents('.cd-horizontal-timeline');
+                var date = btn.parents('li').find('.datepicker').val();
+
+                timeline.find('ol').each(function () {
+                    $(this).find('li:nth-child(' + (num + 1) + ')').remove();
+                });
+                timeline.find('.events li a').removeClass("selected").addClass("older-event");
+                timeline.find('.events li:last-child a').removeClass("older-event").addClass("selected");
+                timeline.find('.events-content li').removeClass("selected");
+                timeline.find('.events-content li:last-child').addClass("selected");
+                $('#timeline_update').trigger('click');
+
+                if (timeline.is('#timeline-entretiens')) {
+                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
+                    var url = "{{ path( 'entretien_remove', { 'id': 'entretien_id' }) }}";
+                    url = url.replace("entretien_id", id);
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                } else if (timeline.is('#timeline-ateliers')) {
+                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
+                    var url = "{{ path( 'atelier_remove', { 'id': 'atelier_id' }) }}";
+                    url = url.replace("atelier_id", id);
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                } else if (timeline.is('#timeline-telephoniques')) {
+                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
+                    var url = "{{ path( 'telephonique_remove', { 'id': 'telephonique_id' }) }}";
+                    url = url.replace("telephonique_id", id);
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                } else if (timeline.is('#timeline-rendezVous')) {
+                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
+                    var url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
+                    url = url.replace("rendezVous_id", id);
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                }
+                $('body').prepend(
+                    '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Suppression effectuée !</div>'
+                );
+                alert_pos += 72;
+            });
+        });
+
+        /* Ateliers
+		================= */
+
+        {# Edit #}
+
+        $("#events-content-ateliers li").on("click", ".btn-primary", function () {
+            var arr = [], i = 0;
+            $(this).parents("li").find("input, select").each(function() {
+                arr[i++] = $(this).val();
+            })
+            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
+            var url = "{{ path('atelier_patch', { 'id': 'atelier_id' }) }}";
+            url = url.replace("atelier_id", id);
+            var date = arr[0];
+            var type = arr[1];
+            var accompagnant = arr[2];
+            var motifRefus = arr[3];
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    $('body').prepend(
+                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+                    );
+                    alert_pos += 72;
+                }
+            });
+        })
+
+        {# Error date add #}
+
+        $("#atelier_date").change(function () {
+            resetErrors();
+            var date = $(this).val();
+            $.ajax({
+                url: "{{ path( 'atelier_date_error' ) }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "id": '{{ patient.id }}'
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
+                        $("#atelier_date").addClass('is-invalid').after(msg);
+                        document.getElementById("atelier_add").disabled = true;
+                    } else {
+                        document.getElementById("atelier_add").disabled = false;
+                    }
+                }
+            });
+        });
+
+        {# Add #}
+
+        $("#atelier_add").on('click', function () {
+            var date = $('#atelier_date').val();
+            var type = $('#atelier_type').val();
+            var accompagnant = $('#atelier_accompagnant').val();
+            var motifRefus = $('#atelier_motifRefus').val();
+
+            $.ajax({
+                url: "{{ path('atelier_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "id": '{{ patient.id }}',
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var new_date = new Date(formatDate(date));
+                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var nb = $("#events-content-ateliers").find('li').length;
+                        var events = $('#events-ateliers');
+                        $('#events-ateliers li a').removeClass("selected");
+                        $('#events-ateliers li a').addClass("older-event");
+                        $(document.createElement('li'))
+                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-ateliers li:last-child a').addClass('selected');
+                        $('#events-ateliers li:last-child a').removeClass('older-event');
+
+                        var events_content = $('#events-content-ateliers');
+                        $('#events-content-ateliers li').removeClass("selected");
+                        $(events_content)
+                            .append('<li data-date=' + date + '><h2>Atelier ' + (nb + 1) + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_ateliers_' + resp + '_date">Date</label><input type="text" id="patient_creation_form_ateliers_' + resp + '_date" name="patient_creation_form[ateliers][' + resp + '][date]" required="required" class="datepicker form-control" value=' + date + '></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_ateliers_' + resp + '_type">Type</label><select id="patient_creation_form_ateliers_' + resp + '_type" name="patient_creation_form[ateliers][' + resp + '][type]" class="form-control"><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_' + resp + '_accompagnant">Accompagnant</label><select id="patient_creation_form_ateliers_' + resp + '_accompagnant" name="patient_creation_form[ateliers][' + resp + '][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_ateliers_' + resp + '_motifRefus" name="patient_creation_form[ateliers][' + resp + '][motifRefus]" class="form-control" value=' + motifRefus + '></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .appendTo(events_content);
+                        $('#patient_creation_form_ateliers_' + resp + '_type').val(type);
+                        $('#patient_creation_form_ateliers_' + resp + '_accompagnant').val(accompagnant);
+                        $('#events-content-ateliers li:last-child').addClass('selected');
+
+                        $('#timeline_update').trigger('click');
+                        document.getElementById("atelier_add").disabled = true;
+                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
+                    }
+                }
+            });
+        });
+
+        /* Telephoniques
+		================= */
+
+        {# Edit #}
+
+        $("#events-content-telephoniques li").on("click", ".btn-primary", function () {
+            var arr = [], i = 0;
+            $(this).parents("li").find("input, select").each(function() {
+                arr[i++] = $(this).val();
+            })
+            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
+            var url = "{{ path('telephonique_patch', { 'id': 'telephonique_id' }) }}";
+            url = url.replace("telephonique_id", id);
+            var date = arr[0];
+            var type = arr[1];
+            var motifRefus = arr[2];
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "type": type,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    $('body').prepend(
+                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+                    );
+                    alert_pos += 72;
+                }
+            });
+        })
+
+        {# Error date add #}
+
+        $("#telephonique_date").change(function () {
+            resetErrors();
+            var date = $(this).val();
+            $.ajax({
+                url: "{{ path( 'telephonique_date_error' ) }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "id": '{{ patient.id }}'
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
+                        $("#telephonique_date").addClass('is-invalid').after(msg);
+                        document.getElementById("telephonique_add").disabled = true;
+                    } else {
+                        document.getElementById("telephonique_add").disabled = false;
+                    }
+                }
+            });
+        });
+
+        {# Add #}
+
+        $("#telephonique_add").on('click', function () {
+            var date = $('#telephonique_date').val();
+            var type = $('#telephonique_type').val();
+            var accompagnant = $('#telephonique_accompagnant').val();
+            var motifRefus = $('#telephonique_motifRefus').val();
+
+            $.ajax({
+                url: "{{ path('telephonique_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "id": '{{ patient.id }}',
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var new_date = new Date(formatDate(date));
+                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var nb = $("#events-content-telephoniques").find('li').length;
+                        var events = $('#events-telephoniques');
+                        $('#events-telephoniques li a').removeClass("selected");
+                        $('#events-telephoniques li a').addClass("older-event");
+                        $(document.createElement('li'))
+                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-telephoniques li:last-child a').addClass('selected');
+                        $('#events-telephoniques li:last-child a').removeClass('older-event');
+
+                        var events_content = $('#events-content-telephoniques');
+                        $('#events-content-telephoniques li').removeClass("selected");
+                        $(events_content)
+                            .append('<li data-date=' + date + '><h2>Rendez-vous téléphonique ' + (nb + 1) + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_telephoniques_' + resp + '_date">Date</label><input type="text" id="patient_creation_form_telephoniques_' + resp + '_date" name="patient_creation_form[telephoniques][' + resp + '][date]" required="required" class="datepicker form-control" value=' + date + '></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_telephoniques_' + resp + '_type">Type</label><select id="patient_creation_form_telephoniques_' + resp + '_type" name="patient_creation_form[telephoniques][' + resp + '][type]" class="form-control"><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_telephoniques_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_telephoniques_' + resp + '_motifRefus" name="patient_creation_form[telephoniques][' + resp + '][motifRefus]" class="form-control" value=' + motifRefus + '></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .appendTo(events_content);
+                        $('#patient_creation_form_telephoniques_' + resp + '_type').val(type);
+                        $('#events-content-telephoniques li:last-child').addClass('selected');
+
+                        $('#timeline_update').trigger('click');
+                        document.getElementById("telephonique_add").disabled = true;
+                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
+                    }
+                }
+            });
+        });
+
+        /* Entretiens
+		================= */
+
+        {# Edit #}
+
+        $("#events-content-entretiens li").on("click", ".btn-primary", function () {
+            var arr = [], i = 0;
+            $(this).parents("li").find("input, select").each(function() {
+                arr[i++] = $(this).val();
+            })
+            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
+            var url = "{{ path('entretien_patch', { 'id': 'entretien_id' }) }}";
+            url = url.replace("entretien_id", id);
+            var date = arr[0];
+            var type = arr[1];
+            var accompagnant = arr[2];
+            var motifRefus = arr[3];
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    $('body').prepend(
+                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+                    );
+                    alert_pos += 72;
+                }
+            });
+        })
+
+        {# Error date add #}
+
+        $("#entretien_date").change(function () {
+            resetErrors();
+            var date = $(this).val();
+            $.ajax({
+                url: "{{ path( 'entretien_date_error' ) }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "id": '{{ patient.id }}'
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
+                        $("#entretien_date").addClass('is-invalid').after(msg);
+                        document.getElementById("entretien_add").disabled = true;
+                    } else {
+                        document.getElementById("entretien_add").disabled = false;
+                    }
+                }
+            });
+        });
+
+        {# Add #}
+
+        $("#entretien_add").on('click', function () {
+            var date = $('#entretien_date').val();
+            var type = $('#entretien_type').val();
+            var accompagnant = $('#entretien_accompagnant').val();
+            var motifRefus = $('#entretien_motifRefus').val();
+
+            $.ajax({
+                url: "{{ path('entretien_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "id": '{{ patient.id }}',
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var new_date = new Date(formatDate(date));
+                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var nb = $("#events-content-entretiens").find('li').length;
+                        var events = $('#events-entretiens');
+                        $('#events-entretiens li a').removeClass("selected");
+                        $('#events-entretiens li a').addClass("older-event");
+                        $(document.createElement('li'))
+                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-entretiens li:last-child a').addClass('selected');
+                        $('#events-entretiens li:last-child a').removeClass('older-event');
+
+                        var events_content = $('#events-content-entretiens');
+                        $('#events-content-entretiens li').removeClass("selected");
+                        $(events_content)
+                            .append('<li data-date=' + date + '><h2>Entretien individuel ' + (nb + 1) + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_entretiens_' + resp + '_date">Date</label><input type="text" id="patient_creation_form_entretiens_' + resp + '_date" name="patient_creation_form[entretiens][' + resp + '][date]" required="required" class="datepicker form-control" value=' + date + '></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_entretiens_' + resp + '_type">Type</label><select id="patient_creation_form_entretiens_' + resp + '_type" name="patient_creation_form[entretiens][' + resp + '][type]" class="form-control"><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_entretiens_' + resp + '_accompagnant">Accompagnant</label><select id="patient_creation_form_entretiens_' + resp + '_accompagnant" name="patient_creation_form[entretiens][' + resp + '][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_entretiens_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_entretiens_' + resp + '_motifRefus" name="patient_creation_form[entretiens][' + resp + '][motifRefus]" class="form-control" value=' + motifRefus + '></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .appendTo(events_content);
+                        $('#patient_creation_form_entretiens_' + resp + '_type').val(type);
+                        $('#patient_creation_form_entretiens_' + resp + '_accompagnant').val(accompagnant);
+                        $('#events-content-entretiens li:last-child').addClass('selected');
+
+                        $('#timeline_update').trigger('click');
+                        document.getElementById("entretien_add").disabled = true;
+                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
+                    }
+                }
+            });
+        });
+
+        /* RendezVous
+		================= */
+
+        {# Edit #}
+
+        $("#events-content-rendezVous li").on("click", ".btn-primary", function () {
+            var arr = [], i = 0;
+            $(this).parents("li").find("input, select").each(function() {
+                arr[i++] = $(this).val();
+            })
+            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
+            var url = "{{ path('rendezVous_patch', { 'id': 'rendezVous_id' }) }}";
+            url = url.replace("rendezVous_id", id);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": arr[0],
+                    "type": arr[1],
+                    "accompagnant": arr[2],
+                    "permission": arr[3],
+                    "choix": arr[4],
+                    "motifRefus": arr[5],
+                    "date_repro": arr[6],
+                    "type_repro": arr[7],
+                    "accompagnant_repro": arr[8],
+                    "permission_repro": arr[9],
+                    "choix_repro": arr[10],
+                    "motifRefus_repro": arr[11],
+                },
+                success: function (resp) {
+                    $('body').prepend(
+                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+                    );
+                    alert_pos += 72;
+                }
+            });
+        })
+
+        {# Error date add #}
+
+        $("#rendez_vous_date").change(function () {
+            resetErrors();
+            var date = $(this).val();
+            $.ajax({
+                url: "{{ path( 'rendezVous_date_error' ) }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "id": '{{ patient.id }}'
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
+                        $("#rendez_vous_date").addClass('is-invalid').after(msg);
+                        document.getElementById("rendezVous_add").disabled = true;
+                    } else {
+                        document.getElementById("rendezVous_add").disabled = false;
+                    }
+                }
+            });
+        });
+
+        {# Add #}
+
+        $("#rendezVous_add").on('click', function () {
+            var nom = $('#rendez_vous_nom').val();
+
+            var date = $('#rendez_vous_date').val();
+            var type = $('#rendez_vous_type').val();
+            var accompagnant = $('#rendez_vous_accompagnant').val();
+            var permission = $('#rendez_vous_permission').val();
+            var choix = $('#rendez_vous_choix').val();
+            var motifRefus = $('#rendez_vous_motifRefus').val();
+
+            var date_repro = $('#rendez_vous_date_repro').val();
+            var type_repro = $('#rendez_vous_type_repro').val();
+            var accompagnant_repro = $('#rendez_vous_accompagnant_repro').val();
+            var permission_repro = $('#rendez_vous_permission_repro').val();
+            var choix_repro = $('#rendez_vous_choix_repro').val();
+            var motifRefus_repro = $('#rendez_vous_motifRefus_repro').val();
+
+            $.ajax({
+                url: "{{ path('rendezVous_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "id": '{{ patient.id }}',
+                    "nom": nom,
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "permission": permission,
+                    "choix": choix,
+                    "motifRefus": motifRefus,
+
+                    "date_repro": date_repro,
+                    "type_repro": type_repro,
+                    "accompagnant_repro": accompagnant_repro,
+                    "permission_repro": permission_repro,
+                    "choix_repro": choix_repro,
+                    "motifRefus_repro": motifRefus_repro,
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var new_date = new Date(formatDate(date));
+                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var nb = $("#events-content-rendezVous").find('li').length;
+                        var events = $('#events-rendezVous');
+                        $('#events-rendezVous li a').removeClass("selected");
+                        $('#events-rendezVous li a').addClass("older-event");
+                        $(document.createElement('li'))
+                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-rendezVous li:last-child a').addClass('selected');
+                        $('#events-rendezVous li:last-child a').removeClass('older-event');
+
+                        var events_content = $('#events-content-rendezVous');
+                        $('#events-content-rendezVous li').removeClass("selected");
+                        $(events_content)
+                            .append('<li data-date=' + date + '><h2>'+ nom + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_date">Date prévue</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_date" name="patient_creation_form[rendezVous][' + resp + '][date]" required="required" class="datepicker form-control" value="07/09/2018"></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_type">Type</label><select id="patient_creation_form_rendezVous_' + resp + '_type" name="patient_creation_form[rendezVous][' + resp + '][type]" required="required" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel">Tel</option><option value="Hospi">Hospi</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_accompagnant">Accompagnant</label><select id="patient_creation_form_rendezVous_' + resp + '_accompagnant" name="patient_creation_form[rendezVous][' + resp + '][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_permission">Permission demandée</label><select id="patient_creation_form_rendezVous_' + resp + '_permission" name="patient_creation_form[rendezVous][' + resp + '][permission]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_choix">Est-il/elle venu ?</label><select id="patient_creation_form_rendezVous_' + resp + '_choix" name="patient_creation_form[rendezVous][' + resp + '][choix]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non" >Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_motifRefus" name="patient_creation_form[rendezVous][' + resp + '][motifRefus]" class="form-control" value="aucun"></div></div><div class="separator"></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_date_repro">Date repro prévue</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_date_repro" name="patient_creation_form[rendezVous][' + resp + '][date_repro]" required="required" class="datepicker form-control" value="08/09/2018"></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_type_repro">Type</label><select id="patient_creation_form_rendezVous_' + resp + '_type_repro" name="patient_creation_form[rendezVous][' + resp + '][type_repro]" required="required" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel">Tel</option><option value="Hospi">Hospi</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_accompagnant_repro">Accompagnant</label><select id="patient_creation_form_rendezVous_' + resp + '_accompagnant_repro" name="patient_creation_form[rendezVous][' + resp + '][accompagnant_repro]" class="form-control"><option value=""></option><option value="oui" >Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_permission_repro">Permission demandée</label><select id="patient_creation_form_rendezVous_' + resp + '_permission_repro" name="patient_creation_form[rendezVous][' + resp + '][permission_repro]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_choix_repro">Est-il/elle venu ?</label><select id="patient_creation_form_rendezVous_' + resp + '_choix_repro" name="patient_creation_form[rendezVous][' + resp + '][choix_repro]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_motifRefus_repro">Motif de refus</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_motifRefus_repro" name="patient_creation_form[rendezVous][' + resp + '][motifRefus_repro]" class="form-control" value="aucun"></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .appendTo(events_content);
+                        $('#patient_creation_form_rendezVous_' + resp + '_type').val(type);
+                        $('#patient_creation_form_rendezVous_' + resp + '_type_repro').val(type_repro);
+                        $('#patient_creation_form_rendezVous_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_rendezVous_' + resp + '_accompagnant_repro').val(accompagnant_repro);
+                        $('#patient_creation_form_rendezVous_' + resp + '_permission').val(permission);
+                        $('#patient_creation_form_rendezVous_' + resp + '_permission_repro').val(permission_repro);
+                        $('#patient_creation_form_rendezVous_' + resp + '_choix').val(choix);
+                        $('#patient_creation_form_rendezVous_' + resp + '_choix_repro').val(choix_repro);
+                        $('#events-content-rendezVous li:last-child').addClass('selected');
+
+                        $('#timeline_update').trigger('click');
+                        document.getElementById("rendezVous_add").disabled = true;
+                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
+                    }
+                }
+            });
+        });
+
+        function formatDate(input) {
+            var datePart = input.match(/\d+/g),
+                year = datePart[2] //.substring(2),  get only two digits
+                month = datePart[1],
+                day = datePart[0];
+            return year + '-' + month + '-' + day;
+        }
+
+        function resetErrors() {
+            $('input, select').removeClass('is-invalid');
+            $(".invalid-feedback").remove();
+        }
+
+        /* Annexes
+	    ================= */
+
+        {# Add #}
+
+        var $addTagLink = $('.card-add');
+        var $collectionHolder = $('ul.annexes');
+        $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+        $addTagLink.on('click', function (e) {
+            e.preventDefault();
+            addTagForm($collectionHolder);
+            $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
+        });
+
+        function addTagForm($collectionHolder) {
+            var prototype = $collectionHolder.data('prototype');
+            var index = $collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+            $collectionHolder.data('index', index + 1);
+            var $newFormLi = $('<li class="card"></li>').append(newForm);
+            $newFormLi.append('<a href="#" class="pull-left btn btn-danger remove-tag">Supprimer</a>');
+            $collectionHolder.prepend($newFormLi);
+        }
+        
+        {# Delete #}
+
+        $(".activity-wrapper").on("click", ".remove-tag", function (e) {
+            e.preventDefault();
+            $(this).parent().remove();
+            if ($(this).hasClass('annexe-old')) {
+                var id = $(this).parents().find('.datepicker').attr("name").match(/\d+/)[0];
+                var url = "{{ path( 'annexe_remove', { 'id': 'annexe_id' }) }}";
+                url = url.replace("annexe_id", id);
+                $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+            }
+            return false;
+        });
+    </script>
+
+    <script src="{{ asset('js/timeline.js') }}"></script>
+
+    {# function reload_js(src) {
+       	$('script[src="' + src + '"]').remove();
+       	$('<script>').attr('src', src).appendTo('body');
+   	} #}
+
+    {# $.getScript("{{ asset('js/timeline.js') }}"); #}
+    {# $(this).closest('tr').remove(); #}
+    {# $('section#timeline-entretiens').load(location.href + ' #timeline-entretiens'); #}
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Annexe index{% endblock %}
+
+{% block body %}
+    <h1>Annexe index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Action</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for annexe in annexes %}
+            <tr>
+                <td>{{ annexe.id }}</td>
+                <td>{{ annexe.date ? annexe.date|date('Y-m-d') : '' }}</td>
+                <td>{{ annexe.action }}</td>
+                <td>
+                    <a href="{{ path('annexe_show', {'id': annexe.id}) }}">show</a>
+                    <a href="{{ path('annexe_edit', {'id': annexe.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('annexe_new') }}">Create new</a>
+{% endblock %}

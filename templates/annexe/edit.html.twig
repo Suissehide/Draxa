@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Annexe{% endblock %}
+
+{% block body %}
+    <h1>Edit Annexe</h1>
+
+    {{ include('annexe/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('annexe_index') }}">back to list</a>
+
+    {{ include('annexe/_delete_form.html.twig') }}
+{% endblock %}
