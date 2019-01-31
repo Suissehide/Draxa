@@ -13,6 +13,7 @@ html {
 }
 
 body {
+    overflow-x: hidden;
     background: #f3f3f4;
     font: 14px Helvetica, Arial, sans-serif;
     padding-top: 70px;
@@ -47,9 +48,7 @@ a, a:hover {
     border-color: #07a8a0;
 }
 
-.btn-primary:hover, .btn-primary:active:focus,
-.btn-primary:focus, .btn-primary:hover:disabled,
-.btn-primary:active {
+.btn-primary:hover, .btn-primary:active:focus, .btn-primary:focus, .btn-primary:hover:disabled, .btn-primary:active {
     background-color: #07a8a0;
     border-color: #07a8a0;
 }
@@ -346,8 +345,8 @@ ul#userMenu li a::after {
 
 .logo-menu {
     content: '';
-	height: 128px;
-	width: 128px;
+    height: 128px;
+    width: 128px;
     margin: 10px 20px;
     background: url(../img/logo.jpg) no-repeat 0 0;
     background-size: 100%;
@@ -414,7 +413,7 @@ ul#userMenu li a::after {
 ================= */
 
 .separator {
-    margin: 25px 0;
+    margin: 40px 0 20px 0;
     border-top: 2px solid #CCCCCC;
     position: relative;
 }
@@ -440,6 +439,7 @@ ul#userMenu li a::after {
 
 .nav-bar {
     text-align: center;
+    margin-bottom: 50px;
 }
 
 .btn-nav {
@@ -469,10 +469,20 @@ ul#userMenu li a::after {
     padding-top: 80px;
 }
 
+@media only screen and (max-width: 1125px) {
+    .btn-nav .btn {
+        font-size: 11px;
+    }
+    #page-title, #userLink {
+        display: none;
+    }
+}
+
 /* Top scroll
 ================== */
 
 .cd-top {
+    z-index: 999;
     display: inline-block;
     height: 40px;
     width: 40px;
@@ -654,12 +664,12 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 
 .accueil-wrapper {
     margin: 20px 0;
-    display:-webkit-flex;
-    display:-webkit-box;
-    display:-moz-flex;
-    display:-moz-box;
-    display:-ms-flexbox;
-    display:flex;
+    display: -webkit-flex;
+    display: -webkit-box;
+    display: -moz-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
     flex-flow: row wrap;
 }
 
@@ -675,6 +685,7 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 }
 
 .box-header {
+    font-size: 14px;
     padding: 10px 10px;
     background-color: #fcfcfc;
     border: #08c1b8 1px solid;
@@ -845,27 +856,27 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 ================= */
 
 .alert {
-	padding: 20px;
-	opacity: 0.9;
-	transition: opacity 0.7s;
-	margin-bottom: 15px;
-	position: fixed;
-	right: 0;
-	z-index: 10;
-	margin: 10px;
+    padding: 20px;
+    opacity: 0.9;
+    transition: opacity 0.7s;
+    margin-bottom: 15px;
+    position: fixed;
+    right: 0;
+    z-index: 10;
+    margin: 10px;
 }
 
 .closebtn {
-	margin-left: 15px;
-	color: inherit;
-	font-weight: bold;
-	float: right;
-	font-size: 22px;
-	line-height: 20px;
-	cursor: pointer;
-	transition: 0.3s;
+    margin-left: 15px;
+    color: inherit;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 .closebtn:hover {
-	color: black;
+    color: black;
 }

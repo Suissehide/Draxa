@@ -33,12 +33,12 @@ class PatientFixtures extends Fixture
             $patient->setProfession($value[12]);
             $patient->setActivite($value[13]);
             $patient->setDiagnostic($value[14]);
-            $patient->setDedate($value[15]);
-            $patient->setOrientation($value[16]);
-            $patient->setEtpdecision($value[17]);
-            $patient->setPrecisions($value[18]);
-            $patient->setProgetp($value[19]);
-            $patient->setPrecisionsperso($value[20]);
+            // $patient->setDedate($value[15]);
+            $patient->setOrientation($value[15]);
+            $patient->setEtpdecision($value[16]);
+            $patient->setPrecisions($value[17]);
+            $patient->setProgetp($value[18]);
+            $patient->setPrecisionsperso($value[19]);
             $manager->persist($patient);
         }
         $manager->flush();

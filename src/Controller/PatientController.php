@@ -213,7 +213,7 @@ class PatientController extends Controller
         $normalizer->setCallbacks(array(
             'date' => $callback,
             'dentree' => $callback,
-            'dedate' => $callback,
+            // 'dedate' => $callback,
             'date_repro' => $callback,
         ));
 

@@ -20,24 +20,10 @@
                         <tr>
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
+                            <th data-column-id="rdv_type">Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if rendezVous is empty %}
-                            <tr class="disabled text-center">
-                                <td>
-                                    Aucun rendez-vous aujourd'hui
-                                </td>
-                                <td></td>
-                            </tr>
-                        {% else %}
-                            {% for patient in rendezVous %}
-                                <tr data-row-id="{{ patient.id }}">
-                                    <td>{{ patient.nom }}</td>
-                                    <td>{{ patient.prenom }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -50,24 +36,10 @@
                         <tr>
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
+                            <th data-column-id="rdv_type">Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if entretiens is empty %}
-                            <tr class="disabled text-center">
-                                <td>
-                                    Aucun entretien aujourd'hui
-                                </td>
-                                <td></td>
-                            </tr>
-                        {% else %}
-                            {% for patient in entretiens %}
-                                <tr data-row-id="{{ patient.id }}">
-                                    <td>{{ patient.nom }}</td>
-                                    <td>{{ patient.prenom }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -80,24 +52,10 @@
                         <tr>
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
+                            <th data-column-id="rdv_type">Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if ateliers is empty %}
-                            <tr class="disabled text-center">
-                                <td>
-                                    Aucun atelier aujourd'hui
-                                </td>
-                                <td></td>
-                            </tr>
-                        {% else %}
-                            {% for patient in ateliers %}
-                                <tr data-row-id="{{ patient.id }}">
-                                    <td>{{ patient.nom }}</td>
-                                    <td>{{ patient.prenom }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -110,24 +68,10 @@
                         <tr>
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
+                            <th data-column-id="rdv_type">Type</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% if telephoniques is empty %}
-                            <tr class="disabled text-center">
-                                <td>
-                                    Aucun rendez-vous téléphonique aujourd'hui
-                                </td>
-                                <td></td>
-                            </tr>
-                        {% else %}
-                            {% for patient in telephoniques %}
-                                <tr data-row-id="{{ patient.id }}">
-                                    <td>{{ patient.nom }}</td>
-                                    <td>{{ patient.prenom }}</td>
-                                </tr>
-                            {% endfor %}
-                        {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -164,7 +108,13 @@
             selectedDate: '{{ date }}',
             onSelectedDateChanged: function (event, date) {
                 var d = new Date(date);
-                $.ajax({
+                ajaxAction(d);
+            },
+            language: 'fr'
+        }
+
+        function ajaxAction(d) {
+            $.ajax({
                     url: "{{ path('accueil_ajax') }}",
                     type: "POST",
                     dataType: "json",
@@ -177,44 +127,45 @@
                         if (resp[0].length > 0) {
                             $.each(resp[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
                                 .appendTo('#entretiens');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun entretien aujourd\'hui</td><td></td>').appendTo('#entretiens');
+                            $('<tr class="disabled text-center">').append('<td>Aucun entretien aujourd\'hui</td><td></td><td></td>').appendTo('#entretiens');
                         }
                         if (resp[1].length > 0) {
                             $.each(resp[1], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
                                 .appendTo('#ateliers');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun atelier aujourd\'hui</td><td></td>').appendTo('#ateliers');
+                            $('<tr class="disabled text-center">').append('<td>Aucun atelier aujourd\'hui</td><td></td><td></td>').appendTo('#ateliers');
                         }
                         if (resp[2].length > 0) {
                             $.each(resp[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
                                 .appendTo('#telephoniques');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous téléphonique aujourd\'hui</td><td></td>').appendTo('#telephoniques');
+                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous téléphonique aujourd\'hui</td><td></td><td></td>').appendTo('#telephoniques');
                         }
                         if (resp[3].length > 0) {
                             $.each(resp[3], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
                                 .appendTo('#rendezVous');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous aujourd\'hui</td><td></td>').appendTo('#rendezVous');
+                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous aujourd\'hui</td><td></td><td></td>').appendTo('#rendezVous');
                         }
                     }
                 });
-            },
-            language: 'fr'
         }
+
+        ajaxAction(new Date());
+
         $('#paginator').datepaginator(options);
 
         $('tbody').on("click", "tr", function () {

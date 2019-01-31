@@ -25,13 +25,6 @@ class AccueilController extends Controller
 	public function accueil(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$today_startdatetime = \DateTime::createFromFormat("Y-m-d H:i:s", date("Y-m-d 00:00:00"));
-		$today_enddatetime = \DateTime::createFromFormat("Y-m-d H:i:s", date("Y-m-d 23:59:59"));
-
-		$entretiens = $em->getRepository(Patient::class)->findOneByDateJoinedToEntretien($today_startdatetime, $today_enddatetime);
-		$ateliers = $em->getRepository(Patient::class)->findOneByDateJoinedToAtelier($today_startdatetime, $today_enddatetime);
-        $telephoniques = $em->getRepository(Patient::class)->findOneByDateJoinedToTelephonique($today_startdatetime, $today_enddatetime);
-        $rendezVous = $em->getRepository(Patient::class)->findOneByDateJoinedToRendezVous($today_startdatetime, $today_enddatetime);
 		
 		return $this->render('accueil/index.html.twig', [
 			'title' => 'Accueil',
@@ -39,10 +32,6 @@ class AccueilController extends Controller
 			'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
 			'nbEntretiens' => count($em->getRepository(Entretien::class)->findAll()),
 			'controller_name' => 'AccueilController',
-			'entretiens' => $entretiens,
-			'ateliers' => $ateliers,
-            'telephoniques' => $telephoniques,
-            'rendezVous' => $rendezVous,
 		]);
     }
     
@@ -68,7 +57,8 @@ class AccueilController extends Controller
                 $jsonContent[] = array(
                         "id" => $e->getId(),
                         "nom" => $e->getNom(),
-                        "prenom" => $e->getPrenom(),
+						"prenom" => $e->getPrenom(),
+						"type" => $e->getPrenom(),
                     );
 			}
 			$response[] = $jsonContent;
@@ -77,7 +67,8 @@ class AccueilController extends Controller
                 $jsonContent[] = array(
                         "id" => $e->getId(),
                         "nom" => $e->getNom(),
-                        "prenom" => $e->getPrenom(),
+						"prenom" => $e->getPrenom(),
+						"type" => $e->getPrenom(),
                     );
 			}
 			$response[] = $jsonContent;
@@ -86,7 +77,8 @@ class AccueilController extends Controller
                 $jsonContent[] = array(
                         "id" => $e->getId(),
                         "nom" => $e->getNom(),
-                        "prenom" => $e->getPrenom(),
+						"prenom" => $e->getPrenom(),
+						"type" => $e->getPrenom(),
                     );
 			}
             $response[] = $jsonContent;
@@ -95,7 +87,8 @@ class AccueilController extends Controller
                 $jsonContent[] = array(
                         "id" => $e->getId(),
                         "nom" => $e->getNom(),
-                        "prenom" => $e->getPrenom(),
+						"prenom" => $e->getPrenom(),
+						"type" => $e->getPrenom(),
                     );
 			}
 			$response[] = $jsonContent;

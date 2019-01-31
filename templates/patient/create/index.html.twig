@@ -25,23 +25,6 @@
         <div class="content">
             {{ form_start(form) }}
             {{ form_errors(form) }}
-            <div class="row">
-                <div class="col-md-11">
-                    {{ form_row(form.observ, {'required': false}) }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-5">
-                    {{ form_row(form.motif) }}
-                </div>
-
-                <div class="col-md-3">
-                    {{ form_row(form.etp) }}
-                </div>
-                <div class="col-md-3">
-                    {{ form_row(form.dentree) }}
-                </div>
-            </div>
             <div class="separator">
                 <span id="details" class="separator-text">Détails</span>
             </div>
@@ -61,7 +44,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.tel1) }}
+                    {{ form_row(form.tel1, {'required': false}) }}
                 </div>
                 <div class="col-md-2">
                     {{ form_row(form.tel2, {'required': false}) }}
@@ -76,7 +59,7 @@
                 <div class="col-md-2">
                     {{ form_row(form.etude) }}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     {{ form_row(form.profession) }}
                 </div>
                 <div class="col-md-2">
@@ -84,14 +67,14 @@
                 </div>
             </div>
             <div class="separator">
-                <span class="separator-text">Médical</span>
+                <span class="separator-text">Données à l'inclusion</span>
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.diagnostic) }}
+                    {{ form_row(form.diagnostic, {'required': false}) }}
                 </div>
                 <div class="col-md-3">
-                    {{ form_row(form.dedate) }}
+                    {{ form_row(form.dentree) }}
                 </div>
                 <div class="col-md-5">
                     {{ form_row(form.orientation, {'required': false}) }}
@@ -99,10 +82,10 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.etpdecision) }}
+                    {{ form_row(form.etpdecision, {'required': false}) }}
                 </div>
                 <div class="col-md-3">
-                    {{ form_row(form.progetp) }}
+                    {{ form_row(form.progetp, {'required': false}) }}
                 </div>
                 <div class="col-md-5">
                     {{ form_row(form.precisions, {'required': false}) }}
@@ -111,6 +94,24 @@
             <div class="row">
                 <div class="col-md-11">
                     {{ form_row(form.precisionsperso, {'required': false}) }}
+                </div>
+            </div>
+
+            <div class="separator">
+                <span id="fin" class="separator-text">Fin de parcours</span>
+            </div>
+            <div class="row">
+                <div class="col-md-5">
+                    {{ form_row(form.motif, {'required': false}) }}
+                </div>
+
+                <div class="col-md-offset-1 col-md-5">
+                    {{ form_row(form.etp, {'required': false}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-11">
+                    {{ form_row(form.observ, {'required': false}) }}
                 </div>
             </div>
 

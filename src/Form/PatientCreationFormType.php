@@ -100,7 +100,7 @@ class PatientCreationFormType extends AbstractType
                 ),
             ))
             ->add('diagnostic', ChoiceType::class, array(
-                'label' => 'Diagnostic',
+                'label' => 'Diagnostic médical',
                 'choices' => array(
                     '' => '',
                     'AOMI' => 'AOMI',
@@ -109,14 +109,14 @@ class PatientCreationFormType extends AbstractType
                     'PREVENTION' => 'PREVENTION',
                 ),
             ))
-            ->add('dedate', DateType::class, array(
-                'label' => 'DE Date',
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'datepicker',
-                ],
-            ))
+            // ->add('dedate', DateType::class, array(
+            //     'label' => 'Date d\'entrée',
+            //     'widget' => 'single_text',
+            //     'format' => 'dd/MM/yyyy',
+            //     'attr' => [
+            //         'class' => 'datepicker',
+            //     ],
+            // ))
             ->add('orientation', TextType::class, array('label' => 'Orientation'))
             ->add('etpdecision', ChoiceType::class, array(
                 'label' => 'ETP Décision',
@@ -127,18 +127,18 @@ class PatientCreationFormType extends AbstractType
                 ),
             ))
             ->add('precisions', TextType::class, array('label' => 'Précision non inclusion'))
-            ->add('progetp', ChoiceType::class, array(
-                'label' => 'Type prog ETP',
-                'choices' => array(
-                    '' => '',
-                    'HRCV' => 'HRCV',
-                    'HRCV+AOMI' => 'HRCV+AOMI',
-                    'HRCV+AOD' => 'HRCV+AOD',
-                    'HRCV+AOMI+AOD' => 'HRCV+AOMI+AOD',
-                    'Perso+HRCV' => 'Perso+HRCV',
-                    'Perso+AOMI' => 'Perso+AOMI',
-                    'Personnalisé' => 'Personnalisé',
-                ),
+            ->add('progetp', TextType::class, array(
+                'label' => 'Type de programme',
+                // 'choices' => array(
+                //     '' => '',
+                //     'HRCV' => 'HRCV',
+                //     'HRCV+AOMI' => 'HRCV+AOMI',
+                //     'HRCV+AOD' => 'HRCV+AOD',
+                //     'HRCV+AOMI+AOD' => 'HRCV+AOMI+AOD',
+                //     'Perso+HRCV' => 'Perso+HRCV',
+                //     'Perso+AOMI' => 'Perso+AOMI',
+                //     'Personnalisé' => 'Personnalisé',
+                // ),
             ))
             ->add('precisionsperso', TextareaType::class, array('label' => 'Précision contenu personnalisé'))
 
