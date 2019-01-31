@@ -21,58 +21,6 @@ class PatientRepository extends ServiceEntityRepository
         parent::__construct($registry, Patient::class);
 	}
     
-    public function findOneByDateJoinedToRendezVous(\DateTime $date1, \DateTime $date2)
-	{
-		return $this->createQueryBuilder('p')
-			->add('select', 'p')
-			->leftJoin('p.rendezVous', 'rd')
-			->where('rd.date >= :date1')
-			->andWhere('rd.date <= :date2')
-			->setParameter('date1', $date1)
-			->setParameter('date2', $date2)
-			->getQuery()
-			->getResult();
-    }
-
-	public function findOneByDateJoinedToEntretien(\DateTime $date1, \DateTime $date2)
-	{
-		return $this->createQueryBuilder('p')
-			->add('select', 'p')
-			->leftJoin('p.entretiens', 'e')
-			->where('e.date >= :date1')
-			->andWhere('e.date <= :date2')
-			->setParameter('date1', $date1)
-			->setParameter('date2', $date2)
-			->getQuery()
-			->getResult();
-    }
-    
-    public function findOneByDateJoinedToAtelier(\DateTime $date1, \DateTime $date2)
-	{
-		return $this->createQueryBuilder('p')
-			->add('select', 'p')
-			->leftJoin('p.ateliers', 'a')
-			->where('a.date >= :date1')
-			->andWhere('a.date <= :date2')
-			->setParameter('date1', $date1)
-			->setParameter('date2', $date2)
-			->getQuery()
-			->getResult();
-    }
-    
-    public function findOneByDateJoinedToTelephonique(\DateTime $date1, \DateTime $date2)
-	{
-		return $this->createQueryBuilder('p')
-			->add('select', 'p')
-			->leftJoin('p.telephoniques', 't')
-			->where('t.date >= :date1')
-			->andWhere('t.date <= :date2')
-			->setParameter('date1', $date1)
-			->setParameter('date2', $date2)
-			->getQuery()
-			->getResult();
-    }
-    
     public function compte()
     {
         return $this->createQueryBuilder('p')

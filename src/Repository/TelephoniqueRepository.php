@@ -19,6 +19,16 @@ class TelephoniqueRepository extends ServiceEntityRepository
         parent::__construct($registry, Telephonique::class);
     }
 
+    public function findOneByDateJoinedToTelephonique(\DateTime $date1, \DateTime $date2)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.date >= :date1')
+            ->andWhere('e.date <= :date2')
+            ->setParameter('date1', $date1)
+            ->setParameter('date2', $date2)
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Telephonique[] Returns an array of Telephonique objects
 //     */

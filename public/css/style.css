@@ -685,7 +685,7 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 }
 
 .box-header {
-    font-size: 14px;
+    font-size: 18px;
     padding: 10px 10px;
     background-color: #fcfcfc;
     border: #08c1b8 1px solid;
@@ -715,7 +715,7 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 .box-sm h1 {
     margin: 10px 60px;
     color: #8a8a8a;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 .box-sm p {

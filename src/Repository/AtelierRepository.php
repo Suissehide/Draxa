@@ -19,6 +19,16 @@ class AtelierRepository extends ServiceEntityRepository
         parent::__construct($registry, Atelier::class);
     }
 
+    public function findOneByDateJoinedToAtelier(\DateTime $date1, \DateTime $date2)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.date >= :date1')
+            ->andWhere('e.date <= :date2')
+            ->setParameter('date1', $date1)
+            ->setParameter('date2', $date2)
+            ->getQuery()
+            ->getResult();
+    }
 //    /**
 //     * @return Atelier[] Returns an array of Atelier objects
 //     */

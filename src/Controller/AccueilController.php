@@ -19,81 +19,81 @@ use Symfony\Component\HttpFoundation\JsonResponse;
  */
 class AccueilController extends Controller
 {
-	/**
-	 * @Route("/", name="accueil", methods="GET|POST")
-	 */
-	public function accueil(Request $request)
-	{
-		$em = $this->getDoctrine()->getManager();
-		
-		return $this->render('accueil/index.html.twig', [
-			'title' => 'Accueil',
-			'date' => date("d-m-Y"),
-			'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
-			'nbEntretiens' => count($em->getRepository(Entretien::class)->findAll()),
-			'controller_name' => 'AccueilController',
-		]);
-    }
-    
     /**
-	 * @Route("/ajax", name="accueil_ajax", methods="GET|POST")
-	 */
+     * @Route("/", name="accueil", methods="GET|POST")
+     */
+    public function accueil(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        return $this->render('accueil/index.html.twig', [
+            'title' => 'Accueil',
+            'date' => date("d-m-Y"),
+            'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
+            'nbEntretiens' => count($em->getRepository(Entretien::class)->findAll()),
+            'controller_name' => 'AccueilController',
+        ]);
+    }
+
+    /**
+     * @Route("/ajax", name="accueil_ajax", methods="GET|POST")
+     */
     public function accueil_ajax(Request $request)
-	{
-		if ($request->isXmlHttpRequest()) {
+    {
+        if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
-			$date = $request->request->get('date');
-			$startdatetime = \DateTime::createFromFormat("Y-m-d H:i:s", date($date." 00:00:00"));
-			$enddatetime = \DateTime::createFromFormat("Y-m-d H:i:s", date($date." 23:59:59"));
+            $date = $request->request->get('date');
+            $startdatetime = \DateTime::createFromFormat("Y-m-d H:i:s", date($date . " 00:00:00"));
+            $enddatetime = \DateTime::createFromFormat("Y-m-d H:i:s", date($date . " 23:59:59"));
 
-			$entretiens = $em->getRepository(Patient::class)->findOneByDateJoinedToEntretien($startdatetime, $enddatetime);
-			$ateliers = $em->getRepository(Patient::class)->findOneByDateJoinedToAtelier($startdatetime, $enddatetime);
-			$telephoniques = $em->getRepository(Patient::class)->findOneByDateJoinedToTelephonique($startdatetime, $enddatetime);
-            $rendezVous = $em->getRepository(Patient::class)->findOneByDateJoinedToRendezVous($startdatetime, $enddatetime);
+            $entretiens = $em->getRepository(Entretien::class)->findOneByDateJoinedToEntretien($startdatetime, $enddatetime);
+            $ateliers = $em->getRepository(Atelier::class)->findOneByDateJoinedToAtelier($startdatetime, $enddatetime);
+            $telephoniques = $em->getRepository(Telephonique::class)->findOneByDateJoinedToTelephonique($startdatetime, $enddatetime);
+            $rendezVous = $em->getRepository(RendezVous::class)->findOneByDateJoinedToRendezVous($startdatetime, $enddatetime);
 
-			$jsonContent = array();
-			$response = array();
-			foreach($entretiens as $e) {
+            $jsonContent = array();
+            $response = array();
+            foreach ($entretiens as $e) {
                 $jsonContent[] = array(
-                        "id" => $e->getId(),
-                        "nom" => $e->getNom(),
-						"prenom" => $e->getPrenom(),
-						"type" => $e->getPrenom(),
-                    );
-			}
-			$response[] = $jsonContent;
-			$jsonContent = array();
-			foreach($ateliers as $e) {
-                $jsonContent[] = array(
-                        "id" => $e->getId(),
-                        "nom" => $e->getNom(),
-						"prenom" => $e->getPrenom(),
-						"type" => $e->getPrenom(),
-                    );
-			}
-			$response[] = $jsonContent;
-			$jsonContent = array();
-			foreach($telephoniques as $e) {
-                $jsonContent[] = array(
-                        "id" => $e->getId(),
-                        "nom" => $e->getNom(),
-						"prenom" => $e->getPrenom(),
-						"type" => $e->getPrenom(),
-                    );
-			}
+                    "id" => $e->getPatient()->getId(),
+                    "nom" => $e->getPatient()->getNom(),
+                    "prenom" => $e->getPatient()->getPrenom(),
+                    "type" => $e->getType(),
+                );
+            }
             $response[] = $jsonContent;
             $jsonContent = array();
-			foreach($rendezVous as $e) {
+            foreach ($ateliers as $e) {
                 $jsonContent[] = array(
-                        "id" => $e->getId(),
-                        "nom" => $e->getNom(),
-						"prenom" => $e->getPrenom(),
-						"type" => $e->getPrenom(),
-                    );
-			}
-			$response[] = $jsonContent;
+                    "id" => $e->getPatient()->getId(),
+                    "nom" => $e->getPatient()->getNom(),
+                    "prenom" => $e->getPatient()->getPrenom(),
+                    "type" => $e->getType(),
+                );
+            }
+            $response[] = $jsonContent;
+            $jsonContent = array();
+            foreach ($telephoniques as $e) {
+                $jsonContent[] = array(
+                    "id" => $e->getPatient()->getId(),
+                    "nom" => $e->getPatient()->getNom(),
+                    "prenom" => $e->getPatient()->getPrenom(),
+                    "type" => $e->getType(),
+                );
+            }
+            $response[] = $jsonContent;
+            $jsonContent = array();
+            foreach ($rendezVous as $e) {
+                $jsonContent[] = array(
+                    "id" => $e->getPatient()->getId(),
+                    "nom" => $e->getPatient()->getNom(),
+                    "prenom" => $e->getPatient()->getPrenom(),
+                    "type" => $e->getType(),
+                );
+            }
+            $response[] = $jsonContent;
 
-			return (new JsonResponse ($response, Response::HTTP_OK)) ;
-		}
+            return (new JsonResponse($response, Response::HTTP_OK));
+        }
     }
 }

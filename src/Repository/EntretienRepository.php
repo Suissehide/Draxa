@@ -17,7 +17,18 @@ class EntretienRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Entretien::class);
-	}
+    }
+
+    public function findOneByDateJoinedToEntretien(\DateTime $date1, \DateTime $date2)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.date >= :date1')
+            ->andWhere('e.date <= :date2')
+            ->setParameter('date1', $date1)
+            ->setParameter('date2', $date2)
+            ->getQuery()
+            ->getResult();
+    }
 	
 //    /**
 //     * @return Entretien[] Returns an array of Entretien objects
@@ -34,7 +45,7 @@ class EntretienRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
-    */
+     */
 
     /*
     public function findOneBySomeField($value): ?Entretien
@@ -46,5 +57,5 @@ class EntretienRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
-    */
+     */
 }
