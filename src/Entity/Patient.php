@@ -104,7 +104,6 @@ class Patient
     private $diagnostic;
 
     /**
-     * @Groups({"patient"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $dedate;

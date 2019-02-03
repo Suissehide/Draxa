@@ -1,0 +1,21 @@
+TODO
+
+. J’ai tenté à plusieurs reprises de créer un nouveau patient. J’ai réussi à le créer mais je ne suis pas arrivée à l’enregistrer. : HELP (ça marche tres bien)
+. Sur Léo j’ai pu ajouter des RV cependant je ne sais pas si ils sont enregistrés. En me connectant à nouveau les RV apparaissent sur la page d’accueil? : HELP (oui en effet)
+Pas mal mais aucune heure ni le type du RV. Il faut repartir sur le patient pour obtenir les précisions du RV. HELP : ajout de l'heure dans formulaire ?
+
+. 1ere partie : DONE
+Il semble que cette partie ressemble plutôt à une fin de parcours. Donc je la verrai plutôt à la fin : DONE
+Date d’entrée correspond à la date de DE (Date DE se trouve dans la partie Médical. Possibilité de supprimer pour éviter les répétitions ou de récupérer la donnée qui se trouve dans la partie Partie Médicale) : DONE
+
+. Partie médical A renommer Données à l'Inclusion : DONE
+    Diagnostic préciser Diagnostic Médical : DONE
+    Orientation insérer un menu déroulant (selon critères de l’enquête SOLEN et évaluation quadriennale à récupérer) : HELP
+    Précision non inclusion insérer un menu déroulant refus patient offre non adaptée pas de besoin (à revoir en fonction des demandes HAS et SOLEN) : HELP
+    ETP Décision = Décision équipe éducative ? : HELP
+    Type de programme il me semble que nous allons vers des PEC de plus en plus personnalisées donc difficile de mettre un menu déroulant avec des titres de programmes : DONE (possibilité d'avoir une liste + champ libre)
+Peut-on s’orienter vers un menu déroulant avec les Ateliers et EI choisis avec la possibilité cumuler les  différences séances. : HELP
+
+. Problème quand je choisi un entretien le menu déroulant correspond au menu déroulant des ateliers et quand je choisi entretien les choix multiples correspondent aux ateliers (inversement) : HELP
+
+. Sera t-il facile de modifier les items en fonction des demandes de la HAS? : HELP
