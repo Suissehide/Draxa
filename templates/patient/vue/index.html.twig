@@ -52,6 +52,11 @@
             {{ form_start(form) }}
             {{ form_errors(form) }}
 
+            <div class="row">
+                <div class="col-md-11">
+                    {{ form_row(form.observ, {'required': false}) }}
+                </div>
+            </div>
             <div class="separator">
                 <span id="details" class="separator-text">Détails</span>
             </div>
@@ -100,11 +105,8 @@
                 <div class="col-md-2">
                     {{ form_row(form.diagnostic) }}
                 </div>
-                {# <div class="col-md-3">
-                    {{ form_row(form.dedate) }}
-                </div> #}
                 <div class="col-md-3">
-                    {{ form_row(form.dentree) }}
+                    {{ form_row(form.dedate) }}
                 </div>
                 <div class="col-md-5">
                     {{ form_row(form.orientation, {'required': false}) }}
@@ -138,10 +140,8 @@
                 <div class="col-md-offset-1 col-md-5">
                     {{ form_row(form.etp) }}
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-11">
-                    {{ form_row(form.observ, {'required': false}) }}
+                <div class="col-md-3">
+                    {{ form_row(form.dentree) }}
                 </div>
             </div>
 

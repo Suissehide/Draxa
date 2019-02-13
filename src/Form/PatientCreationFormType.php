@@ -38,7 +38,7 @@ class PatientCreationFormType extends AbstractType
             ->add('nom', TextType::class, array('label' => 'Nom'))
             ->add('prenom', TextType::class, array('label' => 'Prénom'))
             ->add('dentree', DateType::class, array(
-                'label' => 'Date d\'entrée',
+                'label' => 'Date de sortie  ',
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy',
                 'attr' => [
@@ -109,14 +109,14 @@ class PatientCreationFormType extends AbstractType
                     'PREVENTION' => 'PREVENTION',
                 ),
             ))
-            // ->add('dedate', DateType::class, array(
-            //     'label' => 'Date d\'entrée',
-            //     'widget' => 'single_text',
-            //     'format' => 'dd/MM/yyyy',
-            //     'attr' => [
-            //         'class' => 'datepicker',
-            //     ],
-            // ))
+            ->add('dedate', DateType::class, array(
+                'label' => 'Date d\'entrée',
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'attr' => [
+                    'class' => 'datepicker',
+                ],
+            ))
             ->add('orientation', TextType::class, array('label' => 'Orientation'))
             ->add('etpdecision', ChoiceType::class, array(
                 'label' => 'ETP Décision',

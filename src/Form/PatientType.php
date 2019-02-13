@@ -26,7 +26,7 @@ class PatientType extends AbstractType
             ->add('profession')
             ->add('activite')
             ->add('diagnostic')
-            // ->add('dedate')
+            ->add('dedate')
             ->add('orientation')
             ->add('etpdecision')
             ->add('precisions')
