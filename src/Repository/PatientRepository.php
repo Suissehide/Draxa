@@ -34,11 +34,10 @@ class PatientRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p');
 
         if ($searchPhrase != "") {
-            $qb->andWhere('p.dedate LIKE :search
-                OR p.etp LIKE :search
-                OR p.nom LIKE :search
+            $qb->andWhere('p.nom LIKE :search
                 OR p.prenom LIKE :search
-                OR p.motif LIKE :search
+                OR p.telephone LIKE :search
+                OR p.etp LIKE :search
             ')
                 ->setParameter('search', '%' . $searchPhrase . '%');
         }

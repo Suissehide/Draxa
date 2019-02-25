@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Annexe;
 use App\Form\AnnexeType;
 use App\Repository\AnnexeRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * @Route("/annexe")
  */
-class AnnexeController extends Controller
+class AnnexeController extends AbstractController
 {
     /**
      * @Route("/", name="annexe_index", methods="GET")

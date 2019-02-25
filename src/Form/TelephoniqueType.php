@@ -23,19 +23,13 @@ class TelephoniqueType extends AbstractType
                     'class' => 'datepicker',
                 ],
             ))
-            ->add('type', ChoiceType::class, array(
-                'label' => 'Type',
+            ->add('thematique', ChoiceType::class, array(
+                'label' => 'Thématique',
+                'placeholder' => '',
                 'choices' => array(
-                    '' => '',
-                    'Diet' => 'Diet',
-                    'Renf1' => 'Renf1',
-                    'Renf2' => 'Renf2',
-                    'Reactu DE' => 'Reactu DE',
-                    'Tabac' => 'Tabac',
-                    'Psy' => 'Psy',
-                    'Diabète' => 'Diabete',
-                    'HTA' => 'HTA',
-                    'Autre' => 'Autre',
+                    'Motivationnel' => 'Motivationnel',
+                    'Coaching tabac' => 'Coaching tabac',
+                    'Coaching AOMI' => 'Coaching AOMI',
                 ),
                 'required'   => false,
             ))
@@ -46,6 +40,11 @@ class TelephoniqueType extends AbstractType
                     'Oui' => 'Oui',
                     'Non' => 'Non',
                 ),
+                'choice_attr' => [
+                    '' => ['class' => 'white'],
+                    'Oui' => ['class' => 'hotpink'],
+                    'Non' => ['class' => 'yellow'],
+                ],
                 'required'   => false,
             ))
             ->add('motifRefus', TextType::class, array(

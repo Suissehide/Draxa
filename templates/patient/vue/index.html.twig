@@ -34,7 +34,7 @@
                 </a>
                 <a href="#ateliers" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-scissors"></span>
-                    Ateliers
+                    Atelier
                 </a>
                 <a href="#suivi" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-phone"></span>
@@ -318,7 +318,7 @@
             </section>
 
             <div class="separator">
-                <span id="ateliers" class="separator-text">Ateliers</span>
+                <span id="ateliers" class="separator-text">Atelier</span>
             </div>
 
             <section class="cd-horizontal-timeline row" id="timeline-ateliers">
@@ -361,7 +361,7 @@
                         {% for atelierForm in form.ateliers %}
                             {% set counter = (counter | default(0)) + 1 %}
                             <li {% if loop.last %} class="selected" {% endif %} data-date="{{ atelierForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>Ateliers
+                                <h2>Atelier
                                     {{ counter }}
                                 </h2>
                                 <em>
@@ -444,7 +444,7 @@
                                     {{ form_row(telephoniqueForm.date) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(telephoniqueForm.type) }}
+                                    {{ form_row(telephoniqueForm.thematique) }}
                                 </div>
                                 <div class="row">
                                     {{ form_row(telephoniqueForm.etat) }}
@@ -660,7 +660,7 @@
                         {{ form_start(formTelephonique) }}
                         {{ form_errors(formTelephonique) }}
                         {{ form_row(formTelephonique.date, {'attr': {'autocomplete': 'off'} }) }}
-                        {{ form_row(formTelephonique.type) }}
+                        {{ form_row(formTelephonique.thematique) }}
                         {{ form_row(formTelephonique.etat) }}
                         {{ form_row(formTelephonique.motifRefus, {'required': false}) }}
                         {{ form_row(formTelephonique._token) }}
@@ -713,6 +713,48 @@
     <script type="text/javascript">
 
         alert_pos = {{ top }};
+
+        function updateForm() {
+            $('#timeline_update').trigger('click');
+            $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
+            changeSelectColor(null);
+        }
+        updateForm();
+
+        {# Set select color #}
+        function setSelectColor(obj) {
+            let color = obj.find(":selected").attr("class");
+            if (!color)
+                return;
+            obj.css({background: color});
+            let index = obj.parents('li').index();
+            let dot = obj.parents('.events-content').prev().find('ol li:eq(' + index + ') a');
+            if (dot.hasClass('selected'))
+                dot.removeClass().addClass('selected');
+            else if (dot.hasClass('older-event'))
+                dot.removeClass().addClass('older-event');
+            else
+                dot.removeClass()
+            dot.addClass(color + '-after');
+        }
+
+        function changeSelectColor(obj)  {
+            if (obj)
+                setSelectColor(obj)
+            else {
+                $('section select').each(function () {
+                    setSelectColor($(this));
+                });
+            }
+        }
+
+        function changeDotColor() {
+            $('cd-horizontal-timeline, events a.selected::after')
+        }
+
+        $('select').change(function() {
+            changeSelectColor($(this));
+        });
 
         {# Delete #}
 
@@ -895,7 +937,7 @@
             var url = "{{ path('telephonique_patch', { 'id': 'telephonique_id' }) }}";
             url = url.replace("telephonique_id", id);
             var date = arr[0];
-            var type = arr[1];
+            var thematique = arr[1];
             var etat = arr[2];
             var motifRefus = arr[3];
 
@@ -905,7 +947,7 @@
                 dataType: "json",
                 data: {
                     "date": date,
-                    "type": type,
+                    "thematique": thematique,
                     "etat": etat,
                     "motifRefus": motifRefus
                 },
@@ -947,7 +989,7 @@
 
         $("#telephonique_add").on('click', function () {
             var date = $('#telephonique_date').val();
-            var type = $('#telephonique_type').val();
+            var thematique = $('#telephonique_thematique').val();
             var etat = $('#telephonique_etat').val();
             var motifRefus = $('#telephonique_motifRefus').val();
 
@@ -958,7 +1000,7 @@
                 data: {
                     "id": '{{ patient.id }}',
                     "date": date,
-                    "type": type,
+                    "thematique": thematique,
                     "etat": etat,
                     "motifRefus": motifRefus
                 },
@@ -987,15 +1029,48 @@
                         var events_content = $('#events-content-telephoniques');
                         $('#events-content-telephoniques li').removeClass("selected");
                         $(events_content)
-                            .append('<li data-date=' + date + '><h2>Rendez-vous téléphonique ' + (nb + 1) + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_telephoniques_' + resp + '_date">Date</label><input type="text" id="patient_creation_form_telephoniques_' + resp + '_date" name="patient_creation_form[telephoniques][' + resp + '][date]" required="required" class="datepicker form-control" value=' + date + '></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_telephoniques_' + resp + '_type">Type</label><select id="patient_creation_form_telephoniques_' + resp + '_type" name="patient_creation_form[telephoniques][' + resp + '][type]" class="form-control"><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_telephoniques_' + resp + '_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_telephoniques_' + resp + '_etat" name="patient_creation_form[telephoniques][' + resp + '][etat]" class="form-control"><option value=""></option><option value="Oui">Oui</option><option value="Non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_telephoniques_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_telephoniques_' + resp + '_motifRefus" name="patient_creation_form[telephoniques][' + resp + '][motifRefus]" class="form-control" value=' + motifRefus + '></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .append(`<li data-date=` + date + `>
+                                        <h2>Rendez-vous téléphonique ` + (nb + 1) + `</h2><em>` + date_em + `</em>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_telephoniques_` + resp + `_date">Date</label>
+                                            <input type="text" id="patient_creation_form_telephoniques_` + resp + `_date" name="patient_creation_form[telephoniques][` + resp + `][date]" required="required" class="datepicker form-control" value=` + date + `>
+                                        </div></div>
+
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_telephoniques_` + resp + `_thematique">Thématique</label>
+                                            <select id="patient_creation_form_telephoniques_` + resp + `_thematique" name="patient_creation_form[telephoniques][` + resp + `][thematique]" class="form-control">
+                                                <option value="Motivationnel">Motivationnel</option>    
+                                                <option value="Coaching tabac">Coaching tabac</option>
+                                                <option value="Coaching AOMI">Coaching AOMI</option>
+                                            </select>
+                                        </div></div>
+
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_telephoniques_` + resp + `_etat">A-t-il eu lieu ?</label>
+                                            <select id="patient_creation_form_telephoniques_` + resp + `_etat" name="patient_creation_form[telephoniques][` + resp + `][etat]" class="form-control">
+                                                <option value=""></option><option value="Oui" class="hotpink">Oui</option>
+                                                <option value="Non" class="yellow">Non</option>
+                                            </select>
+                                        </div></div>
+
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_telephoniques_` + resp + `_motifRefus">Motif de refus</label>
+                                            <input type="text" id="patient_creation_form_telephoniques_` + resp + `_motifRefus" name="patient_creation_form[telephoniques][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `>
+                                        </div></div>
+
+                                        <div class="row">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                     </li>
+                                    `)
                             .appendTo(events_content);
-                        $('#patient_creation_form_telephoniques_' + resp + '_type').val(type);
+                        $('#patient_creation_form_telephoniques_' + resp + '_thematique').val(thematique);
                         $('#patient_creation_form_telephoniques_' + resp + '_etat').val(etat);
                         $('#events-content-telephoniques li:last-child').addClass('selected');
 
-                        $('#timeline_update').trigger('click');
+                        updateForm();
                         document.getElementById("telephonique_add").disabled = true;
-                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
                     }
                 }
             });

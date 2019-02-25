@@ -24,6 +24,16 @@ class Atelier
     private $date;
 
     /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $heure;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $thematique;
+
+    /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"patient"})
      */
@@ -35,6 +45,11 @@ class Atelier
      */
     private $accompagnant;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $etat;
+    
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient"})
@@ -109,6 +124,42 @@ class Atelier
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getThematique(): ?string
+    {
+        return $this->thematique;
+    }
+
+    public function setThematique(?string $thematique): self
+    {
+        $this->thematique = $thematique;
+
+        return $this;
+    }
+
+    public function getHeure(): ?\DateTimeInterface
+    {
+        return $this->heure;
+    }
+
+    public function setHeure(?\DateTimeInterface $heure): self
+    {
+        $this->heure = $heure;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?string $etat): self
+    {
+        $this->etat = $etat;
 
         return $this;
     }

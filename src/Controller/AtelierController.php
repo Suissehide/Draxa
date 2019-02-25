@@ -6,7 +6,7 @@ use App\Entity\Atelier;
 use App\Entity\Patient;
 use App\Form\AtelierType;
 use App\Repository\AtelierRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * @Route("/atelier")
  */
-class AtelierController extends Controller
+class AtelierController extends AbstractController
 {
     /**
      * @Route("/", name="atelier_index", methods="GET")
@@ -130,12 +130,12 @@ class AtelierController extends Controller
             $em = $this->getDoctrine()->getManager();
             $ateliers = $em->getRepository(Patient::class)->find($id)->getAteliers();
 
-            if (date_diff($now, $new_date)->invert) {
+            if (date_diff($now, $new_date, false)->invert) {
                 $bool = true;
             }
             foreach ($ateliers as $atelier) {
                 $date = date_create($atelier->getDate()->format('y-m-d'));
-                if (!date_diff($new_date, $date)->invert) {
+                if (!date_diff($new_date, $date, false)->invert) {
                     $bool = true;
                 }
             }

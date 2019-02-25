@@ -16,6 +16,17 @@ TODO
 + "date de sortie"
 + Ajout de menus déroulants
 
+==> Ateliers
+
+==> rdv Téléphonique
+- "Type"
++ "Thématique" menu déroulant
++ ajout d'un menu déroulant "A-t-il eu lieu ?"
++ menu déroulant "A-t-il eu lieu ?" coloré en fonction des réponses.
++ Rond coloré en fonction des réponses du menu déroulant "A-t-il eu lieu ?"
+/!\ Ajout de l'heure ?
+==> Activité
+/!\ Aucun changement
 
 /*
 *   Page d'accueil

@@ -148,12 +148,12 @@ class RendezVousController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $rendezVous = $em->getRepository(Patient::class)->find($id)->getRendezVous();
 
-            if (date_diff($now, $new_date)->invert) {
+            if (date_diff($now, $new_date, false)->invert) {
                 $bool = true;
             }
             foreach ($rendezVous as $rd) {
                 $date = date_create($rd->getDate()->format('y-m-d'));
-                if (!date_diff($new_date, $date)->invert) {
+                if (!date_diff($new_date, $date, false)->invert) {
                     $bool = true;
                 }
             }

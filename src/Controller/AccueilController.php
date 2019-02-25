@@ -11,13 +11,13 @@ use App\Repository\PatientRepository;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/accueil")
  */
-class AccueilController extends Controller
+class AccueilController extends AbstractController
 {
     /**
      * @Route("/", name="accueil", methods="GET|POST")

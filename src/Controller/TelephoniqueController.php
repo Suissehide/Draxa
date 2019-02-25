@@ -6,7 +6,7 @@ use App\Entity\Telephonique;
 use App\Entity\Patient;
 use App\Form\TelephoniqueType;
 use App\Repository\TelephoniqueRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * @Route("/telephonique")
  */
-class TelephoniqueController extends Controller
+class TelephoniqueController extends AbstractController
 {
     /**
      * @Route("/", name="telephonique_index", methods="GET")
@@ -104,7 +104,7 @@ class TelephoniqueController extends Controller
 
             $telephonique = new Telephonique();
             $telephonique->setDate($new_date);
-            $telephonique->setType($request->request->get('type'));
+            $telephonique->setThematique($request->request->get('thematique'));
             $telephonique->setEtat($request->request->get('etat'));
             $telephonique->setMotifRefus($request->request->get('motifRefus'));
             $telephonique->setPatient($em->getRepository(Patient::class)->findOneById($id));
@@ -170,7 +170,7 @@ class TelephoniqueController extends Controller
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
                 $telephonique->setDate($new_date);
-                $telephonique->setType($request->request->get('type'));
+                $telephonique->setThematique($request->request->get('thematique'));
                 $telephonique->setEtat($request->request->get('etat'));
                 $telephonique->setMotifRefus($request->request->get('motifRefus'));
                 $em->flush();

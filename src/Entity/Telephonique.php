@@ -24,10 +24,26 @@ class Telephonique
     private $date;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $heure;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient"})
      */
+    private $thematique;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
     private $type;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
+    private $etat;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -41,16 +57,6 @@ class Telephonique
      * @Groups({"telephoniques"})
      */
     private $patient;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $etat;
-
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     */
-    private $heure;
 
     public function getId(): ?int
     {
@@ -125,6 +131,18 @@ class Telephonique
     public function setHeure(?\DateTimeInterface $heure): self
     {
         $this->heure = $heure;
+
+        return $this;
+    }
+
+    public function getThematique(): ?string
+    {
+        return $this->thematique;
+    }
+
+    public function setThematique(?string $thematique): self
+    {
+        $this->thematique = $thematique;
 
         return $this;
     }

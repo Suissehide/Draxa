@@ -44,13 +44,14 @@ a, a:hover {
 }
 
 .btn {
+    transition: 0.3s;
     font-weight: bold;
     border-width: 2px;
 }
 
 .btn-primary {
     background-color: #08c1b8;
-    border-color: #08c1b8;
+    border-color: #09aaaa;
 }
 
 .btn-primary:hover, .btn-primary:active:focus, .btn-primary:focus, .btn-primary:hover:disabled, .btn-primary:active {
@@ -59,6 +60,7 @@ a, a:hover {
 }
 
 .btn-light.btn-primary {
+    transition: 0.5s;
     background-color: transparent;
     border-color: #07a8a0;
     color: #07a8a0;
@@ -187,6 +189,10 @@ a, a:hover {
 
 /* Form
 ================= */
+
+.form-control {
+    color: black;
+}
 
 .is-invalid {
     border-color: red;
@@ -941,6 +947,49 @@ body.tt-boxed #footer.footer-minimal .footer-container {
     margin-top: 2px;
     border-radius: 10px;
     overflow: hidden;
+}
+
+/* RDV
+================= */
+
+.white {
+    background-color: white; 
+}
+
+.hotpink {
+    background-color: hotpink; 
+}
+
+.selected.hotpink-after:after {
+    border-color: hotpink !important; 
+    background-color: hotpink !important; 
+}
+
+.older-event.hotpink-after:after {
+    border-color: hotpink !important; 
+}
+
+.hotpink-after:hover:after {
+    border-color: hotpink !important; 
+    background-color: hotpink !important; 
+}
+
+.yellow {
+    background-color: gold; 
+}
+
+.selected.yellow-after:after {
+    border-color: gold !important; 
+    background-color: gold !important; 
+}
+
+.older-event.yellow-after:after {
+    border-color: gold !important; 
+}
+
+.yellow-after:hover:after {
+    border-color: gold !important; 
+    background-color: gold !important; 
 }
 
 /* Autres

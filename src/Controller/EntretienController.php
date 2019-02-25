@@ -6,7 +6,7 @@ use App\Entity\Entretien;
 use App\Entity\Patient;
 use App\Form\EntretienType;
 use App\Repository\EntretienRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 /**
  * @Route("/entretien")
  */
-class EntretienController extends Controller
+class EntretienController extends AbstractController
 {
     /**
      * @Route("/", name="entretien_index", methods="GET")
@@ -130,12 +130,12 @@ class EntretienController extends Controller
             $em = $this->getDoctrine()->getManager();
             $entretiens = $em->getRepository(Patient::class)->find($id)->getEntretiens();
 
-            if (date_diff($now, $new_date)->invert) {
+            if (date_diff($now, $new_date, false)->invert) {
                 $bool = true;
             }
             foreach ($entretiens as $entretien) {
                 $date = date_create($entretien->getDate()->format('y-m-d'));
-                if (!date_diff($new_date, $date)->invert) {
+                if (!date_diff($new_date, $date, false)->invert) {
                     $bool = true;
                 }
             }
