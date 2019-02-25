@@ -105,6 +105,7 @@ class TelephoniqueController extends Controller
             $telephonique = new Telephonique();
             $telephonique->setDate($new_date);
             $telephonique->setType($request->request->get('type'));
+            $telephonique->setEtat($request->request->get('etat'));
             $telephonique->setMotifRefus($request->request->get('motifRefus'));
             $telephonique->setPatient($em->getRepository(Patient::class)->findOneById($id));
 
@@ -129,12 +130,12 @@ class TelephoniqueController extends Controller
             $em = $this->getDoctrine()->getManager();
             $telephoniques = $em->getRepository(Patient::class)->find($id)->getTelephoniques();
 
-            if (date_diff($now, $new_date)->invert) {
+            if (date_diff($now, $new_date, false)->invert) {
                 $bool = true;
             }
             foreach ($telephoniques as $telephonique) {
                 $date = date_create($telephonique->getDate()->format('y-m-d'));
-                if (!date_diff($new_date, $date)->invert) {
+                if (!date_diff($new_date, $date, false)->invert) {
                     $bool = true;
                 }
             }
@@ -170,6 +171,7 @@ class TelephoniqueController extends Controller
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
                 $telephonique->setDate($new_date);
                 $telephonique->setType($request->request->get('type'));
+                $telephonique->setEtat($request->request->get('etat'));
                 $telephonique->setMotifRefus($request->request->get('motifRefus'));
                 $em->flush();
                 return new JsonResponse(true);

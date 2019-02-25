@@ -38,12 +38,13 @@ class PatientController extends Controller
     public function accueil(PatientRepository $patientRepository, Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
+            $etat = $request->request->get('etat');
             $current = $request->request->get('current');
             $rowCount = $request->request->get('rowCount');
             $searchPhrase = $request->request->get('searchPhrase');
             $sort = $request->request->get('sort');
 
-            $patients = $patientRepository->findByFilter($sort, $searchPhrase);
+            $patients = $patientRepository->findByFilter($sort, $searchPhrase, $etat);
             if ($searchPhrase != "") {
                 $count = count($patients->getQuery()->getResult());
             } else {
@@ -58,13 +59,26 @@ class PatientController extends Controller
             $patients = $patients->getQuery()->getResult();
             $rows = array();
             foreach ($patients as $patient) {
+                $rdv = "rdv";
+                $thematique = "thematique";
+                $type = "type";
+                $sortie = 0;
+                $observ = 0;
+                if ($patient->getObserv())
+                    $observ = 1;
+                if ($patient->getDentree())
+                    $sortie = 1;
                 $row = [
                     "id" => $patient->getId(),
                     "nom" => $patient->getNom(),
                     "prenom" => $patient->getPrenom(),
+                    "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
+                    "rdv" => $rdv,
+                    "thematique" => $thematique,
+                    "type" => $type,
                     "etp" => $patient->getEtp(),
-                    "motif" => $patient->getMotif(),
-                    "date" => $patient->getDentree()->format('d-m-Y'),
+                    "status" => $sortie,
+                    "observ" => $observ,
                 ];
                 array_push($rows, $row);
             }
@@ -155,41 +169,6 @@ class PatientController extends Controller
             'formTelephonique' => $formTelephonique->createView(),
             'formRendezVous' => $formRendezVous->createView(),
         ]);
-    }
-
-    private function CallAPI($method, $url, $data = false)
-    {
-        $curl = curl_init();
-
-        switch ($method) {
-            case "POST":
-                curl_setopt($curl, CURLOPT_POST, 1);
-
-                if ($data) {
-                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-                }
-
-                break;
-            case "PUT":
-                curl_setopt($curl, CURLOPT_PUT, 1);
-                break;
-            default:
-                if ($data) {
-                    $url = sprintf("%s?%s", $url, http_build_query($data));
-                }
-
-        }
-
-        // Optional Authentication:
-        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
-        curl_setopt($curl, CURLOPT_USERPWD, "username:password");
-
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($curl);
-        curl_close($curl);
-        return $result;
     }
 
     /**

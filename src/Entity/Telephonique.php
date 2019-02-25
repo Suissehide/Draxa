@@ -42,6 +42,16 @@ class Telephonique
      */
     private $patient;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $etat;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     */
+    private $heure;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +101,30 @@ class Telephonique
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?string $etat): self
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getHeure(): ?\DateTimeInterface
+    {
+        return $this->heure;
+    }
+
+    public function setHeure(?\DateTimeInterface $heure): self
+    {
+        $this->heure = $heure;
 
         return $this;
     }

@@ -110,23 +110,26 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-11">
+		<div class="col-md-5">
 			{{ form_row(form.precisionsperso, {'required': false}) }}
 		</div>
 	</div>
 	<div class="separator">
-        <span id="fin" class="separator-text">Fin de parcours</span>
+        <span id="fin" class="separator-text">Données à la sortie</span>
+	</div>
+	<div class="row">
+		<div class="col-md-3">
+            {{ form_row(form.dentree) }}
+        </div>
 	</div>
     <div class="row">
         <div class="col-md-5">
             {{ form_row(form.motif) }}
         </div>
-        <div class="col-md-offset-1 col-md-5">
+        <div class="col-md-5">
             {{ form_row(form.etp) }}
         </div>
-		<div class="col-md-3">
-            {{ form_row(form.dentree) }}
-        </div>
+
     </div>
 
 	<div class="separator">

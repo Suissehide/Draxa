@@ -39,8 +39,17 @@ class TelephoniqueType extends AbstractType
                 ),
                 'required'   => false,
             ))
+            ->add('etat', ChoiceType::class, array(
+                'label' => 'A-t-il eu lieu ?',
+                'choices' => array(
+                    '' => '',
+                    'Oui' => 'Oui',
+                    'Non' => 'Non',
+                ),
+                'required'   => false,
+            ))
             ->add('motifRefus', TextType::class, array(
-                'label' => 'Motif de refus',
+                'label' => 'Motif de non réponse',
                 'required'   => false,
             ))
             // ->add('patient')

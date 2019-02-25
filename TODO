@@ -1,5 +1,35 @@
 TODO
 
+/*
+*   Liste des patients
+*/
++ Changement de l'affichage : Nom, prénom, téléphone 1, prochain rendez-vous, thématique, type, point final parcours ETP
++ Ligne grisé pour les patients sortis du programme (lors de l'ajout d'une date de sortie dans le formulaire)
++ Tri des patients par état (tous, sortis, actuel)
++ Ajout d'une pastille rouge devant chaque ligne pour lesquelle la partie "Observations diverses" contient des éléments
+
+/*
+*   Formulaire d'ajout et de création d'un patient
+*/
++ Réorganisation des diverses sous-parties des "Informations" du patient
+- "date d'entrée"
++ "date de sortie"
++ Ajout de menus déroulants
+
+
+/*
+*   Page d'accueil
+*/
++ Ajout d'encarts "Prochain .." pour chaque type de rendez-vous (Selon les professionels)
+/!\ Liste des informations à afficher pour les statistiques (à fournir)
+
+
+
+
+
+
+
+
 . J’ai tenté à plusieurs reprises de créer un nouveau patient. J’ai réussi à le créer mais je ne suis pas arrivée à l’enregistrer. : HELP (ça marche tres bien)
 . Sur Léo j’ai pu ajouter des RV cependant je ne sais pas si ils sont enregistrés. En me connectant à nouveau les RV apparaissent sur la page d’accueil? : HELP (oui en effet)
 Pas mal mais aucune heure ni le type du RV. Il faut repartir sur le patient pour obtenir les précisions du RV. HELP : ajout de l'heure dans formulaire ?

@@ -57,7 +57,7 @@ class Patient
 
     /**
      * @Groups({"patient"})
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      */
     private $dentree;
 
@@ -278,7 +278,7 @@ class Patient
         return $this->dentree;
     }
 
-    public function setDentree(\DateTimeInterface $dentree): self
+    public function setDentree(?\DateTimeInterface $dentree): self
     {
         $this->dentree = $dentree;
 

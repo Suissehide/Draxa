@@ -7,28 +7,42 @@
         <h1>Liste des patients</h1>
         <div class="col-sm-16">
             <div class="well clearfix">
-                <div class="pull-right">
-                    <a href="{{ path('patient_add') }}" class="btn btn-success" id="command-add" data-row-id="0">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        Nouveau patient
-                    </a>
-                </div>
                 <div class="pull-left">
-                    <a href="{{ url('csv') }}" type="button" class="btn btn-primary" id="command-add" data-row-id="0">
+                    <a href="{{ url('csv') }}" type="button" class="btn btn-light btn-primary" id="command-add" data-row-id="0">
                         <span class="glyphicon glyphicon-save"></span>
                         Exporter CSV
                     </a>
                 </div>
+                <div class="pull-right">
+                    <a href="{{ path('patient_add') }}" class="btn btn-primary" id="command-add" data-row-id="0">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Nouveau patient
+                    </a>
+                </div>
             </div>
-            <table id="patient_grid" class="table table-condensed table-hover table-striped" cellspacing="0">
+            <form class="radio-block">
+                <div class="radio-group">
+                    <input type="radio" id="option-one" name="selector" checked>
+                    <label for="option-one">Tous</label>
+                    <input type="radio" id="option-two" name="selector">
+                    <label for="option-two">Actuels</label>
+                    <input type="radio" id="option-three" name="selector">
+                    <label for="option-three">Sortis</label>
+                </div>
+            </form>
+            <table id="patient-grid" class="table table-condensed table-hover table-striped" cellspacing="0">
                 <thead>
                     <tr>
+                        <th data-column-id="observ" data-formatter="observ" data-sortable="false" data-width="28px"></th>
                         <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">Id</th>
                         <th data-column-id="nom">Nom</th>
                         <th data-column-id="prenom">Prénom</th>
-                        <th data-column-id="date">Date d'entrée</th>
+                        <th data-column-id="tel1">Téléphone</th>
+                        <th data-column-id="rdv">Prochain rendez-vous</th>
+                        <th data-column-id="thematique">Thématique</th>
+                        <th data-column-id="type">Type</th>
                         <th data-column-id="etp">Point final parcours ETP</th>
-                        <th data-column-id="motif">Motif d'arrêt de programme</th>
+                        <th data-column-id="status" data-visible="false" data-searchable="false">Status</th>
                     </tr>
                 </thead>
             </table>
@@ -39,15 +53,41 @@
 {% block javascripts %}
     <script src="{{ asset('js/script.js') }}"></script>
     <script>
-        var grid = $("#patient_grid").bootgrid({
+        $etat = "all";
+
+        var grid = $("#patient-grid").bootgrid({
             rowCount: [
                 10, 25, 50, -1
             ],
+            columnSelection: false,
             ajax: true,
+            statusMapping: {
+                0: "in",
+                1: "out"
+            },
             requestHandler: function (request) {
+                request.etat = $etat;
                 return request;
             },
             url: "{{ path('patient') }}",
+            formatters: {
+                "observ": function(column, row) {
+                    if (row.observ)
+                        return "<div class=\"pastille\"></div>";
+                }
+            }
+        }).on("loaded.rs.jquery.bootgrid", function() {
+            
         });
+
+    $(".radio-block input[type=radio]").on("change", function() {
+        if (this.id == "option-one")
+            $etat = "all";
+        else if (this.id == "option-two")
+            $etat = "in";
+        else if (this.id == "option-three")
+            $etat = "out";
+        $("#patient-grid").bootgrid('reload');
+    })
     </script>
 {% endblock %}

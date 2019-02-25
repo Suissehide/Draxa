@@ -25,8 +25,6 @@ class PatientCreationFormType extends AbstractType
     {
         $builder
             ->add('observ', TextareaType::class, array('label' => 'Observations diverses'))
-            ->add('motif', TextType::class, array('label' => 'Motif d\'arrêt de programme'))
-            ->add('etp', TextType::class, array('label' => 'Point final parcours ETP'))
             ->add('date', DateType::class, array(
                 'label' => 'Date de naissance',
                 'widget' => 'single_text',
@@ -37,14 +35,7 @@ class PatientCreationFormType extends AbstractType
             ))
             ->add('nom', TextType::class, array('label' => 'Nom'))
             ->add('prenom', TextType::class, array('label' => 'Prénom'))
-            ->add('dentree', DateType::class, array(
-                'label' => 'Date de sortie  ',
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'datepicker',
-                ],
-            ))
+
             ->add('tel1', TextType::class, array('label' => 'Téléphone 1'))
             ->add('tel2', TextType::class, array('label' => 'Téléphone 2'))
             ->add('sexe', ChoiceType::class, array(
@@ -90,13 +81,13 @@ class PatientCreationFormType extends AbstractType
                 'label' => 'Activité actuelle',
                 'choices' => array(
                     '' => '',
-                    'Actif' => 'actif',
-                    'Retraité' => 'retraité',
+                    'Actif' => 'Actif',
+                    'Retraité' => 'Retraité',
                     'RMI/RSA' => 'RMI/RSA',
-                    'Sans emploi' => 'sans emploi',
-                    'Chômage' => 'chômage',
-                    'Arrêt maladie' => 'arrêt maladie',
-                    'Invalidité' => 'invalidité',
+                    'Sans emploi' => 'Sans emploi',
+                    'Chômage' => 'Chômage',
+                    'Arrêt maladie' => 'Arrêt maladie',
+                    'Invalidité' => 'Invalidité',
                 ),
             ))
             ->add('diagnostic', ChoiceType::class, array(
@@ -117,7 +108,17 @@ class PatientCreationFormType extends AbstractType
                     'class' => 'datepicker',
                 ],
             ))
-            ->add('orientation', TextType::class, array('label' => 'Orientation'))
+            ->add('orientation', ChoiceType::class, array(
+                'label' => 'Orientation',
+                'choices' => array(
+                    '' => '',
+                    'Venue spontanée' => 'Venue spontanée',
+                    'Orientation pro santé ext hôpital' => 'Orientation pro santé ext hôpital',
+                    'Orientation pro santé au cours hospit' => 'Orientation pro santé au cours hospit',
+                    'Orientation pro santé en Cs' => 'Orientation pro santé en Cs',
+                    'NS' => 'NS',
+                ),
+            ))
             ->add('etpdecision', ChoiceType::class, array(
                 'label' => 'ETP Décision',
                 'choices' => array(
@@ -126,21 +127,87 @@ class PatientCreationFormType extends AbstractType
                     'Non' => 'non',
                 ),
             ))
-            ->add('precisions', TextType::class, array('label' => 'Précision non inclusion'))
-            ->add('progetp', TextType::class, array(
+            ->add('precisions', ChoiceType::class, array(
+                'label' => 'Précision non inclusion',
+                'choices' => array(
+                    '' => '',
+                    'Absence de besoins éducatifs' => 'Absence de besoins éducatifs',
+                    'Refus' => 'Refus',
+                    'Absence de critères médicaux d\'inclusion' => 'Absence de critères médicaux d\'inclusion',
+                    'Prise en charge des besoins quotidiens' => 'Prise en charge des besoins quotidiens',
+                    'Problèmes médicaux à régler' => 'Problèmes médicaux à régler',
+                    'Problème de santé' => 'Problème de santé',
+                    'Manque de motivation' => 'Manque de motivation',
+                    'Indisponibilité' => 'Indisponibilité',
+                    'Distance  d\'habitation' => 'Distance d\'habitation',
+                    'Troubles cognitifs' => 'Troubles cognitifs',
+                    'Troubles psychiatriques' => 'Troubles psychiatriques',
+                    'Transport' => 'Transport',
+                    'Barrière de la langue' => 'Barrière de la langue',
+                    'NS' => 'NS',
+                ),
+            ))
+            ->add('progetp', ChoiceType::class, array(
                 'label' => 'Type de programme',
-                // 'choices' => array(
-                //     '' => '',
-                //     'HRCV' => 'HRCV',
-                //     'HRCV+AOMI' => 'HRCV+AOMI',
-                //     'HRCV+AOD' => 'HRCV+AOD',
-                //     'HRCV+AOMI+AOD' => 'HRCV+AOMI+AOD',
-                //     'Perso+HRCV' => 'Perso+HRCV',
-                //     'Perso+AOMI' => 'Perso+AOMI',
-                //     'Personnalisé' => 'Personnalisé',
-                // ),
+                'choices' => array(
+                    '' => '',
+                    'HRCV' => 'HRCV',
+                    'AOMI' => 'AOMI',
+                    'AOMI + HRCV' => 'AOMI + HRCV',
+                ),
             ))
             ->add('precisionsperso', TextareaType::class, array('label' => 'Précision contenu personnalisé'))
+
+            ->add('motif', ChoiceType::class, array(
+                'label' => 'Motif d\'arrêt de programme',
+                'choices' => array(
+                    '' => '',
+                    'Absence besoins éducatifs' => 'Absence besoins éducatifs',
+                    'Refus' => 'Refus',
+                    'Plus de besoin/Fin de parcours' => 'Plus de besoin/Fin de parcours',
+                    'Souhait arrêt' => 'Souhait arrêt',
+                    'Perdu de vue' => 'Perdu de vue',
+                    'Absence de critères médicaux d\'inclusion' => 'Absence de critères médicaux d\'inclusion',
+                    'Prise en charge besoins quotidiens' => 'Prise en charge besoins quotidiens',
+                    'Problèmes médicaux à régler' => 'Problèmes médicaux à régler',
+                    'Problème de santé' => 'Problème de santé',
+                    'Manque de motivation' => 'Manque de motivation',
+                    'Indisponibilité' => 'Indisponibilité',
+                    'Distance d\'habitation' => 'Distance d\'habitation',
+                    'Troubles cognitifs' => 'Troubles cognitifs',
+                    'Troubles psychiatriques' => 'Troubles psychiatriques',
+                    'Transport' => 'Transport',
+                    'Barrière de la langue' => 'Barrière de la langue',
+                    'Déménagement' => 'Déménagement',
+                    'Décès' => 'Décès',
+                    'NS' => 'NS',
+                ),
+            ))
+            ->add('etp', ChoiceType::class, array(
+                'label' => 'Point final parcours ETP',
+                'choices' => array(
+                    '' => '',
+                    'Atelier information' => 'Atelier information',
+                    'BCVs' => 'BCVs',
+                    'DE' => 'DE',
+                    'M3' => 'M3',
+                    'M12' => 'M12',
+                    'Renf1' => 'Renf1',
+                    'Renf2' => 'Renf2',
+                    'Atelier' => 'Atelier',
+                    'Consultation' => 'Consultation',
+                    'Entretien individuel' => 'Entretien individuel',
+                    'Suivi téléphonique' => 'Suivi téléphonique',
+                ),
+            ))
+            ->add('dentree', DateType::class, array(
+                'label' => 'Date de sortie  ',
+                'widget' => 'single_text',
+                'format' => 'dd/MM/yyyy',
+                'attr' => [
+                    'class' => 'datepicker',
+                ],
+            ))
 
             ->add('rendezVous', CollectionType::class, array(
                 'entry_type' => RendezVousType::class,

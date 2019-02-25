@@ -29,12 +29,12 @@ class PatientRepository extends ServiceEntityRepository
                     ->getSingleScalarResult();
     }
 
-    public function findByFilter($sort, $searchPhrase)
+    public function findByFilter($sort, $searchPhrase, $etat)
     {
         $qb = $this->createQueryBuilder('p');
 
         if ($searchPhrase != "") {
-            $qb->andWhere('p.dentree LIKE :search
+            $qb->andWhere('p.dedate LIKE :search
                 OR p.etp LIKE :search
                 OR p.nom LIKE :search
                 OR p.prenom LIKE :search
@@ -42,12 +42,19 @@ class PatientRepository extends ServiceEntityRepository
             ')
                 ->setParameter('search', '%' . $searchPhrase . '%');
         }
+        if ($etat == "in") {
+            $qb->andWhere('p.dentree IS NULL');
+        }
+        else if ($etat == "out") {
+            $qb->andWhere('p.dentree LIKE :val')
+            ->setParameter('val', '%');
+        }
         if ($sort) {
             foreach ($sort as $key => $value) {
                 $qb->orderBy('p.' . $key, $value);
             }
         } else {
-            $qb->orderBy('p.dentree', 'ASC');
+            $qb->orderBy('p.dedate', 'DESC');
         }
         return $qb;
     }
