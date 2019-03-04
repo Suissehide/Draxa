@@ -3483,16 +3483,16 @@
         },
         {
             "name": "symfony/intl",
-            "version": "v4.2.3",
+            "version": "v4.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/intl.git",
-                "reference": "f8037bebebaef34bb2aa7158b35cf918249173cb"
+                "reference": "b2af5ce379781fd4811f79746512fc1934333fbb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/intl/zipball/f8037bebebaef34bb2aa7158b35cf918249173cb",
-                "reference": "f8037bebebaef34bb2aa7158b35cf918249173cb",
+                "url": "https://api.github.com/repos/symfony/intl/zipball/b2af5ce379781fd4811f79746512fc1934333fbb",
+                "reference": "b2af5ce379781fd4811f79746512fc1934333fbb",
                 "shasum": ""
             },
             "require": {
@@ -3554,7 +3554,7 @@
                 "l10n",
                 "localization"
             ],
-            "time": "2019-01-16T20:35:37+00:00"
+            "time": "2019-02-23T15:17:42+00:00"
         },
         {
             "name": "symfony/monolog-bridge",

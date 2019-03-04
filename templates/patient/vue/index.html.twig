@@ -196,9 +196,10 @@
                 <div class="events-content">
                     <ol id="events-content-infos">
                         {% for infosForm in form.infos %}
+                            {% set counter = (counter | default(0)) + 1 %}
                             <li {% if loop.last %} class="selected" {% endif %} data-date="{{ infosForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>
-                                    {{ infosForm.vars.value.nom  }}
+                                <h2>Atelier Infos 
+                                    {{ counter }}
                                 </h2>
                                 <em>
                                     {{ infosForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
@@ -272,9 +273,10 @@
                 <div class="events-content">
                     <ol id="events-content-BCVs">
                         {% for BCVsForm in form.bcvs %}
+                            {% set counter = (counter | default(0)) + 1 %}
                             <li {% if loop.last %} class="selected" {% endif %} data-date="{{ BCVsForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>
-                                    {{ BCVsForm.vars.value.nom  }}
+                                <h2>BCVs 
+                                    {{ counter }}
                                 </h2>
                                 <em>
                                     {{ BCVsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
@@ -1045,6 +1047,305 @@
                     '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Suppression effectuée !</div>'
                 );
                 alert_pos += 72;
+            });
+        });
+
+        /* BCVs
+		================= */
+
+        {# Edit #}
+
+        $("#events-content-bcvs").on("click", ".btn-primary", function () {
+            var arr = [], i = 0;
+            $(this).parents("li").find("input, select").each(function() {
+                arr[i++] = $(this).val();
+            })
+            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
+            var url = "{{ path('bcvs_patch', { 'id': 'bcvs_id' }) }}";
+            url = url.replace("bcvs_id", id);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": arr[0],
+                    "accompagnant": arr[1],
+                    "permission": arr[2],
+                    "etat": arr[3],
+                    "motifRefus": arr[4]
+                },
+                success: function (resp) {
+                    $('body').prepend(
+                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+                    );
+                    alert_pos += 72;
+                }
+            });
+        })
+
+        {# Error date add #}
+
+        $("#bcvs_date").change(function () {
+            resetErrors();
+            var date = $(this).val();
+            $.ajax({
+                url: "{{ path( 'bcvs_date_error' ) }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "id": '{{ patient.id }}'
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
+                        $("#bcvs_date").addClass('is-invalid').after(msg);
+                        document.getElementById("bcvs_add").disabled = true;
+                    } else {
+                        document.getElementById("bcvs_add").disabled = false;
+                    }
+                }
+            });
+        });
+
+        {# Add #}
+
+        $("#bcvs_add").on('click', function () {
+            let date = $('#bcvs_date').val();
+            let thematique = $('#bcvs_thematique').val();
+            let time = $('#bcvs_heure').val();
+            let type = $('#bcvs_type').val();
+            let accompagnant = $('#bcvs_accompagnant').val();
+            let etat = $('#bcvs_etat').val();
+            let motifRefus = $('#bcvs_motifRefus').val();
+
+            $.ajax({
+                url: "{{ path('bcvs_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "id": '{{ patient.id }}',
+                    "date": date,
+                    "accompagnant": accompagnant,
+                    "permission": permission,
+                    "etat": etat,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var new_date = new Date(formatDate(date));
+                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var nb = $("#events-content-bcvs").find('li').length;
+                        var events = $('#events-bcvs');
+                        $('#events-bcvs li a').removeClass("selected");
+                        $('#events-bcvs li a').addClass("older-event");
+                        $(document.createElement('li'))
+                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-bcvs li:last-child a').addClass('selected');
+                        $('#events-bcvs li:last-child a').removeClass('older-event');
+
+                        var events_content = $('#events-content-bcvs');
+                        $('#events-content-bcvs li').removeClass("selected");
+                        $(events_content)
+                            .append(`<li data-date=` + date + `>
+                                        <h2>Atelier bcvs ` + (nb + 1) + `</h2>
+                                        <em>` + date_em + `</em>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_bcvs_` + resp + `_date">Date</label>
+                                            <input type="text" id="patient_creation_form_bcvs_` + resp + `_date" name="patient_creation_form[bcvs][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
+                                        </div></div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_bcvs_` + resp + `_thematique" name="patient_creation_form[bcvs][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Signes d'alerte" data-hour="15:00">Signes d'alerte</option><option value="Gestion du stress" data-hour="13:30">Gestion du stress</option><option value="Cuisine Poisson" data-hour="10:00">Cuisine Poisson</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Gestion des sucres" data-hour="14:00">Gestion des sucres</option><option value="Gestion des quantités" data-hour="12:00">Gestion des quantités</option><option value="Freins/solutions équilibre" data-hour="14:00">Freins/solutions équilibre</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Communication" data-hour="14:00">Communication</option><option value="Marche co 1" data-hour="14:00">Marche co 1</option><option value="Marche co 2" data-hour="14:00">Marche co 2</option></select></div>
+                                        </div>
+                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_bcvs_` + resp + `_heure">Heure</label><select id="patient_creation_form_bcvs_` + resp + `_heure" name="patient_creation_form[bcvs][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="10:00">10:00</option><option value="12:00">12:00</option><option value="13:30">13:30</option><option value="14:00" selected="selected">14:00</option><option value="15:00">15:00</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_type">Type</label><select id="patient_creation_form_bcvs_` + resp + `_type" name="patient_creation_form[bcvs][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_bcvs_` + resp + `_accompagnant" name="patient_creation_form[bcvs][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_bcvs_` + resp + `_etat" name="patient_creation_form[bcvs][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_motifRefus" name="patient_creation_form[bcvs][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                    </li>`)
+                            .appendTo(events_content);
+                        $('#patient_creation_form_bcvs_' + resp + '_permission').val(permission);
+                        $('#patient_creation_form_bcvs_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_bcvs_' + resp + '_etat').val(etat);
+                        $('#events-content-bcvs li:last-child').addClass('selected');
+
+                        updateForm();
+                        document.getElementById("bcvs_add").disabled = true;
+                    }
+                }
+            });
+        });
+
+        /* Infos
+		================= */
+
+        {# Edit #}
+
+        $("#events-content-infos").on("click", ".btn-primary", function () {
+            var arr = [], i = 0;
+            $(this).parents("li").find("input, select").each(function() {
+                arr[i++] = $(this).val();
+            })
+            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
+            var url = "{{ path('infos_patch', { 'id': 'infos_id' }) }}";
+            url = url.replace("infos_id", id);
+            console.log(url);
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": arr[0],
+                    "type": arr[1],
+                    "accompagnant": arr[2],
+                    "etat": arr[3],
+                    "motifRefus": arr[4]
+                },
+                success: function (resp) {
+                    $('body').prepend(
+                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+                    );
+                    alert_pos += 72;
+                }
+            });
+        })
+
+        {# Error date add #}
+
+        $("#infos_date").change(function () {
+            resetErrors();
+            var date = $(this).val();
+            $.ajax({
+                url: "{{ path( 'infos_date_error' ) }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "id": '{{ patient.id }}'
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
+                        $("#infos_date").addClass('is-invalid').after(msg);
+                        document.getElementById("infos_add").disabled = true;
+                    } else {
+                        document.getElementById("infos_add").disabled = false;
+                    }
+                }
+            });
+        });
+
+        {# Add #}
+
+        $("#infos_add").on('click', function () {
+            let date = $('#infos_date').val();
+            let thematique = $('#infos_thematique').val();
+            let time = $('#infos_heure').val();
+            let type = $('#infos_type').val();
+            let accompagnant = $('#infos_accompagnant').val();
+            let etat = $('#infos_etat').val();
+            let motifRefus = $('#infos_motifRefus').val();
+
+            $.ajax({
+                url: "{{ path('infos_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "id": '{{ patient.id }}',
+                    "date": date,
+                    "type": type,
+                    "accompagnant": accompagnant,
+                    "etat": etat,
+                    "motifRefus": motifRefus
+                },
+                success: function (resp) {
+                    if (resp) {
+                        var new_date = new Date(formatDate(date));
+                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
+                        var nb = $("#events-content-infos").find('li').length;
+                        var events = $('#events-infos');
+                        $('#events-infos li a').removeClass("selected");
+                        $('#events-infos li a').addClass("older-event");
+                        $(document.createElement('li'))
+                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-infos li:last-child a').addClass('selected');
+                        $('#events-infos li:last-child a').removeClass('older-event');
+
+                        var events_content = $('#events-content-infos');
+                        $('#events-content-infos li').removeClass("selected");
+                        $(events_content)
+                            .append(`<li data-date=` + date + `>
+                                        <h2>Atelier Infos ` + (nb + 1) + `</h2>
+                                        <em>` + date_em + `</em>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_infos_` + resp + `_date">Date</label>
+                                            <input type="text" id="patient_creation_form_infos_` + resp + `_date" name="patient_creation_form[infos][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
+                                        </div></div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_infos_` + resp + `_thematique" name="patient_creation_form[infos][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Signes d'alerte" data-hour="15:00">Signes d'alerte</option><option value="Gestion du stress" data-hour="13:30">Gestion du stress</option><option value="Cuisine Poisson" data-hour="10:00">Cuisine Poisson</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Gestion des sucres" data-hour="14:00">Gestion des sucres</option><option value="Gestion des quantités" data-hour="12:00">Gestion des quantités</option><option value="Freins/solutions équilibre" data-hour="14:00">Freins/solutions équilibre</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Communication" data-hour="14:00">Communication</option><option value="Marche co 1" data-hour="14:00">Marche co 1</option><option value="Marche co 2" data-hour="14:00">Marche co 2</option></select></div>
+                                        </div>
+                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_infos_` + resp + `_heure">Heure</label><select id="patient_creation_form_infos_` + resp + `_heure" name="patient_creation_form[infos][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="10:00">10:00</option><option value="12:00">12:00</option><option value="13:30">13:30</option><option value="14:00" selected="selected">14:00</option><option value="15:00">15:00</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_type">Type</label><select id="patient_creation_form_infos_` + resp + `_type" name="patient_creation_form[infos][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_infos_` + resp + `_accompagnant" name="patient_creation_form[infos][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_infos_` + resp + `_etat" name="patient_creation_form[infos][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_infos_` + resp + `_motifRefus" name="patient_creation_form[infos][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                    </li>`)
+                            .appendTo(events_content);
+                        $('#patient_creation_form_infos_' + resp + '_type').val(type);
+                        $('#patient_creation_form_infos_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_infos_' + resp + '_etat').val(etat);
+                        $('#events-content-infos li:last-child').addClass('selected');
+
+                        updateForm();
+                        document.getElementById("infos_add").disabled = true;
+                    }
+                }
             });
         });
 
