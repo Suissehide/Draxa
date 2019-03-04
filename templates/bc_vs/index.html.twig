@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BCVs index{% endblock %}
+
+{% block body %}
+    <h1>BCVs index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Accompagnant</th>
+                <th>Permission</th>
+                <th>Etat</th>
+                <th>MotifRefus</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for b_c_v in b_c_vs %}
+            <tr>
+                <td>{{ b_c_v.id }}</td>
+                <td>{{ b_c_v.date ? b_c_v.date|date('Y-m-d') : '' }}</td>
+                <td>{{ b_c_v.accompagnant }}</td>
+                <td>{{ b_c_v.permission }}</td>
+                <td>{{ b_c_v.etat }}</td>
+                <td>{{ b_c_v.motifRefus }}</td>
+                <td>
+                    <a href="{{ path('b_c_vs_show', {'id': b_c_v.id}) }}">show</a>
+                    <a href="{{ path('b_c_vs_edit', {'id': b_c_v.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('b_c_vs_new') }}">Create new</a>
+{% endblock %}

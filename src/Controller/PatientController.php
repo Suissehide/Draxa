@@ -7,12 +7,18 @@ use App\Entity\Entretien;
 use App\Entity\Patient;
 use App\Entity\Telephonique;
 use App\Entity\RendezVous;
+use App\Entity\BCVs;
+use App\Entity\Infos;
+
 use App\Form\AtelierType;
 use App\Form\EntretienType;
 use App\Form\PatientCreationFormType;
 use App\Form\PatientType;
 use App\Form\TelephoniqueType;
 use App\Form\RendezVousType;
+use App\Form\BCVsType;
+use App\Form\InfosType;
+
 use App\Repository\PatientRepository;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -116,7 +122,7 @@ class PatientController extends AbstractController
                 $em->flush();
             }
 
-            return $this->redirectToRoute('patient');
+            return $this->redirectToRoute('vue', ['id' => $patient->getId()]);
         }
 
         return $this->render('patient/create/index.html.twig', [
@@ -158,6 +164,12 @@ class PatientController extends AbstractController
         $rendezVous = new RendezVous();
         $formRendezVous = $this->createForm(RendezVousType::class, $rendezVous);
 
+        $BCVs = new BCVs();
+        $formBCVs = $this->createForm(BCVsType::class, $BCVs);
+
+        $Infos = new Infos();
+        $formInfos = $this->createForm(InfosType::class, $Infos);
+
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',
             'controller_name' => 'PatientController',
@@ -168,6 +180,8 @@ class PatientController extends AbstractController
             'formAtelier' => $formAtelier->createView(),
             'formTelephonique' => $formTelephonique->createView(),
             'formRendezVous' => $formRendezVous->createView(),
+            'formBCVs' => $formBCVs->createView(),
+            'formInfos' => $formInfos->createView(),
         ]);
     }
 

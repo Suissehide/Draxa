@@ -175,6 +175,16 @@ class Patient
      */
     private $rendezVous;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\BCVs", mappedBy="patient")
+     */
+    private $bcvs;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Infos", mappedBy="patient")
+     */
+    private $infos;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
@@ -182,6 +192,8 @@ class Patient
         $this->annexes = new ArrayCollection();
         $this->ateliers = new ArrayCollection();
         $this->telephoniques = new ArrayCollection();
+        $this->bcvs = new ArrayCollection();
+        $this->infos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -590,6 +602,68 @@ class Patient
             // set the owning side to null (unless already changed)
             if ($rendezVous->getPatient() === $this) {
                 $rendezVous->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|BCVs[]
+     */
+    public function getBcvs(): Collection
+    {
+        return $this->bcvs;
+    }
+
+    public function addBcv(BCVs $bcv): self
+    {
+        if (!$this->bcvs->contains($bcv)) {
+            $this->bcvs[] = $bcv;
+            $bcv->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBcv(BCVs $bcv): self
+    {
+        if ($this->bcvs->contains($bcv)) {
+            $this->bcvs->removeElement($bcv);
+            // set the owning side to null (unless already changed)
+            if ($bcv->getPatient() === $this) {
+                $bcv->setPatient(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Infos[]
+     */
+    public function getInfos(): Collection
+    {
+        return $this->infos;
+    }
+
+    public function addInfo(Infos $info): self
+    {
+        if (!$this->infos->contains($info)) {
+            $this->infos[] = $info;
+            $info->setPatient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInfo(Infos $info): self
+    {
+        if ($this->infos->contains($info)) {
+            $this->infos->removeElement($info);
+            // set the owning side to null (unless already changed)
+            if ($info->getPatient() === $this) {
+                $info->setPatient(null);
             }
         }
 

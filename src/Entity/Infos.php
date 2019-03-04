@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TelephoniqueRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\InfosRepository")
  */
-class Telephonique
+class Infos
 {
     /**
      * @ORM\Id()
@@ -19,44 +18,31 @@ class Telephonique
 
     /**
      * @ORM\Column(type="date")
-     * @Groups({"patient"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $thematique;
-
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     * @Groups({"patient"})
-     */
-    private $heure;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
+     */
+    private $accompagnant;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $etat;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
      */
     private $motifRefus;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="telephoniques")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"telephoniques"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="infos")
      */
     private $patient;
 
@@ -82,9 +68,33 @@ class Telephonique
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
+
+        return $this;
+    }
+
+    public function getAccompagnant(): ?string
+    {
+        return $this->accompagnant;
+    }
+
+    public function setAccompagnant(?string $accompagnant): self
+    {
+        $this->accompagnant = $accompagnant;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?string $etat): self
+    {
+        $this->etat = $etat;
 
         return $this;
     }
@@ -109,42 +119,6 @@ class Telephonique
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
-
-        return $this;
-    }
-
-    public function getEtat(): ?string
-    {
-        return $this->etat;
-    }
-
-    public function setEtat(?string $etat): self
-    {
-        $this->etat = $etat;
-
-        return $this;
-    }
-
-    public function getHeure(): ?\DateTimeInterface
-    {
-        return $this->heure;
-    }
-
-    public function setHeure(?\DateTimeInterface $heure): self
-    {
-        $this->heure = $heure;
-
-        return $this;
-    }
-
-    public function getThematique(): ?string
-    {
-        return $this->thematique;
-    }
-
-    public function setThematique(?string $thematique): self
-    {
-        $this->thematique = $thematique;
 
         return $this;
     }

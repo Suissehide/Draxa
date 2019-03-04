@@ -93,19 +93,25 @@ class AtelierController extends AbstractController
     /**
      * @Route("/add", name="atelier_add", methods="GET|POST")
      */
-    public function atelier_add(Request $request) : Response
+    public function atelier_add(Request $request) : JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             $id = $request->request->get('id');
 
+            $time = explode(':', $request->request->get('time'));
+            $new_time = new \DateTime();
+            $new_time->setTime($time[0], $time[1]);
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
             $atelier = new Atelier();
             $atelier->setDate($new_date);
+            $atelier->setThematique($request->request->get('thematique'));
+            $atelier->setHeure($new_time);
             $atelier->setType($request->request->get('type'));
             $atelier->setAccompagnant($request->request->get('accompagnant'));
+            $atelier->setEtat($request->request->get('etat'));
             $atelier->setMotifRefus($request->request->get('motifRefus'));
             $atelier->setPatient($em->getRepository(Patient::class)->findOneById($id));
 
@@ -118,7 +124,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/date_error", name="atelier_date_error", methods="GET|POST")
      */
-    public function atelier_date_error(Request $request) : Response
+    public function atelier_date_error(Request $request) : JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $bool = false;
@@ -146,7 +152,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/remove/{id}", name="atelier_remove", methods="DELETE")
      */
-    public function atelier_remove(Request $request, Atelier $atelier) : Response
+    public function atelier_remove(Request $request, Atelier $atelier) : JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -159,19 +165,25 @@ class AtelierController extends AbstractController
         }
     }
 
-        /**
+    /**
      * @Route("/patch/{id}", name="atelier_patch", methods="GET|POST")
      */
-    public function atelier_patch(Request $request, Atelier $atelier) : Response
+    public function atelier_patch(Request $request, Atelier $atelier) : JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             if ($atelier) {
+                $time = explode(':', $request->request->get('time'));
+                $new_time = new \DateTime();
+                $new_time->setTime($time[0], $time[1]);
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
                 $atelier->setDate($new_date);
+                $atelier->setThematique($request->request->get('thematique'));
+                $atelier->setHeure($new_time);
                 $atelier->setType($request->request->get('type'));
                 $atelier->setAccompagnant($request->request->get('accompagnant'));
+                $atelier->setEtat($request->request->get('etat'));
                 $atelier->setMotifRefus($request->request->get('motifRefus'));
                 $em->flush();
                 return new JsonResponse(true);

@@ -8,6 +8,9 @@ use App\Form\AtelierType;
 use App\Form\EntretienType;
 use App\Form\TelephoniqueType;
 use App\Form\RendezVousType;
+use App\Form\BCVsType;
+use App\Form\InfosType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
@@ -207,6 +210,7 @@ class PatientCreationFormType extends AbstractType
                 'attr' => [
                     'class' => 'datepicker',
                 ],
+                'required' => false,
             ))
 
             ->add('rendezVous', CollectionType::class, array(
@@ -229,6 +233,18 @@ class PatientCreationFormType extends AbstractType
             ))
             ->add('telephoniques', CollectionType::class, array(
                 'entry_type' => TelephoniqueType::class,
+                'entry_options' => array('label' => false),
+                'allow_add' => true,
+                'by_reference' => false,
+            ))
+            ->add('bcvs', CollectionType::class, array(
+                'entry_type' => BCVsType::class,
+                'entry_options' => array('label' => false),
+                'allow_add' => true,
+                'by_reference' => false,
+            ))
+            ->add('infos', CollectionType::class, array(
+                'entry_type' => InfosType::class,
                 'entry_options' => array('label' => false),
                 'allow_add' => true,
                 'by_reference' => false,

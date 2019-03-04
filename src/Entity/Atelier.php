@@ -24,14 +24,16 @@ class Atelier
     private $date;
 
     /**
-     * @ORM\Column(type="time", nullable=true)
-     */
-    private $heure;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
      */
     private $thematique;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"patient"})
+     */
+    private $heure;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -47,6 +49,7 @@ class Atelier
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
      */
     private $etat;
     

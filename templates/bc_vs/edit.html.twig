@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit BCVs{% endblock %}
+
+{% block body %}
+    <h1>Edit BCVs</h1>
+
+    {{ include('b_c_vs/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('b_c_vs_index') }}">back to list</a>
+
+    {{ include('b_c_vs/_delete_form.html.twig') }}
+{% endblock %}

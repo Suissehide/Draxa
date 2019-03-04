@@ -30,16 +30,22 @@ class RendezVous
     private $date;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
+    private $thematique;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"patient"})
+     */
+    private $heure;
+
+    /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"patient"})
      */
     private $type;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $permission;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -51,49 +57,13 @@ class RendezVous
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient"})
      */
-    private $choix;
+    private $etat;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient"})
      */
     private $motifRefus;
-
-    /**
-     * @ORM\Column(type="date", nullable=true, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $date_repro;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $type_repro;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $permission_repro;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $accompagnant_repro;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $choix_repro;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $MotifRefus_repro;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="rendezVous")
@@ -143,18 +113,6 @@ class RendezVous
         return $this;
     }
 
-    public function getPermission(): ?string
-    {
-        return $this->permission;
-    }
-
-    public function setPermission(?string $permission): self
-    {
-        $this->permission = $permission;
-
-        return $this;
-    }
-
     public function getAccompagnant(): ?string
     {
         return $this->accompagnant;
@@ -163,18 +121,6 @@ class RendezVous
     public function setAccompagnant(?string $accompagnant): self
     {
         $this->accompagnant = $accompagnant;
-
-        return $this;
-    }
-
-    public function getChoix(): ?string
-    {
-        return $this->choix;
-    }
-
-    public function setChoix(?string $choix): self
-    {
-        $this->choix = $choix;
 
         return $this;
     }
@@ -191,78 +137,6 @@ class RendezVous
         return $this;
     }
 
-    public function getDateRepro(): ?\DateTimeInterface
-    {
-        return $this->date_repro;
-    }
-
-    public function setDateRepro(?\DateTimeInterface $date_repro): self
-    {
-        $this->date_repro = $date_repro;
-
-        return $this;
-    }
-
-    public function getTypeRepro(): ?string
-    {
-        return $this->type_repro;
-    }
-
-    public function setTypeRepro(string $type_repro): self
-    {
-        $this->type_repro = $type_repro;
-
-        return $this;
-    }
-
-    public function getPermissionRepro(): ?string
-    {
-        return $this->permission_repro;
-    }
-
-    public function setPermissionRepro(?string $permission_repro): self
-    {
-        $this->permission_repro = $permission_repro;
-
-        return $this;
-    }
-
-    public function getAccompagnantRepro(): ?string
-    {
-        return $this->accompagnant_repro;
-    }
-
-    public function setAccompagnantRepro(?string $accompagnant_repro): self
-    {
-        $this->accompagnant_repro = $accompagnant_repro;
-
-        return $this;
-    }
-
-    public function getChoixRepro(): ?string
-    {
-        return $this->choix_repro;
-    }
-
-    public function setChoixRepro(?string $choix_repro): self
-    {
-        $this->choix_repro = $choix_repro;
-
-        return $this;
-    }
-
-    public function getMotifRefusRepro(): ?string
-    {
-        return $this->MotifRefus_repro;
-    }
-
-    public function setMotifRefusRepro(?string $MotifRefus_repro): self
-    {
-        $this->MotifRefus_repro = $MotifRefus_repro;
-
-        return $this;
-    }
-
     public function getPatient(): ?Patient
     {
         return $this->patient;
@@ -271,6 +145,42 @@ class RendezVous
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?string $etat): self
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function getThematique(): ?string
+    {
+        return $this->thematique;
+    }
+
+    public function setThematique(?string $thematique): self
+    {
+        $this->thematique = $thematique;
+
+        return $this;
+    }
+
+    public function getHeure(): ?\DateTimeInterface
+    {
+        return $this->heure;
+    }
+
+    public function setHeure(?\DateTimeInterface $heure): self
+    {
+        $this->heure = $heure;
 
         return $this;
     }

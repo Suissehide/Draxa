@@ -22,6 +22,18 @@ class Entretien
      * @Groups({"patient"})
      */
     private $date;
+    
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
+    private $thematique;
+
+    /**
+     * @ORM\Column(type="time", nullable=true)
+     * @Groups({"patient"})
+     */
+    private $heure;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -34,6 +46,12 @@ class Entretien
      * @Groups({"patient"})
      */
     private $accompagnant;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
+    private $etat;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -109,6 +127,42 @@ class Entretien
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getThematique(): ?string
+    {
+        return $this->thematique;
+    }
+
+    public function setThematique(?string $thematique): self
+    {
+        $this->thematique = $thematique;
+
+        return $this;
+    }
+
+    public function getHeure(): ?\DateTimeInterface
+    {
+        return $this->heure;
+    }
+
+    public function setHeure(?\DateTimeInterface $heure): self
+    {
+        $this->heure = $heure;
+
+        return $this;
+    }
+
+    public function getEtat(): ?string
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?string $etat): self
+    {
+        $this->etat = $etat;
 
         return $this;
     }

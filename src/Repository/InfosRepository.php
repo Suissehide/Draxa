@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Repository;
+
+use App\Entity\Infos;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
+/**
+ * @method Infos|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Infos|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Infos[]    findAll()
+ * @method Infos[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class InfosRepository extends ServiceEntityRepository
+{
+    public function __construct(RegistryInterface $registry)
+    {
+        parent::__construct($registry, Infos::class);
+    }
+
+    public function findOneByDateJoinedToInfos(\DateTime $date1, \DateTime $date2)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('e.date >= :date1')
+            ->andWhere('e.date <= :date2')
+            ->setParameter('date1', $date1)
+            ->setParameter('date2', $date2)
+            ->getQuery()
+            ->getResult();
+    }
+
+    // /**
+    //  * @return Infos[] Returns an array of Infos objects
+    //  */
+    /*
+    public function findByExampleField($value)
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.exampleField = :val')
+            ->setParameter('val', $value)
+            ->orderBy('i.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    */
+
+    /*
+    public function findOneBySomeField($value): ?Infos
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.exampleField = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+    */
+}

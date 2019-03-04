@@ -24,9 +24,17 @@
                     <span class="glyphicon glyphicon-search"></span>
                     Informations
                 </a>
-                <a href="#rdv" class="js-scrollTo btn btn-primary" data-row-id="0">
+                <a href="#infos" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-paperclip"></span>
+                    Atelier Infos
+                </a>
+                <a href="#bcvs" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-briefcase"></span>
+                    BCVs
+                </a>
+                <a href="#consultations" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-book"></span>
-                    Rendez-vous
+                    Consultations
                 </a>
                 <a href="#entretiens" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-bookmark"></span>
@@ -134,7 +142,7 @@
             </div>
             <div class="row">
 		        <div class="col-md-3">
-                    {{ form_row(form.dentree, {'required': false}) }}
+                    {{ form_row(form.dentree) }}
                 </div>
 	        </div>
             <div class="row">
@@ -147,7 +155,159 @@
             </div>
 
             <div class="separator">
-                <span id="rdv" class="separator-text">Rendez-vous</span>
+                <span id="infos" class="separator-text">Atelier Infos</span>
+            </div>
+
+            <section class="cd-horizontal-timeline row" id="timeline-infos">
+                <div class="timeline">
+                    <div class="events-wrapper">
+                        <div class="events">
+                            <ol id="events-infos">
+                                {% for infosForm in form.infos %}
+                                    <li>
+                                        <a href="#0" data-date="{{ infosForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ infosForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+
+                            <span class="filling-line" aria-hidden="true"></span>
+                        </div>
+                        <!-- .events -->
+                    </div>
+                    <!-- .events-wrapper -->
+
+                    <ul class="cd-timeline-navigation">
+                        <li>
+                            <a href="#0" class="prev inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a class="new" data-toggle="modal" data-target="#infosModal">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <!-- .cd-timeline-navigation -->
+                </div>
+                <!-- .timeline -->
+
+                <div class="events-content">
+                    <ol id="events-content-infos">
+                        {% for infosForm in form.infos %}
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ infosForm.vars.value.date|date("d/m/Y") }}">
+                                <h2>
+                                    {{ infosForm.vars.value.nom  }}
+                                </h2>
+                                <em>
+                                    {{ infosForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
+                                </em>
+                                <div class="row">
+                                    {{ form_row(infosForm.date) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(infosForm.type) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(infosForm.accompagnant) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(infosForm.etat) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(infosForm.motifRefus, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+
+                </div>
+                <!-- .events-content -->
+            </section>
+
+            <div class="separator">
+                <span id="bcvs" class="separator-text">BCVs</span>
+            </div>
+
+            <section class="cd-horizontal-timeline row" id="timeline-BCVs">
+                <div class="timeline">
+                    <div class="events-wrapper">
+                        <div class="events">
+                            <ol id="events-BCVs">
+                                {% for BCVsForm in form.bcvs %}
+                                    <li>
+                                        <a href="#0" data-date="{{ BCVsForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ BCVsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ol>
+
+                            <span class="filling-line" aria-hidden="true"></span>
+                        </div>
+                        <!-- .events -->
+                    </div>
+                    <!-- .events-wrapper -->
+
+                    <ul class="cd-timeline-navigation">
+                        <li>
+                            <a href="#0" class="prev inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a class="new" data-toggle="modal" data-target="#bcvsModal">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+                    <!-- .cd-timeline-navigation -->
+                </div>
+                <!-- .timeline -->
+
+                <div class="events-content">
+                    <ol id="events-content-BCVs">
+                        {% for BCVsForm in form.bcvs %}
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ BCVsForm.vars.value.date|date("d/m/Y") }}">
+                                <h2>
+                                    {{ BCVsForm.vars.value.nom  }}
+                                </h2>
+                                <em>
+                                    {{ BCVsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
+                                </em>
+                                <div class="row">
+                                    {{ form_row(BCVsForm.date) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(BCVsForm.accompagnant) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(BCVsForm.permission) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(BCVsForm.etat) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(BCVsForm.motifRefus, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ol>
+
+                </div>
+                <!-- .events-content -->
+            </section>
+
+            <div class="separator">
+                <span id="consultations" class="separator-text">Consultations</span>
             </div>
 
             <section class="cd-horizontal-timeline row" id="timeline-rendezVous">
@@ -199,38 +359,22 @@
                                     {{ form_row(rendezVousForm.date) }}
                                 </div>
                                 <div class="row">
+                                    {{ form_row(rendezVousForm.thematique) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(rendezVousForm.heure) }}
+                                </div>
+                                <div class="row">
                                     {{ form_row(rendezVousForm.type) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(rendezVousForm.accompagnant, {'required': false}) }}
+                                    {{ form_row(rendezVousForm.accompagnant) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(rendezVousForm.permission, {'required': false}) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.choix, {'required': false}) }}
+                                    {{ form_row(rendezVousForm.etat) }}
                                 </div>
                                 <div class="row">
                                     {{ form_row(rendezVousForm.motifRefus, {'required': false}) }}
-                                </div>
-                                <div class="separator"></div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.date_repro) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.type_repro) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.accompagnant_repro, {'required': false}) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.permission_repro, {'required': false}) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.choix_repro, {'required': false}) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(rendezVousForm.motifRefus_repro, {'required': false}) }}
                                 </div>
                                 <div class="row">
                                     <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -298,10 +442,19 @@
                                     {{ form_row(entretienForm.date) }}
                                 </div>
                                 <div class="row">
+                                    {{ form_row(entretienForm.thematique) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(entretienForm.heure) }}
+                                </div>
+                                <div class="row">
                                     {{ form_row(entretienForm.type) }}
                                 </div>
                                 <div class="row">
                                     {{ form_row(entretienForm.accompagnant, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(entretienForm.etat) }}
                                 </div>
                                 <div class="row">
                                     {{ form_row(entretienForm.motifRefus, {'required': false}) }}
@@ -371,10 +524,19 @@
                                     {{ form_row(atelierForm.date) }}
                                 </div>
                                 <div class="row">
+                                    {{ form_row(atelierForm.thematique) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(atelierForm.heure) }}
+                                </div>
+                                <div class="row">
                                     {{ form_row(atelierForm.type) }}
                                 </div>
                                 <div class="row">
                                     {{ form_row(atelierForm.accompagnant, {'required': false}) }}
+                                </div>
+                                <div class="row">
+                                    {{ form_row(atelierForm.etat) }}
                                 </div>
                                 <div class="row">
                                     {{ form_row(atelierForm.motifRefus, {'required': false}) }}
@@ -543,7 +705,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">
                             <span class="glyphicon glyphicon-plus"></span>
-                            Ajouter un entretien</h4>
+                            Ajouter une consultation</h4>
                     </div>
                     <div class="modal-body">
                         {{ form_start(formRendezVous) }}
@@ -551,19 +713,12 @@
                         {{ form_row(formRendezVous.nom) }}
                         <div class="separator"></div>
                         {{ form_row(formRendezVous.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formRendezVous.thematique) }}
+                        {{ form_row(formRendezVous.heure) }}
                         {{ form_row(formRendezVous.type) }}
                         {{ form_row(formRendezVous.accompagnant, {'required': false}) }}
-                        {{ form_row(formRendezVous.permission, {'required': false}) }}
-                        {{ form_row(formRendezVous.choix, {'required': false}) }}
+                        {{ form_row(formRendezVous.etat, {'required': false}) }}
                         {{ form_row(formRendezVous.motifRefus, {'required': false}) }}
-                        <div class="separator"></div>
-                        {{ form_row(formRendezVous.date_repro, {'attr': {'autocomplete': 'off'}, 'required': false }) }}
-                        {{ form_row(formRendezVous.type_repro, {'required': false}) }}
-                        {{ form_row(formRendezVous.accompagnant_repro, {'required': false}) }}
-                        {{ form_row(formRendezVous.permission_repro, {'required': false}) }}
-                        {{ form_row(formRendezVous.choix_repro, {'required': false}) }}
-                        {{ form_row(formRendezVous.motifRefus_repro, {'required': false}) }}
-                        
                         {{ form_row(formRendezVous._token) }}
                         {{ form_end(formRendezVous, {'render_rest' : false}) }}
                         <button id="rendezVous_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
@@ -594,8 +749,11 @@
                         {{ form_start(formEntretien) }}
                         {{ form_errors(formEntretien) }}
                         {{ form_row(formEntretien.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formEntretien.thematique) }}
+                        {{ form_row(formEntretien.heure) }}
                         {{ form_row(formEntretien.type) }}
                         {{ form_row(formEntretien.accompagnant, {'required': false}) }}
+                        {{ form_row(formEntretien.etat) }}
                         {{ form_row(formEntretien.motifRefus, {'required': false}) }}
                         {{ form_row(formEntretien._token) }}
                         {{ form_end(formEntretien, {'render_rest' : false}) }}
@@ -627,8 +785,11 @@
                         {{ form_start(formAtelier) }}
                         {{ form_errors(formAtelier) }}
                         {{ form_row(formAtelier.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formAtelier.thematique) }}
+                        {{ form_row(formAtelier.heure) }}
                         {{ form_row(formAtelier.type) }}
                         {{ form_row(formAtelier.accompagnant, {'required': false}) }}
+                        {{ form_row(formAtelier.etat) }}
                         {{ form_row(formAtelier.motifRefus, {'required': false}) }}
                         {{ form_row(formAtelier._token) }}
                         {{ form_end(formAtelier, {'render_rest' : false}) }}
@@ -666,6 +827,74 @@
                         {{ form_row(formTelephonique._token) }}
                         {{ form_end(formTelephonique, {'render_rest' : false}) }}
                         <button id="telephonique_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal addInfos-->
+        <div id="infosModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un atelier Infos</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formInfos) }}
+                        {{ form_errors(formInfos) }}
+                        {{ form_row(formInfos.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formInfos.type) }}
+                        {{ form_row(formInfos.accompagnant) }}
+                        {{ form_row(formInfos.etat) }}
+                        {{ form_row(formInfos.motifRefus, {'required': false}) }}
+                        {{ form_row(formInfos._token) }}
+                        {{ form_end(formInfos, {'render_rest' : false}) }}
+                        <button id="infos_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                            Annuler</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal addBCVs-->
+        <div id="bcvsModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            Ajouter un BCVs</h4>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(formBCVs) }}
+                        {{ form_errors(formBCVs) }}
+                        {{ form_row(formBCVs.date, {'attr': {'autocomplete': 'off'} }) }}
+                        {{ form_row(formBCVs.accompagnant) }}
+                        {{ form_row(formBCVs.permission) }}
+                        {{ form_row(formBCVs.etat) }}
+                        {{ form_row(formBCVs.motifRefus, {'required': false}) }}
+                        {{ form_row(formBCVs._token) }}
+                        {{ form_end(formBCVs, {'render_rest' : false}) }}
+                        <button id="bcvs_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -752,9 +981,15 @@
             $('cd-horizontal-timeline, events a.selected::after')
         }
 
-        $('select').change(function() {
+        $('ol, .modal').on('change', 'select', function() {
             changeSelectColor($(this));
         });
+
+        {# Set time from select #}
+        $("ol, .modal").on("change", ".get-hour", function() {
+            let time = $(this).find(":selected").attr("data-hour");
+            $(this).parents().eq(2).find(".set-hour").val(time);
+        })
 
         {# Delete #}
 
@@ -795,6 +1030,16 @@
                     var url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
                     url = url.replace("rendezVous_id", id);
                     $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                } else if (timeline.is('#timeline-bcvs')) {
+                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
+                    var url = "{{ path( 'bcvs_remove', { 'id': 'bcvs_id' }) }}";
+                    url = url.replace("bcvs_id", id);
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                } else if (timeline.is('#timeline-infos')) {
+                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
+                    var url = "{{ path( 'infos_remove', { 'id': 'infos_id' }) }}";
+                    url = url.replace("infos_id", id);
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
                 }
                 $('body').prepend(
                     '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Suppression effectuée !</div>'
@@ -808,7 +1053,7 @@
 
         {# Edit #}
 
-        $("#events-content-ateliers li").on("click", ".btn-primary", function () {
+        $("#events-content-ateliers").on("click", ".btn-primary", function () {
             var arr = [], i = 0;
             $(this).parents("li").find("input, select").each(function() {
                 arr[i++] = $(this).val();
@@ -816,20 +1061,19 @@
             var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
             var url = "{{ path('atelier_patch', { 'id': 'atelier_id' }) }}";
             url = url.replace("atelier_id", id);
-            var date = arr[0];
-            var type = arr[1];
-            var accompagnant = arr[2];
-            var motifRefus = arr[3];
 
             $.ajax({
                 url: url,
                 type: "POST",
                 dataType: "json",
                 data: {
-                    "date": date,
-                    "type": type,
-                    "accompagnant": accompagnant,
-                    "motifRefus": motifRefus
+                    "date": arr[0],
+                    "thematique": arr[1],
+                    "time": arr[2],
+                    "type": arr[3],
+                    "accompagnant": arr[4],
+                    "etat": arr[5],
+                    "motifRefus": arr[6]
                 },
                 success: function (resp) {
                     $('body').prepend(
@@ -868,10 +1112,13 @@
         {# Add #}
 
         $("#atelier_add").on('click', function () {
-            var date = $('#atelier_date').val();
-            var type = $('#atelier_type').val();
-            var accompagnant = $('#atelier_accompagnant').val();
-            var motifRefus = $('#atelier_motifRefus').val();
+            let date = $('#atelier_date').val();
+            let thematique = $('#atelier_thematique').val();
+            let time = $('#atelier_heure').val();
+            let type = $('#atelier_type').val();
+            let accompagnant = $('#atelier_accompagnant').val();
+            let etat = $('#atelier_etat').val();
+            let motifRefus = $('#atelier_motifRefus').val();
 
             $.ajax({
                 url: "{{ path('atelier_add') }}",
@@ -880,8 +1127,11 @@
                 data: {
                     "id": '{{ patient.id }}',
                     "date": date,
+                    "thematique": thematique,
+                    "time": time,
                     "type": type,
                     "accompagnant": accompagnant,
+                    "etat": etat,
                     "motifRefus": motifRefus
                 },
                 success: function (resp) {
@@ -909,15 +1159,45 @@
                         var events_content = $('#events-content-ateliers');
                         $('#events-content-ateliers li').removeClass("selected");
                         $(events_content)
-                            .append('<li data-date=' + date + '><h2>Atelier ' + (nb + 1) + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_ateliers_' + resp + '_date">Date</label><input type="text" id="patient_creation_form_ateliers_' + resp + '_date" name="patient_creation_form[ateliers][' + resp + '][date]" required="required" class="datepicker form-control" value=' + date + '></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_ateliers_' + resp + '_type">Type</label><select id="patient_creation_form_ateliers_' + resp + '_type" name="patient_creation_form[ateliers][' + resp + '][type]" class="form-control"><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_' + resp + '_accompagnant">Accompagnant</label><select id="patient_creation_form_ateliers_' + resp + '_accompagnant" name="patient_creation_form[ateliers][' + resp + '][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_ateliers_' + resp + '_motifRefus" name="patient_creation_form[ateliers][' + resp + '][motifRefus]" class="form-control" value=' + motifRefus + '></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .append(`<li data-date=` + date + `>
+                                        <h2>Atelier ` + (nb + 1) + `</h2>
+                                        <em>` + date_em + `</em>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_ateliers_` + resp + `_date">Date</label>
+                                            <input type="text" id="patient_creation_form_ateliers_` + resp + `_date" name="patient_creation_form[ateliers][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
+                                        </div></div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_ateliers_` + resp + `_thematique" name="patient_creation_form[ateliers][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Signes d'alerte" data-hour="15:00">Signes d'alerte</option><option value="Gestion du stress" data-hour="13:30">Gestion du stress</option><option value="Cuisine Poisson" data-hour="10:00">Cuisine Poisson</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Gestion des sucres" data-hour="14:00">Gestion des sucres</option><option value="Gestion des quantités" data-hour="12:00">Gestion des quantités</option><option value="Freins/solutions équilibre" data-hour="14:00">Freins/solutions équilibre</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Communication" data-hour="14:00">Communication</option><option value="Marche co 1" data-hour="14:00">Marche co 1</option><option value="Marche co 2" data-hour="14:00">Marche co 2</option></select></div>
+                                        </div>
+                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_` + resp + `_heure">Heure</label><select id="patient_creation_form_ateliers_` + resp + `_heure" name="patient_creation_form[ateliers][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="10:00">10:00</option><option value="12:00">12:00</option><option value="13:30">13:30</option><option value="14:00" selected="selected">14:00</option><option value="15:00">15:00</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_type">Type</label><select id="patient_creation_form_ateliers_` + resp + `_type" name="patient_creation_form[ateliers][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_ateliers_` + resp + `_accompagnant" name="patient_creation_form[ateliers][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_ateliers_` + resp + `_etat" name="patient_creation_form[ateliers][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_ateliers_` + resp + `_motifRefus" name="patient_creation_form[ateliers][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                    </li>`)
                             .appendTo(events_content);
+                        $('#patient_creation_form_ateliers_' + resp + '_thematique').val(thematique);
+                        $('#patient_creation_form_ateliers_' + resp + '_heure').val(time);
                         $('#patient_creation_form_ateliers_' + resp + '_type').val(type);
                         $('#patient_creation_form_ateliers_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_ateliers_' + resp + '_etat').val(etat);
                         $('#events-content-ateliers li:last-child').addClass('selected');
 
-                        $('#timeline_update').trigger('click');
+                        updateForm();
                         document.getElementById("atelier_add").disabled = true;
-                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
                     }
                 }
             });
@@ -928,7 +1208,7 @@
 
         {# Edit #}
 
-        $("#events-content-telephoniques li").on("click", ".btn-primary", function () {
+        $("#events-content-telephoniques").on("click", ".btn-primary", function () {
             var arr = [], i = 0;
             $(this).parents("li").find("input, select").each(function() {
                 arr[i++] = $(this).val();
@@ -1033,7 +1313,7 @@
                                         <h2>Rendez-vous téléphonique ` + (nb + 1) + `</h2><em>` + date_em + `</em>
                                         <div class="row"><div class="form-group">
                                             <label class="control-label required" for="patient_creation_form_telephoniques_` + resp + `_date">Date</label>
-                                            <input type="text" id="patient_creation_form_telephoniques_` + resp + `_date" name="patient_creation_form[telephoniques][` + resp + `][date]" required="required" class="datepicker form-control" value=` + date + `>
+                                            <input type="text" id="patient_creation_form_telephoniques_` + resp + `_date" name="patient_creation_form[telephoniques][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
                                         </div></div>
 
                                         <div class="row"><div class="form-group">
@@ -1081,7 +1361,7 @@
 
         {# Edit #}
 
-        $("#events-content-entretiens li").on("click", ".btn-primary", function () {
+        $("#events-content-entretiens").on("click", ".btn-primary", function () {
             var arr = [], i = 0;
             $(this).parents("li").find("input, select").each(function() {
                 arr[i++] = $(this).val();
@@ -1089,20 +1369,19 @@
             var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
             var url = "{{ path('entretien_patch', { 'id': 'entretien_id' }) }}";
             url = url.replace("entretien_id", id);
-            var date = arr[0];
-            var type = arr[1];
-            var accompagnant = arr[2];
-            var motifRefus = arr[3];
 
             $.ajax({
                 url: url,
                 type: "POST",
                 dataType: "json",
                 data: {
-                    "date": date,
-                    "type": type,
-                    "accompagnant": accompagnant,
-                    "motifRefus": motifRefus
+                    "date": arr[0],
+                    "thematique": arr[1],
+                    "time": arr[2],
+                    "type": arr[3],
+                    "accompagnant": arr[4],
+                    "etat": arr[5],
+                    "motifRefus": arr[6]
                 },
                 success: function (resp) {
                     $('body').prepend(
@@ -1142,8 +1421,11 @@
 
         $("#entretien_add").on('click', function () {
             var date = $('#entretien_date').val();
+            var thematique = $('#entretien_thematique').val();
+            var time = $('#entretien_heure').val();
             var type = $('#entretien_type').val();
             var accompagnant = $('#entretien_accompagnant').val();
+            var etat = $('#entretien_etat').val();
             var motifRefus = $('#entretien_motifRefus').val();
 
             $.ajax({
@@ -1153,8 +1435,11 @@
                 data: {
                     "id": '{{ patient.id }}',
                     "date": date,
+                    "thematique": thematique,
+                    "time": time,
                     "type": type,
                     "accompagnant": accompagnant,
+                    "etat": etat,
                     "motifRefus": motifRefus
                 },
                 success: function (resp) {
@@ -1182,15 +1467,45 @@
                         var events_content = $('#events-content-entretiens');
                         $('#events-content-entretiens li').removeClass("selected");
                         $(events_content)
-                            .append('<li data-date=' + date + '><h2>Entretien individuel ' + (nb + 1) + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_entretiens_' + resp + '_date">Date</label><input type="text" id="patient_creation_form_entretiens_' + resp + '_date" name="patient_creation_form[entretiens][' + resp + '][date]" required="required" class="datepicker form-control" value=' + date + '></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_entretiens_' + resp + '_type">Type</label><select id="patient_creation_form_entretiens_' + resp + '_type" name="patient_creation_form[entretiens][' + resp + '][type]" class="form-control"><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_entretiens_' + resp + '_accompagnant">Accompagnant</label><select id="patient_creation_form_entretiens_' + resp + '_accompagnant" name="patient_creation_form[entretiens][' + resp + '][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_entretiens_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_entretiens_' + resp + '_motifRefus" name="patient_creation_form[entretiens][' + resp + '][motifRefus]" class="form-control" value=' + motifRefus + '></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .append(`<li data-date=` + date + `>
+                                        <h2>Entretien individuel ` + (nb + 1) + `</h2>
+                                        <em>` + date_em + `</em><div class="row">
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_entretiens_` + resp + `_date" name="patient_creation_form[entretiens][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_entretiens_` + resp + `_thematique" name="patient_creation_form[entretiens][` + resp + `][thematique]" required="required" class="form-control"><option value=""></option><option value="Maladie et FDR">Maladie et FDR</option><option value="Diabète">Diabète</option><option value="Signes alerte et CAT">Signes alerte et CAT</option><option value="Motivationnel">Motivationnel</option><option value="M3">M3</option><option value="M12">M12</option><option value="Renf 1">Renf 1</option><option value="Renf 2">Renf 2</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_heure">Heure</label><select id="patient_creation_form_entretiens_` + resp + `_heure" name="patient_creation_form[entretiens][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:15">09:15</option><option value="10:15">10:15</option><option value="10:30">10:30</option><option value="11:30">11:30</option><option value="11:45">11:45</option><option value="13:30">13:30</option><option value="14:30">14:30</option><option value="14:45">14:45</option><option value="16:00">16:00</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_type">Type</label><select id="patient_creation_form_entretiens_` + resp + `_type" name="patient_creation_form[entretiens][` + resp + `][type]" required="required" class="form-control"><option value=""></option><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_entretiens_` + resp + `_accompagnant" name="patient_creation_form[entretiens][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_entretiens_` + resp + `_etat" name="patient_creation_form[entretiens][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                        </div>
+                                        <div class="row"><div class="form-group">
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_entretiens_` + resp + `_motifRefus" name="patient_creation_form[entretiens][` + resp + `][motifRefus]" class="form-control"></div>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                    </li>`)
                             .appendTo(events_content);
+                        $('#patient_creation_form_entretiens_' + resp + '_thematique').val(thematique);
+                        $('#patient_creation_form_entretiens_' + resp + '_heure').val(time);
                         $('#patient_creation_form_entretiens_' + resp + '_type').val(type);
                         $('#patient_creation_form_entretiens_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_entretiens_' + resp + '_etat').val(etat);
                         $('#events-content-entretiens li:last-child').addClass('selected');
 
-                        $('#timeline_update').trigger('click');
+                        updateForm();
                         document.getElementById("entretien_add").disabled = true;
-                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
                     }
                 }
             });
@@ -1201,7 +1516,7 @@
 
         {# Edit #}
 
-        $("#events-content-rendezVous li").on("click", ".btn-primary", function () {
+        $("#events-content-rendezVous").on("click", ".btn-primary", function () {
             var arr = [], i = 0;
             $(this).parents("li").find("input, select").each(function() {
                 arr[i++] = $(this).val();
@@ -1216,17 +1531,12 @@
                 dataType: "json",
                 data: {
                     "date": arr[0],
-                    "type": arr[1],
-                    "accompagnant": arr[2],
-                    "permission": arr[3],
-                    "choix": arr[4],
-                    "motifRefus": arr[5],
-                    "date_repro": arr[6],
-                    "type_repro": arr[7],
-                    "accompagnant_repro": arr[8],
-                    "permission_repro": arr[9],
-                    "choix_repro": arr[10],
-                    "motifRefus_repro": arr[11],
+                    "thematique": arr[1],
+                    "time": arr[2],
+                    "type": arr[3],
+                    "accompagnant": arr[4],
+                    "etat": arr[5],
+                    "motifRefus": arr[6]
                 },
                 success: function (resp) {
                     $('body').prepend(
@@ -1267,19 +1577,13 @@
         $("#rendezVous_add").on('click', function () {
             var nom = $('#rendez_vous_nom').val();
 
-            var date = $('#rendez_vous_date').val();
-            var type = $('#rendez_vous_type').val();
-            var accompagnant = $('#rendez_vous_accompagnant').val();
-            var permission = $('#rendez_vous_permission').val();
-            var choix = $('#rendez_vous_choix').val();
-            var motifRefus = $('#rendez_vous_motifRefus').val();
-
-            var date_repro = $('#rendez_vous_date_repro').val();
-            var type_repro = $('#rendez_vous_type_repro').val();
-            var accompagnant_repro = $('#rendez_vous_accompagnant_repro').val();
-            var permission_repro = $('#rendez_vous_permission_repro').val();
-            var choix_repro = $('#rendez_vous_choix_repro').val();
-            var motifRefus_repro = $('#rendez_vous_motifRefus_repro').val();
+            let date = $('#rendez_vous_date').val();
+            let thematique = $('#rendez_vous_thematique').val();
+            let time = $('#rendez_vous_heure').val();
+            let type = $('#rendez_vous_type').val();
+            let accompagnant = $('#rendez_vous_accompagnant').val();
+            let etat = $('#rendez_vous_etat').val();
+            let motifRefus = $('#rendez_vous_motifRefus').val();
 
             $.ajax({
                 url: "{{ path('rendezVous_add') }}",
@@ -1289,18 +1593,12 @@
                     "id": '{{ patient.id }}',
                     "nom": nom,
                     "date": date,
+                    "thematique": thematique,
+                    "time": time,
                     "type": type,
                     "accompagnant": accompagnant,
-                    "permission": permission,
-                    "choix": choix,
-                    "motifRefus": motifRefus,
-
-                    "date_repro": date_repro,
-                    "type_repro": type_repro,
-                    "accompagnant_repro": accompagnant_repro,
-                    "permission_repro": permission_repro,
-                    "choix_repro": choix_repro,
-                    "motifRefus_repro": motifRefus_repro,
+                    "etat": etat,
+                    "motifRefus": motifRefus
                 },
                 success: function (resp) {
                     if (resp) {
@@ -1327,21 +1625,43 @@
                         var events_content = $('#events-content-rendezVous');
                         $('#events-content-rendezVous li').removeClass("selected");
                         $(events_content)
-                            .append('<li data-date=' + date + '><h2>'+ nom + '</h2><em>' + date_em + '</em><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_date">Date prévue</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_date" name="patient_creation_form[rendezVous][' + resp + '][date]" required="required" class="datepicker form-control" value="07/09/2018"></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_type">Type</label><select id="patient_creation_form_rendezVous_' + resp + '_type" name="patient_creation_form[rendezVous][' + resp + '][type]" required="required" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel">Tel</option><option value="Hospi">Hospi</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_accompagnant">Accompagnant</label><select id="patient_creation_form_rendezVous_' + resp + '_accompagnant" name="patient_creation_form[rendezVous][' + resp + '][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_permission">Permission demandée</label><select id="patient_creation_form_rendezVous_' + resp + '_permission" name="patient_creation_form[rendezVous][' + resp + '][permission]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_choix">Est-il/elle venu ?</label><select id="patient_creation_form_rendezVous_' + resp + '_choix" name="patient_creation_form[rendezVous][' + resp + '][choix]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non" >Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_motifRefus" name="patient_creation_form[rendezVous][' + resp + '][motifRefus]" class="form-control" value="aucun"></div></div><div class="separator"></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_date_repro">Date repro prévue</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_date_repro" name="patient_creation_form[rendezVous][' + resp + '][date_repro]" required="required" class="datepicker form-control" value="08/09/2018"></div></div><div class="row"><div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_' + resp + '_type_repro">Type</label><select id="patient_creation_form_rendezVous_' + resp + '_type_repro" name="patient_creation_form[rendezVous][' + resp + '][type_repro]" required="required" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel">Tel</option><option value="Hospi">Hospi</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_accompagnant_repro">Accompagnant</label><select id="patient_creation_form_rendezVous_' + resp + '_accompagnant_repro" name="patient_creation_form[rendezVous][' + resp + '][accompagnant_repro]" class="form-control"><option value=""></option><option value="oui" >Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_permission_repro">Permission demandée</label><select id="patient_creation_form_rendezVous_' + resp + '_permission_repro" name="patient_creation_form[rendezVous][' + resp + '][permission_repro]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_choix_repro">Est-il/elle venu ?</label><select id="patient_creation_form_rendezVous_' + resp + '_choix_repro" name="patient_creation_form[rendezVous][' + resp + '][choix_repro]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div></div><div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_' + resp + '_motifRefus_repro">Motif de refus</label><input type="text" id="patient_creation_form_rendezVous_' + resp + '_motifRefus_repro" name="patient_creation_form[rendezVous][' + resp + '][motifRefus_repro]" class="form-control" value="aucun"></div></div><div class="row"><button type="button" class="btn btn-primary pull-right">Modifier</button><button type="button" class="btn btn-danger pull-left">Supprimer</button></div></li>')
+                            .append(`<li data-date=` + date + `><h2>`+ nom + `</h2><em>` + date_em + `</em>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_rendezVous_` + resp + `_date" name="patient_creation_form[rendezVous][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_rendezVous_` + resp + `_thematique" name="patient_creation_form[rendezVous][` + resp + `][thematique]" required="required" class="form-control"><option value=""></option><option value="Consultation psychologue">Consultation psychologue</option><option value="Consultation diététicienne">Consultation diététicienne</option><option value="Consultation pharmacienne">Consultation pharmacienne</option></select></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_heure">Heure</label><select id="patient_creation_form_rendezVous_` + resp + `_heure" name="patient_creation_form[rendezVous][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:15">09:15</option><option value="10:15">10:15</option><option value="11:15">11:15</option><option value="11:30">11:30</option><option value="12:30">12:30</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option></select></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_type">Type</label><select id="patient_creation_form_rendezVous_` + resp + `_type" name="patient_creation_form[rendezVous][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel">Tel</option><option value="Hospi">Hospi</option></select></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_rendezVous_` + resp + `_accompagnant" name="patient_creation_form[rendezVous][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_rendezVous_` + resp + `_etat" name="patient_creation_form[rendezVous][` + resp + `][etat]" class="form-control" style="background: white;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_rendezVous_` + resp + `_motifRefus" name="patient_creation_form[rendezVous][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
+                                        </div>
+                                        <div class="row">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                    </li>`)
                             .appendTo(events_content);
+                        $('#patient_creation_form_rendezVous_' + resp + '_thematique').val(thematique);
+                        $('#patient_creation_form_rendezVous_' + resp + '_heure').val(time);
                         $('#patient_creation_form_rendezVous_' + resp + '_type').val(type);
-                        $('#patient_creation_form_rendezVous_' + resp + '_type_repro').val(type_repro);
                         $('#patient_creation_form_rendezVous_' + resp + '_accompagnant').val(accompagnant);
-                        $('#patient_creation_form_rendezVous_' + resp + '_accompagnant_repro').val(accompagnant_repro);
-                        $('#patient_creation_form_rendezVous_' + resp + '_permission').val(permission);
-                        $('#patient_creation_form_rendezVous_' + resp + '_permission_repro').val(permission_repro);
-                        $('#patient_creation_form_rendezVous_' + resp + '_choix').val(choix);
-                        $('#patient_creation_form_rendezVous_' + resp + '_choix_repro').val(choix_repro);
+                        $('#patient_creation_form_rendezVous_' + resp + '_etat').val(etat);
                         $('#events-content-rendezVous li:last-child').addClass('selected');
 
-                        $('#timeline_update').trigger('click');
+                        updateForm();
                         document.getElementById("rendezVous_add").disabled = true;
-                        $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
                     }
                 }
             });

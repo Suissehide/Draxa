@@ -92,39 +92,27 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/add", name="rendezVous_add", methods="GET|POST")
      */
-    public function rendezVous_add(Request $request): Response
+    public function rendezVous_add(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             $id = $request->request->get('id');
 
+            $time = explode(':', $request->request->get('time'));
+            $new_time = new \DateTime();
+            $new_time->setTime($time[0], $time[1]);
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
-            $date_repro = explode('/', $request->request->get('date_repro'));
-            if (empty($date_repro)) {
-                $new_date_repro = date_create(date("y-m-d", mktime(0, 0, 0, $date_repro[1], $date_repro[0], $date_repro[2])));
-            } else {
-                $new_date_repro = null;
-            }
-
             $rendezVous = new RendezVous();
             $rendezVous->setNom($request->request->get('nom'));
-
             $rendezVous->setDate($new_date);
+            $rendezVous->setThematique($request->request->get('thematique'));
+            $rendezVous->setHeure($new_time);
             $rendezVous->setType($request->request->get('type'));
             $rendezVous->setAccompagnant($request->request->get('accompagnant'));
-            $rendezVous->setPermission($request->request->get('permission'));
-            $rendezVous->setChoix($request->request->get('choix'));
+            $rendezVous->setEtat($request->request->get('etat'));
             $rendezVous->setMotifRefus($request->request->get('motifRefus'));
-
-            $rendezVous->setDateRepro($new_date_repro);
-            $rendezVous->setTypeRepro($request->request->get('type_repro'));
-            $rendezVous->getAccompagnantRepro($request->request->get('accompagnant_repro'));
-            $rendezVous->setPermissionRepro($request->request->get('permission_repro'));
-            $rendezVous->getChoixRepro($request->request->get('choix_repro'));
-            $rendezVous->setMotifRefusRepro($request->request->get('motifRefus_repro'));
-
             $rendezVous->setPatient($em->getRepository(Patient::class)->findOneById($id));
 
             $em->persist($rendezVous);
@@ -136,7 +124,7 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/date_error", name="rendezVous_date_error", methods="GET|POST")
      */
-    public function rendezVous_date_error(Request $request): Response
+    public function rendezVous_date_error(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $bool = false;
@@ -164,7 +152,7 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/remove/{id}", name="rendezVous_remove", methods="DELETE")
      */
-    public function rendezVous_remove(Request $request, RendezVous $rendezVous): Response
+    public function rendezVous_remove(Request $request, RendezVous $rendezVous): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -180,30 +168,25 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/patch/{id}", name="rendezVous_patch", methods="GET|POST")
      */
-    public function rendezVous_patch(Request $request, RendezVous $rendezVous): Response
+    public function rendezVous_patch(Request $request, RendezVous $rendezVous): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             if ($rendezVous) {
+                $time = explode(':', $request->request->get('time'));
+                $new_time = new \DateTime();
+                $new_time->setTime($time[0], $time[1]);
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+                
                 $rendezVous->setDate($new_date);
+                $rendezVous->setThematique($request->request->get('thematique'));
+                $rendezVous->setHeure($new_time);
                 $rendezVous->setType($request->request->get('type'));
                 $rendezVous->setAccompagnant($request->request->get('accompagnant'));
-                $rendezVous->setChoix($request->request->get('choix'));
-                $rendezVous->setPermission($request->request->get('permission'));
+                $rendezVous->setEtat($request->request->get('etat'));
                 $rendezVous->setMotifRefus($request->request->get('motifRefus'));
 
-                if ($request->request->get('date_repro')) {
-                    $date_repro = explode('/', $request->request->get('date_repro'));
-                    $new_date_repro = date_create(date("y-m-d", mktime(0, 0, 0, $date_repro[1], $date_repro[0], $date_repro[2])));
-                    $rendezVous->setDateRepro($new_date_repro);
-                }
-                $rendezVous->setTypeRepro($request->request->get('type_repro'));
-                $rendezVous->setAccompagnantRepro($request->request->get('accompagnant_repro'));
-                $rendezVous->setChoixRepro($request->request->get('choix_repro'));
-                $rendezVous->setPermissionRepro($request->request->get('permission_repro'));
-                $rendezVous->setMotifRefusRepro($request->request->get('motifRefus_repro'));
                 $em->flush();
                 return new JsonResponse(true);
             }

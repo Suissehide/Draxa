@@ -31,7 +31,7 @@ class TelephoniqueType extends AbstractType
                     'Coaching tabac' => 'Coaching tabac',
                     'Coaching AOMI' => 'Coaching AOMI',
                 ),
-                'required'   => false,
+                'required' => false,
             ))
             ->add('etat', ChoiceType::class, array(
                 'label' => 'A-t-il eu lieu ?',
@@ -45,11 +45,11 @@ class TelephoniqueType extends AbstractType
                     'Oui' => ['class' => 'hotpink'],
                     'Non' => ['class' => 'yellow'],
                 ],
-                'required'   => false,
+                'required' => false,
             ))
             ->add('motifRefus', TextType::class, array(
                 'label' => 'Motif de non réponse',
-                'required'   => false,
+                'required' => false,
             ))
             // ->add('patient')
         ;
