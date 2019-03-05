@@ -13,7 +13,39 @@
         <div class="row accueil-wrapper">
             <div class="box">
                 <div class="box-header">Prochains
-                    <b>rendez-vous</b>
+                    <b>ateliers Infos</b>
+                </div>
+                <table id="infos" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="patient_nom">Nom</th>
+                            <th data-column-id="patient_prenom">Prénom</th>
+                            <th data-column-id="rdv_type">Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-header">Prochaines
+                    <b>BCVs</b>
+                </div>
+                <table id="bcvs" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="patient_nom">Nom</th>
+                            <th data-column-id="patient_prenom">Prénom</th>
+                            <th data-column-id="rdv_type">Permission</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div class="box">
+                <div class="box-header">Prochaines
+                    <b>consultations</b>
                 </div>
                 <table id="rendezVous" class="table table-condensed table-striped">
                     <thead>
@@ -21,6 +53,8 @@
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
                             <th data-column-id="rdv_type">Type</th>
+                            <th data-column-id="thematique">Thématique</th>
+                            <th data-column-id="heure">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -37,6 +71,8 @@
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
                             <th data-column-id="rdv_type">Type</th>
+                            <th data-column-id="thematique">Thématique</th>
+                            <th data-column-id="heure">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +89,8 @@
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
                             <th data-column-id="rdv_type">Type</th>
+                            <th data-column-id="thematique">Thématique</th>
+                            <th data-column-id="heure">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +107,8 @@
                             <th data-column-id="patient_nom">Nom</th>
                             <th data-column-id="patient_prenom">Prénom</th>
                             <th data-column-id="rdv_type">Type</th>
+                            <th data-column-id="thematique">Thématique</th>
+                            <th data-column-id="heure">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,38 +167,56 @@
                         if (resp[0].length > 0) {
                             $.each(resp[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td><td>' + val.thematique + '</td><td>' + val.heure + '</td>')
                                 .appendTo('#entretiens');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun entretien aujourd\'hui</td><td></td><td></td>').appendTo('#entretiens');
+                            $('<tr class="disabled text-center">').append('<td>Aucun entretien aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#entretiens');
                         }
                         if (resp[1].length > 0) {
                             $.each(resp[1], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td><td>' + val.thematique + '</td><td>' + val.heure + '</td>')
                                 .appendTo('#ateliers');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun atelier aujourd\'hui</td><td></td><td></td>').appendTo('#ateliers');
+                            $('<tr class="disabled text-center">').append('<td>Aucun atelier aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#ateliers');
                         }
                         if (resp[2].length > 0) {
                             $.each(resp[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td><td>' + val.thematique + '</td><td>' + val.heure + '</td>')
                                 .appendTo('#telephoniques');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous téléphonique aujourd\'hui</td><td></td><td></td>').appendTo('#telephoniques');
+                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous téléphonique aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#telephoniques');
                         }
                         if (resp[3].length > 0) {
                             $.each(resp[3], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td><td>' + val.thematique + '</td><td>' + val.heure + '</td>')
                                 .appendTo('#rendezVous');
                             });
                         } else {
-                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous aujourd\'hui</td><td></td><td></td>').appendTo('#rendezVous');
+                            $('<tr class="disabled text-center">').append('<td>Aucun rendez-vous aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#rendezVous');
+                        }
+                        if (resp[4].length > 0) {
+                            $.each(resp[4], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
+                                .appendTo('#infos');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td>Aucun atelier Infos aujourd\'hui</td><td></td><td></td>').appendTo('#infos');
+                        }
+                        if (resp[5].length > 0) {
+                            $.each(resp[5], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.permission + '</td>')
+                                .appendTo('#bcvs');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td>Aucun BCVs aujourd\'hui</td><td></td><td></td>').appendTo('#bcvs');
                         }
                     }
                 });
