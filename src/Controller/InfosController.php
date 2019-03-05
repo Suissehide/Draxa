@@ -2,15 +2,15 @@
 
 namespace App\Controller;
 
-use App\Entity\Patient;
 use App\Entity\Infos;
+use App\Entity\Patient;
 use App\Form\InfosType;
 use App\Repository\InfosRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/infos")
@@ -30,8 +30,7 @@ class InfosController extends AbstractController
     /**
      * @Route("/new", name="infos_new", methods={"GET","POST"})
      */
-    public function new(Request $request): Response
-    {
+    function new (Request $request): Response {
         $info = new Infos();
         $form = $this->createForm(InfosType::class, $info);
         $form->handleRequest($request);
@@ -87,7 +86,7 @@ class InfosController extends AbstractController
      */
     public function delete(Request $request, Infos $info): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$info->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $info->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($info);
             $entityManager->flush();
@@ -99,7 +98,7 @@ class InfosController extends AbstractController
     /**
      * @Route("/add", name="infos_add", methods="GET|POST")
      */
-    public function infos_add(Request $request) : JsonResponse
+    public function infos_add(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -125,7 +124,7 @@ class InfosController extends AbstractController
     /**
      * @Route("/date_error", name="infos_date_error", methods="GET|POST")
      */
-    public function infos_date_error(Request $request) : JsonResponse
+    public function infos_date_error(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $bool = false;
@@ -153,7 +152,7 @@ class InfosController extends AbstractController
     /**
      * @Route("/remove/{id}", name="infos_remove", methods="DELETE")
      */
-    public function infos_remove(Request $request, Infos $infos) : JsonResponse
+    public function infos_remove(Request $request, Infos $infos): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -169,7 +168,7 @@ class InfosController extends AbstractController
     /**
      * @Route("/patch/{id}", name="infos_patch", methods="GET|POST")
      */
-    public function infos_patch(Request $request, Infos $infos) : JsonResponse
+    public function infos_patch(Request $request, Infos $infos): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();

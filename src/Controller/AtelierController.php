@@ -7,10 +7,10 @@ use App\Entity\Patient;
 use App\Form\AtelierType;
 use App\Repository\AtelierRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/atelier")
@@ -28,8 +28,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/new", name="atelier_new", methods="GET|POST")
      */
-    public function new(Request $request): Response
-    {
+    function new (Request $request): Response {
         $atelier = new Atelier();
         $form = $this->createForm(AtelierType::class, $atelier);
         $form->handleRequest($request);
@@ -81,7 +80,7 @@ class AtelierController extends AbstractController
      */
     public function delete(Request $request, Atelier $atelier): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$atelier->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $atelier->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
             $em->remove($atelier);
             $em->flush();
@@ -93,7 +92,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/add", name="atelier_add", methods="GET|POST")
      */
-    public function atelier_add(Request $request) : JsonResponse
+    public function atelier_add(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -124,7 +123,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/date_error", name="atelier_date_error", methods="GET|POST")
      */
-    public function atelier_date_error(Request $request) : JsonResponse
+    public function atelier_date_error(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $bool = false;
@@ -152,7 +151,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/remove/{id}", name="atelier_remove", methods="DELETE")
      */
-    public function atelier_remove(Request $request, Atelier $atelier) : JsonResponse
+    public function atelier_remove(Request $request, Atelier $atelier): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -168,7 +167,7 @@ class AtelierController extends AbstractController
     /**
      * @Route("/patch/{id}", name="atelier_patch", methods="GET|POST")
      */
-    public function atelier_patch(Request $request, Atelier $atelier) : JsonResponse
+    public function atelier_patch(Request $request, Atelier $atelier): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();

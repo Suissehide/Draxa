@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Patient;
 use App\Entity\BCVs;
 use App\Form\BCVsType;
 use App\Repository\BCVsRepository;
@@ -9,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/b/c/vs")
@@ -133,7 +135,7 @@ class BCVsController extends AbstractController
             $now = date_create(date('y-m-d'));
 
             $em = $this->getDoctrine()->getManager();
-            $bcvss = $em->getRepository(Patient::class)->find($id)->getBCVss();
+            $bcvss = $em->getRepository(Patient::class)->find($id)->getBcvs();
 
             if (date_diff($now, $new_date, false)->invert) {
                 $bool = true;

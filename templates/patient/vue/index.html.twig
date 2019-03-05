@@ -271,30 +271,30 @@
                 <!-- .timeline -->
 
                 <div class="events-content">
-                    <ol id="events-content-BCVs">
-                        {% for BCVsForm in form.bcvs %}
+                    <ol id="events-content-bcvs">
+                        {% for bcvsForm in form.bcvs %}
                             {% set counter = (counter | default(0)) + 1 %}
-                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ BCVsForm.vars.value.date|date("d/m/Y") }}">
+                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ bcvsForm.vars.value.date|date("d/m/Y") }}">
                                 <h2>BCVs 
                                     {{ counter }}
                                 </h2>
                                 <em>
-                                    {{ BCVsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
+                                    {{ bcvsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
                                 </em>
                                 <div class="row">
-                                    {{ form_row(BCVsForm.date) }}
+                                    {{ form_row(bcvsForm.date) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(BCVsForm.accompagnant) }}
+                                    {{ form_row(bcvsForm.accompagnant) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(BCVsForm.permission) }}
+                                    {{ form_row(bcvsForm.permission) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(BCVsForm.etat) }}
+                                    {{ form_row(bcvsForm.etat) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(BCVsForm.motifRefus, {'required': false}) }}
+                                    {{ form_row(bcvsForm.motifRefus, {'required': false}) }}
                                 </div>
                                 <div class="row">
                                     <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -993,6 +993,24 @@
             $(this).parents().eq(2).find(".set-hour").val(time);
         })
 
+        {# Update datetime #}
+        var month = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre",]
+
+        function sort_li(a, b){
+            return ($(b).find("a").attr('data-date')) < ($(a).find("a").attr('data-date')) ? 1 : -1;    
+        }
+
+        $("ol .datepicker").on("change", function() {
+            let datetime = $(this).val().split("/");
+            $(this).parents("li").find("em").text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1] + " " + datetime[2]);
+            let index = $(this).parents('li').index();
+            let dot = $(this).parents('.events-content').prev().find('ol li:eq(' + index + ') a');
+            dot.attr('data-date', $(this).val());
+            dot.text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1]);
+            // $(this).parents('ol').find('li').sort(sort_li).appendTo($(this).parents('ol'));
+            // updateForm();
+        })
+
         {# Delete #}
 
         $('.cd-horizontal-timeline').on("click", ".btn-danger", function () {
@@ -1086,7 +1104,7 @@
 
         {# Error date add #}
 
-        $("#bcvs_date").change(function () {
+        $("#bc_vs_date").change(function () {
             resetErrors();
             var date = $(this).val();
             $.ajax({
@@ -1100,7 +1118,7 @@
                 success: function (resp) {
                     if (resp) {
                         var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#bcvs_date").addClass('is-invalid').after(msg);
+                        $("#bc_vs_date").addClass('is-invalid').after(msg);
                         document.getElementById("bcvs_add").disabled = true;
                     } else {
                         document.getElementById("bcvs_add").disabled = false;
@@ -1112,13 +1130,11 @@
         {# Add #}
 
         $("#bcvs_add").on('click', function () {
-            let date = $('#bcvs_date').val();
-            let thematique = $('#bcvs_thematique').val();
-            let time = $('#bcvs_heure').val();
-            let type = $('#bcvs_type').val();
-            let accompagnant = $('#bcvs_accompagnant').val();
-            let etat = $('#bcvs_etat').val();
-            let motifRefus = $('#bcvs_motifRefus').val();
+            let date = $('#bc_vs_date').val();
+            let accompagnant = $('#bc_vs_accompagnant').val();
+            let permission = $('#bc_vs_permission').val();
+            let etat = $('#bc_vs_etat').val();
+            let motifRefus = $('#bc_vs_motifRefus').val();
 
             $.ajax({
                 url: "{{ path('bcvs_add') }}",
@@ -1158,28 +1174,22 @@
                         $('#events-content-bcvs li').removeClass("selected");
                         $(events_content)
                             .append(`<li data-date=` + date + `>
-                                        <h2>Atelier bcvs ` + (nb + 1) + `</h2>
+                                        <h2>BCVs ` + (nb + 1) + `</h2>
                                         <em>` + date_em + `</em>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_bcvs_` + resp + `_date">Date</label>
-                                            <input type="text" id="patient_creation_form_bcvs_` + resp + `_date" name="patient_creation_form[bcvs][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
-                                        </div></div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_bcvs_` + resp + `_thematique" name="patient_creation_form[bcvs][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Signes d'alerte" data-hour="15:00">Signes d'alerte</option><option value="Gestion du stress" data-hour="13:30">Gestion du stress</option><option value="Cuisine Poisson" data-hour="10:00">Cuisine Poisson</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Gestion des sucres" data-hour="14:00">Gestion des sucres</option><option value="Gestion des quantités" data-hour="12:00">Gestion des quantités</option><option value="Freins/solutions équilibre" data-hour="14:00">Freins/solutions équilibre</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Communication" data-hour="14:00">Communication</option><option value="Marche co 1" data-hour="14:00">Marche co 1</option><option value="Marche co 2" data-hour="14:00">Marche co 2</option></select></div>
-                                        </div>
-                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_bcvs_` + resp + `_heure">Heure</label><select id="patient_creation_form_bcvs_` + resp + `_heure" name="patient_creation_form[bcvs][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="10:00">10:00</option><option value="12:00">12:00</option><option value="13:30">13:30</option><option value="14:00" selected="selected">14:00</option><option value="15:00">15:00</option></select></div>
+                                            <label class="control-label required" for="patient_creation_form_bcvs_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_date" name="patient_creation_form[bcvs][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_type">Type</label><select id="patient_creation_form_bcvs_` + resp + `_type" name="patient_creation_form[bcvs][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_bcvs_` + resp + `_accompagnant" name="patient_creation_form[bcvs][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="Oui" selected="selected">Oui</option><option value="Non">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_bcvs_` + resp + `_accompagnant" name="patient_creation_form[bcvs][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_permission">Permission demandée</label><select id="patient_creation_form_bcvs_` + resp + `_permission" name="patient_creation_form[bcvs][` + resp + `][permission]" class="form-control"><option value=""></option><option value="Oui 1 nuit">Oui 1 nuit</option><option value="Oui 2 nuits" selected="selected">Oui 2 nuits</option><option value="Non">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_bcvs_` + resp + `_etat" name="patient_creation_form[bcvs][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_bcvs_` + resp + `_etat" name="patient_creation_form[bcvs][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="yellow">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_motifRefus" name="patient_creation_form[bcvs][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
+                                        <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_motifRefus" name="patient_creation_form[bcvs][` + resp + `][motifRefus]" class="form-control"></div>
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -1187,9 +1197,9 @@
                                         </div>
                                     </li>`)
                             .appendTo(events_content);
-                        $('#patient_creation_form_bcvs_' + resp + '_permission').val(permission);
-                        $('#patient_creation_form_bcvs_' + resp + '_accompagnant').val(accompagnant);
-                        $('#patient_creation_form_bcvs_' + resp + '_etat').val(etat);
+                        $('#patient_creation_form_bc_vs_' + resp + '_permission').val(permission);
+                        $('#patient_creation_form_bc_vs_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_bc_vs_' + resp + '_etat').val(etat);
                         $('#events-content-bcvs li:last-child').addClass('selected');
 
                         updateForm();
@@ -1212,7 +1222,6 @@
             var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
             var url = "{{ path('infos_patch', { 'id': 'infos_id' }) }}";
             url = url.replace("infos_id", id);
-            console.log(url);
 
             $.ajax({
                 url: url,
@@ -1263,8 +1272,6 @@
 
         $("#infos_add").on('click', function () {
             let date = $('#infos_date').val();
-            let thematique = $('#infos_thematique').val();
-            let time = $('#infos_heure').val();
             let type = $('#infos_type').val();
             let accompagnant = $('#infos_accompagnant').val();
             let etat = $('#infos_etat').val();
@@ -1310,32 +1317,26 @@
                             .append(`<li data-date=` + date + `>
                                         <h2>Atelier Infos ` + (nb + 1) + `</h2>
                                         <em>` + date_em + `</em>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_infos_` + resp + `_date">Date</label>
-                                            <input type="text" id="patient_creation_form_infos_` + resp + `_date" name="patient_creation_form[infos][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
-                                        </div></div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_infos_` + resp + `_thematique" name="patient_creation_form[infos][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Signes d'alerte" data-hour="15:00">Signes d'alerte</option><option value="Gestion du stress" data-hour="13:30">Gestion du stress</option><option value="Cuisine Poisson" data-hour="10:00">Cuisine Poisson</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Gestion des sucres" data-hour="14:00">Gestion des sucres</option><option value="Gestion des quantités" data-hour="12:00">Gestion des quantités</option><option value="Freins/solutions équilibre" data-hour="14:00">Freins/solutions équilibre</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Communication" data-hour="14:00">Communication</option><option value="Marche co 1" data-hour="14:00">Marche co 1</option><option value="Marche co 2" data-hour="14:00">Marche co 2</option></select></div>
-                                        </div>
-                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_infos_` + resp + `_heure">Heure</label><select id="patient_creation_form_infos_` + resp + `_heure" name="patient_creation_form[infos][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="10:00">10:00</option><option value="12:00">12:00</option><option value="13:30">13:30</option><option value="14:00" selected="selected">14:00</option><option value="15:00">15:00</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_type">Type</label><select id="patient_creation_form_infos_` + resp + `_type" name="patient_creation_form[infos][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_infos_` + resp + `_accompagnant" name="patient_creation_form[infos][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_infos_` + resp + `_etat" name="patient_creation_form[infos][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_infos_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_infos_` + resp + `_motifRefus" name="patient_creation_form[infos][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
-                                        </div>
-                                        <div class="row">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </li>`)
+                                <div class="row"><div class="form-group">
+                                    <label class="control-label required" for="patient_creation_form_infos_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_infos_` + resp + `_date" name="patient_creation_form[infos][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
+                                </div>
+                                <div class="row"><div class="form-group">
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_type">Type</label><select id="patient_creation_form_infos_` + resp + `_type" name="patient_creation_form[infos][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel" selected="selected">Tel</option><option value="Hospit">Hospit</option></select></div>
+                                </div>
+                                <div class="row"><div class="form-group">
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_infos_` + resp + `_accompagnant" name="patient_creation_form[infos][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="Oui">Oui</option><option value="Non" selected="selected">Non</option></select></div>
+                                </div>
+                                <div class="row"><div class="form-group">
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_infos_` + resp + `_etat" name="patient_creation_form[infos][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                </div>
+                                <div class="row"><div class="form-group">
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_infos_` + resp + `_motifRefus" name="patient_creation_form[infos][` + resp + `][motifRefus]" class="form-control"></div>
+                                </div>
+                                <div class="row">
+                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                </div>
+                            </li>`)
                             .appendTo(events_content);
                         $('#patient_creation_form_infos_' + resp + '_type').val(type);
                         $('#patient_creation_form_infos_' + resp + '_accompagnant').val(accompagnant);

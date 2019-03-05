@@ -147,6 +147,7 @@ class Patient
     /**
      * @Groups({"patient", "entretiens"})
      * @ORM\OneToMany(targetEntity="App\Entity\Entretien", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $entretiens;
 
@@ -160,28 +161,34 @@ class Patient
     /**
      * @Groups({"patient", "ateliers"})
      * @ORM\OneToMany(targetEntity="App\Entity\Atelier", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $ateliers;
 
     /**
      * @Groups({"patient", "telephoniques"})
      * @ORM\OneToMany(targetEntity="App\Entity\Telephonique", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $telephoniques;
 
     /**
      * @Groups({"patient", "rendezVous"})
      * @ORM\OneToMany(targetEntity="App\Entity\RendezVous", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $rendezVous;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\BCVs", mappedBy="patient")
+     * @Groups({"patient", "rendezVous"})
+     * @ORM\OneToMany(targetEntity="App\Entity\BCVs", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $bcvs;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Infos", mappedBy="patient")
+     * @Groups({"patient", "rendezVous"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Infos", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
      */
     private $infos;
 
