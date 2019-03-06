@@ -7,6 +7,8 @@ TODO
 + Ligne grisé pour les patients sortis du programme (lors de l'ajout d'une date de sortie dans le formulaire)
 + Tri des patients par état (tous, sortis, actuel)
 + Ajout d'une pastille rouge devant chaque ligne pour lesquelle la partie "Observations diverses" contient des éléments
++ fix de l'export en excel
+
 
 /*
 *   Formulaire d'ajout et de création d'un patient
@@ -16,8 +18,18 @@ TODO
 + "date de sortie"
 + Ajout de menus déroulants
 
+==> Ateliers, RendezVous
++ "Thématique" menu déroulant
++ "Heure" menu déroulant
++ ajout d'un menu déroulant "A-t-il eu lieu ?"
++ menu déroulant "A-t-il eu lieu ?" coloré en fonction des réponses.
++ Rond coloré en fonction des réponses du menu déroulant "A-t-il eu lieu ?"
 ==> Ateliers
-
++ "Thématique" menu déroulant
++ "Heure" menu déroulant remplit en fonction de la thématique
++ ajout d'un menu déroulant "A-t-il eu lieu ?"
++ menu déroulant "A-t-il eu lieu ?" coloré en fonction des réponses.
++ Rond coloré en fonction des réponses du menu déroulant "A-t-il eu lieu ?"
 ==> rdv Téléphonique
 - "Type"
 + "Thématique" menu déroulant
@@ -27,6 +39,11 @@ TODO
 /!\ Ajout de l'heure ?
 ==> Activité
 /!\ Aucun changement
+==> Ateliers Infos
++ ajout
+==> BCVs
++ ajout
+
 
 /*
 *   Page d'accueil
