@@ -21,6 +21,18 @@ class Patient
 
     /**
      * @Groups({"patient"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $observ;
+
+    /**
+     * @Groups({"patient"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $sexe;
+
+    /**
+     * @Groups({"patient"})
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
@@ -36,30 +48,6 @@ class Patient
      * @ORM\Column(type="date", nullable=true)
      */
     private $date;
-
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $motif;
-
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $etp;
-
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $sexe;
-
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="date", nullable=true)
-     */
-    private $dentree;
 
     /**
      * @Groups({"patient"})
@@ -97,13 +85,14 @@ class Patient
      */
     private $activite;
 
-    /**
+/**
      * @Groups({"patient"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $diagnostic;
 
     /**
+     * @Groups({"patient"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $dedate;
@@ -124,13 +113,13 @@ class Patient
      * @Groups({"patient"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $precisions;
+    private $progetp;
 
     /**
      * @Groups({"patient"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $progetp;
+    private $precisions;
 
     /**
      * @Groups({"patient"})
@@ -140,9 +129,21 @@ class Patient
 
     /**
      * @Groups({"patient"})
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dentree;
+
+    /**
+     * @Groups({"patient"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $observ;
+    private $motif;
+
+    /**
+     * @Groups({"patient"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $etp;
 
     /**
      * @Groups({"patient", "entretiens"})
@@ -180,15 +181,16 @@ class Patient
     private $rendezVous;
 
     /**
-     * @Groups({"patient", "rendezVous"})
+     * @Groups({"patient", "bcvs"})
      * @ORM\OneToMany(targetEntity="App\Entity\BCVs", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
      * @ORM\OrderBy({"date" = "ASC"})
      */
     private $bcvs;
 
     /**
-     * @Groups({"patient", "rendezVous"})
+     * @Groups({"patient", "infos"})
      * @ORM\OneToMany(targetEntity="App\Entity\Infos", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OrderBy({"date" = "ASC"})
      */
     private $infos;
 

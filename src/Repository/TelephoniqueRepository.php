@@ -19,6 +19,24 @@ class TelephoniqueRepository extends ServiceEntityRepository
         parent::__construct($registry, Telephonique::class);
     }
 
+    public function findClosestRdv(\DateTime $date, $id)
+    {
+        $qb = $this
+            ->createQueryBuilder('a')
+
+            ->andWhere('a.date >= :date')
+            ->setParameter('date', $date)
+            ->orderBy('a.date', 'ASC')
+
+            ->leftJoin('a.patient', 'p')
+            ->andWhere('p.id = :id')
+            ->setParameter('id', $id)
+
+            ->setMaxResults(1)
+            ;
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
     public function findOneByDateJoinedToTelephonique(\DateTime $date1, \DateTime $date2)
     {
         return $this->createQueryBuilder('e')

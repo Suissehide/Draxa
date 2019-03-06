@@ -43,6 +43,8 @@ class PatientController extends AbstractController
 
     public function accueil(PatientRepository $patientRepository, Request $request): Response
     {
+        $em = $this->getDoctrine()->getManager();
+
         if ($request->isXmlHttpRequest()) {
             $etat = $request->request->get('etat');
             $current = $request->request->get('current');
@@ -64,10 +66,32 @@ class PatientController extends AbstractController
             }
             $patients = $patients->getQuery()->getResult();
             $rows = array();
+            $date = \DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
             foreach ($patients as $patient) {
-                $rdv = "rdv";
-                $thematique = "thematique";
-                $type = "type";
+                $rendezVous = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
+                $ateliers = $em->getRepository(Atelier::class)->findClosestRdv($date, $patient->getId());
+                $telephonique = $em->getRepository(Telephonique::class)->findClosestRdv($date, $patient->getId());
+                $entretien = $em->getRepository(Entretien::class)->findClosestRdv($date, $patient->getId());
+                $bcvs = $em->getRepository(BCVs::class)->findClosestRdv($date, $patient->getId());
+                $infos = $em->getRepository(Infos::class)->findClosestRdv($date, $patient->getId());
+
+                $tmp = 0;
+
+                $rdv = ["", "", ""];
+                if ($rendezVous) {
+                    $min_date = date_create($rendezVous->getDate()->format('y-m-d'));
+                    $rdv = ["Consultation", $rendezVous->getThematique(), $rendezVous->getType()];
+                }
+                dump("test");
+                $tmp_date = date_create($ateliers->getDate()->format('y-m-d'));
+                dump(!date_diff($min_date, $tmp_date, false)->invert);
+
+                if ($ateliers && !date_diff($min_date, date_create($ateliers->getDate()->format('y-m-d')), false)->invert) {
+                    $min_date = date_create($ateliers->getDate()->format('y-m-d'));
+                    $rdv = ["Atelier", $ateliers->getThematique(), $ateliers->getType()];
+                }
+
+                dump($rdv);
                 $sortie = 0;
                 $observ = 0;
                 if ($patient->getObserv())
@@ -79,9 +103,9 @@ class PatientController extends AbstractController
                     "nom" => $patient->getNom(),
                     "prenom" => $patient->getPrenom(),
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
-                    "rdv" => $rdv,
-                    "thematique" => $thematique,
-                    "type" => $type,
+                    "rdv" => $rdv[0],
+                    "thematique" => $rdv[1],
+                    "type" => $rdv[2],
                     "etp" => $patient->getEtp(),
                     "status" => $sortie,
                     "observ" => $observ,
@@ -191,7 +215,6 @@ class PatientController extends AbstractController
      */
     public function generateCsvAction(PatientRepository $patientRepository): Response
     {
-        // $data = $this->CallApi('GET', $this->generateUrl('cget', array(), UrlGeneratorInterface::ABSOLUTE_URL).'.csv', false);
         $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
         $encoder = new CsvEncoder();
         $normalizer = new PropertyNormalizer($classMetadataFactory);
@@ -203,11 +226,18 @@ class PatientController extends AbstractController
             : '';
         };
 
+        $callback2 = function ($dateTime) {
+            return $dateTime instanceof \DateTime
+            ? $dateTime->format('H:i')
+            : '';
+        };
+
         $normalizer->setCallbacks(array(
             'date' => $callback,
             'dentree' => $callback,
             'dedate' => $callback,
             'date_repro' => $callback,
+            'heure' => $callback2
         ));
 
         $org = $patientRepository->findAll();
@@ -215,6 +245,8 @@ class PatientController extends AbstractController
 
         $data = str_replace(",", ";", $data);
         $data = str_replace("Artisans;", "Artisans,", $data);
+        $data = str_replace("observ;sexe;nom;prenom;date;tel1;tel2;distance;etude;profession;activite;diagnostic;dedate;orientation;etpdecision;progetp;precisions;precisionsperso;dentree;motif;etp;"
+        , "Observations diverses;Sexe;Nom;Prénom;Date de naissance;Téléphone 1;Téléphone 2;Distance d'habitation;Niveau d'étude;Profession;Activité actuelle;Diagnostic médical;Date d'entrée;Orientation;ETP Décision;Type de programme;Précision non inclusion;Précision contenu personnalisé;Date de sortie;Motif d'arrêt de programme;Point final parcours ETP;", $data);
 
         $fileName = "export_patients_" . date("d_m_Y") . ".csv";
         $response = new Response($data);

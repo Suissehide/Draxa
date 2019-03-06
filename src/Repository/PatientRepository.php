@@ -20,7 +20,7 @@ class PatientRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Patient::class);
 	}
-    
+
     public function compte()
     {
         return $this->createQueryBuilder('p')

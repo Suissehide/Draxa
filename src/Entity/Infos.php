@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -18,31 +19,38 @@ class Infos
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"patient"})
      */
     private $date;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
      */
     private $accompagnant;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
      */
     private $etat;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
      */
     private $motifRefus;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="infos")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups({"infos"})
      */
     private $patient;
 

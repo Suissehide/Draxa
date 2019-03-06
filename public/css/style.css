@@ -500,7 +500,7 @@ ul#userMenu li a::after {
     padding-top: 80px;
 }
 
-@media only screen and (max-width: 1125px) {
+@media only screen and (max-width: 1400px) {
     .btn-nav .btn {
         font-size: 11px;
     }
