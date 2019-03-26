@@ -5,7 +5,7 @@
 {% block page_content %}
     <div class="wrapper">
         <div class="row">
-            <div class="col-md-offset-2 col-md-8">
+            <div class="date-wrapper">
                 <div id="paginator"></div>
             </div>
         </div>
@@ -116,7 +116,7 @@
                 </table>
             </div>
         </div>
-        <div class="row accueil-wrapper">
+        <div class="row stats-wrapper">
             <div class="box-sm">
                 <span class="glyphicon glyphicon-user"></span>
                 <h1>Patients</h1>
@@ -171,7 +171,7 @@
                                 .appendTo('#entretiens');
                             });
                         } else {
-                            $('<tr class="disabled text-left">').append('<td>Aucun entretien aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#entretiens');
+                            $('<tr class="disabled text-center">').append('<td colspan="5">Aucun entretien aujourd\'hui</td>').appendTo('#entretiens');
                         }
                         if (resp[1].length > 0) {
                             $.each(resp[1], function (index, val) {
@@ -180,7 +180,7 @@
                                 .appendTo('#ateliers');
                             });
                         } else {
-                            $('<tr class="disabled text-left">').append('<td>Aucun atelier aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#ateliers');
+                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="5">Aucun atelier aujourd\'hui</td>').appendTo('#ateliers');
                         }
                         if (resp[2].length > 0) {
                             $.each(resp[2], function (index, val) {
@@ -189,7 +189,7 @@
                                 .appendTo('#telephoniques');
                             });
                         } else {
-                            $('<tr class="disabled text-left">').append('<td>Aucun rendez-vous téléphonique aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#telephoniques');
+                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="5">Aucun rendez-vous téléphonique aujourd\'hui</td>').appendTo('#telephoniques');
                         }
                         if (resp[3].length > 0) {
                             $.each(resp[3], function (index, val) {
@@ -198,7 +198,7 @@
                                 .appendTo('#rendezVous');
                             });
                         } else {
-                            $('<tr class="disabled text-left">').append('<td>Aucun rendez-vous aujourd\'hui</td><td></td><td></td><td></td><td></td>').appendTo('#rendezVous');
+                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="5">Aucun rendez-vous aujourd\'hui</td>').appendTo('#rendezVous');
                         }
                         if (resp[4].length > 0) {
                             $.each(resp[4], function (index, val) {
@@ -207,7 +207,7 @@
                                 .appendTo('#infos');
                             });
                         } else {
-                            $('<tr class="disabled text-left">').append('<td>Aucun atelier Infos aujourd\'hui</td><td></td><td></td>').appendTo('#infos');
+                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucun atelier Infos').appendTo('#infos');
                         }
                         if (resp[5].length > 0) {
                             $.each(resp[5], function (index, val) {
@@ -216,7 +216,7 @@
                                 .appendTo('#bcvs');
                             });
                         } else {
-                            $('<tr class="disabled text-left">').append('<td>Aucun BCVs aujourd\'hui</td><td></td><td></td>').appendTo('#bcvs');
+                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucun BCVs').appendTo('#bcvs');
                         }
                         setTableWidth();
                     }
@@ -240,14 +240,9 @@
         });
 
         function setTableWidth() {
-            console.log("hey");
             $(".box").each(function(i, el) {
                 let lenght = $(el).find('tbody tr:first > td').length;
-                console.log($(el).find('tbody tr:first').attr('class'));
-                if ($(el).find('tbody tr:first').attr('class') == 'disabled text-left') {
-                    $(el).find('td').css("width", "0%");
-                    $(el).find('td:eq(0)').css("width", "100%");
-                } else if (lenght == 5) {
+                if (lenght == 5) {
                     $(el).find('td:eq(0)').css("width", "15%");
                     $(el).find('td:eq(1)').css("width", "15%");
                     $(el).find('td:eq(2)').css("width", "20%");

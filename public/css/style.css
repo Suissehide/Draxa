@@ -270,7 +270,7 @@ nav {
 
 nav a, #sideMenu {
     z-index: 10;
-    margin: 0 10px 0 0;
+    margin: 0 10px;
     text-shadow: 1px 1px 2px #212121;
 }
 
@@ -350,7 +350,7 @@ ul#userMenu li a::after {
     font-size: 22px;
     font-weight: 700;
     letter-spacing: 0px;
-    left: 90px;
+    left: 115px;
     top: 17px;
     text-transform: uppercase;
     position: fixed;
@@ -576,12 +576,12 @@ ul#userMenu li a::after {
     width: 100%;
     position: fixed;
     top: 100%;
-    margin: -50px auto 0 auto;
+    margin: -40px auto 0 auto;
 }
 
 #footer.footer-minimal {
-    height: 50px;
-    padding: 13px 15px;
+    height: 40px;
+    padding: 15px 30px;
 }
 
 body.tt-boxed #footer.footer-minimal .footer-container {
@@ -690,16 +690,21 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 ================= */
 
 .wrapper {
-    margin: 10px 65px;
+    margin: 10px 10%;
+}
+
+.date-wrapper {
+    margin: 0 auto;
 }
 
 .accueil-wrapper {
     margin: 20px 0;
-    display: -webkit-flex;
-    display: -webkit-box;
-    display: -moz-flex;
-    display: -moz-box;
-    display: -ms-flexbox;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.stats-wrapper {
+    margin: 20px 0;
     display: flex;
     flex-flow: row wrap;
 }

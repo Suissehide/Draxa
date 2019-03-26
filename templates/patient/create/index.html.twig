@@ -26,7 +26,7 @@
             {{ form_start(form) }}
             {{ form_errors(form) }}
             <div class="row">
-                <div class="col-md-11">
+                <div class="col-md-12">
                     {{ form_row(form.observ, {'required': false}) }}
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 <div class="col-md-3">
                     {{ form_row(form.prenom) }}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {{ form_row(form.date) }}
                 </div>
             </div>
@@ -64,7 +64,7 @@
                 <div class="col-md-2">
                     {{ form_row(form.etude) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.profession) }}
                 </div>
                 <div class="col-md-2">
@@ -81,7 +81,7 @@
                 <div class="col-md-3">
                     {{ form_row(form.dedate) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.orientation, {'required': false}) }}
                 </div>
             </div>
@@ -92,12 +92,12 @@
                 <div class="col-md-3">
                     {{ form_row(form.progetp, {'required': false}) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.precisions, {'required': false}) }}
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-12">
                     {{ form_row(form.precisionsperso, {'required': false}) }}
                 </div>
             </div>
@@ -111,11 +111,11 @@
                 </div>
 	        </div>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.motif, {'required': false}) }}
                 </div>
 
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.etp, {'required': false}) }}
                 </div>
             </div>
@@ -137,4 +137,17 @@
 
     {% block javascripts %}
         <script src="{{ asset('js/script.js') }}"></script>
+        <script type="text/javascript">
+            function sortSelect() {
+                $('.container-fluid').find('select').each(function() {
+                    let sel = $(this);
+                    let selected = sel.val();
+                    let opts_list = sel.find('option');
+                    opts_list.sort(function(a, b) { return $(a).text() > $(b).text() ? 1 : -1; });
+                    sel.html('').append(opts_list);
+                    sel.val(selected);
+                });
+            }
+            sortSelect();
+        </script
     {% endblock %}

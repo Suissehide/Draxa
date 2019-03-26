@@ -91,6 +91,7 @@ class PatientCreationFormType extends AbstractType
                     'Chômage' => 'Chômage',
                     'Arrêt maladie' => 'Arrêt maladie',
                     'Invalidité' => 'Invalidité',
+                    'Autre' => 'Autre',
                 ),
             ))
             ->add('diagnostic', ChoiceType::class, array(

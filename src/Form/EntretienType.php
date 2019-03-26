@@ -56,18 +56,13 @@ class EntretienType extends AbstractType
             ))
             ->add('type', ChoiceType::class, array(
                 'label' => 'Type',
+                'placeholder' => '',
                 'choices' => array(
-                    '' => '',
-                    'Diet' => 'Diet',
-                    'Renf1' => 'Renf1',
-                    'Renf2' => 'Renf2',
-                    'Reactu DE' => 'Reactu DE',
-                    'Tabac' => 'Tabac',
-                    'Psy' => 'Psy',
-                    'Diabète' => 'Diabete',
-                    'HTA' => 'HTA',
-                    'Autre' => 'Autre',
+                    'Ambu' => 'Ambu',
+                    'Tel' => 'Tel',
+                    'Hospit' => 'Hospit',
                 ),
+                'required' => false,
             ))
             ->add('accompagnant', ChoiceType::class, array(
                 'label' => 'Accompagnant',

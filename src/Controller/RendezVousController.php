@@ -105,7 +105,6 @@ class RendezVousController extends AbstractController
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
             $rendezVous = new RendezVous();
-            $rendezVous->setNom($request->request->get('nom'));
             $rendezVous->setDate($new_date);
             $rendezVous->setThematique($request->request->get('thematique'));
             $rendezVous->setHeure($new_time);

@@ -61,7 +61,7 @@
             {{ form_errors(form) }}
 
             <div class="row">
-                <div class="col-md-11">
+                <div class="col-md-12">
                     {{ form_row(form.observ, {'required': false}) }}
                 </div>
             </div>
@@ -78,7 +78,7 @@
                 <div class="col-md-3">
                     {{ form_row(form.prenom) }}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     {{ form_row(form.date) }}
                 </div>
             </div>
@@ -99,7 +99,7 @@
                 <div class="col-md-2">
                     {{ form_row(form.etude) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.profession) }}
                 </div>
                 <div class="col-md-2">
@@ -116,7 +116,7 @@
                 <div class="col-md-3">
                     {{ form_row(form.dedate) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.orientation, {'required': false}) }}
                 </div>
             </div>
@@ -127,12 +127,12 @@
                 <div class="col-md-3">
                     {{ form_row(form.progetp) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.precisions, {'required': false}) }}
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-12">
                     {{ form_row(form.precisionsperso, {'required': false}) }}
                 </div>
             </div>
@@ -146,10 +146,10 @@
                 </div>
 	        </div>
             <div class="row">
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.motif, {'required': false}) }}
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     {{ form_row(form.etp, {'required': false}) }}
                 </div>
             </div>
@@ -350,9 +350,10 @@
                 <div class="events-content">
                     <ol id="events-content-rendezVous">
                         {% for rendezVousForm in form.rendezVous %}
+                            {% set counter = (counter | default(0)) + 1 %}
                             <li {% if loop.last %} class="selected" {% endif %} data-date="{{ rendezVousForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>
-                                    {{ rendezVousForm.vars.value.nom  }}
+                                <h2>Consultation  
+                                    {{ counter }}
                                 </h2>
                                 <em>
                                     {{ rendezVousForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
@@ -712,8 +713,6 @@
                     <div class="modal-body">
                         {{ form_start(formRendezVous) }}
                         {{ form_errors(formRendezVous) }}
-                        {{ form_row(formRendezVous.nom) }}
-                        <div class="separator"></div>
                         {{ form_row(formRendezVous.date, {'attr': {'autocomplete': 'off'} }) }}
                         {{ form_row(formRendezVous.thematique) }}
                         {{ form_row(formRendezVous.heure) }}
@@ -949,6 +948,7 @@
             $('#timeline_update').trigger('click');
             $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
             changeSelectColor(null);
+            sortSelect();
         }
         updateForm();
 
@@ -1877,8 +1877,6 @@
         {# Add #}
 
         $("#rendezVous_add").on('click', function () {
-            var nom = $('#rendez_vous_nom').val();
-
             let date = $('#rendez_vous_date').val();
             let thematique = $('#rendez_vous_thematique').val();
             let time = $('#rendez_vous_heure').val();
@@ -1893,7 +1891,6 @@
                 dataType: "json",
                 data: {
                     "id": '{{ patient.id }}',
-                    "nom": nom,
                     "date": date,
                     "thematique": thematique,
                     "time": time,
@@ -1927,7 +1924,9 @@
                         var events_content = $('#events-content-rendezVous');
                         $('#events-content-rendezVous li').removeClass("selected");
                         $(events_content)
-                            .append(`<li data-date=` + date + `><h2>`+ nom + `</h2><em>` + date_em + `</em>
+                            .append(`<li data-date=` + date + `>
+                                        <h2>Consultation ` + (nb + 1) + `</h2>
+                                        <em>` + date_em + `</em>
                                         <div class="row">
                                             <div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_rendezVous_` + resp + `_date" name="patient_creation_form[rendezVous][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
                                         </div>
@@ -2020,6 +2019,18 @@
             }
             return false;
         });
+
+        function sortSelect() {
+            $('.container-fluid').find('select').each(function() {
+                let sel = $(this);
+                let selected = sel.val();
+                let opts_list = sel.find('option');
+                opts_list.sort(function(a, b) { return $(a).text() > $(b).text() ? 1 : -1; });
+                sel.html('').append(opts_list);
+                sel.val(selected);
+            });
+        }
+
     </script>
 
     <script src="{{ asset('js/timeline.js') }}"></script>

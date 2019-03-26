@@ -17,19 +17,6 @@ class RendezVousType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('nom', ChoiceType::class, array(
-                'label' => 'Nom',
-                'placeholder' => '',
-                'choices' => array(
-                    'Stress/Alerte' => 'Stress/Alerte',
-                    'M+3' => 'M+3',
-                    'Equilibre' => 'Equilibre',
-                    'Communication' => 'Communication',
-                    'M+12' => 'M+12',
-                    'Renf1' => 'Renf1',
-                    'Renf2' => 'Renf2',
-                ),
-            ))
             ->add('date', DateType::class, array(
                 'label' => 'Date prévue',
                 'widget' => 'single_text',

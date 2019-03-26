@@ -78,8 +78,10 @@ class PatientController extends AbstractController
                     "prenom" => $patient->getPrenom(),
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
                     "rdv" => $rdv[0],
-                    "thematique" => $rdv[1],
-                    "type" => $rdv[2],
+                    "date" => $rdv[1],
+                    "heure" => $rdv[2],
+                    "thematique" => $rdv[3],
+                    "type" => $rdv[4],
                     "etp" => $patient->getEtp(),
                     "status" => $sortie,
                     "observ" => $observ,
@@ -114,32 +116,32 @@ class PatientController extends AbstractController
         $bcvs = $em->getRepository(BCVs::class)->findClosestRdv($date, $patient->getId());
         $infos = $em->getRepository(Infos::class)->findClosestRdv($date, $patient->getId());
 
-        $rdv = ["", "", ""];
+        $rdv = ["", "", "", "", ""];
         $min_date = $date->add(new \DateInterval('P1Y'));
 
         if ($min_date && $rendezVous && date_diff($min_date, date_create($rendezVous->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($rendezVous->getDate()->format('y-m-d'));
-            $rdv = ["Consultation", $rendezVous->getThematique(), $rendezVous->getType()];
+            $rdv = ["Consultation", $rendezVous->getDate()->format('d/m/Y'), $rendezVous->getHeure()->format('H:i'), $rendezVous->getThematique(), $rendezVous->getType()];
         }
         if ($min_date && $ateliers && date_diff($min_date, date_create($ateliers->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($ateliers->getDate()->format('y-m-d'));
-            $rdv = ["Atelier", $ateliers->getThematique(), $ateliers->getType()];
+            $rdv = ["Atelier", $ateliers->getDate()->format('d/m/Y'), $ateliers->getHeure()->format('H:i'), $ateliers->getThematique(), $ateliers->getType()];
         }
         if ($min_date && $telephonique && date_diff($min_date, date_create($telephonique->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($telephonique->getDate()->format('y-m-d'));
-            $rdv = ["Téléphonique", "", $telephonique->getType()];
+            $rdv = ["Téléphonique", $telephonique->getDate()->format('d/m/Y'), "", "", $telephonique->getType()];
         }
         if ($min_date && $entretien && date_diff($min_date, date_create($entretien->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($entretien->getDate()->format('y-m-d'));
-            $rdv = ["Entretien", $entretien->getThematique(), $entretien->getType()];
+            $rdv = ["Entretien", $entretien->getDate()->format('d/m/Y'), $entretien->getHeure()->format('H:i'), $entretien->getThematique(), $entretien->getType()];
         }
         if ($min_date && $bcvs && date_diff($min_date, date_create($bcvs->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($bcvs->getDate()->format('y-m-d'));
-            $rdv = ["BCVs", "", ""];
+            $rdv = ["BCVs", $bcvs->getDate()->format('d/m/Y'), "", "", ""];
         }
         if ($min_date && $infos && date_diff($min_date, date_create($infos->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($infos->getDate()->format('y-m-d'));
-            $rdv = ["Atelier Infos", "", $infos->getType()];
+            $rdv = ["Atelier Infos", $infos->getDate()->format('d/m/Y'), "", "", $infos->getType()];
         }
         return $rdv;
     }
