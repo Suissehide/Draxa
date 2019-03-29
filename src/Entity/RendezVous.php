@@ -36,7 +36,7 @@ class RendezVous
     private $heure;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient"})
      */
     private $type;
@@ -88,7 +88,7 @@ class RendezVous
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(?string $type): self
     {
         $this->type = $type;
 

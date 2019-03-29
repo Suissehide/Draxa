@@ -30,6 +30,11 @@
                     {{ form_row(form.observ, {'required': false}) }}
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_row(form.divers, {'required': false}) }}
+                </div>
+            </div>
             <div class="separator">
                 <span id="details" class="separator-text">Détails</span>
             </div>
@@ -49,7 +54,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.tel1, {'required': false}) }}
+                    {{ form_row(form.tel1) }}
                 </div>
                 <div class="col-md-2">
                     {{ form_row(form.tel2, {'required': false}) }}
@@ -57,18 +62,18 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    {{ form_row(form.distance) }}
+                    {{ form_row(form.distance, {'required': false}) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.etude) }}
+                    {{ form_row(form.etude, {'required': false}) }}
                 </div>
                 <div class="col-md-4">
-                    {{ form_row(form.profession) }}
+                    {{ form_row(form.profession, {'required': false}) }}
                 </div>
                 <div class="col-md-2">
-                    {{ form_row(form.activite) }}
+                    {{ form_row(form.activite, {'required': false}) }}
                 </div>
             </div>
             <div class="separator">
@@ -107,7 +112,7 @@
             </div>
             <div class="row">
 		        <div class="col-md-3">
-                    {{ form_row(form.dentree) }}
+                    {{ form_row(form.dentree, {'required': false}) }}
                 </div>
 	        </div>
             <div class="row">

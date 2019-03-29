@@ -95,6 +95,14 @@ a, a:hover {
     background-color: lightslategray;
 }
 
+.table>tbody>tr.aomi>td, .table>tbody>tr.aomi>th, .table>tbody>tr>td.aomi, .table>tbody>tr>th.aomi, .table>tfoot>tr.aomi>td, .table>tfoot>tr.aomi>th, .table>tfoot>tr>td.aomi, .table>tfoot>tr>th.aomi, .table>thead>tr.aomi>td, .table>thead>tr.aomi>th, .table>thead>tr>td.aomi, .table>thead>tr>th.aomi {
+    background-color: limegreen;
+}
+
+.table>tbody>tr.hrcv>td, .table>tbody>tr.hrcv>th, .table>tbody>tr>td.hrcv, .table>tbody>tr>th.hrcv, .table>tfoot>tr.hrcv>td, .table>tfoot>tr.hrcv>th, .table>tfoot>tr>td.hrcv, .table>tfoot>tr>th.hrcv, .table>thead>tr.hrcv>td, .table>thead>tr.hrcv>th, .table>thead>tr>td.hrcv, .table>thead>tr>th.hrcv {
+    background-color: gold;
+}
+
 .table-striped>tbody>tr:nth-of-type(odd) {
     background-color: #e9e9e9;
 }
@@ -123,6 +131,14 @@ a, a:hover {
 
 .table>tbody>tr.out:hover>td, .table>tbody>tr.out:hover>th, .table>tbody>tr:hover>td.out, .table>tbody>tr:hover>th.out, .table>tfoot>tr.out:hover>td, .table>tfoot>tr.out:hover>th, .table>tfoot>tr:hover>td.out, .table>tfoot>tr:hover>th.out, .table>thead>tr.out:hover>td, .table>thead>tr.out:hover>th, .table>thead>tr:hover>td.out, .table>thead>tr:hover>th.out {
     background-color: rgba(7, 122, 117, 0.573);
+}
+
+.table>tbody>tr.aomi:hover>td, .table>tbody>tr.aomi:hover>th, .table>tbody>tr:hover>td.aomi, .table>tbody>tr:hover>th.aomi, .table>tfoot>tr.aomi:hover>td, .table>tfoot>tr.aomi:hover>th, .table>tfoot>tr:hover>td.aomi, .table>tfoot>tr:hover>th.aomi, .table>thead>tr.aomi:hover>td, .table>thead>tr.aomi:hover>th, .table>thead>tr:hover>td.aomi, .table>thead>tr:hover>th.aomi {
+    background-color: rgb(104, 250, 104)
+}
+
+.table>tbody>tr.hrcv:hover>td, .table>tbody>tr.hrcv:hover>th, .table>tbody>tr:hover>td.hrcv, .table>tbody>tr:hover>th.hrcv, .table>tfoot>tr.hrcv:hover>td, .table>tfoot>tr.hrcv:hover>th, .table>tfoot>tr:hover>td.hrcv, .table>tfoot>tr:hover>th.hrcv, .table>thead>tr.hrcv:hover>td, .table>thead>tr.hrcv:hover>th, .table>thead>tr:hover>td.hrcv, .table>thead>tr:hover>th.hrcv {
+    background-color: yellow;
 }
 
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
@@ -1014,4 +1030,10 @@ body.tt-boxed #footer.footer-minimal .footer-container {
     width: 16px;
     height: 16px;
     border: 2px solid red;
+}
+
+.glyphicon-star {
+    top: 2px;
+    color: black !important;
+    font-size: 18px
 }

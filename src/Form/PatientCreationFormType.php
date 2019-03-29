@@ -27,7 +27,8 @@ class PatientCreationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('observ', TextareaType::class, array('label' => 'Observations diverses'))
+            ->add('observ', TextareaType::class, array('label' => 'Suivi à régulariser'))
+            ->add('divers', TextareaType::class, array('label' => 'Divers'))
             ->add('date', DateType::class, array(
                 'label' => 'Date de naissance',
                 'widget' => 'single_text',

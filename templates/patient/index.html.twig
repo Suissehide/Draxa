@@ -43,6 +43,11 @@
             {{ form_row(form.observ, {'required': false}) }}
         </div>
     </div>
+	<div class="row">
+        <div class="col-md-12">
+            {{ form_row(form.divers, {'required': false}) }}
+        </div>
+    </div>
 	<div class="separator">
 		<span id="details" class="separator-text">Détails</span>
 	</div>
@@ -70,18 +75,18 @@
 	</div>
 	<div class="row">
 		<div class="col-md-4">
-			{{ form_row(form.distance) }}
+			{{ form_row(form.distance, {'required': false}) }}
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-2">
-			{{ form_row(form.etude) }}
+			{{ form_row(form.etude, {'required': false}) }}
 		</div>
 		<div class="col-md-4">
-			{{ form_row(form.profession) }}
+			{{ form_row(form.profession, {'required': false}) }}
 		</div>
 		<div class="col-md-2">
-			{{ form_row(form.activite) }}
+			{{ form_row(form.activite, {'required': false}) }}
 		</div>
 	</div>
 	<div class="separator">
@@ -89,7 +94,7 @@
 	</div>
 	<div class="row">
 		<div class="col-md-2">
-			{{ form_row(form.diagnostic) }}
+			{{ form_row(form.diagnostic, {'required': false}) }}
 		</div>
 		<div class="col-md-3">
 			{{ form_row(form.dedate) }}
@@ -100,10 +105,10 @@
 	</div>
 	<div class="row">
 		<div class="col-md-2">
-			{{ form_row(form.etpdecision) }}
+			{{ form_row(form.etpdecision, {'required': false}) }}
 		</div>
 		<div class="col-md-3">
-			{{ form_row(form.progetp) }}
+			{{ form_row(form.progetp, {'required': false}) }}
 		</div>
 		<div class="col-md-4">
 			{{ form_row(form.precisions, {'required': false}) }}
@@ -119,15 +124,15 @@
 	</div>
 	<div class="row">
 		<div class="col-md-3">
-            {{ form_row(form.dentree) }}
+            {{ form_row(form.dentree, {'required': false}) }}
         </div>
 	</div>
     <div class="row">
         <div class="col-md-4">
-            {{ form_row(form.motif) }}
+            {{ form_row(form.motif, {'required': false}) }}
         </div>
         <div class="col-md-4">
-            {{ form_row(form.etp) }}
+            {{ form_row(form.etp, {'required': false}) }}
         </div>
 
     </div>

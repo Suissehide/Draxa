@@ -11,7 +11,7 @@
 
 {% block page_content %}
 
-    <div class="wrapper">
+    <div class="wrapper scrollbar">
         <h1 id="top">Index |
             {{ patient.nom }}</h1>
         <div class="well nav-bar" id="navMenu">
@@ -65,6 +65,11 @@
                     {{ form_row(form.observ, {'required': false}) }}
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_row(form.divers, {'required': false}) }}
+                </div>
+            </div>
             <div class="separator">
                 <span id="details" class="separator-text">Détails</span>
             </div>
@@ -92,18 +97,18 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    {{ form_row(form.distance) }}
+                    {{ form_row(form.distance, {'required': false}) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.etude) }}
+                    {{ form_row(form.etude, {'required': false}) }}
                 </div>
                 <div class="col-md-4">
-                    {{ form_row(form.profession) }}
+                    {{ form_row(form.profession, {'required': false}) }}
                 </div>
                 <div class="col-md-2">
-                    {{ form_row(form.activite) }}
+                    {{ form_row(form.activite, {'required': false}) }}
                 </div>
             </div>
             <div class="separator">
@@ -111,7 +116,7 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.diagnostic) }}
+                    {{ form_row(form.diagnostic, {'required': false}) }}
                 </div>
                 <div class="col-md-3">
                     {{ form_row(form.dedate) }}
@@ -122,10 +127,10 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.etpdecision) }}
+                    {{ form_row(form.etpdecision, {'required': false}) }}
                 </div>
                 <div class="col-md-3">
-                    {{ form_row(form.progetp) }}
+                    {{ form_row(form.progetp, {'required': false}) }}
                 </div>
                 <div class="col-md-4">
                     {{ form_row(form.precisions, {'required': false}) }}
@@ -142,7 +147,7 @@
             </div>
             <div class="row">
 		        <div class="col-md-3">
-                    {{ form_row(form.dentree) }}
+                    {{ form_row(form.dentree, {'required': false}) }}
                 </div>
 	        </div>
             <div class="row">
@@ -1782,7 +1787,7 @@
                                             <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_heure">Heure</label><select id="patient_creation_form_entretiens_` + resp + `_heure" name="patient_creation_form[entretiens][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:15">09:15</option><option value="10:15">10:15</option><option value="10:30">10:30</option><option value="11:30">11:30</option><option value="11:45">11:45</option><option value="13:30">13:30</option><option value="14:30">14:30</option><option value="14:45">14:45</option><option value="16:00">16:00</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_type">Type</label><select id="patient_creation_form_entretiens_` + resp + `_type" name="patient_creation_form[entretiens][` + resp + `][type]" required="required" class="form-control"><option value=""></option><option value="Diet">Diet</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option><option value="Reactu DE">Reactu DE</option><option value="Tabac">Tabac</option><option value="Psy">Psy</option><option value="Diabete">Diabète</option><option value="HTA">HTA</option><option value="Autre">Autre</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_type">Type</label><select id="patient_creation_form_entretiens_` + resp + `_type" name="patient_creation_form[entretiens][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option><option value="Tel">Tel</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
                                             <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_entretiens_` + resp + `_accompagnant" name="patient_creation_form[entretiens][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>

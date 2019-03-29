@@ -27,6 +27,12 @@ class Patient
 
     /**
      * @Groups({"patient"})
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $divers;
+
+    /**
+     * @Groups({"patient"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $sexe;
@@ -675,6 +681,18 @@ class Patient
                 $info->setPatient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDivers(): ?string
+    {
+        return $this->divers;
+    }
+
+    public function setDivers(?string $divers): self
+    {
+        $this->divers = $divers;
 
         return $this;
     }

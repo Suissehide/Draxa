@@ -50,10 +50,11 @@ class PatientRepository extends ServiceEntityRepository
         }
         if ($sort) {
             foreach ($sort as $key => $value) {
-                $qb->orderBy('p.' . $key, $value);
+                if ($key != "date" && $key != "heure")
+                    $qb->orderBy('p.' . $key, $value);
             }
         } else {
-            $qb->orderBy('p.dedate', 'DESC');
+            $qb->orderBy('p.nom', 'ASC');
         }
         return $qb;
     }

@@ -66,12 +66,16 @@ class PatientController extends AbstractController
             $rows = array();
             foreach ($patients as $patient) {
                 $rdv = $this->getNextRdv($patient);
+
+                $observ = $patient->getObserv() ? 1 : 0;
+                $divers = $patient->getDivers() ? 1 : 0;
                 $sortie = 0;
-                $observ = 0;
-                if ($patient->getObserv())
-                    $observ = 1;
                 if ($patient->getDentree())
                     $sortie = 1;
+                else if ($patient->getProgetp() == "AOMI")
+                    $sortie = 2;
+                else if ($patient->getProgetp() == "AOMI + HRCV")
+                    $sortie = 3;
                 $row = [
                     "id" => $patient->getId(),
                     "nom" => $patient->getNom(),
@@ -85,9 +89,19 @@ class PatientController extends AbstractController
                     "etp" => $patient->getEtp(),
                     "status" => $sortie,
                     "observ" => $observ,
+                    "divers" => $divers,
                 ];
                 array_push($rows, $row);
             }
+
+            // dump($rows);
+
+            if ($sort && key($sort) == 'date')
+                usort($rows, $this->build_sorter_date(key($sort), reset($sort)));
+            if ($sort && key($sort) == 'heure')
+                usort($rows, $this->build_sorter_heure("date", key($sort), reset($sort)));
+
+
             $data = array(
                 "current" => intval($current),
                 "rowCount" => intval($rowCount),
@@ -102,6 +116,35 @@ class PatientController extends AbstractController
             'controller_name' => 'PatientController',
             'patients' => $patientRepository->findAll(),
         ]);
+    }
+
+    private function build_sorter_date($key, $dir='ASC') {
+        return function ($a, $b) use ($key, $dir) {
+            $t1 = is_array($a) ? $a[$key] : $a->$key;
+            $t2 = is_array($b) ? $b[$key] : $b->$key;
+            $t1 = date_create_from_format("d/m/Y", ($t1 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $t1);
+            $t2 = date_create_from_format("d/m/Y", ($t2 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $t2);
+            if ($t1 == $t2) return 0;
+            return (strtoupper($dir) == 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
+        };
+    }
+
+    private function build_sorter_heure($date, $hour, $dir='ASC') {
+        dump("heure");
+        return function ($a, $b) use ($date, $hour, $dir) {
+            $date1 = is_array($a) ? $a[$date] : $a->$date;
+            $date2 = is_array($b) ? $b[$date] : $b->$date;
+            $time1 = is_array($a) ? $a[$hour] . ':00' : $a->$hour . ':00';
+            $time2 = is_array($b) ? $b[$hour] . ':00' : $b->$hour . ':00';
+            $time1 = (($time1 == ':00' && strtoupper($dir) == 'ASC') ? '23:59:59' : $time1);
+            $time1 = (($time1 == ':00' && strtoupper($dir) == 'DESC') ? '00:00:00' : $time1);
+            $time2 = (($time2 == ':00' && strtoupper($dir) == 'ASC') ? '23:59:59' : $time2);
+            $time2 = (($time2 == ':00' && strtoupper($dir) == 'DESC') ? '00:00:00' : $time2);
+            $t1 = date_create_from_format("d/m/Y H:i:s", (($date1 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date1) . ' ' . $time1);
+            $t2 = date_create_from_format("d/m/Y H:i:s", (($date2 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date2) . ' ' . $time2);
+            if ($t1 == $t2) return 0;
+            return (strtoupper($dir) == 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
+        };
     }
 
     private function getNextRdv(Patient $patient)
@@ -263,8 +306,8 @@ class PatientController extends AbstractController
 
         $data = str_replace(",", ";", $data);
         $data = str_replace("Artisans;", "Artisans,", $data);
-        $data = str_replace("observ;sexe;nom;prenom;date;tel1;tel2;distance;etude;profession;activite;diagnostic;dedate;orientation;etpdecision;progetp;precisions;precisionsperso;dentree;motif;etp;"
-        , "Observations diverses;Sexe;Nom;Prénom;Date de naissance;Téléphone 1;Téléphone 2;Distance d'habitation;Niveau d'étude;Profession;Activité actuelle;Diagnostic médical;Date d'entrée;Orientation;ETP Décision;Type de programme;Précision non inclusion;Précision contenu personnalisé;Date de sortie;Motif d'arrêt de programme;Point final parcours ETP;", $data);
+        $data = str_replace("observ;divers;sexe;nom;prenom;date;tel1;tel2;distance;etude;profession;activite;diagnostic;dedate;orientation;etpdecision;progetp;precisions;precisionsperso;dentree;motif;etp;"
+        , "Suivi à régulariser;Divers;Sexe;Nom;Prénom;Date de naissance;Téléphone 1;Téléphone 2;Distance d'habitation;Niveau d'étude;Profession;Activité actuelle;Diagnostic médical;Date d'entrée;Orientation;ETP Décision;Type de programme;Précision non inclusion;Précision contenu personnalisé;Date de sortie;Motif d'arrêt de programme;Point final parcours ETP;", $data);
 
         $fileName = "export_patients_" . date("d_m_Y") . ".csv";
         $response = new Response($data);

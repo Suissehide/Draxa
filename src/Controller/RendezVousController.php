@@ -98,9 +98,11 @@ class RendezVousController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $id = $request->request->get('id');
 
-            $time = explode(':', $request->request->get('time'));
             $new_time = new \DateTime();
-            $new_time->setTime($time[0], $time[1]);
+            if ($request->request->get('time')) {
+                $time = explode(':', $request->request->get('time'));
+                $new_time->setTime($time[0], $time[1]);
+            }
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
@@ -172,9 +174,11 @@ class RendezVousController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             if ($rendezVous) {
-                $time = explode(':', $request->request->get('time'));
                 $new_time = new \DateTime();
-                $new_time->setTime($time[0], $time[1]);
+                if ($request->request->get('time')) {
+                    $time = explode(':', $request->request->get('time'));
+                    $new_time->setTime($time[0], $time[1]);
+                }
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
                 
