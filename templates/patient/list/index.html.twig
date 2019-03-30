@@ -72,8 +72,13 @@
                 3: "hrcv",
             },
             requestHandler: function (request) {
-                request.etat = $etat;
-                return request;
+                try {
+                    request.etat = $etat;
+                    return request;
+                } catch (e) {
+                    console.error(e);
+                    console.error('JSON recived :', request);
+                }
             },
             url: "{{ path('patient') }}",
             formatters: {

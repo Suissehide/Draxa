@@ -86,6 +86,8 @@ window.onscroll = function () { navTop() };
 
 function navTop() {
     var header = document.getElementById("navMenu");
+    if (!header)
+        return;
     var sticky = header.offsetTop;
     if (window.pageYOffset > sticky) {
         header.classList.add("sticky");
