@@ -134,14 +134,14 @@ class PatientController extends AbstractController
         return function ($a, $b) use ($date, $hour, $dir) {
             $date1 = is_array($a) ? $a[$date] : $a->$date;
             $date2 = is_array($b) ? $b[$date] : $b->$date;
-            $time1 = is_array($a) ? $a[$hour] . ':00' : $a->$hour . ':00';
-            $time2 = is_array($b) ? $b[$hour] . ':00' : $b->$hour . ':00';
-            $time1 = (($time1 == ':00' && strtoupper($dir) == 'ASC') ? '23:59:59' : $time1);
-            $time1 = (($time1 == ':00' && strtoupper($dir) == 'DESC') ? '00:00:00' : $time1);
-            $time2 = (($time2 == ':00' && strtoupper($dir) == 'ASC') ? '23:59:59' : $time2);
-            $time2 = (($time2 == ':00' && strtoupper($dir) == 'DESC') ? '00:00:00' : $time2);
-            $t1 = date_create_from_format("d/m/Y H:i:s", (($date1 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date1) . ' ' . $time1);
-            $t2 = date_create_from_format("d/m/Y H:i:s", (($date2 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date2) . ' ' . $time2);
+            $time1 = is_array($a) ? $a[$hour] : $a->$hour;
+            $time2 = is_array($b) ? $b[$hour] : $b->$hour;
+            $time1 = (($time1 == '' && strtoupper($dir) == 'ASC') ? '23:59' : $time1);
+            $time1 = (($time1 == '' && strtoupper($dir) == 'DESC') ? '00:00' : $time1);
+            $time2 = (($time2 == '' && strtoupper($dir) == 'ASC') ? '23:59' : $time2);
+            $time2 = (($time2 == '' && strtoupper($dir) == 'DESC') ? '00:00' : $time2);
+            $t1 = date_create_from_format("d/m/Y H:i", (($date1 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date1) . ' ' . $time1);
+            $t2 = date_create_from_format("d/m/Y H:i", (($date2 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date2) . ' ' . $time2);
             if ($t1 == $t2) return 0;
             return (strtoupper($dir) == 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
         };
