@@ -89,7 +89,7 @@ class PatientController extends AbstractController
                     "etp" => $patient->getEtp(),
                     "status" => $sortie,
                     "observ" => $observ,
-                    "divers" => $divers,
+                    "divers" => $divers
                 ];
                 array_push($rows, $row);
             }
