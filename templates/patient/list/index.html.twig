@@ -75,11 +75,6 @@
                 request.etat = $etat;
                 return request;
             },
-            responseHandler: function (res) {
-                _bootgridResponse = res;
-                console.log("responseHandler ", res);
-                return res;
-            },
             url: "{{ path('patient') }}",
             formatters: {
                 "observ": function(column, row) {
