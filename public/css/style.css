@@ -647,6 +647,13 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 /* footer copyright
 ================= */
 
+.footer-flex {
+    width: 100%;
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-between;
+}
+
 .footer-copyright {
     font-size: 12px;
     color: #888;
@@ -730,7 +737,7 @@ body.tt-boxed #footer.footer-minimal .footer-container {
     padding: 0 15px;
 }
 
-@media (max-width: 650px) {
+@media (max-width: 950px) {
     .box {
         width: 100%;
     }
@@ -749,11 +756,12 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 
 .box-sm {
     position: relative;
-    flex: 1;
     margin: 0 10px;
+    margin-bottom: 10px;
     padding: 10px 15px;
     background-color: #fcfcfc;
     border: #e7eaec 1px solid;
+    flex: 20%;
 }
 
 .box-sm .glyphicon {
@@ -790,6 +798,12 @@ body.tt-boxed #footer.footer-minimal .footer-container {
 
 .box-sm .glyphicon-user {
     color: violet;
+}
+
+@media (max-width: 1200px) {
+    .box-sm {
+        flex: 45%;
+    }
 }
 
 .well {
