@@ -159,11 +159,11 @@ class PatientController extends AbstractController
 
         if ($min_date && $rendezVous && date_diff($min_date, date_create($rendezVous->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($rendezVous->getDate()->format('y-m-d'));
-            $rdv = ["Consultation", $rendezVous->getDate()->format('d/m/Y'), $rendezVous->getHeure()->format('H:i'), $rendezVous->getThematique(), $rendezVous->getType()];
+            $rdv = ["Consultation", $rendezVous->getDate()->format('d/m/Y'), $rendezVous->getHeure() ? $rendezVous->getHeure()->format('H:i') : "", $rendezVous->getThematique(), $rendezVous->getType()];
         }
         if ($min_date && $ateliers && date_diff($min_date, date_create($ateliers->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($ateliers->getDate()->format('y-m-d'));
-            $rdv = ["Atelier", $ateliers->getDate()->format('d/m/Y'), $ateliers->getHeure()->format('H:i'), $ateliers->getThematique(), $ateliers->getType()];
+            $rdv = ["Atelier", $ateliers->getDate()->format('d/m/Y'), $ateliers->getHeure() ? $ateliers->getHeure()->format('H:i') : "", $ateliers->getThematique(), $ateliers->getType()];
         }
         if ($min_date && $telephonique && date_diff($min_date, date_create($telephonique->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($telephonique->getDate()->format('y-m-d'));
@@ -171,7 +171,7 @@ class PatientController extends AbstractController
         }
         if ($min_date && $entretien && date_diff($min_date, date_create($entretien->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($entretien->getDate()->format('y-m-d'));
-            $rdv = ["Entretien", $entretien->getDate()->format('d/m/Y'), $entretien->getHeure()->format('H:i'), $entretien->getThematique(), $entretien->getType()];
+            $rdv = ["Entretien", $entretien->getDate()->format('d/m/Y'), $entretien->getHeure() ? $entretien->getHeure()->format('H:i') : "", $entretien->getThematique(), $entretien->getType()];
         }
         if ($min_date && $bcvs && date_diff($min_date, date_create($bcvs->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($bcvs->getDate()->format('y-m-d'));

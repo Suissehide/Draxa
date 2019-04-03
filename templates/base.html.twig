@@ -14,11 +14,13 @@
         <link rel="stylesheet" href="{{ asset('vendor/jquery/bootstrap-datepicker.css') }}">
         <link rel="stylesheet" href="{{ asset('vendor/jquery/bootstrap-datepaginator.css') }}">
         <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        <div class="row">
-            {# flashbag #}
+                
+        {# flashbag #}
+        <div class="alert-row">
             {% if app.request.hasPreviousSession %}
                 {% set top = 60 %}
                 {% for type, messages in app.session.flashbag.all() %}
@@ -32,9 +34,10 @@
                 {% endfor %}
             {% endif %}
         </div>
+
         {% block body %}{% endblock %}
-        <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+        <!-- JavaScript -->
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('vendor/jquery/jquery.bootgrid.min.js') }}"></script>
         <script src="{{ asset('vendor/jquery/moment.js') }}"></script>
@@ -46,6 +49,7 @@
         <script src='https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js'></script>
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ asset('vendor/bootstrap/js/sideToggleExtended.js') }}"></script>
+
         {% block javascripts %}{% endblock %}
     </body>
 </html>
