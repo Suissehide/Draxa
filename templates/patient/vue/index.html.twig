@@ -727,7 +727,7 @@
                         {{ form_row(formRendezVous.motifRefus, {'required': false}) }}
                         {{ form_row(formRendezVous._token) }}
                         {{ form_end(formRendezVous, {'render_rest' : false}) }}
-                        <button id="rendezVous_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                        <button id="rendezVous_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -763,7 +763,7 @@
                         {{ form_row(formEntretien.motifRefus, {'required': false}) }}
                         {{ form_row(formEntretien._token) }}
                         {{ form_end(formEntretien, {'render_rest' : false}) }}
-                        <button id="entretien_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                        <button id="entretien_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -799,7 +799,7 @@
                         {{ form_row(formAtelier.motifRefus, {'required': false}) }}
                         {{ form_row(formAtelier._token) }}
                         {{ form_end(formAtelier, {'render_rest' : false}) }}
-                        <button id="atelier_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                        <button id="atelier_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -832,7 +832,7 @@
                         {{ form_row(formTelephonique.motifRefus, {'required': false}) }}
                         {{ form_row(formTelephonique._token) }}
                         {{ form_end(formTelephonique, {'render_rest' : false}) }}
-                        <button id="telephonique_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                        <button id="telephonique_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -866,7 +866,7 @@
                         {{ form_row(formInfos.motifRefus, {'required': false}) }}
                         {{ form_row(formInfos._token) }}
                         {{ form_end(formInfos, {'render_rest' : false}) }}
-                        <button id="infos_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                        <button id="infos_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -900,7 +900,7 @@
                         {{ form_row(formBCVs.motifRefus, {'required': false}) }}
                         {{ form_row(formBCVs._token) }}
                         {{ form_end(formBCVs, {'render_rest' : false}) }}
-                        <button id="bcvs_add" class="btn btn-primary btn-block" data-dismiss="modal" disabled="disabled">Ajouter</button>
+                        <button id="bcvs_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -945,11 +945,34 @@
 
 {% block javascripts %}
     <script src="{{ asset('js/script.js') }}"></script>
+    <script src="{{ asset('js/timeline.js') }}"></script>
     <script type="text/javascript">
 
         alert_pos = {{ top }};
 
+        function sort_date1(a, b) {
+            let date1 = $(a).find('a').attr('data-date').split("/");
+            let date2 = $(b).find('a').attr('data-date').split("/");
+            return (new Date(date2[2], date2[1], date2[0])) < (new Date(date1[2], date1[1], date1[0])) ? 1 : -1;    
+        }
+
+        function sort_date2(a, b) {
+            let date1 = $(a).attr('data-date').split("/");
+            let date2 = $(b).attr('data-date').split("/");
+            return (new Date(date2[2], date2[1], date2[0])) < (new Date(date1[2], date1[1], date1[0])) ? 1 : -1;    
+        }
+
+        function orderTimeline() {
+            $('.cd-horizontal-timeline').each(function() {
+                let timeline = $(this).find('.timeline ol')
+                let events = $(this).find('.events-content ol')
+                timeline.find('li').sort(sort_date1).appendTo(timeline);
+                events.find('li').sort(sort_date2).appendTo(events);
+            });
+        }
+
         function updateForm() {
+            orderTimeline();
             $('#timeline_update').trigger('click');
             $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
             changeSelectColor(null);
@@ -999,21 +1022,19 @@
         })
 
         {# Update datetime #}
-        var month = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre",]
-
         function sort_li(a, b){
             return ($(b).find("a").attr('data-date')) < ($(a).find("a").attr('data-date')) ? 1 : -1;    
         }
 
-        $("ol .datepicker").on("change", function() {
+        $("ol").on("change", ".datepicker", function() {
+            var month = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
             let datetime = $(this).val().split("/");
+            // $(this).parents("li").attr("data-date", $(this).val());
             $(this).parents("li").find("em").text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1] + " " + datetime[2]);
             let index = $(this).parents('li').index();
             let dot = $(this).parents('.events-content').prev().find('ol li:eq(' + index + ') a');
             dot.attr('data-date', $(this).val());
             dot.text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1]);
-            // $(this).parents('ol').find('li').sort(sort_li).appendTo($(this).parents('ol'));
-            // updateForm();
         })
 
         {# Delete #}
@@ -1107,31 +1128,6 @@
             });
         })
 
-        {# Error date add #}
-
-        $("#bc_vs_date").change(function () {
-            resetErrors();
-            var date = $(this).val();
-            $.ajax({
-                url: "{{ path( 'bcvs_date_error' ) }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "id": '{{ patient.id }}'
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#bc_vs_date").addClass('is-invalid').after(msg);
-                        document.getElementById("bcvs_add").disabled = true;
-                    } else {
-                        document.getElementById("bcvs_add").disabled = false;
-                    }
-                }
-            });
-        });
-
         {# Add #}
 
         $("#bcvs_add").on('click', function () {
@@ -1208,7 +1204,6 @@
                         $('#events-content-bcvs li:last-child').addClass('selected');
 
                         updateForm();
-                        document.getElementById("bcvs_add").disabled = true;
                     }
                 }
             });
@@ -1247,31 +1242,6 @@
                 }
             });
         })
-
-        {# Error date add #}
-
-        $("#infos_date").change(function () {
-            resetErrors();
-            var date = $(this).val();
-            $.ajax({
-                url: "{{ path( 'infos_date_error' ) }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "id": '{{ patient.id }}'
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#infos_date").addClass('is-invalid').after(msg);
-                        document.getElementById("infos_add").disabled = true;
-                    } else {
-                        document.getElementById("infos_add").disabled = false;
-                    }
-                }
-            });
-        });
 
         {# Add #}
 
@@ -1349,7 +1319,6 @@
                         $('#events-content-infos li:last-child').addClass('selected');
 
                         updateForm();
-                        document.getElementById("infos_add").disabled = true;
                     }
                 }
             });
@@ -1390,31 +1359,6 @@
                 }
             });
         })
-
-        {# Error date add #}
-
-        $("#atelier_date").change(function () {
-            resetErrors();
-            var date = $(this).val();
-            $.ajax({
-                url: "{{ path( 'atelier_date_error' ) }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "id": '{{ patient.id }}'
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#atelier_date").addClass('is-invalid').after(msg);
-                        document.getElementById("atelier_add").disabled = true;
-                    } else {
-                        document.getElementById("atelier_add").disabled = false;
-                    }
-                }
-            });
-        });
 
         {# Add #}
 
@@ -1504,7 +1448,6 @@
                         $('#events-content-ateliers li:last-child').addClass('selected');
 
                         updateForm();
-                        document.getElementById("atelier_add").disabled = true;
                     }
                 }
             });
@@ -1546,31 +1489,6 @@
                 }
             });
         })
-
-        {# Error date add #}
-
-        $("#telephonique_date").change(function () {
-            resetErrors();
-            var date = $(this).val();
-            $.ajax({
-                url: "{{ path( 'telephonique_date_error' ) }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "id": '{{ patient.id }}'
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#telephonique_date").addClass('is-invalid').after(msg);
-                        document.getElementById("telephonique_add").disabled = true;
-                    } else {
-                        document.getElementById("telephonique_add").disabled = false;
-                    }
-                }
-            });
-        });
 
         {# Add #}
 
@@ -1657,7 +1575,6 @@
                         $('#events-content-telephoniques li:last-child').addClass('selected');
 
                         updateForm();
-                        document.getElementById("telephonique_add").disabled = true;
                     }
                 }
             });
@@ -1698,31 +1615,6 @@
                 }
             });
         })
-
-        {# Error date add #}
-
-        $("#entretien_date").change(function () {
-            resetErrors();
-            var date = $(this).val();
-            $.ajax({
-                url: "{{ path( 'entretien_date_error' ) }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "id": '{{ patient.id }}'
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#entretien_date").addClass('is-invalid').after(msg);
-                        document.getElementById("entretien_add").disabled = true;
-                    } else {
-                        document.getElementById("entretien_add").disabled = false;
-                    }
-                }
-            });
-        });
 
         {# Add #}
 
@@ -1812,7 +1704,6 @@
                         $('#events-content-entretiens li:last-child').addClass('selected');
 
                         updateForm();
-                        document.getElementById("entretien_add").disabled = true;
                     }
                 }
             });
@@ -1853,31 +1744,6 @@
                 }
             });
         })
-
-        {# Error date add #}
-
-        $("#rendez_vous_date").change(function () {
-            resetErrors();
-            var date = $(this).val();
-            $.ajax({
-                url: "{{ path( 'rendezVous_date_error' ) }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "id": '{{ patient.id }}'
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var msg = '<span class="invalid-feedback d-block"><span class="mb-0 d-block"><span class="initialism form-error-icon badge badge-danger">Error</span> <span class="form-error-message">La date est antérieure à un précédent rendez-vous ou à aujourd\'hui</span></span></span>';
-                        $("#rendez_vous_date").addClass('is-invalid').after(msg);
-                        document.getElementById("rendezVous_add").disabled = true;
-                    } else {
-                        document.getElementById("rendezVous_add").disabled = false;
-                    }
-                }
-            });
-        });
 
         {# Add #}
 
@@ -1967,7 +1833,6 @@
                         $('#events-content-rendezVous li:last-child').addClass('selected');
 
                         updateForm();
-                        document.getElementById("rendezVous_add").disabled = true;
                     }
                 }
             });
@@ -2038,7 +1903,7 @@
 
     </script>
 
-    <script src="{{ asset('js/timeline.js') }}"></script>
+
 
     {# function reload_js(src) {
        	$('script[src="' + src + '"]').remove();

@@ -5,7 +5,7 @@ jQuery(document).ready(function($){
 	(timelines.length > 0) && initTimeline(timelines);
 
 	function initTimeline(timelines) {
-		timelines.each(function(){
+		timelines.each(function() {
 			var timeline = $(this),
 				timelineComponents = {};
 			//cache timeline components 

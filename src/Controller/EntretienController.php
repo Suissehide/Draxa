@@ -99,9 +99,11 @@ class EntretienController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $id = $request->request->get('id');
 
-            $time = explode(':', $request->request->get('time'));
-            $new_time = new \DateTime();
-            $new_time->setTime($time[0], $time[1]);
+            $new_time = null;
+            if ($request->request->get('time') != '') { 
+                $time = explode(':', $request->request->get('time'));
+                $new_time->setTime($time[0], $time[1]);
+            }
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
@@ -173,9 +175,11 @@ class EntretienController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             if ($entretien) {
-                $time = explode(':', $request->request->get('time'));
-                $new_time = new \DateTime();
-                $new_time->setTime($time[0], $time[1]);
+                $new_time = null;
+                if ($request->request->get('time') != '') { 
+                    $time = explode(':', $request->request->get('time'));
+                    $new_time->setTime($time[0], $time[1]);
+                }
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
     

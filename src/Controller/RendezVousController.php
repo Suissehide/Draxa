@@ -98,8 +98,8 @@ class RendezVousController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $id = $request->request->get('id');
 
-            $new_time = new \DateTime();
-            if ($request->request->get('time')) {
+            $new_time = null;
+            if ($request->request->get('time') != '') {
                 $time = explode(':', $request->request->get('time'));
                 $new_time->setTime($time[0], $time[1]);
             }
@@ -174,8 +174,8 @@ class RendezVousController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             if ($rendezVous) {
-                $new_time = new \DateTime();
-                if ($request->request->get('time')) {
+                $new_time = null;
+                if ($request->request->get('time') != '') {
                     $time = explode(':', $request->request->get('time'));
                     $new_time->setTime($time[0], $time[1]);
                 }
