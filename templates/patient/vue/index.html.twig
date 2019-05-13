@@ -240,15 +240,15 @@
                 <span id="bcvs" class="separator-text">BCVs</span>
             </div>
 
-            <section class="cd-horizontal-timeline row" id="timeline-BCVs">
+            <section class="cd-horizontal-timeline row" id="timeline-bcvs">
                 <div class="timeline">
                     <div class="events-wrapper">
                         <div class="events">
-                            <ol id="events-BCVs">
-                                {% for BCVsForm in form.bcvs %}
+                            <ol id="events-bcvs">
+                                {% for bcvsForm in form.bcvs %}
                                     <li>
-                                        <a href="#0" data-date="{{ BCVsForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ BCVsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                        <a href="#0" data-date="{{ bcvsForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
+                                            {{ bcvsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -1037,6 +1037,29 @@
             dot.text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1]);
         })
 
+        {# Alert #}
+
+        function errorAlert() {
+            $('body').prepend(
+                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur: date déjà existante !</div>'
+            );
+            alert_pos += 72;
+        }
+
+        function deleteAlert() {
+            $('body').prepend(
+                '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Suppression effectuée !</div>'
+            );
+            alert_pos += 72;
+        }
+
+        function editAlert() {
+            $('body').prepend(
+                '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
+            );
+            alert_pos += 72;
+        }
+
         {# Delete #}
 
         $('.cd-horizontal-timeline').on("click", ".btn-danger", function () {
@@ -1060,37 +1083,33 @@
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'entretien_remove', { 'id': 'entretien_id' }) }}";
                     url = url.replace("entretien_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 } else if (timeline.is('#timeline-ateliers')) {
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'atelier_remove', { 'id': 'atelier_id' }) }}";
                     url = url.replace("atelier_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 } else if (timeline.is('#timeline-telephoniques')) {
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'telephonique_remove', { 'id': 'telephonique_id' }) }}";
                     url = url.replace("telephonique_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 } else if (timeline.is('#timeline-rendezVous')) {
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
                     url = url.replace("rendezVous_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 } else if (timeline.is('#timeline-bcvs')) {
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'bcvs_remove', { 'id': 'bcvs_id' }) }}";
                     url = url.replace("bcvs_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 } else if (timeline.is('#timeline-infos')) {
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'infos_remove', { 'id': 'infos_id' }) }}";
                     url = url.replace("infos_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {}});
+                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 }
-                $('body').prepend(
-                    '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Suppression effectuée !</div>'
-                );
-                alert_pos += 72;
             });
         });
 
@@ -1120,10 +1139,10 @@
                     "motifRefus": arr[4]
                 },
                 success: function (resp) {
-                    $('body').prepend(
-                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-                    );
-                    alert_pos += 72;
+                    if (resp)
+                        editAlert();
+                    else
+                        errorAlert();
                 }
             });
         })
@@ -1187,10 +1206,10 @@
                                             <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_permission">Permission demandée</label><select id="patient_creation_form_bcvs_` + resp + `_permission" name="patient_creation_form[bcvs][` + resp + `][permission]" class="form-control"><option value=""></option><option value="Oui 1 nuit">Oui 1 nuit</option><option value="Oui 2 nuits" selected="selected">Oui 2 nuits</option><option value="Non">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_bcvs_` + resp + `_etat" name="patient_creation_form[bcvs][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_bcvs_` + resp + `_etat" name="patient_creation_form[bcvs][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="gold">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                        <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_motifRefus" name="patient_creation_form[bcvs][` + resp + `][motifRefus]" class="form-control"></div>
+                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_motifRefus" name="patient_creation_form[bcvs][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -1198,12 +1217,14 @@
                                         </div>
                                     </li>`)
                             .appendTo(events_content);
-                        $('#patient_creation_form_bc_vs_' + resp + '_permission').val(permission);
-                        $('#patient_creation_form_bc_vs_' + resp + '_accompagnant').val(accompagnant);
-                        $('#patient_creation_form_bc_vs_' + resp + '_etat').val(etat);
+                        $('#patient_creation_form_bcvs_' + resp + '_permission').val(permission);
+                        $('#patient_creation_form_bcvs_' + resp + '_accompagnant').val(accompagnant);
+                        $('#patient_creation_form_bcvs_' + resp + '_etat').val(etat);
                         $('#events-content-bcvs li:last-child').addClass('selected');
 
                         updateForm();
+                    } else {
+                        errorAlert();
                     }
                 }
             });
@@ -1235,10 +1256,10 @@
                     "motifRefus": arr[4]
                 },
                 success: function (resp) {
-                    $('body').prepend(
-                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-                    );
-                    alert_pos += 72;
+                    if (resp)
+                        editAlert();
+                    else
+                        errorAlert();
                 }
             });
         })
@@ -1302,10 +1323,10 @@
                                     <label class="control-label" for="patient_creation_form_infos_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_infos_` + resp + `_accompagnant" name="patient_creation_form[infos][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="Oui">Oui</option><option value="Non" selected="selected">Non</option></select></div>
                                 </div>
                                 <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_infos_` + resp + `_etat" name="patient_creation_form[infos][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_infos_` + resp + `_etat" name="patient_creation_form[infos][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="gold">Non</option></select></div>
                                 </div>
                                 <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_infos_` + resp + `_motifRefus" name="patient_creation_form[infos][` + resp + `][motifRefus]" class="form-control"></div>
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_infos_` + resp + `_motifRefus" name="patient_creation_form[infos][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
                                 </div>
                                 <div class="row">
                                     <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -1319,6 +1340,8 @@
                         $('#events-content-infos li:last-child').addClass('selected');
 
                         updateForm();
+                    } else {
+                        errorAlert();
                     }
                 }
             });
@@ -1352,10 +1375,10 @@
                     "motifRefus": arr[6]
                 },
                 success: function (resp) {
-                    $('body').prepend(
-                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-                    );
-                    alert_pos += 72;
+                    if (resp)
+                        editAlert();
+                    else
+                        errorAlert();
                 }
             });
         })
@@ -1429,7 +1452,7 @@
                                             <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_ateliers_` + resp + `_accompagnant" name="patient_creation_form[ateliers][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_ateliers_` + resp + `_etat" name="patient_creation_form[ateliers][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_etat">Est-il/elle venu(e) ?</label><select id="patient_creation_form_ateliers_` + resp + `_etat" name="patient_creation_form[ateliers][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="gold">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
                                             <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_ateliers_` + resp + `_motifRefus" name="patient_creation_form[ateliers][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
@@ -1448,6 +1471,8 @@
                         $('#events-content-ateliers li:last-child').addClass('selected');
 
                         updateForm();
+                    } else {
+                        errorAlert();
                     }
                 }
             });
@@ -1482,10 +1507,10 @@
                     "motifRefus": motifRefus
                 },
                 success: function (resp) {
-                    $('body').prepend(
-                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-                    );
-                    alert_pos += 72;
+                    if (resp)
+                        editAlert();
+                    else
+                        errorAlert();
                 }
             });
         })
@@ -1554,7 +1579,7 @@
                                             <label class="control-label" for="patient_creation_form_telephoniques_` + resp + `_etat">A-t-il eu lieu ?</label>
                                             <select id="patient_creation_form_telephoniques_` + resp + `_etat" name="patient_creation_form[telephoniques][` + resp + `][etat]" class="form-control">
                                                 <option value=""></option><option value="Oui" class="hotpink">Oui</option>
-                                                <option value="Non" class="yellow">Non</option>
+                                                <option value="Non" class="gold">Non</option>
                                             </select>
                                         </div></div>
 
@@ -1575,6 +1600,8 @@
                         $('#events-content-telephoniques li:last-child').addClass('selected');
 
                         updateForm();
+                    } else {
+                        errorAlert();
                     }
                 }
             });
@@ -1608,10 +1635,10 @@
                     "motifRefus": arr[6]
                 },
                 success: function (resp) {
-                    $('body').prepend(
-                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-                    );
-                    alert_pos += 72;
+                    if (resp)
+                        editAlert();
+                    else
+                        errorAlert();
                 }
             });
         })
@@ -1685,10 +1712,10 @@
                                             <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_entretiens_` + resp + `_accompagnant" name="patient_creation_form[entretiens][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_entretiens_` + resp + `_etat" name="patient_creation_form[entretiens][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_entretiens_` + resp + `_etat" name="patient_creation_form[entretiens][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="gold">Non</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_entretiens_` + resp + `_motifRefus" name="patient_creation_form[entretiens][` + resp + `][motifRefus]" class="form-control"></div>
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_entretiens_` + resp + `_motifRefus" name="patient_creation_form[entretiens][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
                                         </div>
                                         <div class="row">
                                             <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -1704,6 +1731,8 @@
                         $('#events-content-entretiens li:last-child').addClass('selected');
 
                         updateForm();
+                    } else {
+                        errorAlert();
                     }
                 }
             });
@@ -1737,10 +1766,10 @@
                     "motifRefus": arr[6]
                 },
                 success: function (resp) {
-                    $('body').prepend(
-                        '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-                    );
-                    alert_pos += 72;
+                    if (resp)
+                        editAlert();
+                    else
+                        errorAlert();
                 }
             });
         })
@@ -1814,7 +1843,7 @@
                                             <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_rendezVous_` + resp + `_accompagnant" name="patient_creation_form[rendezVous][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="oui">Oui</option><option value="non">Non</option></select></div>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_rendezVous_` + resp + `_etat" name="patient_creation_form[rendezVous][` + resp + `][etat]" class="form-control" style="background: white;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="yellow">Non</option></select></div>
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_rendezVous_` + resp + `_etat" name="patient_creation_form[rendezVous][` + resp + `][etat]" class="form-control" style="background: white;"><option value="" class="white"></option><option value="Oui" class="hotpink">Oui</option><option value="Non" class="gold">Non</option></select></div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_rendezVous_` + resp + `_motifRefus" name="patient_creation_form[rendezVous][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
@@ -1833,6 +1862,8 @@
                         $('#events-content-rendezVous li:last-child').addClass('selected');
 
                         updateForm();
+                    } else {
+                        errorAlert();
                     }
                 }
             });

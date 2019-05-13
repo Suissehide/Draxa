@@ -102,6 +102,9 @@ class TelephoniqueController extends AbstractController
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
+            if ($em->getRepository(Telephonique::class)->findSameDate($date[2], $date[1], $date[0]) != [])
+                return new JsonResponse(0);
+
             $telephonique = new Telephonique();
             $telephonique->setDate($new_date);
             $telephonique->setThematique($request->request->get('thematique'));
@@ -169,6 +172,11 @@ class TelephoniqueController extends AbstractController
             if ($telephonique) {
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+                $t = $em->getRepository(Telephonique::class)->findSameDate($date[2], $date[1], $date[0]);
+                if ($t != [] && $t[0]->getDate() != $telephonique->getDate())
+                    return new JsonResponse(0);
+
                 $telephonique->setDate($new_date);
                 $telephonique->setThematique($request->request->get('thematique'));
                 $telephonique->setEtat($request->request->get('etat'));

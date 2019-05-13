@@ -107,6 +107,9 @@ class InfosController extends AbstractController
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
+            if ($em->getRepository(Infos::class)->findSameDate($date[2], $date[1], $date[0]) != [])
+                return new JsonResponse(0);
+
             $infos = new Infos();
             $infos->setDate($new_date);
             $infos->setType($request->request->get('type'));
@@ -175,6 +178,11 @@ class InfosController extends AbstractController
             if ($infos) {
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+                $t = $em->getRepository(Infos::class)->findSameDate($date[2], $date[1], $date[0]);
+                if ($t != [] && $t[0]->getDate() != $infos->getDate())
+                    return new JsonResponse(0);
+
                 $infos->setDate($new_date);
                 $infos->setType($request->request->get('type'));
                 $infos->setAccompagnant($request->request->get('accompagnant'));

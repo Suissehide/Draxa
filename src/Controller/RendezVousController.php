@@ -101,10 +101,13 @@ class RendezVousController extends AbstractController
             $new_time = null;
             if ($request->request->get('time') != '') {
                 $time = explode(':', $request->request->get('time'));
-                $new_time->setTime($time[0], $time[1]);
+                $new_time = date_create('2019-01-01')->setTime($time[0], $time[1]);
             }
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+            if ($em->getRepository(RendezVous::class)->findSameDate($date[2], $date[1], $date[0]) != [])
+                return new JsonResponse(0);
 
             $rendezVous = new RendezVous();
             $rendezVous->setDate($new_date);
@@ -177,11 +180,15 @@ class RendezVousController extends AbstractController
                 $new_time = null;
                 if ($request->request->get('time') != '') {
                     $time = explode(':', $request->request->get('time'));
-                    $new_time->setTime($time[0], $time[1]);
+                    $new_time = date_create('2019-01-01')->setTime($time[0], $time[1]);
                 }
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
                 
+                $t = $em->getRepository(RendezVous::class)->findSameDate($date[2], $date[1], $date[0]);
+                if ($t != [] && $t[0]->getDate() != $rendezVous->getDate())
+                    return new JsonResponse(0);
+
                 $rendezVous->setDate($new_date);
                 $rendezVous->setThematique($request->request->get('thematique'));
                 $rendezVous->setHeure($new_time);

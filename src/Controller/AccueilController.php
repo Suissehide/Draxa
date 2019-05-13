@@ -64,7 +64,7 @@ class AccueilController extends AbstractController
                     "nom" => $e->getPatient()->getNom(),
                     "prenom" => $e->getPatient()->getPrenom(),
                     "type" => $e->getType(),
-                    "heure" => $e->getHeure()->format('H:i'),
+                    "heure" => $e->getHeure() == null ? "" : $e->getHeure()->format('H:i'),
                     "thematique" => $e->getThematique(),
                 );
             }
@@ -76,7 +76,7 @@ class AccueilController extends AbstractController
                     "nom" => $e->getPatient()->getNom(),
                     "prenom" => $e->getPatient()->getPrenom(),
                     "type" => $e->getType(),
-                    "heure" => $e->getHeure()->format('H:i'),
+                    "heure" => $e->getHeure() == null ? "" : $e->getHeure()->format('H:i'),
                     "thematique" => $e->getThematique(),
                 );
             }
@@ -101,7 +101,7 @@ class AccueilController extends AbstractController
                     "nom" => $e->getPatient()->getNom(),
                     "prenom" => $e->getPatient()->getPrenom(),
                     "type" => $e->getType(),
-                    "heure" => $e->getHeure()->format('H:i'),
+                    "heure" => $e->getHeure() == null ? "" : $e->getHeure()->format('H:i'),
                     "thematique" => $e->getThematique(),
                 );
             }
@@ -127,7 +127,7 @@ class AccueilController extends AbstractController
             }
             $response[] = $jsonContent;
 
-            return (new JsonResponse($response, Response::HTTP_OK));
+            return new JsonResponse($response, Response::HTTP_OK);
         }
     }
 }

@@ -26,6 +26,124 @@ class AtelierController extends AbstractController
     }
 
     /**
+     * @Route("/add", name="atelier_add", methods="GET|POST")
+     */
+    public function atelier_add(Request $request): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            $id = $request->request->get('id');
+
+            $new_time = null;
+            if ($request->request->get('time') != "") { 
+                $time = explode(':', $request->request->get('time'));
+                $new_time = date_create('2019-01-01')->setTime($time[0], $time[1]);
+            }
+            $date = explode('/', $request->request->get('date'));
+            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+            
+            if ($em->getRepository(Atelier::class)->findSameDate($date[2], $date[1], $date[0]) != [])
+                return new JsonResponse(0);
+
+            $atelier = new Atelier();
+            $atelier->setDate($new_date);
+            $atelier->setThematique($request->request->get('thematique'));
+            $atelier->setHeure($new_time);
+            $atelier->setType($request->request->get('type'));
+            $atelier->setAccompagnant($request->request->get('accompagnant'));
+            $atelier->setEtat($request->request->get('etat'));
+            $atelier->setMotifRefus($request->request->get('motifRefus'));
+            $atelier->setPatient($em->getRepository(Patient::class)->findOneById($id));
+
+            $em->persist($atelier);
+            $em->flush();
+            return new JsonResponse($atelier->getId());
+        }
+    }
+
+    /**
+     * @Route("/patch/{id}", name="atelier_patch", methods="GET|POST")
+     */
+    public function atelier_patch(Request $request, Atelier $atelier): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($atelier) {
+                $new_time = null;
+                if ($request->request->get('time') != '') { 
+                    $time = explode(':', $request->request->get('time'));
+                    $new_time = date_create('2019-01-01')->setTime($time[0], $time[1]);
+                }
+                $date = explode('/', $request->request->get('date'));
+                $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+                $t = $em->getRepository(Atelier::class)->findSameDate($date[2], $date[1], $date[0]);
+                if ($t != [] && $t[0]->getDate() != $atelier->getDate())
+                    return new JsonResponse(0);
+
+                $atelier->setDate($new_date);
+                $atelier->setThematique($request->request->get('thematique'));
+                $atelier->setHeure($new_time);
+                $atelier->setType($request->request->get('type'));
+                $atelier->setAccompagnant($request->request->get('accompagnant'));
+                $atelier->setEtat($request->request->get('etat'));
+                $atelier->setMotifRefus($request->request->get('motifRefus'));
+                $em->flush();
+                return new JsonResponse(true);
+            }
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/date_error", name="atelier_date_error", methods="GET|POST")
+     */
+    public function atelier_date_error(Request $request): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $bool = false;
+            $id = $request->request->get('id');
+            $date = explode('/', $request->request->get('date'));
+            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+            $now = date_create(date('y-m-d'));
+
+            $em = $this->getDoctrine()->getManager();
+            $ateliers = $em->getRepository(Patient::class)->find($id)->getAteliers();
+
+            if (date_diff($now, $new_date, false)->invert) {
+                $bool = true;
+            }
+            foreach ($ateliers as $atelier) {
+                $date = date_create($atelier->getDate()->format('y-m-d'));
+                if (!date_diff($new_date, $date, false)->invert) {
+                    $bool = true;
+                }
+            }
+            return new JsonResponse($bool);
+        }
+    }
+
+    /**
+     * @Route("/remove/{id}", name="atelier_remove", methods="DELETE")
+     */
+    public function atelier_remove(Request $request, Atelier $atelier): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($atelier) {
+                $em->remove($atelier);
+                $em->flush();
+                return new JsonResponse(true);
+            }
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * OLD ROUTE
+     */
+
+    /**
      * @Route("/new", name="atelier_new", methods="GET|POST")
      */
     function new (Request $request): Response {
@@ -87,111 +205,5 @@ class AtelierController extends AbstractController
         }
 
         return $this->redirectToRoute('atelier_index');
-    }
-
-    /**
-     * @Route("/add", name="atelier_add", methods="GET|POST")
-     */
-    public function atelier_add(Request $request): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            $id = $request->request->get('id');
-
-            $new_time = null;
-            if ($request->request->get('time') != '') { 
-                $time = explode(':', $request->request->get('time'));
-                $new_time->setTime($time[0], $time[1]);
-            }
-            $date = explode('/', $request->request->get('date'));
-            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-
-            $atelier = new Atelier();
-            $atelier->setDate($new_date);
-            $atelier->setThematique($request->request->get('thematique'));
-            $atelier->setHeure($new_time);
-            $atelier->setType($request->request->get('type'));
-            $atelier->setAccompagnant($request->request->get('accompagnant'));
-            $atelier->setEtat($request->request->get('etat'));
-            $atelier->setMotifRefus($request->request->get('motifRefus'));
-            $atelier->setPatient($em->getRepository(Patient::class)->findOneById($id));
-
-            $em->persist($atelier);
-            $em->flush();
-            return new JsonResponse($atelier->getId());
-        }
-    }
-
-    /**
-     * @Route("/date_error", name="atelier_date_error", methods="GET|POST")
-     */
-    public function atelier_date_error(Request $request): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $bool = false;
-            $id = $request->request->get('id');
-            $date = explode('/', $request->request->get('date'));
-            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-            $now = date_create(date('y-m-d'));
-
-            $em = $this->getDoctrine()->getManager();
-            $ateliers = $em->getRepository(Patient::class)->find($id)->getAteliers();
-
-            if (date_diff($now, $new_date, false)->invert) {
-                $bool = true;
-            }
-            foreach ($ateliers as $atelier) {
-                $date = date_create($atelier->getDate()->format('y-m-d'));
-                if (!date_diff($new_date, $date, false)->invert) {
-                    $bool = true;
-                }
-            }
-            return new JsonResponse($bool);
-        }
-    }
-
-    /**
-     * @Route("/remove/{id}", name="atelier_remove", methods="DELETE")
-     */
-    public function atelier_remove(Request $request, Atelier $atelier): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            if ($atelier) {
-                $em->remove($atelier);
-                $em->flush();
-                return new JsonResponse(true);
-            }
-            return new JsonResponse(false);
-        }
-    }
-
-    /**
-     * @Route("/patch/{id}", name="atelier_patch", methods="GET|POST")
-     */
-    public function atelier_patch(Request $request, Atelier $atelier): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            if ($atelier) {
-                $new_time = null;
-                if ($request->request->get('time') != '') { 
-                    $time = explode(':', $request->request->get('time'));
-                    $new_time->setTime($time[0], $time[1]);
-                }
-                $date = explode('/', $request->request->get('date'));
-                $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-                $atelier->setDate($new_date);
-                $atelier->setThematique($request->request->get('thematique'));
-                $atelier->setHeure($new_time);
-                $atelier->setType($request->request->get('type'));
-                $atelier->setAccompagnant($request->request->get('accompagnant'));
-                $atelier->setEtat($request->request->get('etat'));
-                $atelier->setMotifRefus($request->request->get('motifRefus'));
-                $em->flush();
-                return new JsonResponse(true);
-            }
-            return new JsonResponse(false);
-        }
     }
 }

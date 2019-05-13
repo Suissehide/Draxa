@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\BCVs;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use DoctrineExtensions\Query\Mysql;
 
 /**
  * @method BCVs|null find($id, $lockMode = null, $lockVersion = null)
@@ -44,6 +45,19 @@ class BCVsRepository extends ServiceEntityRepository
             ->andWhere('e.date <= :date2')
             ->setParameter('date1', $date1)
             ->setParameter('date2', $date2)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findSameDate($year, $month, $day)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('YEAR(e.date) = :year')
+            ->andWhere('MONTH(e.date) = :month')
+            ->andWhere('DAY(e.date) = :day')
+            ->setParameter('year', $year)
+            ->setParameter('month', $month)
+            ->setParameter('day', $day)
             ->getQuery()
             ->getResult();
     }

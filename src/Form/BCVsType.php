@@ -52,7 +52,7 @@ class BCVsType extends AbstractType
                 'choice_attr' => [
                     '' => ['class' => 'white'],
                     'Oui' => ['class' => 'hotpink'],
-                    'Non' => ['class' => 'yellow'],
+                    'Non' => ['class' => 'gold'],
                 ],
                 'required' => false,
             ))

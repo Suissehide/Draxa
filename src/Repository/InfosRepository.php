@@ -48,6 +48,18 @@ class InfosRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findSameDate($year, $month, $day)
+    {
+        return $this->createQueryBuilder('e')
+            ->where('YEAR(e.date) = :year')
+            ->andWhere('MONTH(e.date) = :month')
+            ->andWhere('DAY(e.date) = :day')
+            ->setParameter('year', $year)
+            ->setParameter('month', $month)
+            ->setParameter('day', $day)
+            ->getQuery()
+            ->getResult();
+    }
     // /**
     //  * @return Infos[] Returns an array of Infos objects
     //  */

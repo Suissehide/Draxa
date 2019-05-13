@@ -112,6 +112,7 @@ function fadeOutAlert() {
         if (alert_pos > 60) {
             alert_pos -= 72;
         }
+        $(this).remove();
     });
 }
 
@@ -124,4 +125,5 @@ $('body').on('click', '.closebtn', function () {
     setTimeout(function () {
         div.css('display', 'none');
     }, 600);
+    div.remove();
 })

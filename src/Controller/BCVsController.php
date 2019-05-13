@@ -13,12 +13,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
- * @Route("/b/c/vs")
+ * @Route("/bcvs")
  */
 class BCVsController extends AbstractController
 {
     /**
-     * @Route("/", name="b_c_vs_index", methods={"GET"})
+     * @Route("/", name="bcvs_index", methods={"GET"})
      */
     public function index(BCVsRepository $bCVsRepository): Response
     {
@@ -28,7 +28,7 @@ class BCVsController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="b_c_vs_new", methods={"GET","POST"})
+     * @Route("/new", name="bcvs_new", methods={"GET","POST"})
      */
     public function new(Request $request): Response
     {
@@ -51,7 +51,7 @@ class BCVsController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="b_c_vs_show", methods={"GET"})
+     * @Route("/{id}", name="bcvs_show", methods={"GET"})
      */
     public function show(BCVs $bCV): Response
     {
@@ -61,7 +61,7 @@ class BCVsController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="b_c_vs_edit", methods={"GET","POST"})
+     * @Route("/{id}/edit", name="bcvs_edit", methods={"GET","POST"})
      */
     public function edit(Request $request, BCVs $bCV): Response
     {
@@ -83,7 +83,7 @@ class BCVsController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="b_c_vs_delete", methods={"DELETE"})
+     * @Route("/{id}", name="bcvs_delete", methods={"DELETE"})
      */
     public function delete(Request $request, BCVs $bCV): Response
     {
@@ -107,6 +107,9 @@ class BCVsController extends AbstractController
 
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+            if ($em->getRepository(BCVs::class)->findSameDate($date[2], $date[1], $date[0]) != [])
+                return new JsonResponse(0);
 
             $bcvs = new BCVs();
             $bcvs->setDate($new_date);
@@ -176,6 +179,11 @@ class BCVsController extends AbstractController
             if ($bcvs) {
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+                $t = $em->getRepository(BCVs::class)->findSameDate($date[2], $date[1], $date[0]);
+                if ($t != [] && $t[0]->getDate() != $bcvs->getDate())
+                    return new JsonResponse(0);
+
                 $bcvs->setDate($new_date);
                 $bcvs->setAccompagnant($request->request->get('accompagnant'));
                 $bcvs->setPermission($request->request->get('permission'));
