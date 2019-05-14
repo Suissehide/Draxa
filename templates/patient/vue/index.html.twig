@@ -949,6 +949,7 @@
     <script type="text/javascript">
 
         alert_pos = {{ top }};
+        patient_id = {{ patient.id }};
 
         function sort_date1(a, b) {
             let date1 = $(a).find('a').attr('data-date').split("/");
@@ -1136,7 +1137,8 @@
                     "accompagnant": arr[1],
                     "permission": arr[2],
                     "etat": arr[3],
-                    "motifRefus": arr[4]
+                    "motifRefus": arr[4],
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp)
@@ -1166,7 +1168,8 @@
                     "accompagnant": accompagnant,
                     "permission": permission,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp) {
@@ -1253,7 +1256,8 @@
                     "type": arr[1],
                     "accompagnant": arr[2],
                     "etat": arr[3],
-                    "motifRefus": arr[4]
+                    "motifRefus": arr[4],
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp)
@@ -1283,7 +1287,8 @@
                     "type": type,
                     "accompagnant": accompagnant,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp) {
@@ -1372,7 +1377,8 @@
                     "type": arr[3],
                     "accompagnant": arr[4],
                     "etat": arr[5],
-                    "motifRefus": arr[6]
+                    "motifRefus": arr[6],
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp)
@@ -1406,7 +1412,8 @@
                     "type": type,
                     "accompagnant": accompagnant,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp) {
@@ -1504,7 +1511,8 @@
                     "date": date,
                     "thematique": thematique,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp)
@@ -1532,7 +1540,8 @@
                     "date": date,
                     "thematique": thematique,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp) {
@@ -1632,7 +1641,8 @@
                     "type": arr[3],
                     "accompagnant": arr[4],
                     "etat": arr[5],
-                    "motifRefus": arr[6]
+                    "motifRefus": arr[6],
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp)
@@ -1666,7 +1676,8 @@
                     "type": type,
                     "accompagnant": accompagnant,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp) {
@@ -1763,7 +1774,8 @@
                     "type": arr[3],
                     "accompagnant": arr[4],
                     "etat": arr[5],
-                    "motifRefus": arr[6]
+                    "motifRefus": arr[6],
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp)
@@ -1797,7 +1809,8 @@
                     "type": type,
                     "accompagnant": accompagnant,
                     "etat": etat,
-                    "motifRefus": motifRefus
+                    "motifRefus": motifRefus,
+                    "patient": patient_id,
                 },
                 success: function (resp) {
                     if (resp) {

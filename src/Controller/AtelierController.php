@@ -41,8 +41,9 @@ class AtelierController extends AbstractController
             }
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-            
-            if ($em->getRepository(Atelier::class)->findSameDate($date[2], $date[1], $date[0]) != [])
+
+            $patient_id = $request->request->get('patient');
+            if ($em->getRepository(Atelier::class)->findSameDate($date[2], $date[1], $date[0], $patient_id) != [])
                 return new JsonResponse(0);
 
             $atelier = new Atelier();
@@ -77,7 +78,8 @@ class AtelierController extends AbstractController
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
-                $t = $em->getRepository(Atelier::class)->findSameDate($date[2], $date[1], $date[0]);
+                $patient_id = $request->request->get('patient');
+                $t = $em->getRepository(Atelier::class)->findSameDate($date[2], $date[1], $date[0], $patient_id);
                 if ($t != [] && $t[0]->getDate() != $atelier->getDate())
                     return new JsonResponse(0);
 

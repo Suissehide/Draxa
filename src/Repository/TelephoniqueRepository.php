@@ -48,15 +48,18 @@ class TelephoniqueRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSameDate($year, $month, $day)
+    public function findSameDate($year, $month, $day, $id)
     {
         return $this->createQueryBuilder('e')
             ->where('YEAR(e.date) = :year')
             ->andWhere('MONTH(e.date) = :month')
             ->andWhere('DAY(e.date) = :day')
+            ->leftJoin('e.patient', 'p')
+            ->andWhere('p.id = :id')
             ->setParameter('year', $year)
             ->setParameter('month', $month)
             ->setParameter('day', $day)
+            ->setParameter('id', $id)
             ->getQuery()
             ->getResult();
     }

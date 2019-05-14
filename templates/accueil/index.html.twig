@@ -18,9 +18,9 @@
                 <table id="infos" class="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th data-column-id="patient_nom">Nom</th>
-                            <th data-column-id="patient_prenom">Prénom</th>
-                            <th data-column-id="rdv_type">Type</th>
+                            <th data-column-id="patient_nom" data-width="40%">Nom</th>
+                            <th data-column-id="patient_prenom" data-width="40%">Prénom</th>
+                            <th data-column-id="rdv_type" data-width="20%">Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,9 +34,9 @@
                 <table id="bcvs" class="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th data-column-id="patient_nom">Nom</th>
-                            <th data-column-id="patient_prenom">Prénom</th>
-                            <th data-column-id="rdv_type">Permission</th>
+                            <th data-column-id="patient_nom" data-width="40%">Nom</th>
+                            <th data-column-id="patient_prenom" data-width="40%">Prénom</th>
+                            <th data-column-id="rdv_type" data-width="20%">Permission</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,11 +50,11 @@
                 <table id="rendezVous" class="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th data-column-id="patient_nom">Nom</th>
-                            <th data-column-id="patient_prenom">Prénom</th>
-                            <th data-column-id="rdv_type">Type</th>
-                            <th data-column-id="thematique">Thématique</th>
-                            <th data-column-id="heure">Heure</th>
+                            <th data-column-id="patient_nom" data-width="20%">Nom</th>
+                            <th data-column-id="patient_prenom" data-width="20%">Prénom</th>
+                            <th data-column-id="rdv_type" data-width="15%">Type</th>
+                            <th data-column-id="thematique" data-width="30%">Thématique</th>
+                            <th data-column-id="heure" data-width="15%">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,11 +68,11 @@
                 <table id="entretiens" class="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th data-column-id="patient_nom">Nom</th>
-                            <th data-column-id="patient_prenom">Prénom</th>
-                            <th data-column-id="rdv_type">Type</th>
-                            <th data-column-id="thematique">Thématique</th>
-                            <th data-column-id="heure">Heure</th>
+                            <th data-column-id="patient_nom" data-width="20%">Nom</th>
+                            <th data-column-id="patient_prenom" data-width="20%">Prénom</th>
+                            <th data-column-id="rdv_type" data-width="15%">Type</th>
+                            <th data-column-id="thematique" data-width="30%">Thématique</th>
+                            <th data-column-id="heure" data-width="15%">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -86,11 +86,11 @@
                 <table id="ateliers" class="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th data-column-id="patient_nom">Nom</th>
-                            <th data-column-id="patient_prenom">Prénom</th>
-                            <th data-column-id="rdv_type">Type</th>
-                            <th data-column-id="thematique">Thématique</th>
-                            <th data-column-id="heure">Heure</th>
+                            <th data-column-id="patient_nom" data-width="20%">Nom</th>
+                            <th data-column-id="patient_prenom" data-width="20%">Prénom</th>
+                            <th data-column-id="rdv_type" data-width="15%">Type</th>
+                            <th data-column-id="thematique" data-width="30%">Thématique</th>
+                            <th data-column-id="heure" data-width="15%">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -104,11 +104,11 @@
                 <table id="telephoniques" class="table table-condensed table-striped">
                     <thead>
                         <tr>
-                            <th data-column-id="patient_nom">Nom</th>
-                            <th data-column-id="patient_prenom">Prénom</th>
-                            <th data-column-id="rdv_type">Type</th>
-                            <th data-column-id="thematique">Thématique</th>
-                            <th data-column-id="heure">Heure</th>
+                            <th data-column-id="patient_nom" data-width="20%">Nom</th>
+                            <th data-column-id="patient_prenom" data-width="20%">Prénom</th>
+                            <th data-column-id="rdv_type" data-width="15%">Type</th>
+                            <th data-column-id="thematique" data-width="30%">Thématique</th>
+                            <th data-column-id="heure" data-width="15%">Heure</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -218,7 +218,6 @@
                         } else {
                             $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucun BCVs').appendTo('#bcvs');
                         }
-                        setTableWidth();
                     }
                 });
         }
@@ -239,21 +238,5 @@
             }
         });
 
-        function setTableWidth() {
-            $(".box").each(function(i, el) {
-                let lenght = $(el).find('tbody tr:first > td').length;
-                if (lenght == 5) {
-                    $(el).find('td:eq(0)').css("width", "15%");
-                    $(el).find('td:eq(1)').css("width", "15%");
-                    $(el).find('td:eq(2)').css("width", "20%");
-                    $(el).find('td:eq(3)').css("width", "35%");
-                    $(el).find('td:eq(4)').css("width", "15%");
-                } else if (lenght == 3) {
-                    $(el).find('td:eq(0)').css("width", "35%");
-                    $(el).find('td:eq(1)').css("width", "35%");
-                    $(el).find('td:eq(2)').css("width", "30%");
-                }
-            })
-        }
     </script>
 {% endblock %}
