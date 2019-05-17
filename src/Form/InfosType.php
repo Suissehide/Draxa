@@ -30,34 +30,42 @@ class InfosType extends AbstractType
                     'Tablette' => 'Tablette',
                     'Smartphone' => 'Smartphone',
                     'Ordinateur' => 'Ordinateur',
+                    'Tablette + Ordinateur' => 'Tablette + Ordinateur',
+                    'Tablette + Smartphone' => 'Tablette + Smartphone',
+                    'Smartphone + Ordinateur' => 'Smartphone + Ordinateur',
+                    'Tablette + Smartphone + Ordinateur' => 'Tablette + Smartphone + Ordinateur',
                 ),
                 'required' => false,
             ))
-            ->add('accompagnant', ChoiceType::class, array(
-                'label' => 'Accompagnant',
+            ->add('moment', ChoiceType::class, array(
+                'label' => 'Moment du parcours',
                 'placeholder' => '',
                 'choices' => array(
-                    'Oui' => 'Oui',
-                    'Non' => 'Non',
+                    'Phase aïgue' => 'Phase aïgue',
+                    'Consultation ambulatoire' => 'Consultation ambulatoire',
+                    'Au cours d\'une hospitalisation' => 'Au cours d\'une hospitalisation',
+                    'BCVi' => 'BCVi',
+                    'BCVs' => 'BCVs',
+                    'Atelier éducatif' => 'Atelier éducatif',
+                    'M3' => 'M3',
+                    'M12' => 'M12',
+                    'Renf1' => 'Renf1',
+                    'Renf2' => 'Renf2',
                 ),
                 'required' => false,
             ))
-            ->add('etat', ChoiceType::class, array(
-                'label' => 'A-t-il eu lieu ?',
+            ->add('parametrage', ChoiceType::class, array(
+                'label' => 'Paramétrage',
+                'placeholder' => '',
                 'choices' => array(
-                    '' => '',
-                    'Oui' => 'Oui',
-                    'Non' => 'Non',
+                    'Profil santé' => 'Profil santé',
+                    'Profil santé + Programme objectifs' => 'Profil santé + Programme objectifs',
+                    'Profil santé + Programme objectifs + Télésurveillance' => 'Profil santé + Programme + Télésurveillance',
                 ),
-                'choice_attr' => [
-                    '' => ['class' => 'white'],
-                    'Oui' => ['class' => 'hotpink'],
-                    'Non' => ['class' => 'gold'],
-                ],
                 'required' => false,
             ))
-            ->add('motifRefus', TextType::class, array(
-                'label' => 'Motif de refus',
+            ->add('code', TextType::class, array(
+                'label' => 'Codes d\'accès dossier patient',
                 'required' => false,
             ))
         ;

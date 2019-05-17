@@ -216,13 +216,13 @@
                                     {{ form_row(infosForm.type) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(infosForm.accompagnant) }}
+                                    {{ form_row(infosForm.moment) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(infosForm.etat) }}
+                                    {{ form_row(infosForm.parametrage) }}
                                 </div>
                                 <div class="row">
-                                    {{ form_row(infosForm.motifRefus, {'required': false}) }}
+                                    {{ form_row(infosForm.code) }}
                                 </div>
                                 <div class="row">
                                     <button type="button" class="btn btn-primary pull-right">Modifier</button>
@@ -861,9 +861,9 @@
                         {{ form_errors(formInfos) }}
                         {{ form_row(formInfos.date, {'attr': {'autocomplete': 'off'} }) }}
                         {{ form_row(formInfos.type) }}
-                        {{ form_row(formInfos.accompagnant) }}
-                        {{ form_row(formInfos.etat) }}
-                        {{ form_row(formInfos.motifRefus, {'required': false}) }}
+                        {{ form_row(formInfos.moment) }}
+                        {{ form_row(formInfos.parametrage) }}
+                        {{ form_row(formInfos.code, {'required': false}) }}
                         {{ form_row(formInfos._token) }}
                         {{ form_end(formInfos, {'render_rest' : false}) }}
                         <button id="infos_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
@@ -1254,9 +1254,9 @@
                 data: {
                     "date": arr[0],
                     "type": arr[1],
-                    "accompagnant": arr[2],
-                    "etat": arr[3],
-                    "motifRefus": arr[4],
+                    "moment": arr[2],
+                    "parametrage": arr[3],
+                    "code": arr[4],
                     "patient": patient_id,
                 },
                 success: function (resp) {
@@ -1273,9 +1273,9 @@
         $("#infos_add").on('click', function () {
             let date = $('#infos_date').val();
             let type = $('#infos_type').val();
-            let accompagnant = $('#infos_accompagnant').val();
-            let etat = $('#infos_etat').val();
-            let motifRefus = $('#infos_motifRefus').val();
+            let moment = $('#infos_moment').val();
+            let parametrage = $('#infos_parametrage').val();
+            let code = $('#infos_code').val();
 
             $.ajax({
                 url: "{{ path('infos_add') }}",
@@ -1285,9 +1285,9 @@
                     "id": '{{ patient.id }}',
                     "date": date,
                     "type": type,
-                    "accompagnant": accompagnant,
-                    "etat": etat,
-                    "motifRefus": motifRefus,
+                    "moment": moment,
+                    "parametrage": parametrage,
+                    "code": code,
                     "patient": patient_id,
                 },
                 success: function (resp) {
@@ -1322,17 +1322,17 @@
                                     <label class="control-label required" for="patient_creation_form_infos_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_infos_` + resp + `_date" name="patient_creation_form[infos][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
                                 </div>
                                 <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_type">Type</label><select id="patient_creation_form_infos_` + resp + `_type" name="patient_creation_form[infos][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel" selected="selected">Tel</option><option value="Hospit">Hospit</option></select></div>
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_type">Type de support</label> <select id="patient_creation_form_infos_` + resp + `_type" name="patient_creation_form[infos][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ordinateur">Ordinateur</option><option value="Smartphone" selected="selected">Smartphone</option><option value="Smartphone + Ordinateur">Smartphone + Ordinateur</option><option value="Tablette">Tablette</option><option value="Tablette + Ordinateur">Tablette + Ordinateur</option><option value="Tablette + Smartphone">Tablette + Smartphone</option><option value="Tablette + Smartphone + Ordinateur">Tablette + Smartphone + Ordinateur</option></select>  </div> 
                                 </div>
                                 <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_infos_` + resp + `_accompagnant" name="patient_creation_form[infos][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="Oui">Oui</option><option value="Non" selected="selected">Non</option></select></div>
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_moment">Moment du parcours</label> <select id="patient_creation_form_infos_` + resp + `_moment" name="patient_creation_form[infos][` + resp + `][moment]" class="form-control"><option value=""></option><option value="Atelier éducatif">Atelier éducatif</option><option value="Au cours d'une hospitalisation" selected="selected">Au cours d'une hospitalisation</option><option value="BCVi">BCVi</option><option value="BCVs">BCVs</option><option value="Consultation ambulatoire">Consultation ambulatoire</option><option value="M12">M12</option><option value="M3">M3</option><option value="Phase aïgue">Phase aïgue</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option></select></div> 
                                 </div>
                                 <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_infos_` + resp + `_etat" name="patient_creation_form[infos][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="gold">Non</option></select></div>
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_parametrage">Paramétrage</label> <select id="patient_creation_form_infos_` + resp + `_parametrage" name="patient_creation_form[infos][` + resp + `][parametrage]" class="form-control"><option value=""></option><option value="Profil santé" selected="selected">Profil santé</option><option value="Profil santé + Programme objectifs">Profil santé + Programme objectifs</option><option value="Profil santé + Programme + Télésurveillance">Profil santé + Programme objectifs + Télésurveillance</option></select></div> 
                                 </div>
                                 <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_infos_` + resp + `_motifRefus" name="patient_creation_form[infos][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
-                                </div>
+                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_code">Codes d'accès dossier patient</label> <input type="text" id="patient_creation_form_infos_` + resp + `_code" name="patient_creation_form[infos][` + resp + `][code]" class="form-control" value=` + code + `>
+                                </div> 
                                 <div class="row">
                                     <button type="button" class="btn btn-primary pull-right">Modifier</button>
                                     <button type="button" class="btn btn-danger pull-left">Supprimer</button>
@@ -1340,8 +1340,8 @@
                             </li>`)
                             .appendTo(events_content);
                         $('#patient_creation_form_infos_' + resp + '_type').val(type);
-                        $('#patient_creation_form_infos_' + resp + '_accompagnant').val(accompagnant);
-                        $('#patient_creation_form_infos_' + resp + '_etat').val(etat);
+                        $('#patient_creation_form_infos_' + resp + '_moment').val(moment);
+                        $('#patient_creation_form_infos_' + resp + '_parametrage').val(parametrage);
                         $('#events-content-infos li:last-child').addClass('selected');
 
                         updateForm();

@@ -30,29 +30,26 @@ class Infos
     private $type;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $accompagnant;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $etat;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $motifRefus;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="infos")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"infos"})
      */
     private $patient;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $moment;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $parametrage;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $code;
 
     public function getId(): ?int
     {
@@ -83,42 +80,6 @@ class Infos
         return $this;
     }
 
-    public function getAccompagnant(): ?string
-    {
-        return $this->accompagnant;
-    }
-
-    public function setAccompagnant(?string $accompagnant): self
-    {
-        $this->accompagnant = $accompagnant;
-
-        return $this;
-    }
-
-    public function getEtat(): ?string
-    {
-        return $this->etat;
-    }
-
-    public function setEtat(?string $etat): self
-    {
-        $this->etat = $etat;
-
-        return $this;
-    }
-
-    public function getMotifRefus(): ?string
-    {
-        return $this->motifRefus;
-    }
-
-    public function setMotifRefus(?string $motifRefus): self
-    {
-        $this->motifRefus = $motifRefus;
-
-        return $this;
-    }
-
     public function getPatient(): ?Patient
     {
         return $this->patient;
@@ -127,6 +88,42 @@ class Infos
     public function setPatient(?Patient $patient): self
     {
         $this->patient = $patient;
+
+        return $this;
+    }
+
+    public function getMoment(): ?string
+    {
+        return $this->moment;
+    }
+
+    public function setMoment(?string $moment): self
+    {
+        $this->moment = $moment;
+
+        return $this;
+    }
+
+    public function getParametrage(): ?string
+    {
+        return $this->parametrage;
+    }
+
+    public function setParametrage(?string $parametrage): self
+    {
+        $this->parametrage = $parametrage;
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(?string $code): self
+    {
+        $this->code = $code;
 
         return $this;
     }

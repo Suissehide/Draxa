@@ -114,9 +114,9 @@ class InfosController extends AbstractController
             $infos = new Infos();
             $infos->setDate($new_date);
             $infos->setType($request->request->get('type'));
-            $infos->setAccompagnant($request->request->get('accompagnant'));
-            $infos->setEtat($request->request->get('etat'));
-            $infos->setMotifRefus($request->request->get('motifRefus'));
+            $infos->setMoment($request->request->get('moment'));
+            $infos->setParametrage($request->request->get('parametrage'));
+            $infos->setCode($request->request->get('code'));
             $infos->setPatient($em->getRepository(Patient::class)->findOneById($id));
 
             $em->persist($infos);
@@ -187,9 +187,9 @@ class InfosController extends AbstractController
 
                 $infos->setDate($new_date);
                 $infos->setType($request->request->get('type'));
-                $infos->setAccompagnant($request->request->get('accompagnant'));
-                $infos->setEtat($request->request->get('etat'));
-                $infos->setMotifRefus($request->request->get('motifRefus'));
+                $infos->setMoment($request->request->get('moment'));
+                $infos->setParametrage($request->request->get('parametrage'));
+                $infos->setCode($request->request->get('code'));
                 $em->flush();
                 return new JsonResponse(true);
             }
