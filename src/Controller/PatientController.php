@@ -51,7 +51,7 @@ class PatientController extends AbstractController
             $sort = $request->request->get('sort');
 
             $patients = $patientRepository->findByFilter($sort, $searchPhrase, $etat);
-            if ($searchPhrase != "") {
+            if ($searchPhrase != "" || $sort != "all") {
                 $count = count($patients->getQuery()->getResult());
             } else {
                 $count = $patientRepository->compte();
