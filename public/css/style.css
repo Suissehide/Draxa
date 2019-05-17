@@ -96,7 +96,7 @@ a, a:hover {
 }
 
 .table>tbody>tr.aomi>td, .table>tbody>tr.aomi>th, .table>tbody>tr>td.aomi, .table>tbody>tr>th.aomi, .table>tfoot>tr.aomi>td, .table>tfoot>tr.aomi>th, .table>tfoot>tr>td.aomi, .table>tfoot>tr>th.aomi, .table>thead>tr.aomi>td, .table>thead>tr.aomi>th, .table>thead>tr>td.aomi, .table>thead>tr>th.aomi {
-    background-color: limegreen;
+    background-color: lightgreen;
 }
 
 .table>tbody>tr.hrcv>td, .table>tbody>tr.hrcv>th, .table>tbody>tr>td.hrcv, .table>tbody>tr>th.hrcv, .table>tfoot>tr.hrcv>td, .table>tfoot>tr.hrcv>th, .table>tfoot>tr>td.hrcv, .table>tfoot>tr>th.hrcv, .table>thead>tr.hrcv>td, .table>thead>tr.hrcv>th, .table>thead>tr>td.hrcv, .table>thead>tr>th.hrcv {

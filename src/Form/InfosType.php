@@ -24,12 +24,12 @@ class InfosType extends AbstractType
                 ],
             ))
             ->add('type', ChoiceType::class, array(
-                'label' => 'Type',
+                'label' => 'Type de support',
                 'placeholder' => '',
                 'choices' => array(
-                    'Ambu' => 'Ambu',
-                    'Tel' => 'Tel',
-                    'Hospit' => 'Hospit',
+                    'Tablette' => 'Tablette',
+                    'Smartphone' => 'Smartphone',
+                    'Ordinateur' => 'Ordinateur',
                 ),
                 'required' => false,
             ))

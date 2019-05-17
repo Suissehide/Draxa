@@ -12,8 +12,8 @@
 
         <div class="row accueil-wrapper">
             <div class="box">
-                <div class="box-header">Prochains
-                    <b>ateliers Infos</b>
+                <div class="box-header">Prochaines
+                    <b>applications Betterises</b>
                 </div>
                 <table id="infos" class="table table-condensed table-striped">
                     <thead>
@@ -207,7 +207,7 @@
                                 .appendTo('#infos');
                             });
                         } else {
-                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucun atelier Infos').appendTo('#infos');
+                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucune application Betterise').appendTo('#infos');
                         }
                         if (resp[5].length > 0) {
                             $.each(resp[5], function (index, val) {
@@ -226,15 +226,18 @@
 
         $('#paginator').datepaginator(options);
 
+        anchor_list = ["infos", "bcvs", "consultations", "entretiens", "ateliers", "suivi"]
+
         $('tbody').on("click", "tr", function () {
             if (!$(this).hasClass("disabled")) {
                 var npatient = $(this).attr('data-row-id');
                 var pathArray = window.location.pathname.split("/");
                 var url = window.location.protocol + "//" + window.location.host;
+                var anchor = anchor_list[$(this).parents('.box').index()];
                 for (var i = 0; i < pathArray.length - 2; i++) {
                     url += pathArray[i] + "/";
                 }
-                window.location.assign(url + "patient/vue/" + npatient);
+                window.location.assign(url + "patient/vue/" + npatient + "#" + anchor);
             }
         });
 

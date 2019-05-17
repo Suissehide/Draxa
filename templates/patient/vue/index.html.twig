@@ -26,7 +26,7 @@
                 </a>
                 <a href="#infos" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-paperclip"></span>
-                    Atelier Infos
+                    Application Betterise
                 </a>
                 <a href="#bcvs" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-briefcase"></span>
@@ -160,7 +160,7 @@
             </div>
 
             <div class="separator">
-                <span id="infos" class="separator-text">Atelier Infos</span>
+                <span id="infos" class="separator-text">Application Betterise</span>
             </div>
 
             <section class="cd-horizontal-timeline row" id="timeline-infos">
@@ -203,7 +203,7 @@
                         {% for infosForm in form.infos %}
                             {% set counter = (counter | default(0)) + 1 %}
                             <li {% if loop.last %} class="selected" {% endif %} data-date="{{ infosForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>Atelier Infos 
+                                <h2>Application Betterise  
                                     {{ counter }}
                                 </h2>
                                 <em>
@@ -854,7 +854,7 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">
                             <span class="glyphicon glyphicon-plus"></span>
-                            Ajouter un atelier Infos</h4>
+                            Ajouter une application Betterise</h4>
                     </div>
                     <div class="modal-body">
                         {{ form_start(formInfos) }}
@@ -1316,7 +1316,7 @@
                         $('#events-content-infos li').removeClass("selected");
                         $(events_content)
                             .append(`<li data-date=` + date + `>
-                                        <h2>Atelier Infos ` + (nb + 1) + `</h2>
+                                        <h2>Application Betterise ` + (nb + 1) + `</h2>
                                         <em>` + date_em + `</em>
                                 <div class="row"><div class="form-group">
                                     <label class="control-label required" for="patient_creation_form_infos_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_infos_` + resp + `_date" name="patient_creation_form[infos][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>

@@ -80,7 +80,7 @@ class PatientController extends AbstractController
                     "nom" => $patient->getNom(),
                     "prenom" => $patient->getPrenom(),
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
-                    "rdv" => $rdv[0],
+                    "tel2" => wordwrap($patient->getTel2(), 2, ' ', true),
                     "date" => $rdv[1],
                     "heure" => $rdv[2],
                     "thematique" => $rdv[3],
@@ -179,7 +179,7 @@ class PatientController extends AbstractController
         }
         if ($min_date && $infos && date_diff($min_date, date_create($infos->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($infos->getDate()->format('y-m-d'));
-            $rdv = ["Atelier Infos", $infos->getDate()->format('d/m/Y'), "", "", $infos->getType()];
+            $rdv = ["Application Betterise", $infos->getDate()->format('d/m/Y'), "", "", $infos->getType()];
         }
         return $rdv;
     }

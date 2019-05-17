@@ -36,7 +36,8 @@ class PatientRepository extends ServiceEntityRepository
         if ($searchPhrase != "") {
             $qb->andWhere('p.nom LIKE :search
                 OR p.prenom LIKE :search
-                OR p.telephone LIKE :search
+                OR p.tel1 LIKE :search
+                OR p.tel2 LIKE :search
                 OR p.etp LIKE :search
             ')
                 ->setParameter('search', '%' . $searchPhrase . '%');
