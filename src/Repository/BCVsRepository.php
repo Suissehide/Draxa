@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\BCVs;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use DoctrineExtensions\Query\Mysql;
 
 /**
@@ -15,7 +15,7 @@ use DoctrineExtensions\Query\Mysql;
  */
 class BCVsRepository extends ServiceEntityRepository
 {
-    public function __construct(RegistryInterface $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, BCVs::class);
     }
