@@ -1,28 +1,33 @@
 {% extends 'base.html.twig' %}
 {% block body %}
     <nav class="barMenu">
-        <div id="sideMenu">
-            <a class="menu-trigger" href="#" id="sideMenuClosed">
-                <span></span>
-                <span></span>
-                <span></span>
-            </a>
+        <div class="nav-container">
+            <div class="flex">
+                <div id="sideMenu">
+                    <a class="menu-trigger" href="#" id="sideMenuClosed">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </a>
+                </div>
+                <p class="colorchange" id="page-title">
+                    {% block page_title %}
+                        {{ title }}
+                    {% endblock %}
+                </p>
+            </div>
+            <div class="title">
+                WebApp CEPTA
+            </div>
+            <div class="flex">
+                <a href="{{ path('login') }}" class="user-link">
+                    {{ app.user.username }}
+                </a>
+                <a href="{{ path('logout') }}" class="logout">
+                    <span class="glyphicon glyphicon-off"></span>
+                </a>
+            </div>
         </div>
-        <p class="colorchange" id="page-title">
-            {% block page_title %}
-                {{ title }}
-            {% endblock %}
-            {# <span>Le meilleur du Web</span> #}
-        </p>
-        <div class="title">
-            WebApp CEPTA
-        </div>
-        <a href="{{ path('login') }}" id="userLink">
-            {{ app.user.username }}
-        </a>
-        <a href="{{ path('logout') }}">
-            <span class="glyphicon glyphicon-off"></span>
-        </a>
     </nav>
     <div id="sideMenuContainer">
         <div class="logo-menu"></div>
@@ -43,10 +48,10 @@
         <section class="footer-minimal footer-dark" id="footer">
             <div class="footer-container footer-flex">
                 <div class="footer-copyright">
-                        <p>Design by: <a href="http://qwetle.fr" target="_blank">Léo</a></p>
+                        <p>Design by: <a href="https://github.com/Suissehide/Draxa" target="_blank">Suissehide</a></p>
                 </div>
                 <div class="footer-copyright">
-                    <p class="text-right">© Draxa 2018 / All rights reserved</p>
+                    <p class="text-right">© <a href="https://qwetle.fr" target="_blank">Qwetle</a> 2020 / All rights reserved</p>
                 </div>
             </div>
         </section>

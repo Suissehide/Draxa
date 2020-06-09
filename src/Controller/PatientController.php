@@ -108,7 +108,7 @@ class PatientController extends AbstractController
         }
 
         return $this->render('patient/list/index.html.twig', [
-            'title' => 'Patients',
+            'title' => 'Liste des patients',
             'controller_name' => 'PatientController',
             'patients' => $patientRepository->findAll(),
         ]);

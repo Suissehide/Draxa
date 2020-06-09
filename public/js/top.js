@@ -93,10 +93,13 @@ function navTop() {
         header.classList.add("sticky");
         header.classList.remove("well");
         $('.title').css("visibility", "hidden");
+        console.log("hey");
+        $('.nav-container').css("display", "none");
     } else {
         header.classList.add("well");
         header.classList.remove("sticky");
         $('.title').css("visibility", "visible");
+        $('.nav-container').css("display", "flex");
     }
 }
 

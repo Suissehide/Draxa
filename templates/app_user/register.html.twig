@@ -1,24 +1,30 @@
 {% extends 'layout_fos.html.twig' %}
 {% block title %}Nouvel utilisateur{% endblock %}
-{% block user_content %}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 
-    <div class="row login-header">
-        <h1>Nouvel utilisateur</h1>
-    </div>
-    <div class="row">
-        <div class="col-md-offset-4 col-md-4">
-            {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_row(form.username, {'attr': {'autofocus' : true} }) }}
-            {{ form_row(form.plainPassword.first) }}
-            {{ form_row(form.plainPassword.second) }}
-            {{ form_row(form.roles) }}
-            {{ form_widget(form.validation, {'attr': {'class': 'btn btn-primary btn-block'} }) }}
-            <a class="btn btn-block btn-default" href="{{ url('login') }}">
-                {{ 'Connexion' }}</a>
-            {{ form_row(form._token) }}
-            {{ form_end(form, {'render_rest' : false}) }}
+{% block stylesheets %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
+{% endblock %}
+
+{% block user_content %}
+
+    <div class="panel">
+        <div class="row login-header">
+            <h1>Nouvel utilisateur</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                {{ form_start(form) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.username, {'attr': {'autofocus' : true} }) }}
+                {{ form_row(form.plainPassword.first) }}
+                {{ form_row(form.plainPassword.second) }}
+                {{ form_row(form.roles) }}
+                {{ form_widget(form.validation, {'attr': {'class': 'btn btn-primary btn-block'} }) }}
+                <a class="btn btn-block btn-default" href="{{ url('login') }}">
+                    {{ 'Connexion' }}</a>
+                {{ form_row(form._token) }}
+                {{ form_end(form, {'render_rest' : false}) }}
+            </div>
         </div>
     </div>
 
