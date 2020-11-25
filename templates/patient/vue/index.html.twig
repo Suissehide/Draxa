@@ -9,28 +9,24 @@
     {{ patient.nom }}
 {% endblock %}
 
-{% block page_content %}
+{% block toolbar_component %}
+    <button class="cd cd-save js-cd-save"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+    <a class="cd cd-back js-cd-back" href="{{ url('patient') }}"><span class="glyphicon glyphicon-chevron-left"></span></button>
+{% endblock %}
 
+{% block page_content %}
     <div class="wrapper scrollbar">
         <h1 id="top">Index |
             {{ patient.nom }}</h1>
         <div class="well nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
-                <a href="{{ url('patient') }}" class="btn btn-default">
+                <a href="{{ url('patient') }}" class="btn btn-default" id="btn-back">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                     Retour
                 </a>
                 <a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-search"></span>
                     Informations
-                </a>
-                <a href="#infos" class="js-scrollTo btn btn-primary" data-row-id="0">
-                    <span class="glyphicon glyphicon-paperclip"></span>
-                    Application Betterise
-                </a>
-                <a href="#bcvs" class="js-scrollTo btn btn-primary" data-row-id="0">
-                    <span class="glyphicon glyphicon-briefcase"></span>
-                    BCVs
                 </a>
                 <a href="#consultations" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-book"></span>
@@ -42,15 +38,7 @@
                 </a>
                 <a href="#ateliers" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-scissors"></span>
-                    Atelier
-                </a>
-                <a href="#suivi" class="js-scrollTo btn btn-primary" data-row-id="0">
-                    <span class="glyphicon glyphicon-phone"></span>
-                    Suivi téléphonique
-                </a>
-                <a href="#activite" class="js-scrollTo btn btn-primary" data-row-id="0">
-                    <span class="glyphicon glyphicon-comment"></span>
-                    Activité
+                    Ateliers
                 </a>
             </div>
         </div>
@@ -141,6 +129,11 @@
                     {{ form_row(form.precisionsperso, {'required': false}) }}
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_row(form.objectif, {'required': false}) }}
+                </div>
+            </div>
 
             <div class="separator">
                 <span id="fin" class="separator-text">Données à la sortie</span>
@@ -160,160 +153,6 @@
             </div>
 
             <div class="separator">
-                <span id="infos" class="separator-text">Application Betterise</span>
-            </div>
-
-            <section class="cd-horizontal-timeline row" id="timeline-infos">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
-                            <ol id="events-infos">
-                                {% for infosForm in form.infos %}
-                                    <li>
-                                        <a href="#0" data-date="{{ infosForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ infosForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ol>
-
-                            <span class="filling-line" aria-hidden="true"></span>
-                        </div>
-                        <!-- .events -->
-                    </div>
-                    <!-- .events-wrapper -->
-
-                    <ul class="cd-timeline-navigation">
-                        <li>
-                            <a href="#0" class="prev inactive">Prev</a>
-                        </li>
-                        <li>
-                            <a href="#0" class="next">Next</a>
-                        </li>
-                    </ul>
-
-                    <a class="new" data-toggle="modal" data-target="#infosModal">
-                        <span class="glyphicon glyphicon-plus"></span></a>
-                    <!-- .cd-timeline-navigation -->
-                </div>
-                <!-- .timeline -->
-
-                <div class="events-content">
-                    <ol id="events-content-infos">
-                        {% for infosForm in form.infos %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ infosForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>Application Betterise  
-                                    {{ counter }}
-                                </h2>
-                                <em>
-                                    {{ infosForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
-                                </em>
-                                <div class="row">
-                                    {{ form_row(infosForm.date) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(infosForm.type) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(infosForm.moment) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(infosForm.parametrage) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(infosForm.code) }}
-                                </div>
-                                <div class="row">
-                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ol>
-
-                </div>
-                <!-- .events-content -->
-            </section>
-
-            <div class="separator">
-                <span id="bcvs" class="separator-text">BCVs</span>
-            </div>
-
-            <section class="cd-horizontal-timeline row" id="timeline-bcvs">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
-                            <ol id="events-bcvs">
-                                {% for bcvsForm in form.bcvs %}
-                                    <li>
-                                        <a href="#0" data-date="{{ bcvsForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ bcvsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ol>
-
-                            <span class="filling-line" aria-hidden="true"></span>
-                        </div>
-                        <!-- .events -->
-                    </div>
-                    <!-- .events-wrapper -->
-
-                    <ul class="cd-timeline-navigation">
-                        <li>
-                            <a href="#0" class="prev inactive">Prev</a>
-                        </li>
-                        <li>
-                            <a href="#0" class="next">Next</a>
-                        </li>
-                    </ul>
-
-                    <a class="new" data-toggle="modal" data-target="#bcvsModal">
-                        <span class="glyphicon glyphicon-plus"></span></a>
-                    <!-- .cd-timeline-navigation -->
-                </div>
-                <!-- .timeline -->
-
-                <div class="events-content">
-                    <ol id="events-content-bcvs">
-                        {% for bcvsForm in form.bcvs %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ bcvsForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>BCVs 
-                                    {{ counter }}
-                                </h2>
-                                <em>
-                                    {{ bcvsForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
-                                </em>
-                                <div class="row">
-                                    {{ form_row(bcvsForm.date) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(bcvsForm.accompagnant) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(bcvsForm.permission) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(bcvsForm.etat) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(bcvsForm.motifRefus, {'required': false}) }}
-                                </div>
-                                <div class="row">
-                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ol>
-
-                </div>
-                <!-- .events-content -->
-            </section>
-
-            <div class="separator">
                 <span id="consultations" class="separator-text">Consultations</span>
             </div>
 
@@ -325,7 +164,7 @@
                                 {% for rendezVousForm in form.rendezVous %}
                                     <li>
                                         <a href="#0" data-date="{{ rendezVousForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ rendezVousForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                            {{ rendezVousForm.vars.value.date|format_datetime(pattern="d MMM", locale='fr')  }}
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -361,7 +200,7 @@
                                     {{ counter }}
                                 </h2>
                                 <em>
-                                    {{ rendezVousForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y') }}
+                                    {{ rendezVousForm.vars.value.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
                                 </em>
                                 <div class="row">
                                     {{ form_row(rendezVousForm.date) }}
@@ -408,7 +247,7 @@
                                 {% for entretienForm in form.entretiens %}
                                     <li>
                                         <a href="#0" data-date="{{ entretienForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ entretienForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                            {{ entretienForm.vars.value.date|format_datetime(pattern="d MMM", locale='fr') }}
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -444,7 +283,7 @@
                                     {{ counter }}
                                 </h2>
                                 <em>
-                                    {{ entretienForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y')  }}
+                                    {{ entretienForm.vars.value.date|format_datetime(pattern="d MMMM YYYY", locale='fr')  }}
                                 </em>
                                 <div class="row">
                                     {{ form_row(entretienForm.date) }}
@@ -479,7 +318,7 @@
             </section>
 
             <div class="separator">
-                <span id="ateliers" class="separator-text">Atelier</span>
+                <span id="ateliers" class="separator-text">Ateliers</span>
             </div>
 
             <section class="cd-horizontal-timeline row" id="timeline-ateliers">
@@ -490,7 +329,7 @@
                                 {% for atelierForm in form.ateliers %}
                                     <li>
                                         <a href="#0" data-date="{{ atelierForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ atelierForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
+                                            {{ atelierForm.vars.value.date|format_datetime(pattern="d MMM", locale='fr') }}
                                         </a>
                                     </li>
                                 {% endfor %}
@@ -526,7 +365,7 @@
                                     {{ counter }}
                                 </h2>
                                 <em>
-                                    {{ atelierForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y')  }}
+                                    {{ atelierForm.vars.value.date|format_datetime(pattern="d MMMM YYYY", locale='fr')  }}
                                 </em>
                                 <div class="row">
                                     {{ form_row(atelierForm.date) }}
@@ -559,100 +398,6 @@
                 </div>
                 <!-- .events-content -->
             </section>
-
-            <div class="separator">
-                <span id="suivi" class="separator-text">Suivi téléphonique</span>
-            </div>
-
-            <section class="cd-horizontal-timeline row" id="timeline-telephoniques">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
-                            <ol id="events-telephoniques">
-                                {% for telephoniqueForm in form.telephoniques %}
-                                    <li>
-                                        <a href="#0" data-date="{{ telephoniqueForm.vars.value.date|date("d/m/Y") }}" {% if loop.last %} class="selected" {% else %} class="older-event" {% endif %}>
-                                            {{ telephoniqueForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM')  }}
-                                        </a>
-                                    </li>
-                                {% endfor %}
-                            </ol>
-
-                            <span class="filling-line" aria-hidden="true"></span>
-                        </div>
-                        <!-- .events -->
-                    </div>
-                    <!-- .events-wrapper -->
-
-                    <ul class="cd-timeline-navigation">
-                        <li>
-                            <a href="#0" class="prev inactive">Prev</a>
-                        </li>
-                        <li>
-                            <a href="#0" class="next">Next</a>
-                        </li>
-                    </ul>
-
-                    <a class="new" data-toggle="modal" data-target="#telephoniqueModal">
-                        <span class="glyphicon glyphicon-plus"></span></a>
-                    <!-- .cd-timeline-navigation -->
-                </div>
-                <!-- .timeline -->
-
-                <div class="events-content">
-                    <ol id="events-content-telephoniques">
-                        {% for telephoniqueForm in form.telephoniques %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ telephoniqueForm.vars.value.date|date("d/m/Y") }}">
-                                <h2>Rendez-vous téléphonique
-                                    {{ counter }}
-                                </h2>
-                                <em>
-                                    {{ telephoniqueForm.vars.value.date|localizeddate('none', 'none', 'fr', null, 'd MMMM y')  }}
-                                </em>
-                                <div class="row">
-                                    {{ form_row(telephoniqueForm.date) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(telephoniqueForm.thematique) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(telephoniqueForm.etat) }}
-                                </div>
-                                <div class="row">
-                                    {{ form_row(telephoniqueForm.motifRefus, {'required': false}) }}
-                                </div>
-                                <div class="row">
-                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ol>
-                </div>
-                <!-- .events-content -->
-            </section>
-
-            <div class="separator">
-                <span id="activite" class="separator-text">Activité</span>
-            </div>
-
-            <div class="activity-wrapper">
-                <div class="card card-add">
-                    <span class="glyphicon glyphicon-plus"></span>
-                </div>
-                <div class="scrollbar list-wrapper">
-                    <ul class="list-content annexes" data-prototype="{{ form_widget(form.annexes.vars.prototype)|e('html_attr') }}">
-                        {% for annexesForm in form.annexes | reverse %}
-                            <li class="card">
-                                {{ form_row(annexesForm.date) }}
-                                {{ form_row(annexesForm.action) }}
-                                <button type="button" class="btn btn-danger pull-left remove-tag annexe-old">Supprimer</button>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
 
             <div class="separator"></div>
             <div class="form-inline">
@@ -811,107 +556,6 @@
             </div>
         </div>
 
-        <!-- Modal addTelephonique-->
-        <div id="telephoniqueModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Ajouter un rendez-vous téléphonique</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ form_start(formTelephonique) }}
-                        {{ form_errors(formTelephonique) }}
-                        {{ form_row(formTelephonique.date, {'attr': {'autocomplete': 'off'} }) }}
-                        {{ form_row(formTelephonique.thematique) }}
-                        {{ form_row(formTelephonique.etat) }}
-                        {{ form_row(formTelephonique.motifRefus, {'required': false}) }}
-                        {{ form_row(formTelephonique._token) }}
-                        {{ form_end(formTelephonique, {'render_rest' : false}) }}
-                        <button id="telephonique_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            Annuler</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal addInfos-->
-        <div id="infosModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Ajouter une application Betterise</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ form_start(formInfos) }}
-                        {{ form_errors(formInfos) }}
-                        {{ form_row(formInfos.date, {'attr': {'autocomplete': 'off'} }) }}
-                        {{ form_row(formInfos.type) }}
-                        {{ form_row(formInfos.moment) }}
-                        {{ form_row(formInfos.parametrage) }}
-                        {{ form_row(formInfos.code, {'required': false}) }}
-                        {{ form_row(formInfos._token) }}
-                        {{ form_end(formInfos, {'render_rest' : false}) }}
-                        <button id="infos_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            Annuler</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal addBCVs-->
-        <div id="bcvsModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Ajouter un BCVs</h4>
-                    </div>
-                    <div class="modal-body">
-                        {{ form_start(formBCVs) }}
-                        {{ form_errors(formBCVs) }}
-                        {{ form_row(formBCVs.date, {'attr': {'autocomplete': 'off'} }) }}
-                        {{ form_row(formBCVs.accompagnant) }}
-                        {{ form_row(formBCVs.permission) }}
-                        {{ form_row(formBCVs.etat) }}
-                        {{ form_row(formBCVs.motifRefus, {'required': false}) }}
-                        {{ form_row(formBCVs._token) }}
-                        {{ form_end(formBCVs, {'render_rest' : false}) }}
-                        <button id="bcvs_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            Annuler</button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
         <!-- Modal Suppression-->
         <div id="removeModal" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -980,6 +624,10 @@
             sortSelect();
         }
         updateForm();
+
+        $('.js-cd-save').on('click', function() {
+            $('#patient_creation_form_validation').trigger('click');
+        });
 
         {# Set select color #}
         function setSelectColor(obj) {
@@ -1090,270 +738,17 @@
                     var url = "{{ path( 'atelier_remove', { 'id': 'atelier_id' }) }}";
                     url = url.replace("atelier_id", id);
                     $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
-                } else if (timeline.is('#timeline-telephoniques')) {
-                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
-                    var url = "{{ path( 'telephonique_remove', { 'id': 'telephonique_id' }) }}";
-                    url = url.replace("telephonique_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
                 } else if (timeline.is('#timeline-rendezVous')) {
                     var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
                     var url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
                     url = url.replace("rendezVous_id", id);
                     $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
-                } else if (timeline.is('#timeline-bcvs')) {
-                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
-                    var url = "{{ path( 'bcvs_remove', { 'id': 'bcvs_id' }) }}";
-                    url = url.replace("bcvs_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
-                } else if (timeline.is('#timeline-infos')) {
-                    var id = btn.parents('li').find('.datepicker').attr("name").match(/\d+/)[0];
-                    var url = "{{ path( 'infos_remove', { 'id': 'infos_id' }) }}";
-                    url = url.replace("infos_id", id);
-                    $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
-                }
-            });
-        });
-
-        /* BCVs
-		================= */
-
-        {# Edit #}
-
-        $("#events-content-bcvs").on("click", ".btn-primary", function () {
-            var arr = [], i = 0;
-            $(this).parents("li").find("input, select").each(function() {
-                arr[i++] = $(this).val();
-            })
-            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
-            var url = "{{ path('bcvs_patch', { 'id': 'bcvs_id' }) }}";
-            url = url.replace("bcvs_id", id);
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": arr[0],
-                    "accompagnant": arr[1],
-                    "permission": arr[2],
-                    "etat": arr[3],
-                    "motifRefus": arr[4],
-                    "patient": patient_id,
-                },
-                success: function (resp) {
-                    if (resp)
-                        editAlert();
-                    else
-                        errorAlert();
-                }
-            });
-        })
-
-        {# Add #}
-
-        $("#bcvs_add").on('click', function () {
-            let date = $('#bc_vs_date').val();
-            let accompagnant = $('#bc_vs_accompagnant').val();
-            let permission = $('#bc_vs_permission').val();
-            let etat = $('#bc_vs_etat').val();
-            let motifRefus = $('#bc_vs_motifRefus').val();
-
-            $.ajax({
-                url: "{{ path('bcvs_add') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "id": '{{ patient.id }}',
-                    "date": date,
-                    "accompagnant": accompagnant,
-                    "permission": permission,
-                    "etat": etat,
-                    "motifRefus": motifRefus,
-                    "patient": patient_id,
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var new_date = new Date(formatDate(date));
-                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
-                            month: 'long',
-                            day: 'numeric'
-                        }).format(new_date);
-                        var date_em = new Intl.DateTimeFormat("fr-FR", {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        }).format(new_date);
-                        var nb = $("#events-content-bcvs").find('li').length;
-                        var events = $('#events-bcvs');
-                        $('#events-bcvs li a').removeClass("selected");
-                        $('#events-bcvs li a').addClass("older-event");
-                        $(document.createElement('li'))
-                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
-                            .appendTo(events);
-                        $('#events-bcvs li:last-child a').addClass('selected');
-                        $('#events-bcvs li:last-child a').removeClass('older-event');
-
-                        var events_content = $('#events-content-bcvs');
-                        $('#events-content-bcvs li').removeClass("selected");
-                        $(events_content)
-                            .append(`<li data-date=` + date + `>
-                                        <h2>BCVs ` + (nb + 1) + `</h2>
-                                        <em>` + date_em + `</em>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_bcvs_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_date" name="patient_creation_form[bcvs][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_accompagnant">Accompagnant</label><select id="patient_creation_form_bcvs_` + resp + `_accompagnant" name="patient_creation_form[bcvs][` + resp + `][accompagnant]" class="form-control"><option value=""></option><option value="Oui" selected="selected">Oui</option><option value="Non">Non</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_permission">Permission demandée</label><select id="patient_creation_form_bcvs_` + resp + `_permission" name="patient_creation_form[bcvs][` + resp + `][permission]" class="form-control"><option value=""></option><option value="Oui 1 nuit">Oui 1 nuit</option><option value="Oui 2 nuits" selected="selected">Oui 2 nuits</option><option value="Non">Non</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_etat">A-t-il eu lieu ?</label><select id="patient_creation_form_bcvs_` + resp + `_etat" name="patient_creation_form[bcvs][` + resp + `][etat]" class="form-control" style="background: hotpink;"><option value="" class="white"></option><option value="Oui" class="hotpink" selected="selected">Oui</option><option value="Non" class="gold">Non</option></select></div>
-                                        </div>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_bcvs_` + resp + `_motifRefus">Motif de refus</label><input type="text" id="patient_creation_form_bcvs_` + resp + `_motifRefus" name="patient_creation_form[bcvs][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `></div>
-                                        </div>
-                                        <div class="row">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </li>`)
-                            .appendTo(events_content);
-                        $('#patient_creation_form_bcvs_' + resp + '_permission').val(permission);
-                        $('#patient_creation_form_bcvs_' + resp + '_accompagnant').val(accompagnant);
-                        $('#patient_creation_form_bcvs_' + resp + '_etat').val(etat);
-                        $('#events-content-bcvs li:last-child').addClass('selected');
-
-                        updateForm();
-                    } else {
-                        errorAlert();
-                    }
-                }
-            });
-        });
-
-        /* Infos
-		================= */
-
-        {# Edit #}
-
-        $("#events-content-infos").on("click", ".btn-primary", function () {
-            var arr = [], i = 0;
-            $(this).parents("li").find("input, select").each(function() {
-                arr[i++] = $(this).val();
-            })
-            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
-            var url = "{{ path('infos_patch', { 'id': 'infos_id' }) }}";
-            url = url.replace("infos_id", id);
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": arr[0],
-                    "type": arr[1],
-                    "moment": arr[2],
-                    "parametrage": arr[3],
-                    "code": arr[4],
-                    "patient": patient_id,
-                },
-                success: function (resp) {
-                    if (resp)
-                        editAlert();
-                    else
-                        errorAlert();
-                }
-            });
-        })
-
-        {# Add #}
-
-        $("#infos_add").on('click', function () {
-            let date = $('#infos_date').val();
-            let type = $('#infos_type').val();
-            let moment = $('#infos_moment').val();
-            let parametrage = $('#infos_parametrage').val();
-            let code = $('#infos_code').val();
-
-            $.ajax({
-                url: "{{ path('infos_add') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "id": '{{ patient.id }}',
-                    "date": date,
-                    "type": type,
-                    "moment": moment,
-                    "parametrage": parametrage,
-                    "code": code,
-                    "patient": patient_id,
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var new_date = new Date(formatDate(date));
-                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
-                            month: 'long',
-                            day: 'numeric'
-                        }).format(new_date);
-                        var date_em = new Intl.DateTimeFormat("fr-FR", {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        }).format(new_date);
-                        var nb = $("#events-content-infos").find('li').length;
-                        var events = $('#events-infos');
-                        $('#events-infos li a').removeClass("selected");
-                        $('#events-infos li a').addClass("older-event");
-                        $(document.createElement('li'))
-                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
-                            .appendTo(events);
-                        $('#events-infos li:last-child a').addClass('selected');
-                        $('#events-infos li:last-child a').removeClass('older-event');
-
-                        var events_content = $('#events-content-infos');
-                        $('#events-content-infos li').removeClass("selected");
-                        $(events_content)
-                            .append(`<li data-date=` + date + `>
-                                        <h2>Application Betterise ` + (nb + 1) + `</h2>
-                                        <em>` + date_em + `</em>
-                                <div class="row"><div class="form-group">
-                                    <label class="control-label required" for="patient_creation_form_infos_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_infos_` + resp + `_date" name="patient_creation_form[infos][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
-                                </div>
-                                <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_type">Type de support</label> <select id="patient_creation_form_infos_` + resp + `_type" name="patient_creation_form[infos][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ordinateur">Ordinateur</option><option value="Smartphone" selected="selected">Smartphone</option><option value="Smartphone + Ordinateur">Smartphone + Ordinateur</option><option value="Tablette">Tablette</option><option value="Tablette + Ordinateur">Tablette + Ordinateur</option><option value="Tablette + Smartphone">Tablette + Smartphone</option><option value="Tablette + Smartphone + Ordinateur">Tablette + Smartphone + Ordinateur</option></select>  </div> 
-                                </div>
-                                <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_moment">Moment du parcours</label> <select id="patient_creation_form_infos_` + resp + `_moment" name="patient_creation_form[infos][` + resp + `][moment]" class="form-control"><option value=""></option><option value="Atelier éducatif">Atelier éducatif</option><option value="Au cours d'une hospitalisation" selected="selected">Au cours d'une hospitalisation</option><option value="BCVi">BCVi</option><option value="BCVs">BCVs</option><option value="Consultation ambulatoire">Consultation ambulatoire</option><option value="M12">M12</option><option value="M3">M3</option><option value="Phase aïgue">Phase aïgue</option><option value="Renf1">Renf1</option><option value="Renf2">Renf2</option></select></div> 
-                                </div>
-                                <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_parametrage">Paramétrage</label> <select id="patient_creation_form_infos_` + resp + `_parametrage" name="patient_creation_form[infos][` + resp + `][parametrage]" class="form-control"><option value=""></option><option value="Profil santé" selected="selected">Profil santé</option><option value="Profil santé + Programme objectifs">Profil santé + Programme objectifs</option><option value="Profil santé + Programme + Télésurveillance">Profil santé + Programme objectifs + Télésurveillance</option></select></div> 
-                                </div>
-                                <div class="row"><div class="form-group">
-                                    <label class="control-label" for="patient_creation_form_infos_` + resp + `_code">Codes d'accès dossier patient</label> <input type="text" id="patient_creation_form_infos_` + resp + `_code" name="patient_creation_form[infos][` + resp + `][code]" class="form-control" value=` + code + `>
-                                </div> 
-                                <div class="row">
-                                    <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                    <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                </div>
-                            </li>`)
-                            .appendTo(events_content);
-                        $('#patient_creation_form_infos_' + resp + '_type').val(type);
-                        $('#patient_creation_form_infos_' + resp + '_moment').val(moment);
-                        $('#patient_creation_form_infos_' + resp + '_parametrage').val(parametrage);
-                        $('#events-content-infos li:last-child').addClass('selected');
-
-                        updateForm();
-                    } else {
-                        errorAlert();
-                    }
                 }
             });
         });
 
         /* Ateliers
-		================= */
+	    ============================================================================== */
 
         {# Edit #}
 
@@ -1419,7 +814,7 @@
                     if (resp) {
                         var new_date = new Date(formatDate(date));
                         var date_h1 = new Intl.DateTimeFormat("fr-FR", {
-                            month: 'long',
+                            month: 'short',
                             day: 'numeric'
                         }).format(new_date);
                         var date_em = new Intl.DateTimeFormat("fr-FR", {
@@ -1448,9 +843,9 @@
                                             <input type="text" id="patient_creation_form_ateliers_` + resp + `_date" name="patient_creation_form[ateliers][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
                                         </div></div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_ateliers_` + resp + `_thematique" name="patient_creation_form[ateliers][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Signes d'alerte" data-hour="15:00">Signes d'alerte</option><option value="Gestion du stress" data-hour="13:30">Gestion du stress</option><option value="Cuisine Poisson" data-hour="10:00">Cuisine Poisson</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Gestion des sucres" data-hour="14:00">Gestion des sucres</option><option value="Gestion des quantités" data-hour="12:00">Gestion des quantités</option><option value="Freins/solutions équilibre" data-hour="14:00">Freins/solutions équilibre</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Communication" data-hour="14:00">Communication</option><option value="Marche co 1" data-hour="14:00">Marche co 1</option><option value="Marche co 2" data-hour="14:00">Marche co 2</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_ateliers_` + resp + `_thematique" name="patient_creation_form[ateliers][` + resp + `][thematique]" class="get-hour form-control"><option value=""></option><option value="Alim Sensation 1" data-hour="14:00">Alim Sensation 1</option><option value="Alim Sensation 2" data-hour="14:00">Alim Sensation 2</option><option value="Alim Sensation 3" data-hour="14:00">Alim Sensation 3</option><option value="Athérosclérose" data-hour="09:30">Athérosclérose</option><option value="Cuisine F&amp;L" data-hour="10:00">Cuisine F&amp;L</option><option value="Cuisine MG" data-hour="10:00">Cuisine MG</option><option value="Cuisine Poisson" data-hour="10:00" selected="selected">Cuisine Poisson</option><option value="Freins AP" data-hour="09:30">Freins AP</option><option value="Navigation" data-hour="14:00">Navigation</option><option value="PRM1" data-hour="14:00">PRM1</option><option value="PRM2" data-hour="14:00">PRM2</option><option value="Pharma" data-hour="10:30">Pharma</option><option value="Prévention stress" data-hour="14:00">Prévention stress</option><option value="Quantités" data-hour="10:00">Quantités</option><option value="Signes d'alerte" data-hour="09:30">Signes d'alerte</option><option value="Stress &amp; MCV" data-hour="14:00">Stress &amp; MCV</option><option value="Stress aigu" data-hour="14:00">Stress aigu</option><option value="Sucres" data-hour="14:00">Sucres</option><option value="Tabac" data-hour="14:00">Tabac</option><option value="Vécu/Cse de Soi" data-hour="14:00">Vécu/Cse de Soi</option></select></div>
                                         </div>
-                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_` + resp + `_heure">Heure</label><select id="patient_creation_form_ateliers_` + resp + `_heure" name="patient_creation_form[ateliers][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="10:00">10:00</option><option value="12:00">12:00</option><option value="13:30">13:30</option><option value="14:00" selected="selected">14:00</option><option value="15:00">15:00</option></select></div>
+                                            <div class="row"><div class="form-group"><label class="control-label" for="patient_creation_form_ateliers_` + resp + `_heure">Heure</label><select id="patient_creation_form_ateliers_` + resp + `_heure" name="patient_creation_form[ateliers][` + resp + `][heure]" class="set-hour form-control"><option value=""></option><option value="09:30">09:30</option><option value="10:00" selected="selected">10:00</option><option value="10:30">10:30</option><option value="14:00">14:00</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
                                             <label class="control-label" for="patient_creation_form_ateliers_` + resp + `_type">Type</label><select id="patient_creation_form_ateliers_` + resp + `_type" name="patient_creation_form[ateliers][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option></select></div>
@@ -1485,139 +880,8 @@
             });
         });
 
-        /* Telephoniques
-		================= */
-
-        {# Edit #}
-
-        $("#events-content-telephoniques").on("click", ".btn-primary", function () {
-            var arr = [], i = 0;
-            $(this).parents("li").find("input, select").each(function() {
-                arr[i++] = $(this).val();
-            })
-            var id = $(this).parents("li").find('input').attr('id').match(/\d+/)[0];
-            var url = "{{ path('telephonique_patch', { 'id': 'telephonique_id' }) }}";
-            url = url.replace("telephonique_id", id);
-            var date = arr[0];
-            var thematique = arr[1];
-            var etat = arr[2];
-            var motifRefus = arr[3];
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "date": date,
-                    "thematique": thematique,
-                    "etat": etat,
-                    "motifRefus": motifRefus,
-                    "patient": patient_id,
-                },
-                success: function (resp) {
-                    if (resp)
-                        editAlert();
-                    else
-                        errorAlert();
-                }
-            });
-        })
-
-        {# Add #}
-
-        $("#telephonique_add").on('click', function () {
-            var date = $('#telephonique_date').val();
-            var thematique = $('#telephonique_thematique').val();
-            var etat = $('#telephonique_etat').val();
-            var motifRefus = $('#telephonique_motifRefus').val();
-
-            $.ajax({
-                url: "{{ path('telephonique_add') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    "id": '{{ patient.id }}',
-                    "date": date,
-                    "thematique": thematique,
-                    "etat": etat,
-                    "motifRefus": motifRefus,
-                    "patient": patient_id,
-                },
-                success: function (resp) {
-                    if (resp) {
-                        var new_date = new Date(formatDate(date));
-                        var date_h1 = new Intl.DateTimeFormat("fr-FR", {
-                            month: 'long',
-                            day: 'numeric'
-                        }).format(new_date);
-                        var date_em = new Intl.DateTimeFormat("fr-FR", {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        }).format(new_date);
-                        var nb = $("#events-content-telephoniques").find('li').length;
-                        var events = $('#events-telephoniques');
-                        $('#events-telephoniques li a').removeClass("selected");
-                        $('#events-telephoniques li a').addClass("older-event");
-                        $(document.createElement('li'))
-                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
-                            .appendTo(events);
-                        $('#events-telephoniques li:last-child a').addClass('selected');
-                        $('#events-telephoniques li:last-child a').removeClass('older-event');
-
-                        var events_content = $('#events-content-telephoniques');
-                        $('#events-content-telephoniques li').removeClass("selected");
-                        $(events_content)
-                            .append(`<li data-date=` + date + `>
-                                        <h2>Rendez-vous téléphonique ` + (nb + 1) + `</h2><em>` + date_em + `</em>
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_telephoniques_` + resp + `_date">Date</label>
-                                            <input type="text" id="patient_creation_form_telephoniques_` + resp + `_date" name="patient_creation_form[telephoniques][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `">
-                                        </div></div>
-
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_telephoniques_` + resp + `_thematique">Thématique</label>
-                                            <select id="patient_creation_form_telephoniques_` + resp + `_thematique" name="patient_creation_form[telephoniques][` + resp + `][thematique]" class="form-control">
-                                                <option value="Motivationnel">Motivationnel</option>    
-                                                <option value="Coaching tabac">Coaching tabac</option>
-                                                <option value="Coaching AOMI">Coaching AOMI</option>
-                                            </select>
-                                        </div></div>
-
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_telephoniques_` + resp + `_etat">A-t-il eu lieu ?</label>
-                                            <select id="patient_creation_form_telephoniques_` + resp + `_etat" name="patient_creation_form[telephoniques][` + resp + `][etat]" class="form-control">
-                                                <option value=""></option><option value="Oui" class="hotpink">Oui</option>
-                                                <option value="Non" class="gold">Non</option>
-                                            </select>
-                                        </div></div>
-
-                                        <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_telephoniques_` + resp + `_motifRefus">Motif de refus</label>
-                                            <input type="text" id="patient_creation_form_telephoniques_` + resp + `_motifRefus" name="patient_creation_form[telephoniques][` + resp + `][motifRefus]" class="form-control" value=` + motifRefus + `>
-                                        </div></div>
-
-                                        <div class="row">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                     </li>
-                                    `)
-                            .appendTo(events_content);
-                        $('#patient_creation_form_telephoniques_' + resp + '_thematique').val(thematique);
-                        $('#patient_creation_form_telephoniques_' + resp + '_etat').val(etat);
-                        $('#events-content-telephoniques li:last-child').addClass('selected');
-
-                        updateForm();
-                    } else {
-                        errorAlert();
-                    }
-                }
-            });
-        });
-
         /* Entretiens
-		================= */
+		============================================================================== */
 
         {# Edit #}
 
@@ -1683,7 +947,7 @@
                     if (resp) {
                         var new_date = new Date(formatDate(date));
                         var date_h1 = new Intl.DateTimeFormat("fr-FR", {
-                            month: 'long',
+                            month: 'short',
                             day: 'numeric'
                         }).format(new_date);
                         var date_em = new Intl.DateTimeFormat("fr-FR", {
@@ -1711,10 +975,10 @@
                                             <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_date">Date prévue</label><input type="text" id="patient_creation_form_entretiens_` + resp + `_date" name="patient_creation_form[entretiens][` + resp + `][date]" required="required" class="datepicker form-control" value="` + date + `"></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_entretiens_` + resp + `_thematique" name="patient_creation_form[entretiens][` + resp + `][thematique]" required="required" class="form-control"><option value=""></option><option value="Maladie et FDR">Maladie et FDR</option><option value="Diabète">Diabète</option><option value="Signes alerte et CAT">Signes alerte et CAT</option><option value="Motivationnel">Motivationnel</option><option value="M3">M3</option><option value="M12">M12</option><option value="Renf 1">Renf 1</option><option value="Renf 2">Renf 2</option></select></div>
+                                            <label class="control-label required" for="patient_creation_form_entretiens_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_entretiens_` + resp + `_thematique" name="patient_creation_form[entretiens][` + resp + `][thematique]" required="required" class="form-control"><option value=""></option><option value="Activité physique">Activité physique</option><option value="Athérosclérose">Athérosclérose</option><option value="Diabète">Diabète</option><option value="HTA" selected="selected">HTA</option><option value="Motivation AP">Motivation AP</option><option value="Motivation FDR">Motivation FDR</option><option value="Motivation navigation">Motivation navigation</option><option value="Motivation tabac">Motivation tabac</option><option value="Navigation">Navigation</option><option value="Réactu 1">Réactu 1</option><option value="Réactu 2">Réactu 2</option><option value="Réactu 3">Réactu 3</option><option value="Réactu 4">Réactu 4</option><option value="Réactu 5">Réactu 5</option><option value="Réactu 6">Réactu 6</option><option value="Signes alerte et CAT">Signes alerte et CAT</option><option value="Tabac">Tabac</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
-                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_heure">Heure</label><select id="patient_creation_form_entretiens_` + resp + `_heure" name="patient_creation_form[entretiens][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:15">09:15</option><option value="10:15">10:15</option><option value="10:30">10:30</option><option value="11:30">11:30</option><option value="11:45">11:45</option><option value="13:30">13:30</option><option value="14:30">14:30</option><option value="14:45">14:45</option><option value="16:00">16:00</option></select></div>
+                                            <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_heure">Heure</label><select id="patient_creation_form_entretiens_` + resp + `_heure" name="patient_creation_form[entretiens][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:15">09:15</option><option value="10:30">10:30</option><option value="11:45" selected="selected">11:45</option><option value="13:30">13:30</option><option value="14:45">14:45</option></select></div>
                                         </div>
                                         <div class="row"><div class="form-group">
                                             <label class="control-label" for="patient_creation_form_entretiens_` + resp + `_type">Type</label><select id="patient_creation_form_entretiens_` + resp + `_type" name="patient_creation_form[entretiens][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Hospit">Hospit</option><option value="Tel">Tel</option></select></div>
@@ -1750,7 +1014,7 @@
         });
 
         /* RendezVous
-		================= */
+		============================================================================== */
 
         {# Edit #}
 
@@ -1816,7 +1080,7 @@
                     if (resp) {
                         var new_date = new Date(formatDate(date));
                         var date_h1 = new Intl.DateTimeFormat("fr-FR", {
-                            month: 'long',
+                            month: 'short',
                             day: 'numeric'
                         }).format(new_date);
                         var date_em = new Intl.DateTimeFormat("fr-FR", {
@@ -1847,7 +1111,7 @@
                                             <div class="form-group"><label class="control-label required" for="patient_creation_form_rendezVous_` + resp + `_thematique">Thématique</label><select id="patient_creation_form_rendezVous_` + resp + `_thematique" name="patient_creation_form[rendezVous][` + resp + `][thematique]" required="required" class="form-control"><option value=""></option><option value="Consultation psychologue">Consultation psychologue</option><option value="Consultation diététicienne">Consultation diététicienne</option><option value="Consultation pharmacienne">Consultation pharmacienne</option></select></div>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_heure">Heure</label><select id="patient_creation_form_rendezVous_` + resp + `_heure" name="patient_creation_form[rendezVous][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:15">09:15</option><option value="10:15">10:15</option><option value="11:15">11:15</option><option value="11:30">11:30</option><option value="12:30">12:30</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option></select></div>
+                                            <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_heure">Heure</label><select id="patient_creation_form_rendezVous_` + resp + `_heure" name="patient_creation_form[rendezVous][` + resp + `][heure]" class="form-control"><option value=""></option><option value="09:00">09:00</option><option value="09:30">09:30</option><option value="10:00">10:00</option><option value="10:30">10:30</option><option value="11:00">11:00</option><option value="11:30">11:30</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="13:30">13:30</option><option value="14:00">14:00</option><option value="14:30">14:30</option><option value="15:00">15:00</option><option value="15:30">15:30</option><option value="16:00">16:00</option></select></div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group"><label class="control-label" for="patient_creation_form_rendezVous_` + resp + `_type">Type</label><select id="patient_creation_form_rendezVous_` + resp + `_type" name="patient_creation_form[rendezVous][` + resp + `][type]" class="form-control"><option value=""></option><option value="Ambu">Ambu</option><option value="Tel">Tel</option><option value="Hospi">Hospi</option></select></div>
@@ -1882,6 +1146,9 @@
             });
         });
 
+        /* 
+	    ============================================================================== */
+
         function formatDate(input) {
             var datePart = input.match(/\d+/g),
                 year = datePart[2] //.substring(2),  get only two digits
@@ -1894,45 +1161,6 @@
             $('input, select').removeClass('is-invalid');
             $(".invalid-feedback").remove();
         }
-
-        /* Annexes
-	    ================= */
-
-        {# Add #}
-
-        var $addTagLink = $('.card-add');
-        var $collectionHolder = $('ul.annexes');
-        $collectionHolder.data('index', $collectionHolder.find(':input').length);
-
-        $addTagLink.on('click', function (e) {
-            e.preventDefault();
-            addTagForm($collectionHolder);
-            $('.datepicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: true, autoclose: true});
-        });
-
-        function addTagForm($collectionHolder) {
-            var prototype = $collectionHolder.data('prototype');
-            var index = $collectionHolder.data('index');
-            var newForm = prototype.replace(/__name__/g, index);
-            $collectionHolder.data('index', index + 1);
-            var $newFormLi = $('<li class="card"></li>').append(newForm);
-            $newFormLi.append('<a href="#" class="pull-left btn btn-danger remove-tag">Supprimer</a>');
-            $collectionHolder.prepend($newFormLi);
-        }
-        
-        {# Delete #}
-
-        $(".activity-wrapper").on("click", ".remove-tag", function (e) {
-            e.preventDefault();
-            $(this).parent().remove();
-            if ($(this).hasClass('annexe-old')) {
-                var id = $(this).parents().find('.datepicker').attr("name").match(/\d+/)[0];
-                var url = "{{ path( 'annexe_remove', { 'id': 'annexe_id' }) }}";
-                url = url.replace("annexe_id", id);
-                $.ajax({url: url, type: "DELETE", success: function (resp) {}});
-            }
-            return false;
-        });
 
         function sortSelect() {
             $('.container-fluid').find('select').each(function() {

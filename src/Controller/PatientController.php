@@ -5,19 +5,13 @@ namespace App\Controller;
 use App\Entity\Atelier;
 use App\Entity\Entretien;
 use App\Entity\Patient;
-use App\Entity\Telephonique;
 use App\Entity\RendezVous;
-use App\Entity\BCVs;
-use App\Entity\Infos;
 
 use App\Form\AtelierType;
 use App\Form\EntretienType;
 use App\Form\PatientCreationFormType;
 use App\Form\PatientType;
-use App\Form\TelephoniqueType;
 use App\Form\RendezVousType;
-use App\Form\BCVsType;
-use App\Form\InfosType;
 
 use App\Repository\PatientRepository;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -82,10 +76,9 @@ class PatientController extends AbstractController
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
                     "tel2" => wordwrap($patient->getTel2(), 2, ' ', true),
                     "date" => $rdv[1],
-                    "heure" => $rdv[2],
                     "thematique" => $rdv[3],
-                    "type" => $rdv[4],
                     "etp" => $patient->getEtp(),
+                    "objectif" => $patient->getObjectif(),
                     "status" => $sortie,
                     "observ" => $observ,
                     "divers" => $divers
@@ -149,10 +142,7 @@ class PatientController extends AbstractController
 
         $rendezVous = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
         $ateliers = $em->getRepository(Atelier::class)->findClosestRdv($date, $patient->getId());
-        $telephonique = $em->getRepository(Telephonique::class)->findClosestRdv($date, $patient->getId());
         $entretien = $em->getRepository(Entretien::class)->findClosestRdv($date, $patient->getId());
-        $bcvs = $em->getRepository(BCVs::class)->findClosestRdv($date, $patient->getId());
-        $infos = $em->getRepository(Infos::class)->findClosestRdv($date, $patient->getId());
 
         $rdv = ["", "", "", "", ""];
         $min_date = $date->add(new \DateInterval('P1Y'));
@@ -165,21 +155,9 @@ class PatientController extends AbstractController
             $min_date = date_create($ateliers->getDate()->format('y-m-d'));
             $rdv = ["Atelier", $ateliers->getDate()->format('d/m/Y'), $ateliers->getHeure() ? $ateliers->getHeure()->format('H:i') : "", $ateliers->getThematique(), $ateliers->getType()];
         }
-        if ($min_date && $telephonique && date_diff($min_date, date_create($telephonique->getDate()->format('y-m-d')), false)->invert) {
-            $min_date = date_create($telephonique->getDate()->format('y-m-d'));
-            $rdv = ["Téléphonique", $telephonique->getDate()->format('d/m/Y'), "", "", $telephonique->getType()];
-        }
         if ($min_date && $entretien && date_diff($min_date, date_create($entretien->getDate()->format('y-m-d')), false)->invert) {
             $min_date = date_create($entretien->getDate()->format('y-m-d'));
             $rdv = ["Entretien", $entretien->getDate()->format('d/m/Y'), $entretien->getHeure() ? $entretien->getHeure()->format('H:i') : "", $entretien->getThematique(), $entretien->getType()];
-        }
-        if ($min_date && $bcvs && date_diff($min_date, date_create($bcvs->getDate()->format('y-m-d')), false)->invert) {
-            $min_date = date_create($bcvs->getDate()->format('y-m-d'));
-            $rdv = ["BCVs", $bcvs->getDate()->format('d/m/Y'), "", "", ""];
-        }
-        if ($min_date && $infos && date_diff($min_date, date_create($infos->getDate()->format('y-m-d')), false)->invert) {
-            $min_date = date_create($infos->getDate()->format('y-m-d'));
-            $rdv = ["Application Betterise", $infos->getDate()->format('d/m/Y'), "", "", $infos->getType()];
         }
         return $rdv;
     }
@@ -238,17 +216,8 @@ class PatientController extends AbstractController
         $atelier = new Atelier();
         $formAtelier = $this->createForm(AtelierType::class, $atelier);
 
-        $telephonique = new Telephonique();
-        $formTelephonique = $this->createForm(TelephoniqueType::class, $telephonique);
-
         $rendezVous = new RendezVous();
         $formRendezVous = $this->createForm(RendezVousType::class, $rendezVous);
-
-        $BCVs = new BCVs();
-        $formBCVs = $this->createForm(BCVsType::class, $BCVs);
-
-        $Infos = new Infos();
-        $formInfos = $this->createForm(InfosType::class, $Infos);
 
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',
@@ -258,10 +227,7 @@ class PatientController extends AbstractController
             'form' => $form->createView(),
             'formEntretien' => $formEntretien->createView(),
             'formAtelier' => $formAtelier->createView(),
-            'formTelephonique' => $formTelephonique->createView(),
             'formRendezVous' => $formRendezVous->createView(),
-            'formBCVs' => $formBCVs->createView(),
-            'formInfos' => $formInfos->createView(),
         ]);
     }
 
@@ -301,8 +267,8 @@ class PatientController extends AbstractController
 
         $data = str_replace(",", ";", $data);
         $data = str_replace("Artisans;", "Artisans,", $data);
-        $data = str_replace("observ;divers;sexe;nom;prenom;date;tel1;tel2;distance;etude;profession;activite;diagnostic;dedate;orientation;etpdecision;progetp;precisions;precisionsperso;dentree;motif;etp;"
-        , "Suivi à régulariser;Divers;Sexe;Nom;Prénom;Date de naissance;Téléphone 1;Téléphone 2;Distance d'habitation;Niveau d'étude;Profession;Activité actuelle;Diagnostic médical;Date d'entrée;Orientation;ETP Décision;Type de programme;Précision non inclusion;Précision contenu personnalisé;Date de sortie;Motif d'arrêt de programme;Point final parcours ETP;", $data);
+        $data = str_replace("observ;divers;sexe;nom;prenom;date;tel1;tel2;distance;etude;profession;activite;diagnostic;dedate;orientation;etpdecision;progetp;precisions;precisionsperso;objectif;dentree;motif;etp;"
+        , "Suivi à régulariser;Divers;Sexe;Nom;Prénom;Date de naissance;Téléphone 1;Téléphone 2;Distance d'habitation;Niveau d'étude;Profession;Activité actuelle;Diagnostic médical;Date d'entrée;Orientation;ETP Décision;Type de programme;Précision non inclusion;Précision contenu personnalisé;Objectif;Date de sortie;Motif d'arrêt de programme;Point final parcours ETP;", $data);
 
         $fileName = "export_patients_" . date("d_m_Y") . ".csv";
         $response = new Response($data);

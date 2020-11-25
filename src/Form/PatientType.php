@@ -32,6 +32,7 @@ class PatientType extends AbstractType
             ->add('precisions')
             ->add('progetp')
             ->add('precisionsperso')
+            ->add('objectif')
             ->add('observ')
         ;
     }

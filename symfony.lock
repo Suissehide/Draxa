@@ -251,6 +251,9 @@
             "ref": "87c585d24de9f43bca80ebcfd5cf5cb39445d95f"
         }
     },
+    "symfony/http-client-contracts": {
+        "version": "v2.3.1"
+    },
     "symfony/http-foundation": {
         "version": "v4.1.4"
     },
@@ -461,14 +464,8 @@
     "twbs/bootstrap": {
         "version": "v3.3.7"
     },
-    "twig/extensions": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "ddb2e0a77773b7fd75d8d649545f174e664500ab"
-        }
+    "twig/intl-extra": {
+        "version": "v3.1.1"
     },
     "twig/twig": {
         "version": "v2.5.0"

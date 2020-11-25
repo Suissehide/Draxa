@@ -12,38 +12,6 @@
         <div class="accueil-wrapper">
             <div class="box">
                 <div class="box-header">Prochaines
-                    <b>applications Betterises</b>
-                </div>
-                <table id="infos" class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th data-column-id="patient_nom" data-width="40%">Nom</th>
-                            <th data-column-id="patient_prenom" data-width="40%">Prénom</th>
-                            <th data-column-id="rdv_type" data-width="20%">Type</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div class="box">
-                <div class="box-header">Prochains
-                    <b>BCVs</b>
-                </div>
-                <table id="bcvs" class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th data-column-id="patient_nom" data-width="40%">Nom</th>
-                            <th data-column-id="patient_prenom" data-width="40%">Prénom</th>
-                            <th data-column-id="rdv_type" data-width="20%">Permission</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
-            <div class="box">
-                <div class="box-header">Prochaines
                     <b>consultations</b>
                 </div>
                 <table id="rendezVous" class="table table-condensed table-striped">
@@ -96,24 +64,6 @@
                     </tbody>
                 </table>
             </div>
-            <div class="box">
-                <div class="box-header">Prochains
-                    <b>rendez-vous téléphoniques</b>
-                </div>
-                <table id="telephoniques" class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th data-column-id="patient_nom" data-width="20%">Nom</th>
-                            <th data-column-id="patient_prenom" data-width="20%">Prénom</th>
-                            <th data-column-id="rdv_type" data-width="15%">Type</th>
-                            <th data-column-id="thematique" data-width="30%">Thématique</th>
-                            <th data-column-id="heure" data-width="15%">Heure</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
         </div>
         <div class="stats-wrapper">
             <div class="box-sm">
@@ -149,7 +99,8 @@
                 var d = new Date(date);
                 ajaxAction(d);
             },
-            language: 'fr'
+            language: 'fr',
+            showCalendar: true
         }
 
         function ajaxAction(d) {
@@ -185,37 +136,10 @@
                             $.each(resp[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
                                 .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td><td>' + val.thematique + '</td><td>' + val.heure + '</td>')
-                                .appendTo('#telephoniques');
-                            });
-                        } else {
-                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="5">Aucun rendez-vous téléphonique aujourd\'hui</td>').appendTo('#telephoniques');
-                        }
-                        if (resp[3].length > 0) {
-                            $.each(resp[3], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td><td>' + val.thematique + '</td><td>' + val.heure + '</td>')
                                 .appendTo('#rendezVous');
                             });
                         } else {
                             $('<tr colspan="5" class="disabled text-center">').append('<td colspan="5">Aucun rendez-vous aujourd\'hui</td>').appendTo('#rendezVous');
-                        }
-                        if (resp[4].length > 0) {
-                            $.each(resp[4], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.type + '</td>')
-                                .appendTo('#infos');
-                            });
-                        } else {
-                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucune application Betterise').appendTo('#infos');
-                        }
-                        if (resp[5].length > 0) {
-                            $.each(resp[5], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append('<td>' + val.nom + '</td><td>' + val.prenom + '</td><td>' + val.permission + '</td>')
-                                .appendTo('#bcvs');
-                            });
-                        } else {
-                            $('<tr colspan="5" class="disabled text-center">').append('<td colspan="3">Aucun BCVs').appendTo('#bcvs');
                         }
                     }
                 });
@@ -225,7 +149,7 @@
 
         $('#paginator').datepaginator(options);
 
-        anchor_list = ["infos", "bcvs", "consultations", "entretiens", "ateliers", "suivi"]
+        anchor_list = ["consultations", "entretiens", "ateliers", "suivi"]
 
         $('tbody').on("click", "tr", function () {
             if (!$(this).hasClass("disabled")) {

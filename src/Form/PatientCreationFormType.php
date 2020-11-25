@@ -6,10 +6,7 @@ use App\Entity\Patient;
 use App\Form\AnnexeType;
 use App\Form\AtelierType;
 use App\Form\EntretienType;
-use App\Form\TelephoniqueType;
 use App\Form\RendezVousType;
-use App\Form\BCVsType;
-use App\Form\InfosType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -156,12 +153,16 @@ class PatientCreationFormType extends AbstractType
                 'label' => 'Type de programme',
                 'choices' => array(
                     '' => '',
-                    'HRCV' => 'HRCV',
                     'AOMI' => 'AOMI',
                     'AOMI + HRCV' => 'AOMI + HRCV',
+                    'HRCV' => 'HRCV',
+                    'ViVa' => 'ViVa',
+                    'ViVa module AOMI' => 'ViVa module AOMI',
                 ),
             ))
             ->add('precisionsperso', TextareaType::class, array('label' => 'Précision contenu personnalisé'))
+
+            ->add('objectif', TextareaType::class, array('label' => 'Objectif'))
 
             ->add('motif', ChoiceType::class, array(
                 'label' => 'Motif d\'arrêt de programme',
@@ -231,31 +232,6 @@ class PatientCreationFormType extends AbstractType
                 'entry_type' => AtelierType::class,
                 'entry_options' => array('label' => false),
                 'allow_add' => true,
-                'by_reference' => false,
-            ))
-            ->add('telephoniques', CollectionType::class, array(
-                'entry_type' => TelephoniqueType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'by_reference' => false,
-            ))
-            ->add('bcvs', CollectionType::class, array(
-                'entry_type' => BCVsType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'by_reference' => false,
-            ))
-            ->add('infos', CollectionType::class, array(
-                'entry_type' => InfosType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'by_reference' => false,
-            ))
-            ->add('annexes', CollectionType::class, array(
-                'entry_type' => AnnexeType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'allow_delete' => true,
                 'by_reference' => false,
             ))
             ->add('validation', SubmitType::class, array('label' => 'Enregistrer'))

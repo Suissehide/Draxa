@@ -316,10 +316,10 @@
 						forceParse: true,
 						startView: 0, //2
 						minView: 0, //2
-						todayBtn: true,
+						todayBtn: false,
 						todayHighlight: true,
-						startDate: this.options.startDate.toDate(),
-						endDate: this.options.endDate.toDate()
+						//startDate: this.options.startDate.toDate(),
+						//endDate: this.options.endDate.toDate()
 			        })
 			        .datepicker('update', this.options.selectedDate.toDate())
 			        .on('changeDate', $.proxy(this._calendarSelect, this));

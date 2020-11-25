@@ -27,10 +27,6 @@
 						<span class="glyphicon glyphicon-scissors"></span>
 						Ateliers
 					</a>
-					<a href="#suivi" class="js-scrollTo btn btn-primary" data-row-id="0">
-						<span class="glyphicon glyphicon-phone"></span>
-						Suivi téléphonique
-					</a>
 				</div>
 			</div>
 		</div>
@@ -119,6 +115,11 @@
 			{{ form_row(form.precisionsperso, {'required': false}) }}
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-12">
+			{{ form_row(form.objectif, {'required': false}) }}
+		</div>
+	</div>
 	<div class="separator">
         <span id="fin" class="separator-text">Données à la sortie</span>
 	</div>
@@ -147,13 +148,6 @@
 					<div class="wizard-inner">
 						<div class="connecting-line"></div>
 						<ul class="nav nav-tabs" role="tablist">
-							<li role="presentation" class="active">
-								<a href="#step1" data-toggle="tab" aria-controls="step1" role="tab" title="BCVs">
-									<span class="round-tab">
-										<i class="glyphicon glyphicon-book"></i>
-									</span>
-								</a>
-							</li>
 							<li role="presentation">
 								<a href="#step2" data-toggle="tab" aria-controls="step2" role="tab" title="M+1">
 									<span class="round-tab">

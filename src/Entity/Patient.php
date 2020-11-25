@@ -135,6 +135,12 @@ class Patient
 
     /**
      * @Groups({"patient"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $objectif;
+
+    /**
+     * @Groups({"patient"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $dentree;
@@ -159,25 +165,11 @@ class Patient
     private $entretiens;
 
     /**
-     * @Groups({"patient", "annexes"})
-     * @ORM\OneToMany(targetEntity="App\Entity\Annexe", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
-    private $annexes;
-
-    /**
      * @Groups({"patient", "ateliers"})
      * @ORM\OneToMany(targetEntity="App\Entity\Atelier", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
      * @ORM\OrderBy({"date" = "ASC"})
      */
     private $ateliers;
-
-    /**
-     * @Groups({"patient", "telephoniques"})
-     * @ORM\OneToMany(targetEntity="App\Entity\Telephonique", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
-    private $telephoniques;
 
     /**
      * @Groups({"patient", "rendezVous"})
@@ -186,29 +178,11 @@ class Patient
      */
     private $rendezVous;
 
-    /**
-     * @Groups({"patient", "bcvs"})
-     * @ORM\OneToMany(targetEntity="App\Entity\BCVs", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
-    private $bcvs;
-
-    /**
-     * @Groups({"patient", "infos"})
-     * @ORM\OneToMany(targetEntity="App\Entity\Infos", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
-    private $infos;
-
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
         $this->entretiens = new ArrayCollection();
-        $this->annexes = new ArrayCollection();
         $this->ateliers = new ArrayCollection();
-        $this->telephoniques = new ArrayCollection();
-        $this->bcvs = new ArrayCollection();
-        $this->infos = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -468,6 +442,18 @@ class Patient
         return $this;
     }
 
+    public function getObjectif(): ?string
+    {
+        return $this->objectif;
+    }
+
+    public function setObjectif(?string $objectif): self
+    {
+        $this->objectif = $objectif;
+
+        return $this;
+    }
+
     /**
      * @return Collection|Entretien[]
      */
@@ -493,37 +479,6 @@ class Patient
             // set the owning side to null (unless already changed)
             if ($entretiens->getPatient() === $this) {
                 $entretiens->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Annexe[]
-     */
-    public function getAnnexes(): Collection
-    {
-        return $this->annexes;
-    }
-
-    public function addAnnex(Annexe $annex): self
-    {
-        if (!$this->annexes->contains($annex)) {
-            $this->annexes[] = $annex;
-            $annex->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAnnex(Annexe $annex): self
-    {
-        if ($this->annexes->contains($annex)) {
-            $this->annexes->removeElement($annex);
-            // set the owning side to null (unless already changed)
-            if ($annex->getPatient() === $this) {
-                $annex->setPatient(null);
             }
         }
 
@@ -562,37 +517,6 @@ class Patient
     }
 
     /**
-     * @return Collection|Telephonique[]
-     */
-    public function getTelephoniques(): Collection
-    {
-        return $this->telephoniques;
-    }
-
-    public function addTelephonique(Telephonique $telephonique): self
-    {
-        if (!$this->telephoniques->contains($telephonique)) {
-            $this->telephoniques[] = $telephonique;
-            $telephonique->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTelephonique(Telephonique $telephonique): self
-    {
-        if ($this->telephoniques->contains($telephonique)) {
-            $this->telephoniques->removeElement($telephonique);
-            // set the owning side to null (unless already changed)
-            if ($telephonique->getPatient() === $this) {
-                $telephonique->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|RendezVous[]
      */
     public function getRendezVous(): Collection
@@ -617,68 +541,6 @@ class Patient
             // set the owning side to null (unless already changed)
             if ($rendezVous->getPatient() === $this) {
                 $rendezVous->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|BCVs[]
-     */
-    public function getBcvs(): Collection
-    {
-        return $this->bcvs;
-    }
-
-    public function addBcv(BCVs $bcv): self
-    {
-        if (!$this->bcvs->contains($bcv)) {
-            $this->bcvs[] = $bcv;
-            $bcv->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeBcv(BCVs $bcv): self
-    {
-        if ($this->bcvs->contains($bcv)) {
-            $this->bcvs->removeElement($bcv);
-            // set the owning side to null (unless already changed)
-            if ($bcv->getPatient() === $this) {
-                $bcv->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Infos[]
-     */
-    public function getInfos(): Collection
-    {
-        return $this->infos;
-    }
-
-    public function addInfo(Infos $info): self
-    {
-        if (!$this->infos->contains($info)) {
-            $this->infos[] = $info;
-            $info->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeInfo(Infos $info): self
-    {
-        if ($this->infos->contains($info)) {
-            $this->infos->removeElement($info);
-            // set the owning side to null (unless already changed)
-            if ($info->getPatient() === $this) {
-                $info->setPatient(null);
             }
         }
 

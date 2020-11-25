@@ -2,53 +2,45 @@
 {% block body %}
     <nav class="barMenu">
         <div class="nav-container">
-            <div class="flex">
-                <div id="sideMenu">
-                    <a class="menu-trigger" href="#" id="sideMenuClosed">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </a>
-                </div>
-                <p class="colorchange" id="page-title">
-                    {% block page_title %}
-                        {{ title }}
-                    {% endblock %}
-                </p>
-            </div>
-            <div class="title">
+            <a class="title" href="{{ path('accueil') }}">
                 WebApp CEPTA
-            </div>
-            <div class="flex">
-                <a href="{{ path('login') }}" class="user-link">
-                    {{ app.user.username }}
-                </a>
-                <a href="{{ path('logout') }}" class="logout">
-                    <span class="glyphicon glyphicon-off"></span>
-                </a>
-            </div>
+            </a>
+            <ul class="menu">
+                <li class="menu-item {{ title=='Accueil' ? 'active' : '' }}">
+                    <a class="user-link" href="{{ path('accueil') }}" title="Accueil">
+                        <span class="glyphicon glyphicon-home"></span>
+                        Accueil
+                    </a>
+                </li>
+                <li class="menu-item {{ title=='Liste des patients' ? 'active' : '' }}">
+                    <a class="user-link" href="{{ path('patient') }}" title="Patients">
+                        <span class="glyphicon glyphicon glyphicon-list-alt"></span>
+                        Liste des patients
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a class="user-link" href="{{ path('logout') }}">
+                        <span class="glyphicon glyphicon-log-out"></span>
+                        Se déconnecter
+                        {# {{ app.user.username }} #}
+                    </a>
+                </li>
+            </ul>
         </div>
     </nav>
-    <div id="sideMenuContainer">
-        <div class="logo-menu"></div>
-        <h2>Index</h2>
-        <a href="{{ path('accueil') }}" title="Accueil">
-            <span class="glyphicon glyphicon-home"></span>
-        </a>
-        <a href="{{ path('patient') }}" title="Patients">
-            <span class="glyphicon glyphicon-eye-open"></span>
-        </a>
-    </div>
     <div class="container-fluid">
         {% block page_content %}{% endblock %}
     </div>
-    <a class="cd-top js-cd-top" href="#0">Top</a>
+    <div class="toolbar">
+        <a class="cd cd-top js-cd-top" href="#0"><span class="glyphicon glyphicon-chevron-up"></span></a>
+        {% block toolbar_component %}{% endblock %}
+    </div>
     <!-- Footer -->
     <div class="bas">
         <section class="footer-minimal footer-dark" id="footer">
             <div class="footer-container footer-flex">
                 <div class="footer-copyright">
-                        <p>Design by: <a href="https://github.com/Suissehide/Draxa" target="_blank">Suissehide</a></p>
+                        <p>Design by: <a href="https://github.com/Suissehide/Draxa" target="_blank">Léo Couffinhal</a></p>
                 </div>
                 <div class="footer-copyright">
                     <p class="text-right">© <a href="https://qwetle.fr" target="_blank">Qwetle</a> 2020 / All rights reserved</p>

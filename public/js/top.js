@@ -8,7 +8,6 @@
         // browser window scroll (in pixels) after which the "back to top" link is shown
         offset = 300,
         //browser window scroll (in pixels) after which the "back to top" link opacity is reduced
-        offsetOpacity = 1200,
         scrollDuration = 700
     scrolling = false;
     if (backTop) {
@@ -28,8 +27,7 @@
 
     function checkBackToTop() {
         var windowTop = window.scrollY || document.documentElement.scrollTop;
-        (windowTop > offset) ? addClass(backTop, 'cd-top--show') : removeClass(backTop, 'cd-top--show', 'cd-top--fade-out');
-        (windowTop > offsetOpacity) && addClass(backTop, 'cd-top--fade-out');
+        (windowTop > offset) ? addClass(backTop, 'cd-top--show') : removeClass(backTop, 'cd-top--show');
         scrolling = false;
     }
 
@@ -68,14 +66,15 @@
         else if (!hasClass(el, classList[0])) el.className += " " + classList[0];
         if (classList.length > 1) addClass(el, classList.slice(1).join(' '));
     }
-    function removeClass(el, className) {
-        var classList = className.split(' ');
-        if (el.classList) el.classList.remove(classList[0]);
-        else if (hasClass(el, classList[0])) {
-            var reg = new RegExp('(\\s|^)' + classList[0] + '(\\s|$)');
+    function removeClass() {
+        var classList = Array.from(arguments);
+        el = classList[0]
+        if (el.classList) el.classList.remove(classList[1]);
+        else if (hasClass(el, classList[1])) {
+            var reg = new RegExp('(\\s|^)' + classList[1] + '(\\s|$)');
             el.className = el.className.replace(reg, ' ');
         }
-        if (classList.length > 1) removeClass(el, classList.slice(1).join(' '));
+        if (classList.length > 2) removeClass(el, classList.slice(2).join(' '));
     }
 })();
 
@@ -93,7 +92,6 @@ function navTop() {
         header.classList.add("sticky");
         header.classList.remove("well");
         $('.title').css("visibility", "hidden");
-        console.log("hey");
         $('.nav-container').css("display", "none");
     } else {
         header.classList.add("well");

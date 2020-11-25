@@ -5,10 +5,7 @@ namespace App\Controller;
 use App\Entity\Patient;
 use App\Entity\Entretien;
 use App\Entity\Atelier;
-use App\Entity\Telephonique;
 use App\Entity\RendezVous;
-use App\Entity\BCVs;
-use App\Entity\Infos;
 
 use App\Repository\PatientRepository;
 use Symfony\Component\Routing\Annotation\Route;
@@ -51,10 +48,7 @@ class AccueilController extends AbstractController
 
             $entretiens = $em->getRepository(Entretien::class)->findOneByDateJoinedToEntretien($startdatetime, $enddatetime);
             $ateliers = $em->getRepository(Atelier::class)->findOneByDateJoinedToAtelier($startdatetime, $enddatetime);
-            $telephoniques = $em->getRepository(Telephonique::class)->findOneByDateJoinedToTelephonique($startdatetime, $enddatetime);
             $rendezVous = $em->getRepository(RendezVous::class)->findOneByDateJoinedToRendezVous($startdatetime, $enddatetime);
-            $bcvs = $em->getRepository(BCVs::class)->findOneByDateJoinedToBCVs($startdatetime, $enddatetime);
-            $infos = $em->getRepository(Infos::class)->findOneByDateJoinedToInfos($startdatetime, $enddatetime);
 
             $jsonContent = array();
             $response = array();
@@ -63,7 +57,7 @@ class AccueilController extends AbstractController
                     "id" => $e->getPatient()->getId(),
                     "nom" => $e->getPatient()->getNom(),
                     "prenom" => $e->getPatient()->getPrenom(),
-                    "type" => $e->getType(),
+                    "type" => $e->getType() == null ? "" : $e->getType(),
                     "heure" => $e->getHeure() == null ? "" : $e->getHeure()->format('H:i'),
                     "thematique" => $e->getThematique(),
                 );
@@ -75,22 +69,9 @@ class AccueilController extends AbstractController
                     "id" => $e->getPatient()->getId(),
                     "nom" => $e->getPatient()->getNom(),
                     "prenom" => $e->getPatient()->getPrenom(),
-                    "type" => $e->getType(),
+                    "type" => $e->getType() == null ? "" : $e->getType(),
                     "heure" => $e->getHeure() == null ? "" : $e->getHeure()->format('H:i'),
                     "thematique" => $e->getThematique(),
-                );
-            }
-            $response[] = $jsonContent;
-            $jsonContent = array();
-            foreach ($telephoniques as $e) {
-                $jsonContent[] = array(
-                    "id" => $e->getPatient()->getId(),
-                    "nom" => $e->getPatient()->getNom(),
-                    "prenom" => $e->getPatient()->getPrenom(),
-                    "thematique" => $e->getThematique(),
-                    "type" => "",
-                    "heure" => "",
-                    
                 );
             }
             $response[] = $jsonContent;
@@ -100,29 +81,9 @@ class AccueilController extends AbstractController
                     "id" => $e->getPatient()->getId(),
                     "nom" => $e->getPatient()->getNom(),
                     "prenom" => $e->getPatient()->getPrenom(),
-                    "type" => $e->getType(),
+                    "type" => $e->getType() == null ? "" : $e->getType(),
                     "heure" => $e->getHeure() == null ? "" : $e->getHeure()->format('H:i'),
                     "thematique" => $e->getThematique(),
-                );
-            }
-            $response[] = $jsonContent;
-            $jsonContent = array();
-            foreach ($infos as $i) {
-                $jsonContent[] = array(
-                    "id" => $i->getPatient()->getId(),
-                    "nom" => $i->getPatient()->getNom(),
-                    "prenom" => $i->getPatient()->getPrenom(),
-                    "type" => $i->getType(),
-                );
-            }
-            $response[] = $jsonContent;
-            $jsonContent = array();
-            foreach ($bcvs as $b) {
-                $jsonContent[] = array(
-                    "id" => $b->getPatient()->getId(),
-                    "nom" => $b->getPatient()->getNom(),
-                    "prenom" => $b->getPatient()->getPrenom(),
-                    "permission" => $b->getPermission(),
                 );
             }
             $response[] = $jsonContent;
