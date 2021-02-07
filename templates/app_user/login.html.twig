@@ -26,9 +26,14 @@
                         <input type="password" id="inputPassword" name="_password" class="form-control" aria-describedby="passwordHelp" required="required">
                     </div>
                     <div class="form-check">
-                        <label>
-                            <input type="checkbox" class="form-check-input" name="_remember_me">
-                            Se souvenir de moi
+                        <input class="inp-cbx" id="remember_me" type="checkbox" name="_remember_me"/>
+                        <label class="cbx" for="remember_me">
+                            <span>
+                                <svg width="12px" height="10px">
+                                    <use xlink:href="#check"></use>
+                                </svg>
+                            </span>
+                            <span>Se souvenir de moi</span>
                         </label>
                     </div>
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
@@ -40,6 +45,13 @@
                 </form>
             </div>
         </div>
+
+        <!--SVG Sprites-->
+        <svg class="inline-svg">
+            <symbol id="check" viewbox="0 0 12 10">
+                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+            </symbol>
+        </svg>
     <div>
 
 {% endblock user_content %}

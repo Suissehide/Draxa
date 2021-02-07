@@ -7,16 +7,42 @@
             </a>
             <ul class="menu">
                 <li class="menu-item {{ title=='Accueil' ? 'active' : '' }}">
-                    <a class="user-link" href="{{ path('accueil') }}" title="Accueil">
+                    <a class="user-link" href="{{ path('accueil') }}">
                         <span class="glyphicon glyphicon-home"></span>
                         Accueil
                     </a>
                 </li>
                 <li class="menu-item {{ title=='Liste des patients' ? 'active' : '' }}">
-                    <a class="user-link" href="{{ path('patient') }}" title="Patients">
+                    <a class="user-link" href="{{ path('patient') }}">
                         <span class="glyphicon glyphicon glyphicon-list-alt"></span>
                         Liste des patients
                     </a>
+                </li>
+                <li class="menu-item {{ title=='Settings' ? 'active' : '' }}">
+                    <button class="user-link">
+                        <span class="glyphicon glyphicon-cog"></span>
+                        Réglages
+                    </button>
+                    <ul class="menu-content">
+                        <li class="menu-item">
+                            <a class="user-link" href="{{ path('settings') }}">
+                                <span class="glyphicon glyphicon-book"></span>
+                                Gérer les semaines
+                            </a>
+                        </i>
+                        <li class="menu-item">
+                            <a class="user-link" href="#">
+                                <span class="glyphicon glyphicon-book"></span>
+                                Aperçu de l'année
+                            </a>
+                        </i>
+                        <li class="menu-item">
+                            <a class="user-link" href="{{ path('soignant') }}">
+                                <span class="glyphicon glyphicon-book"></span>
+                                Gérer les soignants
+                            </a>
+                        </i>
+                    </ul>
                 </li>
                 <li class="menu-item">
                     <a class="user-link" href="{{ path('logout') }}">

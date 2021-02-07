@@ -3,11 +3,16 @@
 namespace App\Form;
 
 use App\Entity\RendezVous;
+use App\Entity\Slot;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\CallbackTransformer;
@@ -21,63 +26,31 @@ class RendezVousType extends AbstractType
                 'label' => 'Date prévue',
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy',
-                'attr' => [
-                    'class' => 'datepicker',
-                ],
-            ))
-            ->add('thematique', ChoiceType::class, array(
-                'label' => 'Thématique',
-                'placeholder' => '',
-                'choices' => array(
-                    'Consultation psychologue' => 'Consultation psychologue',
-                    'Consultation diététicienne' => 'Consultation diététicienne',
-                    'Consultation pharmacienne' => 'Consultation pharmacienne',
-                ),
+                'input' => 'datetime',
+                'html5' => false
             ))
             ->add('heure', ChoiceType::class, array(
                 'label' => 'Heure',
                 'placeholder' => '',
-                'choices' => array(
-                    '09:00' => '09:00',
-                    '09:30' => '09:30',
-                    '10:00' => '10:00',
-                    '10:30' => '10:30',
-                    '11:00' => '11:00',
-                    '11:30' => '11:30',
-                    '12:00' => '12:00',
-                    '13:00' => '13:00',
-                    '13:30' => '13:30',
-                    '14:00' => '14:00',
-                    '14:30' => '14:30',
-                    '15:00' => '15:00',
-                    '15:30' => '15:30',
-                    '16:00' => '16:00',
-                ),
-                'required' => false,
-            ))
-            ->add('type', ChoiceType::class, array(
-                'label' => 'Type',
-                'placeholder' => '',
-                'choices' => array(
-                    'Ambu' => 'Ambu',
-                    'Tel' => 'Tel',
-                    'Hospi' => 'Hospi',
-                ),
+                'choices' => array(),
+                'attr' => [
+                    'class' => 'heure',
+                ],
                 'required' => false,
             ))
             ->add('accompagnant', ChoiceType::class, array(
                 'label' => 'Accompagnant',
                 'placeholder' => '',
                 'choices' => array(
-                    'Oui' => 'oui',
-                    'Non' => 'non',
+                    'Oui' => 'Oui',
+                    'Non' => 'Non',
                 ),
                 'required' => false,
             ))
             ->add('etat', ChoiceType::class, array(
                 'label' => 'A-t-il eu lieu ?',
+                'placeholder' => '',
                 'choices' => array(
-                    '' => '',
                     'Oui' => 'Oui',
                     'Non' => 'Non',
                 ),
@@ -92,6 +65,7 @@ class RendezVousType extends AbstractType
                 'label' => 'Motif de refus',
                 'required' => false,
             ))
+    
             // ->add('patient',  EntityType::class, array(
             //     'class' => 'App\Entity\Patient',
             //     'choice_label' => 'id',

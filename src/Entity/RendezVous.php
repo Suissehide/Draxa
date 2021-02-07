@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -18,28 +20,16 @@ class RendezVous
     private $id;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\Column(type="date", nullable=true)
      * @Groups({"patient"})
      */
     private $date;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $thematique;
 
     /**
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"patient"})
      */
     private $heure;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
-    private $type;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -62,9 +52,29 @@ class RendezVous
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="rendezVous")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"rendezVous"})
+     * @Groups({"rendezVous", "slot"})
      */
     private $patient;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Slot::class, inversedBy="rendezVous", fetch="EAGER")
+     */
+    private $slot;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $categorie;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $send;
+
+    public function __construct()
+    {
+
+    }
 
     public function getId(): ?int
     {
@@ -76,21 +86,9 @@ class RendezVous
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(?\DateTimeInterface $date): self
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(?string $type): self
-    {
-        $this->type = $type;
 
         return $this;
     }
@@ -143,18 +141,6 @@ class RendezVous
         return $this;
     }
 
-    public function getThematique(): ?string
-    {
-        return $this->thematique;
-    }
-
-    public function setThematique(?string $thematique): self
-    {
-        $this->thematique = $thematique;
-
-        return $this;
-    }
-
     public function getHeure(): ?\DateTimeInterface
     {
         return $this->heure;
@@ -163,6 +149,42 @@ class RendezVous
     public function setHeure(?\DateTimeInterface $heure): self
     {
         $this->heure = $heure;
+
+        return $this;
+    }
+
+    public function getSlot(): ?Slot
+    {
+        return $this->slot;
+    }
+
+    public function setSlot(?Slot $slot): self
+    {
+        $this->slot = $slot;
+
+        return $this;
+    }
+
+    public function getCategorie(): ?string
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?string $categorie): self
+    {
+        $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getSend(): ?string
+    {
+        return $this->send;
+    }
+
+    public function setSend(?string $send): self
+    {
+        $this->send = $send;
 
         return $this;
     }

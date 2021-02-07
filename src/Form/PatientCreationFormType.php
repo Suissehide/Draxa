@@ -24,8 +24,18 @@ class PatientCreationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('observ', TextareaType::class, array('label' => 'Suivi à régulariser'))
-            ->add('divers', TextareaType::class, array('label' => 'Divers'))
+            ->add('observ', TextareaType::class, array(
+                'label' => 'Suivi à régulariser',
+                'required' => false
+            ))
+            ->add('divers', TextareaType::class, array(
+                'label' => 'Theraflow',
+                'required' => false
+            ))
+            ->add('notes', TextareaType::class, array(
+                'label' => 'Notes',
+                'required' => false
+            ))
             ->add('date', DateType::class, array(
                 'label' => 'Date de naissance',
                 'widget' => 'single_text',
@@ -33,19 +43,23 @@ class PatientCreationFormType extends AbstractType
                 'attr' => [
                     'class' => 'datepicker',
                 ],
+                'html5' => false
             ))
             ->add('nom', TextType::class, array('label' => 'Nom'))
             ->add('prenom', TextType::class, array('label' => 'Prénom'))
 
             ->add('tel1', TextType::class, array('label' => 'Téléphone 1'))
-            ->add('tel2', TextType::class, array('label' => 'Téléphone 2'))
+            ->add('tel2', TextType::class, array(
+                'label' => 'Téléphone 2',
+                'required' => false
+            ))
             ->add('sexe', ChoiceType::class, array(
                 'label' => 'Sexe',
                 'choices' => array(
                     '' => '',
                     'Mr' => 'homme',
                     'Mme' => 'femme',
-                ),
+                )
             ))
             ->add('distance', ChoiceType::class, array(
                 'label' => 'Distance d\'habitation',
@@ -55,6 +69,7 @@ class PatientCreationFormType extends AbstractType
                     'CUB' => 'CUB',
                     'Gironde' => 'Gironde',
                 ),
+                'required' => false
             ))
             ->add('etude', ChoiceType::class, array(
                 'label' => 'Niveau d\'étude',
@@ -64,6 +79,7 @@ class PatientCreationFormType extends AbstractType
                     'Secondaire' => 'secondaire',
                     'Universitaire' => 'universitaire',
                 ),
+                'required' => false
             ))
             ->add('profession', ChoiceType::class, array(
                 'label' => 'Profession',
@@ -77,6 +93,7 @@ class PatientCreationFormType extends AbstractType
                     'Agriculteur' => 'Agriculteur',
                     'Mère au foyer' => 'Mère au foyer',
                 ),
+                'required' => false
             ))
             ->add('activite', ChoiceType::class, array(
                 'label' => 'Activité actuelle',
@@ -91,6 +108,7 @@ class PatientCreationFormType extends AbstractType
                     'Invalidité' => 'Invalidité',
                     'Autre' => 'Autre',
                 ),
+                'required' => false
             ))
             ->add('diagnostic', ChoiceType::class, array(
                 'label' => 'Diagnostic médical',
@@ -101,6 +119,7 @@ class PatientCreationFormType extends AbstractType
                     'CORONAROPATHIE' => 'CORONAROPATHIE',
                     'PREVENTION' => 'PREVENTION',
                 ),
+                'required' => false
             ))
             ->add('dedate', DateType::class, array(
                 'label' => 'Date d\'entrée',
@@ -109,6 +128,8 @@ class PatientCreationFormType extends AbstractType
                 'attr' => [
                     'class' => 'datepicker',
                 ],
+                'required' => false,
+                'html5' => false
             ))
             ->add('orientation', ChoiceType::class, array(
                 'label' => 'Orientation',
@@ -120,6 +141,7 @@ class PatientCreationFormType extends AbstractType
                     'Orientation pro santé en Cs' => 'Orientation pro santé en Cs',
                     'NS' => 'NS',
                 ),
+                'required' => false
             ))
             ->add('etpdecision', ChoiceType::class, array(
                 'label' => 'ETP Décision',
@@ -128,7 +150,19 @@ class PatientCreationFormType extends AbstractType
                     'Oui' => 'oui',
                     'Non' => 'non',
                 ),
+                'required' => false
             ))
+
+            ->add('progetp', ChoiceType::class, array(
+                'label' => 'Type de programme',
+                'choices' => array(
+                    '' => '',
+                    'ViVa' => 'ViVa',
+                    'ViVa module AOMI' => 'ViVa module AOMI',
+                ),
+                'required' => false
+            ))
+
             ->add('precisions', ChoiceType::class, array(
                 'label' => 'Précision non inclusion',
                 'choices' => array(
@@ -148,21 +182,18 @@ class PatientCreationFormType extends AbstractType
                     'Barrière de la langue' => 'Barrière de la langue',
                     'NS' => 'NS',
                 ),
+                'required' => false
             ))
-            ->add('progetp', ChoiceType::class, array(
-                'label' => 'Type de programme',
-                'choices' => array(
-                    '' => '',
-                    'AOMI' => 'AOMI',
-                    'AOMI + HRCV' => 'AOMI + HRCV',
-                    'HRCV' => 'HRCV',
-                    'ViVa' => 'ViVa',
-                    'ViVa module AOMI' => 'ViVa module AOMI',
-                ),
-            ))
-            ->add('precisionsperso', TextareaType::class, array('label' => 'Précision contenu personnalisé'))
 
-            ->add('objectif', TextareaType::class, array('label' => 'Objectif'))
+            ->add('precisionsperso', TextareaType::class, array(
+                'label' => 'Précision contenu personnalisé',
+                'required' => false
+            ))
+
+            ->add('objectif', TextareaType::class, array(
+                'label' => 'Objectif',
+                'required' => false
+            ))
 
             ->add('motif', ChoiceType::class, array(
                 'label' => 'Motif d\'arrêt de programme',
@@ -188,7 +219,9 @@ class PatientCreationFormType extends AbstractType
                     'Décès' => 'Décès',
                     'NS' => 'NS',
                 ),
+                'required' => false
             ))
+
             ->add('etp', ChoiceType::class, array(
                 'label' => 'Point final parcours ETP',
                 'choices' => array(
@@ -205,7 +238,9 @@ class PatientCreationFormType extends AbstractType
                     'Entretien individuel' => 'Entretien individuel',
                     'Suivi téléphonique' => 'Suivi téléphonique',
                 ),
+                'required' => false
             ))
+
             ->add('dentree', DateType::class, array(
                 'label' => 'Date de sortie  ',
                 'widget' => 'single_text',
@@ -214,26 +249,9 @@ class PatientCreationFormType extends AbstractType
                     'class' => 'datepicker',
                 ],
                 'required' => false,
+                'html5' => false
             ))
 
-            ->add('rendezVous', CollectionType::class, array(
-                'entry_type' => RendezVousType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'by_reference' => false,
-            ))
-            ->add('entretiens', CollectionType::class, array(
-                'entry_type' => EntretienType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'by_reference' => false,
-            ))
-            ->add('ateliers', CollectionType::class, array(
-                'entry_type' => AtelierType::class,
-                'entry_options' => array('label' => false),
-                'allow_add' => true,
-                'by_reference' => false,
-            ))
             ->add('validation', SubmitType::class, array('label' => 'Enregistrer'))
         ;
     }
@@ -242,6 +260,7 @@ class PatientCreationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Patient::class,
+            'allow_extra_fields' => true
         ]);
     }
 }

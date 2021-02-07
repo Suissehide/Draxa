@@ -37,10 +37,12 @@ class RendezVousRepository extends ServiceEntityRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function findOneByDateJoinedToRendezVous(\DateTime $date1, \DateTime $date2)
+    public function findOneByDateJoinedToRendezVous(\DateTime $date1, \DateTime $date2, $categorie)
     {
         return $this->createQueryBuilder('e')
-            ->where('e.date >= :date1')
+            ->where('e.categorie = :categorie')
+            ->setParameter('categorie', $categorie)
+            ->andWhere('e.date >= :date1')
             ->andWhere('e.date <= :date2')
             ->setParameter('date1', $date1)
             ->setParameter('date2', $date2)
@@ -48,18 +50,19 @@ class RendezVousRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findSameDate($year, $month, $day, $id)
+    public function findSameDate($date, $id, $categorie)
     {
         return $this->createQueryBuilder('e')
-            ->where('YEAR(e.date) = :year')
-            ->andWhere('MONTH(e.date) = :month')
-            ->andWhere('DAY(e.date) = :day')
+            ->where("DATE_FORMAT(e.date, '%d/%m/%Y') = :date")
+            ->setParameter('date', $date)
+
+            ->andWhere('e.categorie = :categorie')
+            ->setParameter('categorie', $categorie)
+
             ->leftJoin('e.patient', 'p')
             ->andWhere('p.id = :id')
-            ->setParameter('year', $year)
-            ->setParameter('month', $month)
-            ->setParameter('day', $day)
             ->setParameter('id', $id)
+
             ->getQuery()
             ->getResult();
     }

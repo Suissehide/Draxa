@@ -253,6 +253,7 @@ a:focus {
 }
 
 .timeline .new {
+	cursor: pointer;
     background-color: #f8f8f8;
 	position: absolute;
 	z-index: 1;
@@ -357,12 +358,13 @@ a:focus {
 .cd-horizontal-timeline .events-content em {
 	display: block;
 	font-style: italic;
-	margin: 10px auto;
+	color: #08c1b8;
+	margin: 5px auto 15px;
 }
 
-.cd-horizontal-timeline .events-content em::before {
+/* .cd-horizontal-timeline .events-content em::before {
 	content: '- ';
-}
+} */
 
 .cd-horizontal-timeline .events-content p {
 	font-size: 1.4rem;
@@ -375,7 +377,7 @@ a:focus {
 
 @media only screen and (min-width: 768px) {
 	.cd-horizontal-timeline .events-content h2 {
-		font-size: 4rem;
+		font-size: 3.2rem;
 	}
 	.cd-horizontal-timeline .events-content em {
 		font-size: 1.6rem;

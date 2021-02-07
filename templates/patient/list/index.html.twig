@@ -34,17 +34,16 @@
             <table id="patient-grid" class="table table-condensed table-hover table-striped" cellspacing="0">
                 <thead>
                     <tr>
-                        <th data-column-id="observ" data-formatter="observ" data-sortable="false" data-width="28px"></th>
-                        <th data-column-id="divers" data-formatter="divers" data-sortable="false" data-width="28px"></th>
+                        <th data-column-id="observ" data-formatter="observ" data-sortable="false" data-width="33px"></th>
+                        <th data-column-id="divers" data-formatter="divers" data-sortable="false" data-width="33px"></th>
                         <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">Id</th>
                         <th data-column-id="nom" data-width="10%">Nom</th>
                         <th data-column-id="prenom" data-width="10%">Prénom</th>
                         <th data-column-id="tel1" data-width="15%">Téléphone</th>
-                        <th data-column-id="tel2" data-width="15%">Téléphone 2</th>
                         <th data-column-id="date" data-width="10%">Date</th>
-                        <th data-column-id="thematique" data-width="15%" data-sortable="false">Thématique</th>
-                        <th data-column-id="etp" data-width="15%">Point final parcours ETP</th>
-                        <th data-column-id="objectif" data-width="10%" data-searchable="false">Objectif</th>
+                        <th data-column-id="thematique" data-width="20%" data-sortable="false">Thématique</th>
+                        <th data-column-id="etp" data-width="20%">Point final parcours ETP</th>
+                        <th data-column-id="objectif" data-width="15%" data-searchable="false">Objectif</th>
                         <th data-column-id="status" data-visible="false" data-searchable="false">Status</th>
                     </tr>
                 </thead>
@@ -68,7 +67,6 @@
                 0: "in",
                 1: "out",
                 2: "aomi",
-                3: "hrcv",
             },
             requestHandler: function (request) {
                 request.etat = $etat;

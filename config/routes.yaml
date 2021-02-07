@@ -1,7 +1,3 @@
 index:
      path: /
      controller: App\Controller\AppUserController::login
-
-# export:
-#     type:     rest
-#     resource: App\Controller\ExportController

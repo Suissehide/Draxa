@@ -4,8 +4,9 @@
     Nouveau patient
 {% endblock %}
 
-{% block page_content %}
+{% form_theme form 'form-theme.html.twig' %}
 
+{% block page_content %}
     <div class="wrapper">
         <h1 id="top">Nouveau patient</h1>
 
@@ -27,12 +28,17 @@
             {{ form_errors(form) }}
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_row(form.observ, {'required': false}) }}
+                    {{ form_row(form.observ) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_row(form.divers, {'required': false}) }}
+                    {{ form_row(form.divers) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_row(form.notes) }}
                 </div>
             </div>
             <div class="separator">
@@ -57,23 +63,23 @@
                     {{ form_row(form.tel1) }}
                 </div>
                 <div class="col-md-2">
-                    {{ form_row(form.tel2, {'required': false}) }}
+                    {{ form_row(form.tel2) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    {{ form_row(form.distance, {'required': false}) }}
+                    {{ form_row(form.distance) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.etude, {'required': false}) }}
+                    {{ form_row(form.etude) }}
                 </div>
                 <div class="col-md-4">
-                    {{ form_row(form.profession, {'required': false}) }}
+                    {{ form_row(form.profession) }}
                 </div>
                 <div class="col-md-2">
-                    {{ form_row(form.activite, {'required': false}) }}
+                    {{ form_row(form.activite) }}
                 </div>
             </div>
             <div class="separator">
@@ -81,34 +87,34 @@
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.diagnostic, {'required': false}) }}
+                    {{ form_row(form.diagnostic) }}
                 </div>
                 <div class="col-md-3">
                     {{ form_row(form.dedate) }}
                 </div>
                 <div class="col-md-4">
-                    {{ form_row(form.orientation, {'required': false}) }}
+                    {{ form_row(form.orientation) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-2">
-                    {{ form_row(form.etpdecision, {'required': false}) }}
+                    {{ form_row(form.etpdecision) }}
                 </div>
                 <div class="col-md-3">
-                    {{ form_row(form.progetp, {'required': false}) }}
+                    {{ form_row(form.progetp) }}
                 </div>
                 <div class="col-md-4">
-                    {{ form_row(form.precisions, {'required': false}) }}
+                    {{ form_row(form.precisions) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_row(form.precisionsperso, {'required': false}) }}
+                    {{ form_row(form.precisionsperso) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_row(form.objectif, {'required': false}) }}
+                    {{ form_row(form.objectif) }}
                 </div>
             </div>
 
@@ -117,16 +123,16 @@
             </div>
             <div class="row">
 		        <div class="col-md-3">
-                    {{ form_row(form.dentree, {'required': false}) }}
+                    {{ form_row(form.dentree) }}
                 </div>
 	        </div>
             <div class="row">
                 <div class="col-md-4">
-                    {{ form_row(form.motif, {'required': false}) }}
+                    {{ form_row(form.motif) }}
                 </div>
 
                 <div class="col-md-4">
-                    {{ form_row(form.etp, {'required': false}) }}
+                    {{ form_row(form.etp) }}
                 </div>
             </div>
 
@@ -159,5 +165,5 @@
                 });
             }
             sortSelect();
-        </script
+        </script>
     {% endblock %}

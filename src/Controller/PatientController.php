@@ -2,18 +2,16 @@
 
 namespace App\Controller;
 
-use App\Entity\Atelier;
-use App\Entity\Entretien;
 use App\Entity\Patient;
 use App\Entity\RendezVous;
+use App\Entity\Slot;
 
-use App\Form\AtelierType;
-use App\Form\EntretienType;
 use App\Form\PatientCreationFormType;
 use App\Form\PatientType;
 use App\Form\RendezVousType;
 
 use App\Repository\PatientRepository;
+
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -65,10 +63,8 @@ class PatientController extends AbstractController
                 $sortie = 0;
                 if ($patient->getDentree())
                     $sortie = 1;
-                else if ($patient->getProgetp() == "AOMI")
+                else if ($patient->getProgetp() == "ViVa module AOMI")
                     $sortie = 2;
-                else if ($patient->getProgetp() == "AOMI + HRCV")
-                    $sortie = 3;
                 $row = array(
                     "id" => $patient->getId(),
                     "nom" => $patient->getNom(),
@@ -103,7 +99,7 @@ class PatientController extends AbstractController
         return $this->render('patient/list/index.html.twig', [
             'title' => 'Liste des patients',
             'controller_name' => 'PatientController',
-            'patients' => $patientRepository->findAll(),
+            'patients' => $patientRepository->findAll()
         ]);
     }
 
@@ -141,8 +137,8 @@ class PatientController extends AbstractController
         $date = \DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
 
         $rendezVous = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
-        $ateliers = $em->getRepository(Atelier::class)->findClosestRdv($date, $patient->getId());
-        $entretien = $em->getRepository(Entretien::class)->findClosestRdv($date, $patient->getId());
+        $ateliers = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
+        $entretien = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
 
         $rdv = ["", "", "", "", ""];
         $min_date = $date->add(new \DateInterval('P1Y'));
@@ -180,7 +176,7 @@ class PatientController extends AbstractController
                 $em->flush();
             }
 
-            return $this->redirectToRoute('vue', ['id' => $patient->getId()]);
+            return $this->redirectToRoute('patient_vue', ['id' => $patient->getId()]);
         }
 
         return $this->render('patient/create/index.html.twig', [
@@ -191,9 +187,9 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/vue/{id}", name="vue", methods="GET|POST")
+     * @Route("/vue/{id}", name="patient_vue", methods="GET|POST")
      */
-    public function vue(Patient $patient, Request $request): Response
+    public function patient_vue(Patient $patient, Request $request): Response
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -210,12 +206,6 @@ class PatientController extends AbstractController
             return $this->redirectToRoute('patient');
         }
 
-        $entretien = new Entretien();
-        $formEntretien = $this->createForm(EntretienType::class, $entretien);
-
-        $atelier = new Atelier();
-        $formAtelier = $this->createForm(AtelierType::class, $atelier);
-
         $rendezVous = new RendezVous();
         $formRendezVous = $this->createForm(RendezVousType::class, $rendezVous);
 
@@ -223,11 +213,13 @@ class PatientController extends AbstractController
             'title' => 'Vue',
             'controller_name' => 'PatientController',
             'patient' => $patient,
-            'today' => date("d-m-y"),
             'form' => $form->createView(),
-            'formEntretien' => $formEntretien->createView(),
-            'formAtelier' => $formAtelier->createView(),
+
             'formRendezVous' => $formRendezVous->createView(),
+
+            'dates_ateliers' => $em->getRepository(Slot::class)->findAllDates("Atelier"),
+            'dates_consultations' => $em->getRepository(Slot::class)->findAllDates("Consultation"),
+            'dates_entretiens' => $em->getRepository(Slot::class)->findAllDates("Entretien"),
         ]);
     }
 

@@ -1,0 +1,928 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
+{% endblock %}
+
+{% block title %}Réglages{% endblock %}
+
+{% macro slot(slot) %}
+    <li class="slot" data-id={{ slot.id }} data-color="{% if slot.categorie|lower == 'atelier' %}chocolate{% elseif slot.categorie|lower == 'entretien' %}purple{% elseif slot.categorie|lower == 'consultation' %}limegreen{% endif %}">
+        <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
+        <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
+        <div class="horaire">{{ slot.heureDebut|date("H:i") }} - {{ slot.heureFin|date("H:i") }}</div>
+        <div class="thematique">
+            {{ slot.thematique }}
+            {% if slot.type %}| {{ slot.type }}{% endif %}</div>
+        <div class="details">
+            {% if slot.soignant %}avec&nbsp; <span>{{ slot.soignant }}</span>{% endif %}
+            &nbsp;
+            {% if slot.location %}en&nbsp; <span>{{ slot.location }}</span>{% endif %}
+        </div>
+    </li>
+{% endmacro %}
+{% import _self as macros %}
+
+{% block page_content %}
+    <div class="settings">
+
+        <div class="nav-bar">
+            <div class="btn-group btn-nav">
+                <a id="semaineAddModal" class="btn btn-primary" data-toggle="modal" data-target="#semaineModal">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Ajouter une semaine
+                </a>
+            </div>
+        </div>
+
+        <ul class="semaine-wrapper">
+            {% for semaine in semaines %}
+                {% set counter = (counter | default(0)) + 1 %}
+                <li class="semaine" data-date="{{ semaine.dateDebut|date("d/m/Y") }}" data-id="{{ semaine.id }}">
+                    <div class="semaine__header">
+                        <div class="semaine__date-info">
+                            <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
+                            <h2>SEMAINE {{ counter }}</h2>
+                            <div class="semaine__date-range">
+                                <div>{{ semaine.dateDebut ? semaine.dateDebut|format_datetime(pattern="d MMMM YYYY", locale='fr') : '' }}</div>
+                                <div class="arrow-separator"> → </div>
+                                <div>{{ semaine.dateFin ? semaine.dateFin|format_datetime(pattern="d MMMM YYYY", locale='fr') : '' }}</div>
+                            </div>
+                        </div>
+                        <div class="semaine__general-info">
+                            <div class="semaine__duplicate"><span class="glyphicon glyphicon-duplicate"></span></div>
+                            <div class="semaine__open-icon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+                        </div>
+                    </div>
+                    <div class="semaine__body">
+                        <div class="semaine__full">
+                            <ol class="hour-list">
+                                {% for i in 7..19 %}
+                                    <li class="hour-indicator">{{ i | format_number({min_integer_digit:'2'}) }}:00</li>
+                                    <li class="hour-indicator">{{ i | format_number({min_integer_digit:'2'}) }}:30</li>
+                                {% endfor %}
+                            </ol>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+0 day")|date("d/m/Y") }}>
+                                <h3>Lundi</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+0days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+1day")|date("d/m/Y") }}>
+                                <h3>Mardi</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+1days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+2 day")|date("d/m/Y") }}>
+                               <h3>Mercredi</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+2days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+3 day")|date("d/m/Y") }}>
+                                <h3>Jeudi</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+3days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+4 day")|date("d/m/Y") }}>
+                                <h3>Vendredi</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+4days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+5 day")|date("d/m/Y") }}>
+                                <h3>Samedi</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+5days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+6 day")|date("d/m/Y") }}>
+                                <h3>Dimanche</h3>
+                                {% for slot in semaine.slots %}
+                                    {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+6days')|date("d/m/Y") %}
+                                        {{ macros.slot(slot) }}
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+    <!-- Modal addSemaine-->
+    <div id="semaineModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title add">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Ajouter une semaine
+                    </h4>
+                    <h4 class="modal-title duplicate">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Dupliquer cette semaine
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(semaineForm) }}
+                    {{ form_errors(semaineForm) }}
+
+                    <div id="semaine__date-error"><strong>Erreur :</strong> Cette semaine existe déjà</div>
+
+                    <div class="form-group">
+                        <label class="control-label" for="semaine_date">Dates</label>
+                        <div class="flex input-group input-daterange">
+                            {{ form_widget(semaineForm.dateDebut) }}
+                            <div class="arrow-separator"> → </div>
+                            {{ form_widget(semaineForm.dateFin) }}
+                        </div>
+                    </div>
+
+                    {{ form_row(semaineForm._token) }}
+                    {{ form_end(semaineForm, {'render_rest' : false}) }}
+                    <button id="semaine_add" disabled class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                    <button id="semaine_duplicate" disabled class="btn btn-primary btn-block" data-dismiss="modal">Dupliquer</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal addSlot-->
+    <div id="slotModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title modal__add">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Ajouter un slot
+                    </h4>
+                    <h4 class="modal-title modal__edit">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Modifier ce slot
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(slotForm) }}
+                    {{ form_errors(slotForm) }}
+
+                    <h3 data-date="">12 Mars 1997</h3>
+
+                    <div class="form-group">
+                        <label class="control-label required" for="slot_heure">Horaire</label>
+                        <div class="flex">
+                            {{ form_widget(slotForm.heureDebut) }}
+                            <div class="separator-hour"> - </div>
+                            {{ form_widget(slotForm.heureFin) }}
+                        </div>
+                    </div>
+                    {{ form_row(slotForm.categorie) }}
+                    {{ form_row(slotForm.thematique) }}
+                    {{ form_row(slotForm.type) }}
+                    {{ form_row(slotForm.location) }}
+                    {{ form_row(slotForm.soignant) }}
+                    {{ form_row(slotForm.rendezVous) }}
+                    {{ form_row(slotForm._token) }}
+                    {{ form_end(slotForm, {'render_rest' : false}) }}
+                    <button id="slot_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                    <button id="slot_edit" class="btn btn-primary btn-block" data-dismiss="modal">Modifier</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+
+    <script src="{{ asset('js/select2.min.js') }}"></script>
+
+    <script type="text/javascript">
+
+        $('.datepicker, .input-daterange').datepicker({
+            language: 'fr',
+            format: 'dd/mm/yyyy',
+            todayBtn: true,
+            todayHighlight: false,
+            autoclose: false
+        });
+
+        /* Scrolling horizontally with mouse
+        ============================================================================== */
+
+        let sliderContainer = $('.semaine-wrapper');
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        sliderContainer.on('mousedown', '.semaine__full', function(e) {
+            isDown = true;
+            $(this).addClass('active');
+            let offset = $(this).offset();
+            startX = e.pageX - offset.left;
+            scrollLeft = $(this).scrollLeft();
+        });
+        sliderContainer.on('mouseleave', '.semaine__full', function() {
+            isDown = false;
+            $(this).removeClass('active');
+        });
+        sliderContainer.on('mouseup', '.semaine__full', function() {
+            isDown = false;
+            $(this).removeClass('active');
+        });
+        sliderContainer.on('mousemove', '.semaine__full', function(e) {
+            if(!isDown) return;
+            e.preventDefault();
+            let offset = $(this).offset();
+            const x = e.pageX - offset.left;
+            const walk = (x - startX) * 3; //scroll-fast
+            $(this).scrollLeft(scrollLeft - walk);
+        });
+
+
+        /* Close modal on "Escape" pressed
+        ============================================================================== */
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.keyCode == 27) {
+                $('.modal').modal('hide');
+            }
+        };
+
+
+        /* Set select color
+        ============================================================================== */
+        function setSelectColor(obj) {
+            let color = obj.find(":selected").attr("class");
+            if (!color)
+                return;
+            obj.css({background: color});
+            obj.css({color: 'white'});
+        }
+
+        $('ol, .modal').on('change', 'select', function() {
+            setSelectColor($(this));
+        });
+
+
+
+        function formatDate(input) {
+            var datePart = input.match(/\d+/g),
+                year = datePart[2] //.substring(2),  get only two digits
+                month = datePart[1],
+                day = datePart[0];
+            return year + '-' + month + '-' + day;
+        }
+
+        /* Semaines
+        ============================================================================== */
+
+        {# Change week number #}
+        Date.prototype.getWeek = function() {
+            var onejan = new Date(this.getFullYear(), 0, 1);
+            return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+        }
+
+        function setWeekNumber() {
+            $('.semaine-wrapper .semaine').each(function() {
+                let date = new Date(formatDate($(this).data('date')));
+                $(this).find('.semaine__date-info h2').text('SEMAINE ' + date.getWeek());
+            })
+        };
+        setWeekNumber();
+
+        {# Sort week #}
+        function sort_date(a, b) {
+            let date1 = $(a).data('date').split("/");
+            let date2 = $(b).data('date').split("/");
+            return (new Date(date2[2], date2[1], date2[0])) < (new Date(date1[2], date1[1], date1[0])) ? 1 : -1;    
+        }
+
+        function orderWeek() {
+            $('.semaine-wrapper > .semaine').sort(sort_date).appendTo('.semaine-wrapper');
+        }
+
+        {#  /  #}
+        $('#semaine_dateDebut').datepicker().on("changeDate", function(e) {
+            setWeekDates(e.date);
+        });
+
+        $('#semaine_dateDebut').keyup(function(e) {
+            jsDate = $(this).datepicker('getDate');
+            setWeekDates(jsDate);
+        })
+
+        function setWeekDates(jsDate) {
+            if (jsDate !== null) {
+                let dateDebut = jsDate.setDate(jsDate.getDate() - (jsDate.getDay() - 1));
+                $('#semaine_dateDebut').datepicker('update', jsDate);
+                let dateFin = jsDate.setDate(jsDate.getDate() + 6);
+                $('#semaine_dateFin').datepicker('setDate', jsDate);
+
+                checkSemaineDate();
+            }
+        }
+
+        {# Check date #}
+        function checkSemaineDate() {
+            semaineResetError();
+            let dateDebut = $('#semaine_dateDebut').val();
+
+            $.ajax({
+                url: "{{ path('semaine_date') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "dateDebut": dateDebut
+                },
+                success: function(resp) {
+                    if (resp) {
+                        semaineRemoveError();
+                    } else {
+                        semaineAddError();
+                    }
+                }
+            });
+        }
+
+        function semaineAddError() {
+            $('#semaine_dateDebut').css({'border-color': 'red'});
+            $('#semaine_add, #semaine_duplicate').prop("disabled", true);
+            $('#semaine__date-error').show();
+        }
+
+        function semaineRemoveError() {
+            $('#semaine_dateDebut').css({'border-color': 'limegreen'});
+            $('#semaine_add, #semaine_duplicate').prop("disabled", false);
+            $('#semaine__date-error').hide();
+        }
+
+        function semaineResetError() {
+            $('#semaine_dateDebut').css({'border-color': '#ccc'});
+            $('#semaine_add, #semaine_duplicate').prop("disabled", true);
+        }
+
+        {# Add #}
+        $('#semaineAddModal').on('click', function (e) {
+            $('.modal-title.duplicate, #semaine_duplicate').hide();
+            $('.modal-title.add, #semaine_add').show();
+        });
+
+        $("#semaine_add").on('click', function () {
+            let dateDebut = $('#semaine_dateDebut').val();
+            let dateFin = $('#semaine_dateFin').val();
+
+            $.ajax({
+                url: "{{ path('semaine_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "dateDebut": dateDebut,
+                    "dateFin": dateFin,
+                },
+                success: function(resp) {
+                    if (resp) {
+                        let new_dateDebut = new Date(formatDate(dateDebut));
+                        let date_debut = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_dateDebut);
+                        let new_dateFin = new Date(formatDate(dateFin));
+                        let date_fin = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_dateFin);
+                        $('.semaine-wrapper')
+                            .append(`<li class="semaine" data-date="` + dateDebut + `" data-id="` + resp + `">
+                                        <div class="semaine__header">
+                                            <div class="semaine__date-info">
+                                                <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
+                                                <h2>SEMAINE 1</h2>
+                                                <div class="semaine__date-range">
+                                                    <div>` + date_debut + `</div>
+                                                    <div class="arrow-separator"> → </div>
+                                                    <div>` + date_fin + `</div>
+                                                </div>
+                                            </div>
+                                            <div class="semaine__general-info">
+                                                <div class="semaine__duplicate"><span class="glyphicon glyphicon-duplicate"></span></div>
+                                                <div class="semaine__open-icon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+                                            </div>
+                                        </div>
+                                        <div class="semaine__body">
+                                            <div class="semaine__full">
+                                                <ol class="hour-list">
+                                                    <li class="hour-indicator">07:00</li>
+                                                    <li class="hour-indicator">07:30</li>
+                                                    <li class="hour-indicator">08:00</li>
+                                                    <li class="hour-indicator">08:30</li>
+                                                    <li class="hour-indicator">09:00</li>
+                                                    <li class="hour-indicator">09:30</li>
+                                                    <li class="hour-indicator">10:00</li>
+                                                    <li class="hour-indicator">10:30</li>
+                                                    <li class="hour-indicator">11:00</li>
+                                                    <li class="hour-indicator">11:30</li>
+                                                    <li class="hour-indicator">12:00</li>
+                                                    <li class="hour-indicator">12:30</li>
+                                                    <li class="hour-indicator">13:00</li>
+                                                    <li class="hour-indicator">13:30</li>
+                                                    <li class="hour-indicator">14:00</li>
+                                                    <li class="hour-indicator">14:30</li>
+                                                    <li class="hour-indicator">15:00</li>
+                                                    <li class="hour-indicator">15:30</li>
+                                                    <li class="hour-indicator">16:00</li>
+                                                    <li class="hour-indicator">16:30</li>
+                                                    <li class="hour-indicator">17:00</li>
+                                                    <li class="hour-indicator">17:30</li>
+                                                    <li class="hour-indicator">18:00</li>
+                                                    <li class="hour-indicator">18:30</li>
+                                                    <li class="hour-indicator">19:00</li>
+                                                    <li class="hour-indicator">19:30</li>
+                                                </ol>
+                                                <ul class="jour" data-date="18/01/2021">
+                                                    <h3>Lundi</h3>
+                                                </ul>
+                                                <ul class="jour" data-date="19/01/2021">
+                                                    <h3>Mardi</h3>
+                                                </ul>
+                                                <ul class="jour" data-date="20/01/2021">
+                                                <h3>Mercredi</h3>
+                                                </ul>
+                                                <ul class="jour" data-date="21/01/2021">
+                                                    <h3>Jeudi</h3>
+                                                </ul>
+                                                <ul class="jour" data-date="22/01/2021">
+                                                    <h3>Vendredi</h3>
+                                                </ul>
+                                                <ul class="jour" data-date="23/01/2021">
+                                                    <h3>Samedi</h3>
+                                                </ul>
+                                                <ul class="jour" data-date="24/01/2021">
+                                                    <h3>Dimanche</h3>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </li>`);
+                        $('#semaineModal form')[0].reset();
+                        semaineResetError();
+                        orderWeek();
+                        setWeekNumber();
+                    } else {
+                        errorAlert('impossible d\'ajouter une semaine');
+                    }
+                }
+            });
+        });
+
+        {# Open #}
+        $('.semaine-wrapper').on('click', '.semaine__header', function() {
+            $(this).parent().toggleClass("open");
+            $('.semaine__header').not(this).parent().removeClass("open");
+            $(this).find('.semaine__open-icon .glyphicon').toggleClass('glyphicon-chevron-down glyphicon-chevron-up');
+        })
+
+
+        {# Delete #}
+        $(".semaine-wrapper").on("click", ".semaine .btn-remove", function (e) {
+            e.stopPropagation();
+            let id = $(this).parents('.semaine').data('id');
+            let url = "{{ path('semaine_delete', { 'id': 'semaine_id' }) }}";
+            url = url.replace("semaine_id", id);
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                dataType: "json",
+                data: {},
+                success: function(resp) {
+                    if (resp) {
+                        $('.semaine[data-id="' + id + '"]').remove();
+                    } else {
+                        errorAlert('impossible de supprimer cette semaine');
+                    }
+                }
+            });
+        });
+
+        {# Duplicate #}
+        $(".semaine-wrapper").on("click", ".semaine .semaine__duplicate", function (e) {
+            e.stopPropagation();
+
+            let modal = $('#semaineModal');
+            let id = $(this).parents('.semaine').data('id');
+            $('.modal-title.duplicate').attr('data-id', id);
+            $('.modal-title.duplicate, #semaine_duplicate').show();
+            $('.modal-title.add, #semaine_add').hide();
+            modal.modal('show');
+        });
+
+        $("#semaine_duplicate").on('click', function () {
+            let id = $('.modal-title.duplicate').data('id');
+            let url = "{{ path('semaine_duplicate', { 'id': 'semaine_id' }) }}";
+            url = url.replace("semaine_id", id);
+
+            let dateDebut = $('#semaine_dateDebut').val();
+            let dateFin = $('#semaine_dateFin').val();
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "dateDebut": dateDebut,
+                    "dateFin": dateFin,
+                },
+                success: function(res) {
+                    if (res) {
+                        let newSemaine = $('.semaine[data-id="' + id + '"]').clone()
+                        newSemaine.attr('data-id', res.id);
+                        newSemaine.attr('data-date', res.debut);
+                        newSemaine.find('.semaine__date-range > div:first-child').text(new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(new Date(formatDate(res.debut))))
+                        newSemaine.find('.semaine__date-range > div:last-child').text(new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(new Date(formatDate(res.fin))))
+                        let date = new Date(formatDate(res.debut));
+                        for (let i = 0; i < 7; i++) {
+                            newSemaine.find('.jour:eq(' + i + ')').attr('data-date', new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'numeric', day: 'numeric'}).format(date));
+                            date.setDate(date.getDate() + 1);
+                        }
+                        newSemaine.find('.slot').remove();
+                        $.each(res.slots, function(e, v) {
+                            let slot = createSlot(v);
+                            newSemaine.find('.jour[data-date="' + v.date + '"]').append(slot);
+                            $('#semaineModal form')[0].reset();    
+                        })
+                        $('.semaine-wrapper').append(newSemaine);
+                        orderWeek();
+                        setWeekNumber();
+
+                        displaySlot();
+                    } else {
+                        errorAlert('impossible de dupliquer ce slot');
+                    }
+                }, error: function(err) {
+                    errorAlert('impossible de dupliquer ce slot');
+                }
+            });
+        });
+
+
+        /* Slot
+        ============================================================================== */
+
+        {#      #}
+        function matchCustom(params, data) {
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            if (data.text.indexOf(params.term) > -1) {
+                return $.extend({}, data, true);;
+            }
+            return null;
+        }
+
+        $(".js-patient").select2({
+            multiple: false,
+            matcher: matchCustom,
+        });
+
+
+        {#      #}
+        $("#slot_categorie").change(function() {
+            $("#slot_thematique option[value='']").prop('selected', true);
+            changeThematique();
+        });
+
+        function changeThematique() {
+            let thematique = $("#slot_categorie option:selected").data('thematique');
+            $('#slot_thematique option').each(function() {
+                if ($(this).data('thematique') !== thematique) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
+            if (thematique === 'atelier') {
+                $(".js-patient").select2({ multiple: true, matcher: matchCustom });
+            } else {
+                $(".js-patient").select2({ multiple: false, matcher: matchCustom });
+            }
+        };
+        changeThematique();
+
+        {# Add #}
+        function getSlotSameTime(slot, jour) {
+            let slots = [];
+            $('.slot', jour).each(function() {
+                if (slot.data('id') !== $(this).data('id') /* && typeof $(this).data('mul') === 'undefined' */) {
+                    let horaire = slot.find('.horaire').text().split(' - ');
+                    let h = $(this).find('.horaire').text().split(' - ');
+                    if ((horaire[0] >= h[0] && horaire[0] <= h[1] && horaire[0] != h[1])
+                    || (h[0] >= horaire[0] && h[0] <= horaire[1] && h[0] != horaire[1])) {
+                        slots.push($(this));
+                    }
+                }
+            });
+            return slots;
+        }
+
+        function displaySlot(heureDebut = '7:00') {
+            $('.semaine .jour').each(function(i, jour) {
+                $('.slot', this).each(function() {
+                    let horaire = $(this).find('.horaire').text();
+                    horaire = horaire.split(' - ');
+                    $(this).css({
+                        top: (((parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1])) - (parseInt(heureDebut.split(':')[0]) * 60 + parseInt(heureDebut.split(':')[1]))) * (70 / 60)) + 50 + 'px',
+                        height: (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60)) - 3 + 'px',
+                        backgroundColor: $(this).data('color'),
+                    });
+                    let slots = getSlotSameTime($(this), jour);
+                    if (slots.length) {
+                        let mul = slots.length + 1;
+                        $(this).data('mul', mul);
+                        $(this).css({'width': ((100 / mul) - 1) + '%', 'left': '0%'});
+                        jQuery.each(slots, function(j) {
+                            $(this).data('mul', mul);
+                            $(this).css({'width': ((100 / mul) - 1) + '%', 'left': ((100 / mul) * (j + 1)) + '%'})
+                        });
+                    }
+                });
+            });
+        }
+        displaySlot();
+
+        function getIdFromSelect2($select2) {
+            let list = [];
+            $select2.forEach(function(e) {
+                list.push(e.id);
+            })
+            return list;
+        }
+
+        function createSlot(data) {
+            let color;
+            if (data.categorie.toLowerCase() == 'atelier')
+                color = 'chocolate';
+            else if (data.categorie.toLowerCase() == 'entretien')
+                color = 'purple';
+            else if (data.categorie.toLowerCase() == 'consultation')
+                color = 'limegreen';
+            let slot = (`
+                <li class="slot" data-id="` + data.id + `" data-color="` + color + `">
+                    <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
+                    <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
+                    <div class="horaire">` + data.debut + ` - ` + data.fin + `</div>
+                    <div class="thematique">
+            `);
+            if (data.thematique) slot += data.thematique;
+            if (data.type) slot += ' | ' + data.type;
+            slot += '</div> <div class="details">';
+            if (data.soignant) slot += 'avec&nbsp;<span>' + data.soignant + '</span>';
+            if (data.location) slot += '&nbsp;en&nbsp;<span>' + data.location + '</span>';
+            slot += '</div></li>';
+            return slot;
+        }
+
+        $(".semaine-wrapper").on("click", ".jour", function (e) {
+            e.preventDefault();
+            //reset
+            $('#slotModal form')[0].reset();
+            changeThematique();
+            $('#slot_categorie').css({background: 'white', color: 'black'});
+
+            //
+            let date = $(this).data('date');
+            let id = $(this).parents('.semaine').data('id');
+            let newDate = new Date(formatDate(date));
+            let dateFormated = new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(newDate);
+            let modal = $('#slotModal');
+            modal.find('.modal-body h3').text(dateFormated);
+            modal.find('.modal-body h3').attr('data-date', date);
+            modal.find('.modal-body form').attr('data-semaineid', id);
+            $("#slot_add, .modal__add").show();
+            $("#slot_edit, .modal__edit").hide();
+            modal.modal('show');
+        });
+
+        $("#slot_add").click(function (e) {
+            let date = $('#slotModal .modal-body h3').data('date');
+            let semaineId = $('#slotModal .modal-body form').data('semaineid');
+            let heureDebut = $('#slot_heureDebut').val();
+            let heureFin = $('#slot_heureFin').val();
+            let categorie = $('#slot_categorie').val();
+            let thematique = $('#slot_thematique').val();
+            let type = $('#slot_type').val();
+            let location = $('#slot_location').val();
+            let soignant = $('#slot_soignant option:selected').val();
+            let patient = getIdFromSelect2($('.js-patient').select2('data'));
+
+            $.ajax({
+                url: "{{ path('slot_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": date,
+                    "semaineId": semaineId,
+                    "heureDebut": heureDebut,
+                    "heureFin": heureFin,
+                    "categorie": categorie,
+                    "thematique": thematique,
+                    "type": type,
+                    "location": location,
+                    "soignant": soignant,
+                    "patient": patient
+                },
+                success: function(res) {
+                    if (res) {
+                        let slot = createSlot(res);
+                        $('.semaine-wrapper .jour[data-date="' + date + '"]').append(slot);
+                        $('#slotModal form')[0].reset();
+                        displaySlot();
+                    } else {
+                        errorAlert('impossible d\'ajouter un slot');
+                    }
+                }
+            });
+        });
+
+        {# Edit #}
+        $(".semaine-wrapper").on("click", ".slot", function (e) {
+            e.stopPropagation();
+            let id = $(this).data('id');
+            let date = $(this).closest('.jour').data('date');
+            let newDate = new Date(formatDate(date));
+            let dateFormated = new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(newDate);
+            let modal = $('#slotModal');
+            modal.find('.modal-body h3').text(dateFormated);
+            modal.find('.modal-body h3').attr('data-date', date);
+            modal.find('.modal-body form').attr('data-semaineid', id);
+
+            let url = "{{ path('slot_get', { 'id': 'slot_id' }) }}";
+            url = url.replace("slot_id", id);
+            $.ajax({
+                url: url, type: "GET", dataType: "json", data: {},
+                success: function(res) {
+                    if (res) {
+                        $('#slot_heureDebut').val(moment(res.heureDebut, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
+                        $('#slot_heureFin').val(moment(res.heureFin, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
+                        $('#slot_categorie option[value="'+ res.categorie +'"]').prop('selected', true);
+                        setSelectColor($('#slot_categorie'));
+                        $('#slot_thematique option[value="'+ res.thematique +'"]').prop('selected', true);
+                        changeThematique();
+                        $('#slot_type option[value="'+ res.type +'"]').prop('selected', true);
+                        $('#slot_location').val(res.location);
+
+                        if (res.soignant) {
+                            if ($("#slot_soignant option[value='" + res.soignant.id + "']").length > 0)
+                                $('#slot_soignant option[value="'+ res.soignant.id +'"]').prop('selected', true);
+                            else
+                                $('#slot_soignant option[value=""]').prop('selected', true);
+                        }
+                        else $('#slot_soignant option[value=""]').prop('selected', true);
+
+                        let list = [];
+                        $.each(res.rendezVous, function(i, v) { list.push(v['patient']['id']) });
+                        $('#slot_rendezVous').val(list);
+                        $('#slot_rendezVous').trigger('change');
+                    
+                        $("#slot_add, .modal__add").hide();
+                        $("#slot_edit, .modal__edit").show();
+                        
+                        modal.modal('show');
+                    }
+                }
+            });
+        });
+
+        $("#slot_edit").click(function () {
+            let id = $('#slotModal .modal-body form').data('semaineid');
+            let date = $('#slotModal .modal-body h3').data('date');
+            let url = "{{ path('slot_edit', { 'id': 'slot_id' }) }}";
+            url = url.replace("slot_id", id);
+
+            let heureDebut = $('#slot_heureDebut').val();
+            let heureFin = $('#slot_heureFin').val();
+            let categorie = $('#slot_categorie').val();
+            let thematique = $('#slot_thematique').val();
+            let type = $('#slot_type').val();
+            let location = $('#slot_location').val();
+            let soignant = $('#slot_soignant option:selected').val();
+            let patient = getIdFromSelect2($('.js-patient').select2('data'));
+
+            $.ajax({
+                url: url, type: "PATCH", dataType: "json",
+                data: {
+                    "heureDebut": heureDebut,
+                    "heureFin": heureFin,
+                    "categorie": categorie,
+                    "thematique": thematique,
+                    "type": type,
+                    "location": location,
+                    "soignant": soignant,
+                    "patient": patient
+                },
+                success: function(res) {
+                    if (res) {
+                        $('.slot[data-id="' + id + '"]').remove();
+                        let slot = createSlot(res);
+                        $('.semaine-wrapper .jour[data-date="' + date + '"]').append(slot);
+                        displaySlot();
+                    }
+                }
+            });
+        });
+
+
+        {# Delete #}
+        $(".semaine-wrapper").on("click", ".slot .delete-btn", function (e) {
+            e.stopPropagation();
+            let id = $(this).parents('.slot').data('id');
+            let url = "{{ path('slot_delete', { 'id': 'slot_id' }) }}";
+            url = url.replace("slot_id", id);
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                dataType: "json",
+                data: {},
+                success: function(resp) {
+                    if (resp) {
+                        $('.slot[data-id="' + id + '"]').remove();
+                        displaySlot();
+                    } else {
+                        errorAlert('impossible de supprimer ce slot');
+                    }
+                }, error: function(err) {
+                    errorAlert('impossible de supprimer ce slot');
+                }
+            });
+        });
+
+        {# Duplicate #}
+        $(".semaine-wrapper").on("click", ".slot .duplicate-btn", function (e) {
+            e.stopPropagation();
+            let id = $(this).parents('.slot').data('id');
+            let url = "{{ path('slot_duplicate', { 'id': 'slot_id' }) }}";
+            url = url.replace("slot_id", id);
+            $.ajax({
+                url: url,
+                type: "POST",
+                dataType: "json",
+                data: {},
+                success: function(res) {
+                    if (res) {
+                        let newSlot = $('.slot[data-id="' + id + '"]').clone().attr('data-id', res.id);
+                        newSlot.find('.horaire').text(res.debut + ' - ' + res.fin);
+                        $('.slot[data-id="' + id + '"]').parents('.jour').append(newSlot);
+                        displaySlot();
+                    } else {
+                        errorAlert('impossible de dupliquer ce slot');
+                    }
+                }, error: function(err) {
+                    errorAlert('impossible de dupliquer ce slot');
+                }
+            });
+        });
+
+        /* Alert
+        ============================================================================== */
+
+        var alert_pos = {{ top }};
+
+        function errorAlert(message) {
+            $('body').prepend(
+                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
+            );
+            alert_pos += 72;
+        }
+
+    </script>
+
+{% endblock %}

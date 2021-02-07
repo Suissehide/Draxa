@@ -4,8 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Patient;
 use App\Entity\RendezVous;
+use App\Entity\Slot;
+
 use App\Form\RendezVousType;
+
 use App\Repository\RendezVousRepository;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/rendez/vous")
+ * @Route("/rendez_vous")
  */
 class RendezVousController extends AbstractController
 {
@@ -24,6 +28,127 @@ class RendezVousController extends AbstractController
     {
         return $this->render('rendez_vous/index.html.twig', ['rendez_vouses' => $rendezVousRepository->findAll()]);
     }
+
+    /**
+     * @Route("/add", name="rendezVous_add", methods="GET|POST")
+     */
+    public function rendezVous_add(Request $request): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            $id = $request->request->get('id');
+            $slotId = $request->request->get('slotId');
+            $categorie = $request->request->get('categorie');
+
+            if ($slotId == '')
+                return new JsonResponse(false);
+            $slot = $em->getRepository(Slot::class)->find($slotId);
+            if (!$slot)
+                return new JsonResponse(false);
+
+            $date = explode('/', $request->request->get('date'));
+            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+            $patientId = $request->request->get('patientId');
+            if ($em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $categorie) != [])
+                return new JsonResponse(false);
+
+            $rendezVous = new RendezVous();
+            $rendezVous->setCategorie($categorie);
+            $rendezVous->setSlot($slot);
+            $rendezVous->setDate($new_date);
+            $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
+            $rendezVous->setAccompagnant($request->request->get('accompagnant'));
+            $rendezVous->setEtat($request->request->get('etat'));
+            $rendezVous->setMotifRefus($request->request->get('motifRefus'));
+            $rendezVous->setPatient($em->getRepository(Patient::class)->findOneById($id));
+
+            $em->persist($rendezVous);
+            $em->flush();
+            return new JsonResponse($rendezVous->getId());
+        }
+    }
+
+    /**
+     * @Route("/remove/{id}", name="rendezVous_remove", methods="DELETE")
+     */
+    public function rendezVous_remove(Request $request, RendezVous $rendezVous): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($rendezVous) {
+                $em->remove($rendezVous);
+                $em->flush();
+                return new JsonResponse(true);
+            }
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/patch/{id}", name="rendezVous_patch", methods="GET|POST")
+     */
+    public function rendezVous_patch(Request $request, RendezVous $rendezVous): JsonResponse
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+            if ($rendezVous) {
+                $slotId = $request->request->get('slotId');
+
+                if ($slotId == '')
+                    return new JsonResponse(false);
+                $slot = $em->getRepository(Slot::class)->find($slotId);
+                if (!$slot)
+                    return new JsonResponse(false);
+
+                $date = explode('/', $request->request->get('date'));
+                $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
+
+                $patientId = $request->request->get('patientId');
+                $t = $em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $rendezVous->getCategorie());
+                if ($t != [] && $t[0]->getDate() != $rendezVous->getDate())
+                    return new JsonResponse(false);
+
+                $rendezVous->setSlot($slot);
+                $rendezVous->setDate($new_date);
+                $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
+                $rendezVous->setAccompagnant($request->request->get('accompagnant'));
+                $rendezVous->setEtat($request->request->get('etat'));
+                $rendezVous->setMotifRefus($request->request->get('motifRefus'));
+
+                $em->flush();
+                return new JsonResponse(true);
+            }
+            return new JsonResponse(false);
+        }
+    }
+
+    /**
+     * @Route("/send", name="rendezVous_send", methods="POST")
+     */
+
+    public function rendezVous_send(Request $request): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $id = $request->request->get('id');
+            $send = $request->request->get('send');
+
+            $rendezVous = $em->getRepository(RendezVous::class)->find($id);
+            $rendezVous->setSend($send);
+            $em->flush();
+
+            return new JsonResponse(true);
+        }
+        return new JsonResponse(false);
+    }
+
+
+
+    /**
+     * OLD ROUTE
+     */
 
     /**
      * @Route("/new", name="rendez_vous_new", methods="GET|POST")
@@ -87,122 +212,5 @@ class RendezVousController extends AbstractController
         }
 
         return $this->redirectToRoute('rendez_vous_index');
-    }
-
-    /**
-     * @Route("/add", name="rendezVous_add", methods="GET|POST")
-     */
-    public function rendezVous_add(Request $request): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            $id = $request->request->get('id');
-
-            $new_time = null;
-            if ($request->request->get('time') != '') {
-                $time = explode(':', $request->request->get('time'));
-                $new_time = date_create('2019-01-01')->setTime($time[0], $time[1]);
-            }
-            $date = explode('/', $request->request->get('date'));
-            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-
-            $patient_id = $request->request->get('patient');
-            if ($em->getRepository(RendezVous::class)->findSameDate($date[2], $date[1], $date[0], $patient_id) != [])
-                return new JsonResponse(0);
-
-            $rendezVous = new RendezVous();
-            $rendezVous->setDate($new_date);
-            $rendezVous->setThematique($request->request->get('thematique'));
-            $rendezVous->setHeure($new_time);
-            $rendezVous->setType($request->request->get('type'));
-            $rendezVous->setAccompagnant($request->request->get('accompagnant'));
-            $rendezVous->setEtat($request->request->get('etat'));
-            $rendezVous->setMotifRefus($request->request->get('motifRefus'));
-            $rendezVous->setPatient($em->getRepository(Patient::class)->findOneById($id));
-
-            $em->persist($rendezVous);
-            $em->flush();
-            return new JsonResponse($rendezVous->getId());
-        }
-    }
-
-    /**
-     * @Route("/date_error", name="rendezVous_date_error", methods="GET|POST")
-     */
-    public function rendezVous_date_error(Request $request): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $bool = false;
-            $id = $request->request->get('id');
-            $date = explode('/', $request->request->get('date'));
-            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-            $now = date_create(date('y-m-d'));
-
-            $em = $this->getDoctrine()->getManager();
-            $rendezVous = $em->getRepository(Patient::class)->find($id)->getRendezVous();
-
-            if (date_diff($now, $new_date, false)->invert) {
-                $bool = true;
-            }
-            foreach ($rendezVous as $rd) {
-                $date = date_create($rd->getDate()->format('y-m-d'));
-                if (!date_diff($new_date, $date, false)->invert) {
-                    $bool = true;
-                }
-            }
-            return new JsonResponse($bool);
-        }
-    }
-
-    /**
-     * @Route("/remove/{id}", name="rendezVous_remove", methods="DELETE")
-     */
-    public function rendezVous_remove(Request $request, RendezVous $rendezVous): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            if ($rendezVous) {
-                $em->remove($rendezVous);
-                $em->flush();
-                return new JsonResponse(true);
-            }
-            return new JsonResponse(false);
-        }
-    }
-
-    /**
-     * @Route("/patch/{id}", name="rendezVous_patch", methods="GET|POST")
-     */
-    public function rendezVous_patch(Request $request, RendezVous $rendezVous): JsonResponse
-    {
-        if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            if ($rendezVous) {
-                $new_time = null;
-                if ($request->request->get('time') != '') {
-                    $time = explode(':', $request->request->get('time'));
-                    $new_time = date_create('2019-01-01')->setTime($time[0], $time[1]);
-                }
-                $date = explode('/', $request->request->get('date'));
-                $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-                
-                $patient_id = $request->request->get('patient');
-                $t = $em->getRepository(RendezVous::class)->findSameDate($date[2], $date[1], $date[0], $patient_id);
-                if ($t != [] && $t[0]->getDate() != $rendezVous->getDate())
-                    return new JsonResponse(0);
-
-                $rendezVous->setDate($new_date);
-                $rendezVous->setThematique($request->request->get('thematique'));
-                $rendezVous->setHeure($new_time);
-                $rendezVous->setType($request->request->get('type'));
-                $rendezVous->setAccompagnant($request->request->get('accompagnant'));
-                $rendezVous->setEtat($request->request->get('etat'));
-                $rendezVous->setMotifRefus($request->request->get('motifRefus'));
-
-                $em->flush();
-                return new JsonResponse(true);
-            }
-            return new JsonResponse(false);
-        }
     }
 }

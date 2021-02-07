@@ -35,6 +35,7 @@ security:
             anonymous: true
 
             # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
 
             # http_basic: true
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate

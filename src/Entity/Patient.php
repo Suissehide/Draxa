@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Patient
 {
     /**
+     * @Groups({"slot"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
@@ -21,7 +22,7 @@ class Patient
 
     /**
      * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $observ;
 
@@ -30,6 +31,12 @@ class Patient
      * @ORM\Column(type="text", nullable=true)
      */
     private $divers;
+
+    /**
+     * @Groups({"patient"})
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $notes;
 
     /**
      * @Groups({"patient"})
@@ -158,22 +165,8 @@ class Patient
     private $etp;
 
     /**
-     * @Groups({"patient", "entretiens"})
-     * @ORM\OneToMany(targetEntity="App\Entity\Entretien", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
-    private $entretiens;
-
-    /**
-     * @Groups({"patient", "ateliers"})
-     * @ORM\OneToMany(targetEntity="App\Entity\Atelier", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
-    private $ateliers;
-
-    /**
      * @Groups({"patient", "rendezVous"})
-     * @ORM\OneToMany(targetEntity="App\Entity\RendezVous", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id")
+     * @ORM\OneToMany(targetEntity="App\Entity\RendezVous", cascade="all", mappedBy="patient", orphanRemoval=true, indexBy="id", fetch="EAGER")
      * @ORM\OrderBy({"date" = "ASC"})
      */
     private $rendezVous;
@@ -181,8 +174,6 @@ class Patient
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
-        $this->entretiens = new ArrayCollection();
-        $this->ateliers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -198,6 +189,30 @@ class Patient
     public function setObserv(?string $observ): self
     {
         $this->observ = $observ;
+
+        return $this;
+    }
+    
+    public function getDivers(): ?string
+    {
+        return $this->divers;
+    }
+
+    public function setDivers(?string $divers): self
+    {
+        $this->divers = $divers;
+
+        return $this;
+    }
+    
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
 
         return $this;
     }
@@ -255,7 +270,7 @@ class Patient
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): self
+    public function setDate(?\DateTimeInterface $date): self
     {
         $this->date = $date;
 
@@ -375,7 +390,7 @@ class Patient
         return $this->dedate;
     }
 
-    public function setDedate(\DateTimeInterface $dedate): self
+    public function setDedate(?\DateTimeInterface $dedate): self
     {
         $this->dedate = $dedate;
 
@@ -455,68 +470,6 @@ class Patient
     }
 
     /**
-     * @return Collection|Entretien[]
-     */
-    public function getEntretiens(): Collection
-    {
-        return $this->entretiens;
-    }
-
-    public function addEntretien(Entretien $entretiens): self
-    {
-        if (!$this->entretiens->contains($entretiens)) {
-            $this->entretiens[] = $entretiens;
-            $entretiens->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEntretien(Entretien $entretiens): self
-    {
-        if ($this->entretiens->contains($entretiens)) {
-            $this->entretiens->removeElement($entretiens);
-            // set the owning side to null (unless already changed)
-            if ($entretiens->getPatient() === $this) {
-                $entretiens->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Atelier[]
-     */
-    public function getAteliers(): Collection
-    {
-        return $this->ateliers;
-    }
-
-    public function addAtelier(Atelier $atelier): self
-    {
-        if (!$this->ateliers->contains($atelier)) {
-            $this->ateliers[] = $atelier;
-            $atelier->setPatient($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAtelier(Atelier $atelier): self
-    {
-        if ($this->ateliers->contains($atelier)) {
-            $this->ateliers->removeElement($atelier);
-            // set the owning side to null (unless already changed)
-            if ($atelier->getPatient() === $this) {
-                $atelier->setPatient(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|RendezVous[]
      */
     public function getRendezVous(): Collection
@@ -543,18 +496,6 @@ class Patient
                 $rendezVous->setPatient(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getDivers(): ?string
-    {
-        return $this->divers;
-    }
-
-    public function setDivers(?string $divers): self
-    {
-        $this->divers = $divers;
 
         return $this;
     }

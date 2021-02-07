@@ -1,0 +1,219 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+{% endblock %}
+
+{% block title %}Soignants{% endblock %}
+
+{% block page_content %}
+    <div class="settings">
+
+        <div class="nav-bar">
+            <div class="btn-group btn-nav">
+                <a class="btn btn-primary" data-toggle="modal" data-target="#soignantModal">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Ajouter une personne
+                </a>
+            </div>
+        </div>
+
+        <div class="soignant__wrapper">
+            <div id="actif" class="list-soignant">
+                <h2>Actifs</h2>
+                <ul>
+                    {% for soignant in soignants %}
+                        {% if soignant.status == true %}
+                            <li class="soignant" data-id="{{ soignant.id }}">{{ soignant.prenom }} {{ soignant.nom }}<button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <div class="soignant__btn-bar">
+                <button disabled class="btn js-remove"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                <button disabled class="btn js-add"><span class="glyphicon glyphicon-chevron-left"></span></button>
+            </div>
+
+            <div id="inactif" class="list-soignant">
+                <h2>Inactifs</h2>
+                <ul>
+                    {% for soignant in soignants %}
+                        {% if soignant.status == false %}
+                            <li class="soignant" data-id="{{ soignant.id }}">{{ soignant.prenom }} {{ soignant.nom }}<button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+        
+    <!-- Modal addSoignant -->
+    <div id="soignantModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Ajouter une personne</h4>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(soignantForm) }}
+                    {{ form_errors(soignantForm) }}
+                    {{ form_row(soignantForm.prenom) }}
+                    {{ form_row(soignantForm.nom) }}
+
+                    {{ form_row(soignantForm._token) }}
+                    {{ form_end(soignantForm, {'render_rest' : false}) }}
+                    <button id="soignant_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock page_content %}
+
+{% block javascripts %}
+
+<script type="text/javascript">
+
+    $('.list-soignant').on('click', '.soignant', function(e) {
+        $(this).toggleClass('selected');
+        updateTransfertButtons();
+    });
+
+    function updateTransfertButtons() {
+        if ($('#inactif .soignant.selected').length > 0)
+            toggleButton($('.js-add'), true);
+        else
+            toggleButton($('.js-add'), false);
+
+        if ($('#actif .soignant.selected').length > 0)
+            toggleButton($('.js-remove'), true);
+        else
+            toggleButton($('.js-remove'), false);
+    }
+
+    function toggleButton(obj, bool) {
+        if (bool) {
+            obj.prop("disabled", false);
+            obj.addClass('active');
+        } else {
+            obj.prop("disabled", true);
+            obj.removeClass('active');
+        }
+    }
+
+    $('.js-add').click(function() {
+        soignantUpdate(true);
+    });
+
+    $('.js-remove').click(function() {
+        soignantUpdate(false);
+    });
+
+    function soignantUpdate(status) {
+        let soignants = [];
+        
+        if (status) {
+            $('#inactif .soignant.selected').each(function() {
+                soignants.push($(this).data('id'));
+            });
+        } else {
+            $('#actif .soignant.selected').each(function() {
+                soignants.push($(this).data('id'));
+            });
+        }
+
+        $.ajax({
+            url: "{{ path('status_update') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "soignants": soignants,
+                "status": status,
+            },
+            success: function (resp) {
+                if (resp) {
+                    if (status)
+                        $('#inactif li.soignant.selected').appendTo('#actif ul');
+                    else
+                        $('#actif li.soignant.selected').appendTo('#inactif ul');
+                    $('.soignant.selected').toggleClass('selected');
+                    updateTransfertButtons();
+                } else {
+                    errorAlert();
+                }
+            }
+        });
+    }
+
+
+    $('#soignant_add').click(function() {
+        var nom = $('#soignant_nom').val();
+        var prenom = $('#soignant_prenom').val();
+
+        $.ajax({
+            url: "{{ path('soignant_add') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "nom": nom,
+                "prenom": prenom,
+            },
+            success: function (resp) {
+                if (resp) {
+                    $('#actif ul')
+                        .append(`<li class="soignant" data-id="` + resp + `">` + prenom + ' ' + nom + `<button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
+                } else {
+                    errorAlert();
+                }
+            }
+        });
+    });
+
+    $('.list-soignant').on('click', '.remove-btn', function(e) {
+        e.stopPropagation();
+        let id = $(this).parents('.soignant').data('id');
+        let url = "{{ path('soignant_delete', { 'id': 'soignant_id' }) }}";
+        url = url.replace("soignant_id", id);
+        $.ajax({
+            url: url,
+            type: "DELETE",
+            dataType: "json",
+            data: {},
+            success: function (resp) {
+                if (resp) {
+                    $('*[data-id="' + id + '"]').remove();
+                } else {
+                    errorAlert('impossible de supprimer cette personne');
+                }
+            }
+        });
+    });
+
+
+    /* Alert
+    ============================================================================== */
+
+    var alert_pos = {{ top }};
+
+    function errorAlert(message) {
+        $('body').prepend(
+            '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
+        );
+        alert_pos += 72;
+    }
+
+</script>
+
+{% endblock %}
