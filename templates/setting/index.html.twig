@@ -231,13 +231,34 @@
 
     <script type="text/javascript">
 
-        $('.datepicker, .input-daterange').datepicker({
-            language: 'fr',
-            format: 'dd/mm/yyyy',
-            todayBtn: true,
-            todayHighlight: false,
-            autoclose: false
-        });
+        var datesSemaines = {{ dates_semaines|json_encode|raw }};
+
+        function updateDatepicker() {
+            $('.datepicker, .input-daterange').datepicker({
+                language: 'fr',
+                format: 'dd/mm/yyyy',
+                todayBtn: true,
+                todayHighlight: false,
+                autoclose: false,
+                beforeShowDay: function (currentDate) {
+                    let day = moment(currentDate).unix();
+                    if (datesSemaines.length > 0) {
+                        for (let i = 0; i < datesSemaines.length; i++) {
+                            for (let j = 0; j < 7; j++) {
+                                if (day == moment(datesSemaines[i]['date'], 'DD/MM/YYYY').add(j, 'days').unix()) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    return true;
+                }
+            });
+            $('#semaine_dateDebut').datepicker('update', '');
+            $('#semaine_dateFin').datepicker('update', '');
+            $('.datepicker, .input-daterange').datepicker('update');
+        }
+        updateDatepicker();
 
         /* Scrolling horizontally with mouse
         ============================================================================== */
@@ -327,12 +348,33 @@
         function sort_date(a, b) {
             let date1 = $(a).data('date').split("/");
             let date2 = $(b).data('date').split("/");
-            return (new Date(date2[2], date2[1], date2[0])) < (new Date(date1[2], date1[1], date1[0])) ? 1 : -1;    
+            return (new Date(date2[2], date2[1], date2[0]).getTime()) < (new Date(date1[2], date1[1], date1[0]).getTime()) ? 1 : -1;    
         }
 
         function orderWeek() {
             $('.semaine-wrapper > .semaine').sort(sort_date).appendTo('.semaine-wrapper');
         }
+        orderWeek();
+
+        function setYearDividers() {
+            $('.divider').remove();
+            let oldYear = '';
+            $('.semaine-wrapper .semaine').each(function() {
+                let year = $(this).data('date').split('/')[2];
+                if (year != oldYear) {
+                    oldYear = year;
+                    let divider = `
+                        <div class="divider">
+                            <div class="line"></div>
+                            <h2 class="year">` + oldYear + `</h2>
+                        </div>
+                    `;
+                    $(this).before(divider);
+                }
+            });
+        }
+        setYearDividers();
+
 
         {#  /  #}
         $('#semaine_dateDebut').datepicker().on("changeDate", function(e) {
@@ -490,9 +532,15 @@
                                         </div>
                                     </li>`);
                         $('#semaineModal form')[0].reset();
+                        
+                        datesSemaines.push({'date':  dateDebut});
+
+                        updateDatepicker();
+
                         semaineResetError();
                         orderWeek();
                         setWeekNumber();
+                        setYearDividers();
                     } else {
                         errorAlert('impossible d\'ajouter une semaine');
                     }
@@ -519,8 +567,14 @@
                 type: "DELETE",
                 dataType: "json",
                 data: {},
-                success: function(resp) {
-                    if (resp) {
+                success: function(res) {
+                    if (res) {
+                        let date = $('.semaine[data-id="' + id + '"]').attr('data-date');
+                        datesSemaines.forEach(function(e, v) {
+                            if (e['date'] == date) datesSemaines.splice(v, 1);
+                        });
+
+                        updateDatepicker();
                         $('.semaine[data-id="' + id + '"]').remove();
                     } else {
                         errorAlert('impossible de supprimer cette semaine');
@@ -578,6 +632,7 @@
                         $('.semaine-wrapper').append(newSemaine);
                         orderWeek();
                         setWeekNumber();
+                        setYearDividers();
 
                         displaySlot();
                     } else {

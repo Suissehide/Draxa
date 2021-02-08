@@ -1344,6 +1344,24 @@ nav {
     display: none;
 }
 
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0 10px;
+}
+
+.divider .line {
+    background-color: #07a8a0;
+    height: 3px;
+    width: 40px;
+    margin-right: 10px;
+}
+
+.divider .year {
+    margin: 0;
+    font-weight: bold;
+}
+
 .semaine__header .semaine__general-info {
     flex: 1;
     width: 100%;

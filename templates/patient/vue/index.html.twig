@@ -203,7 +203,7 @@
                         {% for consultation in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
                         {% if consultation.categorie == 'Consultation' %}
                             {% set counter = (counter | default(0)) + 1 %}
-                            <li data-date="{{ consultation.date|date("d/m/Y") }}">
+                            <li data-date="{{ consultation.date|date("d/m/Y") }}" data-id="{{ consultation.id }}">
                                 <h2>Consultation  
                                     {{ counter }}
                                 </h2>
@@ -335,7 +335,7 @@
                         {% for entretien in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
                         {% if entretien.categorie == 'Entretien' %}
                             {% set counter = (counter | default(0)) + 1 %}
-                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ entretien.date|date("d/m/Y") }}">
+                            <li data-date="{{ entretien.date|date("d/m/Y") }}" data-id="{{ entretien.id }}">
                                 <h2>Entretien  
                                     {{ counter }}
                                 </h2>
@@ -467,7 +467,7 @@
                         {% for atelier in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
                         {% if atelier.categorie == 'Atelier' %}
                             {% set counter = (counter | default(0)) + 1 %}
-                            <li {% if loop.last %} class="selected" {% endif %} data-date="{{ atelier.date|date("d/m/Y") }}">
+                            <li data-date="{{ atelier.date|date("d/m/Y") }}" data-id="{{ atelier.id }}">
                                 <h2>Atelier  
                                     {{ counter }}
                                 </h2>
@@ -836,39 +836,41 @@
 
         {# Delete #}
         $('.cd-horizontal-timeline').on("click", ".btn-danger", function () {
+            $("#removeModal").attr('data-id', $(this).closest('li').data('id'));
             $("#removeModal").modal()
-            let btn = $(this);
-            $('#removeModal .btn-primary').on('click', function () {
-                let num = btn.closest('li').index();
-                let timeline = btn.parents('.cd-horizontal-timeline');
-                let date = btn.closest('li').find('.datepicker').val();
+        });
 
-                let dates;
-                if (btn.closest('ol').is('#events-content-consultations'))
-                    dates = datesConsultations;
-                else if (btn.closest('ol').is('#events-content-entretiens'))
-                    dates = datesEntretiens;
-                else if (btn.closest('ol').is('#events-content-ateliers'))
-                    dates = datesAteliers;
-                let hasValue = hasValueDeep(dates, date);
-                if (!hasValue)
-                    dates.push({'date':  date});
+        $('#removeModal .btn-primary').on('click', function () {
+            let id = $('#removeModal').attr('data-id');
+            let btn = $('.events-content li[data-id="' + id + '"] .btn-danger');
+            let num = btn.closest('li').index();
+            let timeline = btn.parents('.cd-horizontal-timeline');
+            let date = btn.closest('li').find('.datepicker').val();
 
-                timeline.find('ol').each(function () {
-                    $(this).find('li:nth-child(' + (num + 1) + ')').remove();
-                });
-                timeline.find('.events li a').removeClass("selected").addClass("older-event");
-                timeline.find('.events li:last-child a').removeClass("older-event").addClass("selected");
-                timeline.find('.events-content li').removeClass("selected");
-                timeline.find('.events-content li:last-child').addClass("selected");
-                $('#timeline_update').trigger('click');
+            let dates;
+            if (btn.closest('ol').is('#events-content-consultations'))
+                dates = datesConsultations;
+            else if (btn.closest('ol').is('#events-content-entretiens'))
+                dates = datesEntretiens;
+            else if (btn.closest('ol').is('#events-content-ateliers'))
+                dates = datesAteliers;
+            let hasValue = hasValueDeep(dates, date);
+            if (!hasValue)
+                dates.push({'date':  date});
 
-                let id = btn.closest('li').find('.datepicker').attr("name").match(/\d+/)[0];
-                let url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
-                url = url.replace("rendezVous_id", id);
-                $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
-
+            timeline.find('ol').each(function () {
+                $(this).find('li:nth-child(' + (num + 1) + ')').remove();
             });
+            timeline.find('.events li a').removeClass("selected").addClass("older-event");
+            timeline.find('.events li:last-child a').removeClass("older-event").addClass("selected");
+            timeline.find('.events-content li').removeClass("selected");
+            timeline.find('.events-content li:last-child').addClass("selected");
+            $('#timeline_update').trigger('click');
+
+            let url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
+            url = url.replace("rendezVous_id", id);
+            $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
+
         });
 
 
@@ -962,6 +964,17 @@
                 },
                 success: function (res) {
                     if (res) {
+                        let dates;
+                        if (categorie == 'Consultation')
+                            dates = datesConsultations;
+                        else if (categorie == 'Entretien')
+                            dates = datesEntretiens;
+                        else if (categorie == 'Atelier')
+                            dates = datesAteliers;
+                        dates.forEach(function(e, v) {
+                            if (e['date'] == date) dates.splice(v, 1);
+                        })
+
                         let new_date = new Date(formatDate(date));
                         let date_h1 = new Intl.DateTimeFormat("fr-FR", { month: 'short', day: 'numeric' }).format(new_date);
                         let date_em = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_date);
@@ -979,7 +992,7 @@
                         $('#events-content-' + c + 's li').removeClass("selected");
                         $(events_content)
                             .append(`
-                                <li data-date=` + date + `>
+                                <li data-date="` + date + `" data-id="` + res + `">
                                     <h2>` + categorie + ` ` + (nb + 1) + `</h2>
                                     <em>` + date_em + `</em>
                                     <div>
@@ -1152,7 +1165,6 @@
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
             $.when(getHours($(this).val(), categorie)).done(function(res) {
-                console.log(res);
                 hourInput.append(new Option('', ''));
                 res.forEach(function(el) {
                     hourInput.append(new Option(el['hour'], el['id']));

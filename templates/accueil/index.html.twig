@@ -140,7 +140,6 @@
                         d.getMonth() + 1) + '-' + d.getDate()
                     },
                     success: function (res) {
-                        console.log(res);
                         $("tbody tr").remove();
                         if (res[0].length > 0) {
                             $.each(res[0], function (index, val) {
@@ -205,7 +204,6 @@
             label += '<div class="user-list">';
             data.forEach(function(e, v) {
                 let checked = (e.send === 'Oui' ? 'checked' : '');
-                console.log('CHECK: ', checked, e.send);
                 label += `
                     <div class="user-label">
                         <div>
@@ -232,7 +230,6 @@
 
             let id = $(this).attr('id');
             let send = $(this).is(":checked") ? 'Oui': 'Non';
-            console.log(id, send);
             $.ajax({
                 url: "{{ path('rendezVous_send') }}",
                 type: "POST",
@@ -242,7 +239,7 @@
                     send: send
                 },
                 success: function (res) {
-                    console.log(res);
+                    // console.log(res);
                 }
             });
         })
@@ -263,7 +260,6 @@
                     anchor: anchor
                 },
                 success: function (res) {
-                    console.log(res);
                     window.location.href = res;
                 }
             });

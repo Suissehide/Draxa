@@ -33,6 +33,7 @@ class SettingController extends AbstractController
             'semaines' => $em->getRepository(Semaine::class)->findBy([], ['dateDebut' => 'ASC']),
             'semaineForm' => $semaineForm->createView(),
             'slotForm' => $slotForm->createView(),
+            'dates_semaines' => $em->getRepository(Semaine::class)->findAllDates(),
         ]);
     }
 

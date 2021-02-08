@@ -34,6 +34,16 @@ class SemaineRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllDates()
+    {
+        return $this->createQueryBuilder('s')
+            ->select("DATE_FORMAT(s.dateDebut, '%d/%m/%Y') as date")
+            ->orderBy('s.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Semaine[] Returns an array of Semaine objects
     //  */
