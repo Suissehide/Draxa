@@ -207,6 +207,7 @@ class RendezVousController extends AbstractController
     {
         if ($this->isCsrfTokenValid('delete' . $rendezVous->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
+            $rendezVous->setSlot();
             $em->remove($rendezVous);
             $em->flush();
         }
