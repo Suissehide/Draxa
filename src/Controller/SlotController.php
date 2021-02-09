@@ -79,7 +79,7 @@ class SlotController extends AbstractController
                         $rendezVous = new RendezVous();
                         $rendezVous->setDate($new_date);
                         $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $heureDebut));
-                        $rendezVous->setCategorie($thematique);
+                        $rendezVous->setCategorie($categorie);
                         $rendezVous->setPatient($patient);
                         $slot->addRendezVous($rendezVous);
                     }
@@ -137,7 +137,7 @@ class SlotController extends AbstractController
                         $rendezVous = new RendezVous();
                         $rendezVous->setDate($slot->getDate());
                         $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $heureDebut));
-                        $rendezVous->setCategorie($thematique);
+                        $rendezVous->setCategorie($categorie);
                         $rendezVous->setPatient($patient);
                         $slot->addRendezVous($rendezVous);
                     }
