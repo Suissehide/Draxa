@@ -436,6 +436,15 @@
             $('#semaine_add, #semaine_duplicate').prop("disabled", true);
         }
 
+        Date.prototype.addDays = function(days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        }
+        function createDate(date) {
+            return new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'numeric', day: 'numeric' }).format(date)
+        }
+
         {# Add #}
         $('#semaineAddModal').on('click', function (e) {
             $('.modal-title.duplicate, #semaine_duplicate').hide();
@@ -507,25 +516,25 @@
                                                     <li class="hour-indicator">19:00</li>
                                                     <li class="hour-indicator">19:30</li>
                                                 </ol>
-                                                <ul class="jour" data-date="18/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(0)) +`">
                                                     <h3>Lundi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="19/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(1)) +`">
                                                     <h3>Mardi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="20/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(2)) +`">
                                                 <h3>Mercredi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="21/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(3)) +`">
                                                     <h3>Jeudi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="22/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(4)) +`">
                                                     <h3>Vendredi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="23/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(5)) +`">
                                                     <h3>Samedi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="24/01/2021">
+                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(6)) +`">
                                                     <h3>Dimanche</h3>
                                                 </ul>
                                             </div>

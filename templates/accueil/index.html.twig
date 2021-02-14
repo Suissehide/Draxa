@@ -115,15 +115,50 @@
         </symbol>
     </svg>
 
+    <!-- Modal addPatient-->
+    <div id="addPatient" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title modal__add">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Ajouter un patient
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(form) }}
+                    {{ form_errors(form) }}
+
+                    {{ form_row(form.rendezVous) }}
+                    {{ form_row(form._token) }}
+                    {{ form_end(form, {'render_rest' : false}) }}
+                    <button id="patientAdd" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 {% block javascripts %}
     <script>
+        var dateSelected = moment(new Date()).format('DD/MM/YYYY');
+        var categorie = 'Consultation';
+
         var options = {
-            selectedDateFormat: 'DD-MM-YYYY',
-            selectedDate: '{{ date }}',
+            selectedDateFormat: 'DD/MM/YYYY',
+            selectedDate: dateSelected,
             onSelectedDateChanged: function (event, date) {
-                var d = new Date(date);
-                ajaxAction(d);
+                dateSelected = moment(date).format('DD/MM/YYYY');
+                ajaxAction(dateSelected);
             },
             language: 'fr',
             showCalendar: true
@@ -136,15 +171,14 @@
                     type: "POST",
                     dataType: "json",
                     data: {
-                        "date": d.getFullYear() + '-' + (
-                        d.getMonth() + 1) + '-' + d.getDate()
+                        "date": d
                     },
                     success: function (res) {
                         $("tbody tr").remove();
                         if (res[0].length > 0) {
                             $.each(res[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients) + `</td>`)
+                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, 'Consultation') + `</td>`)
                                 .appendTo('#consultations');
                             });
                         } else {
@@ -153,7 +187,7 @@
                         if (res[1].length > 0) {
                             $.each(res[1], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients) + `</td>`)
+                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, 'Entretien') + `</td>`)
                                 .appendTo('#entretiens');
                             });
                         } else {
@@ -162,7 +196,7 @@
                         if (res[2].length > 0) {
                             $.each(res[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients) + `</td>`)
+                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, 'Atelier') + `</td>`)
                                 .appendTo('#ateliers');
                             });
                         } else {
@@ -173,7 +207,7 @@
                     }
                 });
         }
-        ajaxAction(new Date());
+        ajaxAction(dateSelected);
 
         /*
         ============================================================================== */
@@ -197,30 +231,35 @@
         }
         updateWidth();
 
-        function createUser(data) {
+        function createUser(data, c) {
             let label = ''
-            if (data.length === 0)
-                return label;
             label += '<div class="user-list">';
-            data.forEach(function(e, v) {
-                let checked = (e.send === 'Oui' ? 'checked' : '');
-                label += `
-                    <div class="user-label">
-                        <div>
-                            <div class="user-send">
-                                <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
-                                <label class="cbx" for="` + e.rendezVousId + `">
-                                    <span>
-                                        <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
-                                    </span>     
-                                </label>
+            if (data.length !== 0) {
+                data.forEach(function(e, v) {
+                    let checked = (e.send === 'Oui' ? 'checked' : '');
+                    label += `
+                        <div class="user-label" data-id="` + e.rendezVousId + `">
+                            <div>
+                                <div class="user-send">
+                                    <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
+                                    <label class="cbx" for="` + e.rendezVousId + `">
+                                        <span>
+                                            <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
+                                        </span>     
+                                    </label>
+                                </div>
+                                <div class="user-name">` + e.prenom + ` ` + e.nom + `</div>
                             </div>
-                            <div class="user-name">` + e.prenom + ` ` + e.nom + `</div>
+                            <div>
+                                <button class="js-removePatient"><i class="glyphicon glyphicon-minus"></i></button>
+                                <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                            </div>
                         </div>
-                        <div><button class="js-redirect" data-id="` + e.patientId + `" class="edit-patient"><i class="glyphicon glyphicon-pencil"></i></button></div>
-                    </div>
-                `;
-            });
+                    `;
+                });
+            }
+            if ((c == 'Atelier') || data.length === 0)
+                label += '<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>';
             label += '</div>';
             return label;
         }
@@ -263,6 +302,86 @@
                     window.location.href = res;
                 }
             });
+        });
+
+
+        $('tbody').on('click', '.js-addPatient', function() {
+            let id = $(this).closest('tr').attr('data-row-id');
+            $('#patientAdd').attr('data-id', id);
+            $('#addPatient').modal('show');
+        });
+
+        $('#patientAdd').on('click', function() {
+            let slotId = $(this).data('id');
+            let tr = $('tbody tr[data-row-id="' + slotId + '"]');
+            let patientId = $('#add_patient_rendezVous').val();
+
+            let heure = tr.find('td:first-child').text().split(' - ')[0];
+
+            $.ajax({
+                url: "{{ path('add_patient_slot') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    date: dateSelected,
+                    heure: heure,
+                    categorie: categorie,
+                    patientId: patientId,
+                    slotId: slotId
+                },
+                success: function (res) {
+                    let checked = (res.send === 'Oui' ? 'checked' : '');
+                    let label = `
+                        <div class="user-label" data-id="` + res.rendezVousId + `">
+                            <div>
+                                <div class="user-send">
+                                    <input class="inp-cbx" id="` + res.rendezVousId + `" type="checkbox" ` + checked + `/>
+                                    <label class="cbx" for="` + res.rendezVousId + `">
+                                        <span>
+                                            <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
+                                        </span>     
+                                    </label>
+                                </div>
+                                <div class="user-name">` + res.prenom + ` ` + res.nom + `</div>
+                            </div>
+                            <div>
+                                <button class="js-removePatient"><i class="glyphicon glyphicon-minus"></i></button>
+                                <button class="js-redirect" data-id="` + patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                            </div>
+                        </div>
+                    `;
+                    tr.find('.user-list').prepend(label);
+                    if (categorie != 'Atelier')
+                        tr.find('.js-addPatient').remove();
+                }
+            });
+        })
+
+        $('tbody').on('click', '.js-removePatient', function() {
+            let label = $(this).closest('.user-label');
+            let rendezVousId = label.data('id');
+            $.ajax({
+                url: "{{ path('remove_patient_slot') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    rendezVousId: rendezVousId,
+                },
+                success: function (res) {
+                    if (categorie != 'Atelier') {
+                        label.after('<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>');
+                    }
+                    label.remove();
+                }
+            });
+        });
+
+        $('tbody').on('click', function() {
+            categorie = 'Consultation';
+            if ($(this).closest('table').is("#entretiens"))
+                categorie = 'Entretien';
+            else if ($(this).closest('table').is("#ateliers"))
+                categorie = 'Atelier';
         });
 
     </script>

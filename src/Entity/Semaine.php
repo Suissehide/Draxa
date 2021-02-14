@@ -30,7 +30,7 @@ class Semaine
     private $dateFin;
 
     /**
-     * @ORM\OneToMany(targetEntity=Slot::class, mappedBy="semaine", cascade={"persist", "remove"}, fetch="EAGER")
+     * @ORM\OneToMany(targetEntity=Slot::class, mappedBy="semaine", cascade={"persist", "remove"})
      */
     private $slots;
 

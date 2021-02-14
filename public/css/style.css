@@ -956,7 +956,7 @@ nav {
     align-items: center;
 }
 
-.user-label button {
+.user-list button {
     position: relative;
     background-color: #ccc;
     width: 20px;
@@ -965,17 +965,37 @@ nav {
     border: none;
 }
 
-.user-label button .glyphicon {
+.user-list button .glyphicon {
     color: #121212;
     transition: 0.2s ease;
     font-size: 12px;
     position: absolute;
     top: 4px;
-    left: 5px;
+    left: 4px;
 }
 
-.user-label button:hover .glyphicon {
+.user-list button.js-redirect:hover .glyphicon {
     transform: rotate(-45deg);
+}
+
+.user-list button.js-removePatient {
+    background-color: red;
+    margin-right: 5px;
+}
+
+.user-list button.js-removePatient .glyphicon {
+    color: #fff;
+}
+
+.user-list button.js-addPatient {
+    background-color: #07a8a0;
+    margin-right: 5px;
+}
+
+.user-list button.js-addPatient .glyphicon {
+    color: #fff;
+    left: 5px;
+    font-size: 11px;
 }
 
 .user-send {
@@ -984,8 +1004,8 @@ nav {
 }
 
 .user-send label.cbx {
-    margin: 0;
-    padding: 0 8px;
+    margin: 0 8px 0 0;
+    padding: 1px;
 }
 
 /* Login
