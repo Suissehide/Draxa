@@ -17,6 +17,7 @@
 {% form_theme form 'form-theme.html.twig' %}
 
 {% block page_content %}
+
     <div class="wrapper scrollbar">
         <h1 id="top">Index |
             {{ patient.nom }}</h1>
@@ -234,7 +235,12 @@
                                                 <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <input disabled type="text" id="patient_creation_form_consultations_{{ consultation.id }}][thematique]" class="form-control thematique" value="{% if consultation.slot %} {{ consultation.slot.thematique }} {% endif %}">
+                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}][thematique]" class="form-control thematique" value="{% if consultation.slot %} {{ consultation.slot.thematique }} {% endif %}">
+                                                    <option value="" {% if consultation.slot and consultation.slot.thematique == '' %} selected="selected" {% endif %}></option>
+                                                    {% for thematique in thematiques[0] %}
+                                                        <option value="{{thematique}}" {% if consultation.slot and consultation.slot.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -366,7 +372,12 @@
                                                 <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <input disabled type="text" id="patient_creation_form_entretiens_{{ entretien.id }}][thematique]" class="form-control thematique" value="{% if entretien.slot %} {{ entretien.slot.thematique }} {% endif %}">
+                                                <select type="text" id="patient_creation_form_entretiens_{{ entretien.id }}][thematique]" class="form-control thematique" value="{% if entretien.slot %} {{ entretien.slot.thematique }} {% endif %}">
+                                                    <option value="" {% if entretien.slot and entretien.slot.thematique == '' %} selected="selected" {% endif %}></option>
+                                                    {% for thematique in thematiques[1] %}
+                                                        <option value="{{thematique}}" {% if entretien.slot and entretien.slot.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -498,7 +509,12 @@
                                                 <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <input disabled type="text" id="patient_creation_form_ateliers_{{ atelier.id }}][thematique]" class="form-control thematique" value="{% if atelier.slot %} {{ atelier.slot.thematique }} {% endif %}">
+                                                <select type="text" id="patient_creation_form_ateliers_{{ atelier.id }}][thematique]" class="form-control thematique" value="{% if atelier.slot %} {{ atelier.slot.thematique }} {% endif %}">
+                                                    <option value="" {% if atelier.slot and atelier.slot.thematique == '' %} selected="selected" {% endif %}></option>
+                                                    {% for thematique in thematiques[2] %}
+                                                        <option value="{{thematique}}" {% if atelier.slot and atelier.slot.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                    {% endfor %}
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -634,7 +650,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label" for="rendez_vous_thematique">Thématique</label>
-                                    <input disabled type="text" id="rendez_vous_thematique" name="rendez_vous[thematique]" class="form-control thematique">
+                                    <select type="text" id="rendez_vous_thematique" name="rendez_vous[thematique]" class="form-control thematique">
+                                        <option value=""></option>
+                                    <select>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -714,6 +732,8 @@
         var datesConsultations = {{ dates_consultations|json_encode|raw }};
         var datesEntretiens = {{ dates_entretiens|json_encode|raw }};
         var datesAteliers = {{ dates_ateliers|json_encode|raw }};
+
+        var thematiques = {{ thematiques|json_encode|raw }};
 
         function sort_date1(a, b) {
             let date1 = $(a).find('a').attr('data-date').split("/");
@@ -923,6 +943,22 @@
         });
 
         {# Add RendezVous #}
+        $('#rendezVousModal').on('show.bs.modal', function() {
+            $(this).find('form[name="rendez_vous"]')[0].reset();
+            let index = 0
+            if (categorie == 'Entretien')
+                index = 1;
+            else if (categorie == 'Atelier')
+                index = 2;
+            $('#rendez_vous_thematique option:not(:first)').remove();
+            $.each(thematiques[index], function(key, value) {
+                $('#rendez_vous_thematique')
+                    .append($("<option></option>")
+                    .attr("value", value)
+                    .text(value));
+            });
+        })
+
         var categorie = 'Consultation';
         $("#rendezVous_add").on('click', function () {
             let c = categorie.toLowerCase();
@@ -956,6 +992,7 @@
                     "slotId": slotId,
                     "date": date,
                     "time": time,
+                    "thematique": thematique,
                     "accompagnant": accompagnant,
                     "etat": etat,
                     "motifRefus": motifRefus,
@@ -990,6 +1027,17 @@
 
                         let events_content = $('#events-content-' + c + 's');
                         $('#events-content-' + c + 's li').removeClass("selected");
+
+                        let index = 0
+                        if (categorie == 'Entretien')
+                            index = 1;
+                        else if (categorie == 'Atelier')
+                            index = 2;
+                        let options
+                        $.each(thematiques[index], function(key, value) {
+                            options += '<option value="' + value + '">' + value + '</option>'
+                        });
+
                         $(events_content)
                             .append(`
                                 <li data-date="` + date + `" data-id="` + res + `">
@@ -1019,7 +1067,10 @@
                                                     <label class="control-label" for="patient_creation_form_` + c + `s_` + res + `_thematique">
                                                         Thématique
                                                     </label>
-                                                    <input disabled="" type="text" id="patient_creation_form_` + c + `s_` + res + `][thematique]" class="form-control thematique" value="` + thematique + `">
+                                                    <select type="text" id="patient_creation_form_` + c + `s_` + res + `_thematique" name="patient_creation_form[` + c + `][` + res + `][thematique]" class="form-control thematique" value="` + thematique + `">
+                                                        <option value=''></option>
+                                                        ` + options + `
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
@@ -1027,7 +1078,7 @@
                                                     <label class="control-label" for="patient_creation_form_` + c + `s_` + res + `_type">
                                                         Type
                                                     </label>
-                                                    <input disabled="" type="text" id="patient_creation_form_` + c + `s_` + res + `_type" name="patient_creation_form[` + c + `][` + res + `][type]" class="form-control type" value="` + type + `">
+                                                    <input disabled type="text" id="patient_creation_form_` + c + `s_` + res + `_type" name="patient_creation_form[` + c + `][` + res + `][type]" class="form-control type" value="` + type + `">
                                                 </div>
                                             </div>
                                         </div>
@@ -1071,6 +1122,7 @@
                                 </li>
                             `)
                             .appendTo(events_content);
+                        $('#patient_creation_form_' + c + 's_' + res + '_thematique').val(thematique);
                         $('#patient_creation_form_' + c + 's_' + res + '_accompagnant').val(accompagnant);
                         $('#patient_creation_form_' + c + 's_' + res + '_etat').val(etat);
                         $('#events-content-' + c + 's li:last-child').addClass('selected');
@@ -1115,6 +1167,7 @@
                 data: {
                     "date": arr[0],
                     "time": time,
+                    "thematique": arr[2],
                     "accompagnant": arr[4],
                     "etat": arr[5],
                     "motifRefus": arr[6],

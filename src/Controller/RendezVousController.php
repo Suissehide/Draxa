@@ -53,6 +53,7 @@ class RendezVousController extends AbstractController
             if ($em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $categorie) != [])
                 return new JsonResponse(false);
 
+            $slot->setThematique($request->request->get('thematique'));
             $rendezVous = new RendezVous();
             $rendezVous->setCategorie($categorie);
             $rendezVous->setSlot($slot);
@@ -109,6 +110,7 @@ class RendezVousController extends AbstractController
                 if ($t != [] && $t[0]->getDate() != $rendezVous->getDate())
                     return new JsonResponse(false);
 
+                $slot->setThematique($request->request->get('thematique'));
                 $rendezVous->setSlot($slot);
                 $rendezVous->setDate($new_date);
                 $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));

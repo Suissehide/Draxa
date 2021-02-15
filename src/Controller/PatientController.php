@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Constant\ThematiqueConstants;
+
 use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
@@ -209,6 +211,14 @@ class PatientController extends AbstractController
         $rendezVous = new RendezVous();
         $formRendezVous = $this->createForm(RendezVousType::class, $rendezVous);
 
+        $consultations = [];
+        foreach (ThematiqueConstants::CONSULTATION as $consultation) { $consultations[] = $consultation; }
+        $entretiens = [];
+        foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
+        $ateliers = [];
+        foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
+        $thematiques = array( $consultations, $entretiens, $ateliers );
+
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',
             'controller_name' => 'PatientController',
@@ -220,6 +230,8 @@ class PatientController extends AbstractController
             'dates_ateliers' => $em->getRepository(Slot::class)->findAllDates("Atelier"),
             'dates_consultations' => $em->getRepository(Slot::class)->findAllDates("Consultation"),
             'dates_entretiens' => $em->getRepository(Slot::class)->findAllDates("Entretien"),
+
+            'thematiques' => $thematiques
         ]);
     }
 
