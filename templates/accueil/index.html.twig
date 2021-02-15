@@ -1,5 +1,9 @@
 {% extends 'layout.html.twig' %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
+{% endblock %}
+
 {% block title %}Accueil{% endblock %}
 
 {% block page_content %}
@@ -149,6 +153,8 @@
 
 {% endblock %}
 {% block javascripts %}
+    <script src="{{ asset('js/select2.min.js') }}"></script>
+
     <script>
         var dateSelected = moment(new Date()).format('DD/MM/YYYY');
         var categorie = 'Consultation';
@@ -165,6 +171,28 @@
         }
         $('#paginator').datepaginator(options);
 
+        {#  SELECT2  #}
+        function matchCustom(params, data) {
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            if (typeof data.text === 'undefined') {
+                return null;
+            }
+
+            if (data.text.indexOf(params.term) > -1) {
+                return $.extend({}, data, true);;
+            }
+            return null;
+        }
+
+        $(".js-patient").select2({
+            multiple: false,
+            matcher: matchCustom,
+        });
+
+        {#    #}
         function ajaxAction(d) {
             $.ajax({
                     url: "{{ path('accueil_ajax') }}",
