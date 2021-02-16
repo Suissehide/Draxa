@@ -11,7 +11,7 @@
 
 {% block toolbar_component %}
     <button class="cd cd-save js-cd-save"><span class="glyphicon glyphicon-floppy-disk"></span></button>
-    <a class="cd cd-back js-cd-back" href="{{ url('patient') }}"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <a class="cd cd-back js-cd-back" href="{{ url('patient_list') }}"><span class="glyphicon glyphicon-chevron-left"></span></a>
 {% endblock %}
 
 {% form_theme form 'form-theme.html.twig' %}
@@ -23,7 +23,7 @@
             {{ patient.nom }}</h1>
         <div class="well nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
-                <a href="{{ url('patient') }}" class="btn btn-default" id="btn-back">
+                <a href="{{ url('patient_list') }}" class="btn btn-default" id="btn-back">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                     Retour
                 </a>
@@ -573,7 +573,7 @@
 
             <div class="separator"></div>
             <div class="form-inline">
-                <a href="{{ url('patient') }}" class="btn btn-default">
+                <a href="{{ url('patient_list') }}" class="btn btn-default">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                     Retour
                 </a>

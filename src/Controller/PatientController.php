@@ -72,7 +72,6 @@ class PatientController extends AbstractController
                     "nom" => $patient->getNom(),
                     "prenom" => $patient->getPrenom(),
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
-                    "tel2" => wordwrap($patient->getTel2(), 2, ' ', true),
                     "date" => $rdv[1],
                     "thematique" => $rdv[3],
                     "etp" => $patient->getEtp(),
@@ -139,24 +138,17 @@ class PatientController extends AbstractController
         $date = \DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
 
         $rendezVous = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
-        $ateliers = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
-        $entretien = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
 
-        $rdv = ["", "", "", "", ""];
-        $min_date = $date->add(new \DateInterval('P1Y'));
+        $rdv = ["", "", "", ""];
+        if ($rendezVous) {
+            $rdv = [
+                $rendezVous->getCategorie(),
+                $rendezVous->getDate()->format('d/m/Y'),
+                $rendezVous->getHeure() ? $rendezVous->getHeure()->format('H:i') : "",
+                $rendezVous->getSlot() ? $rendezVous->getSlot()->getThematique() : "",
+            ];
+        }
 
-        if ($min_date && $rendezVous && date_diff($min_date, date_create($rendezVous->getDate()->format('y-m-d')), false)->invert) {
-            $min_date = date_create($rendezVous->getDate()->format('y-m-d'));
-            $rdv = ["Consultation", $rendezVous->getDate()->format('d/m/Y'), $rendezVous->getHeure() ? $rendezVous->getHeure()->format('H:i') : "", $rendezVous->getThematique(), $rendezVous->getType()];
-        }
-        if ($min_date && $ateliers && date_diff($min_date, date_create($ateliers->getDate()->format('y-m-d')), false)->invert) {
-            $min_date = date_create($ateliers->getDate()->format('y-m-d'));
-            $rdv = ["Atelier", $ateliers->getDate()->format('d/m/Y'), $ateliers->getHeure() ? $ateliers->getHeure()->format('H:i') : "", $ateliers->getThematique(), $ateliers->getType()];
-        }
-        if ($min_date && $entretien && date_diff($min_date, date_create($entretien->getDate()->format('y-m-d')), false)->invert) {
-            $min_date = date_create($entretien->getDate()->format('y-m-d'));
-            $rdv = ["Entretien", $entretien->getDate()->format('d/m/Y'), $entretien->getHeure() ? $entretien->getHeure()->format('H:i') : "", $entretien->getThematique(), $entretien->getType()];
-        }
         return $rdv;
     }
 
