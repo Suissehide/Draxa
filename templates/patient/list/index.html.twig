@@ -72,7 +72,7 @@
                 request.etat = $etat;
                 return request;
             },
-            url: "{{ path('patient') }}",
+            url: "{{ path('patient_list') }}",
             formatters: {
                 "observ": function(column, row) {
                     if (row.observ)

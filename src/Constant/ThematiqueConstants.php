@@ -31,9 +31,6 @@ class ThematiqueConstants
     ];
 
     const ATELIER = [
-        'Manger Pleine Cse' => 'Manger Pleine Cse',
-        'Sensation Faim' => 'Sensation Faim',
-        'Sensation Satiété' => 'Sensation Satiété',
         'AP' => 'AP',
         'Athérosclérose' => 'Athérosclérose',
         'Cuisine F&L' => 'Cuisine F&L',
@@ -44,8 +41,11 @@ class ThematiqueConstants
         'Prévention stress' => 'Prévention stress',
         'PRM1' => 'PRM1',
         'PRM2' => 'PRM2',
+        'Manger Pleine Cse' => 'Manger Pleine Cse',
         'Navigation' => 'Navigation',
         'Orga Alim' => 'Orga Alim',
+        'Sensation Faim' => 'Sensation Faim',
+        'Sensation Satiété' => 'Sensation Satiété',
         'Signes d\'alerte' => 'Signes d\'alerte',
         'Stress & MCV' => 'Stress & MCV',
         'Stress aigu' => 'Stress aigu',

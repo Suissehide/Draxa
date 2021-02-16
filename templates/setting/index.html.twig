@@ -338,7 +338,7 @@
 
         function setWeekNumber() {
             $('.semaine-wrapper .semaine').each(function() {
-                let date = new Date(formatDate($(this).data('date')));
+                let date = new Date(formatDate($(this).attr('data-date')));
                 $(this).find('.semaine__date-info h2').text('SEMAINE ' + date.getWeek());
             })
         };
@@ -346,8 +346,8 @@
 
         {# Sort week #}
         function sort_date(a, b) {
-            let date1 = $(a).data('date').split("/");
-            let date2 = $(b).data('date').split("/");
+            let date1 = $(a).attr('data-date').split("/");
+            let date2 = $(b).attr('data-date').split("/");
             return (new Date(date2[2], date2[1], date2[0]).getTime()) < (new Date(date1[2], date1[1], date1[0]).getTime()) ? 1 : -1;    
         }
 
@@ -360,7 +360,7 @@
             $('.divider').remove();
             let oldYear = '';
             $('.semaine-wrapper .semaine').each(function() {
-                let year = $(this).data('date').split('/')[2];
+                let year = $(this).attr('data-date').split('/')[2];
                 if (year != oldYear) {
                     oldYear = year;
                     let divider = `
@@ -568,7 +568,7 @@
         {# Delete #}
         $(".semaine-wrapper").on("click", ".semaine .btn-remove", function (e) {
             e.stopPropagation();
-            let id = $(this).parents('.semaine').data('id');
+            let id = $(this).parents('.semaine').attr('data-id');
             let url = "{{ path('semaine_delete', { 'id': 'semaine_id' }) }}";
             url = url.replace("semaine_id", id);
             $.ajax({
@@ -597,7 +597,7 @@
             e.stopPropagation();
 
             let modal = $('#semaineModal');
-            let id = $(this).parents('.semaine').data('id');
+            let id = $(this).parents('.semaine').attr('data-id');
             $('.modal-title.duplicate').attr('data-id', id);
             $('.modal-title.duplicate, #semaine_duplicate').show();
             $('.modal-title.add, #semaine_add').hide();
@@ -605,7 +605,7 @@
         });
 
         $("#semaine_duplicate").on('click', function () {
-            let id = $('.modal-title.duplicate').data('id');
+            let id = $('.modal-title.duplicate').attr('data-id');
             let url = "{{ path('semaine_duplicate', { 'id': 'semaine_id' }) }}";
             url = url.replace("semaine_id", id);
 
@@ -686,12 +686,12 @@
         });
 
         function changeThematique() {
-            let thematique = $("#slot_categorie option:selected").data('thematique');
+            let thematique = $("#slot_categorie option:selected").attr('data-thematique');
             $('#slot_thematique option').each(function() {
-                if ($(this).data('thematique') !== thematique) {
-                    $(this).hide();
-                } else {
+                if ($(this).attr('data-thematique') === thematique || $(this).attr('data-thematique') === 'default') {
                     $(this).show();
+                } else {
+                    $(this).hide();
                 }
             });
             if (thematique === 'atelier') {
@@ -706,7 +706,7 @@
         function getSlotSameTime(slot, jour) {
             let slots = [];
             $('.slot', jour).each(function() {
-                if (slot.data('id') !== $(this).data('id') /* && typeof $(this).data('mul') === 'undefined' */) {
+                if (slot.attr('data-id') !== $(this).attr('data-id') /* && typeof $(this).attr('data-mul') === 'undefined' */) {
                     let horaire = slot.find('.horaire').text().split(' - ');
                     let h = $(this).find('.horaire').text().split(' - ');
                     if ((horaire[0] >= h[0] && horaire[0] <= h[1] && horaire[0] != h[1])
@@ -726,15 +726,15 @@
                     $(this).css({
                         top: (((parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1])) - (parseInt(heureDebut.split(':')[0]) * 60 + parseInt(heureDebut.split(':')[1]))) * (70 / 60)) + 50 + 'px',
                         height: (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60)) - 3 + 'px',
-                        backgroundColor: $(this).data('color'),
+                        backgroundColor: $(this).attr('data-color'),
                     });
                     let slots = getSlotSameTime($(this), jour);
                     if (slots.length) {
                         let mul = slots.length + 1;
-                        $(this).data('mul', mul);
+                        $(this).attr('data-mul', mul);
                         $(this).css({'width': ((100 / mul) - 1) + '%', 'left': '0%'});
                         jQuery.each(slots, function(j) {
-                            $(this).data('mul', mul);
+                            $(this).attr('data-mul', mul);
                             $(this).css({'width': ((100 / mul) - 1) + '%', 'left': ((100 / mul) * (j + 1)) + '%'})
                         });
                     }
@@ -783,8 +783,8 @@
             $('#slot_categorie').css({background: 'white', color: 'black'});
 
             //
-            let date = $(this).data('date');
-            let id = $(this).parents('.semaine').data('id');
+            let date = $(this).attr('data-date');
+            let id = $(this).parents('.semaine').attr('data-id');
             let newDate = new Date(formatDate(date));
             let dateFormated = new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(newDate);
             let modal = $('#slotModal');
@@ -797,8 +797,8 @@
         });
 
         $("#slot_add").click(function (e) {
-            let date = $('#slotModal .modal-body h3').data('date');
-            let semaineId = $('#slotModal .modal-body form').data('semaineid');
+            let date = $('#slotModal .modal-body h3').attr('data-date');
+            let semaineId = $('#slotModal .modal-body form').attr('data-semaineid');
             let heureDebut = $('#slot_heureDebut').val();
             let heureFin = $('#slot_heureFin').val();
             let categorie = $('#slot_categorie').val();
@@ -840,14 +840,14 @@
         {# Edit #}
         $(".semaine-wrapper").on("click", ".slot", function (e) {
             e.stopPropagation();
-            let id = $(this).data('id');
-            let date = $(this).closest('.jour').data('date');
+            let id = $(this).attr('data-id');
+            let date = $(this).closest('.jour').attr('data-date');
             let newDate = new Date(formatDate(date));
             let dateFormated = new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(newDate);
             let modal = $('#slotModal');
             modal.find('.modal-body h3').text(dateFormated);
-            modal.find('.modal-body h3').attr('data-date', date);
-            modal.find('.modal-body form').attr('data-semaineid', id);
+            modal.attr('data-date', date);
+            modal.attr('data-slotid', id);
 
             let url = "{{ path('slot_get', { 'id': 'slot_id' }) }}";
             url = url.replace("slot_id", id);
@@ -887,10 +887,10 @@
         });
 
         $("#slot_edit").click(function () {
-            let id = $('#slotModal .modal-body form').data('semaineid');
-            let date = $('#slotModal .modal-body h3').data('date');
+            let slotId = $('#slotModal').attr('data-slotid');
+            let date = $('#slotModal').attr('data-date');
             let url = "{{ path('slot_edit', { 'id': 'slot_id' }) }}";
-            url = url.replace("slot_id", id);
+            url = url.replace("slot_id", slotId);
 
             let heureDebut = $('#slot_heureDebut').val();
             let heureFin = $('#slot_heureFin').val();
@@ -915,7 +915,7 @@
                 },
                 success: function(res) {
                     if (res) {
-                        $('.slot[data-id="' + id + '"]').remove();
+                        $('.slot[data-id="' + slotId + '"]').remove();
                         let slot = createSlot(res);
                         $('.semaine-wrapper .jour[data-date="' + date + '"]').append(slot);
                         displaySlot();
@@ -928,7 +928,7 @@
         {# Delete #}
         $(".semaine-wrapper").on("click", ".slot .delete-btn", function (e) {
             e.stopPropagation();
-            let id = $(this).parents('.slot').data('id');
+            let id = $(this).parents('.slot').attr('data-id');
             let url = "{{ path('slot_delete', { 'id': 'slot_id' }) }}";
             url = url.replace("slot_id", id);
             $.ajax({
@@ -952,7 +952,7 @@
         {# Duplicate #}
         $(".semaine-wrapper").on("click", ".slot .duplicate-btn", function (e) {
             e.stopPropagation();
-            let id = $(this).parents('.slot').data('id');
+            let id = $(this).parents('.slot').attr('data-id');
             let url = "{{ path('slot_duplicate', { 'id': 'slot_id' }) }}";
             url = url.replace("slot_id", id);
             $.ajax({

@@ -81,15 +81,15 @@ class SemaineController extends AbstractController
                 if ($em->getRepository(Semaine::class)->findSemaineAtSameDate($request->request->get('dateDebut')) != [])
                     return new JsonResponse(false);
 
-                $new = clone $semaine;
+                $newSemaine = clone $semaine;
 
                 $dateDebut = explode('/', $request->request->get('dateDebut'));
                 $new_dateDebut = date_create(date("y-m-d", mktime(0, 0, 0, $dateDebut[1], $dateDebut[0], $dateDebut[2])));
                 $dateFin = explode('/', $request->request->get('dateFin'));
                 $new_dateFin = date_create(date("y-m-d", mktime(0, 0, 0, $dateFin[1], $dateFin[0], $dateFin[2])));
 
-                $new->setDateDebut($new_dateDebut);
-                $new->setDateFin($new_dateFin);
+                $newSemaine->setDateDebut($new_dateDebut);
+                $newSemaine->setDateFin($new_dateFin);
 
                 $slots = $semaine->getSlots();
                 $slotsJson = [];
@@ -98,7 +98,11 @@ class SemaineController extends AbstractController
                     $newSlot = clone $slot;
                     $d = clone $new_dateDebut;
                     $newSlot->setDate(date_sub($d, $diff));
-                    $new->addSlot($newSlot);
+                    $newSemaine->addSlot($newSlot);
+
+                    $em->persist($newSemaine);
+                    $em->flush();
+
                     $slotsJson[] = array(
                         'id' => $newSlot->getId(),
                         'date' => $newSlot->getDate()->format('d/m/Y'),
@@ -111,13 +115,10 @@ class SemaineController extends AbstractController
                         'soignant' => $newSlot->getSoignant() ? $newSlot->getSoignant()->getPrenom() . ' ' . $newSlot->getSoignant()->getNom() : '',
                     );
                 }
-
-                $em->persist($new);
-                $em->flush();
                 return new JsonResponse([
-                    'id' => $new->getId(),
-                    'debut' => $new->getDateDebut()->format('d/m/Y'),
-                    'fin' => $new->getDateFin()->format('d/m/Y'),
+                    'id' => $newSemaine->getId(),
+                    'debut' => $newSemaine->getDateDebut()->format('d/m/Y'),
+                    'fin' => $newSemaine->getDateFin()->format('d/m/Y'),
                     'slots' => $slotsJson
                 ]);
             }

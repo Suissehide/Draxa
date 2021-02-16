@@ -115,6 +115,7 @@ class SlotType extends AbstractType
     public function buildThematiqueChoices()
     {
         $choices = [];
+        $choices[''] = '';
         foreach (ThematiqueConstants::ATELIER as $atelier) {
             $choices[$atelier] = $atelier;
         }
@@ -130,6 +131,7 @@ class SlotType extends AbstractType
     public function buildThematiqueChoiceAttr()
     {
         $choices_attr = [];
+        $choices_attr[''] = ['data-thematique' => 'default'];
         foreach (ThematiqueConstants::ATELIER as $atelier) {
             $choices_attr[$atelier] = ['data-thematique' => 'atelier'];
         }

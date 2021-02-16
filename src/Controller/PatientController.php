@@ -32,10 +32,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class PatientController extends AbstractController
 {
     /**
-     * @Route("/", name="patient", methods="GET|POST")
+     * @Route("/", name="patient_list", methods="GET|POST")
      */
 
-    public function accueil(PatientRepository $patientRepository, Request $request): Response
+    public function patient_list(PatientRepository $patientRepository, Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
             $etat = $request->request->get('etat');

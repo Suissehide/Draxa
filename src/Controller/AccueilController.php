@@ -28,25 +28,6 @@ class AccueilController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
 
-        $slot = new Slot();
-        $form = $this->createForm(AddPatientType::class, $slot);
-
-        return $this->render('accueil/index.html.twig', [
-            'title' => 'Accueil',
-            'controller_name' => 'AccueilController',
-            'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
-            'nbConsultation' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Consultation'])),
-            'nbEntretiens' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Entretien'])),
-            'nbAtelier' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Atelier'])),
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/ajax", name="accueil_ajax", methods="GET|POST")
-     */
-    public function accueil_ajax(Request $request)
-    {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             $date = $request->request->get('date');
@@ -62,6 +43,19 @@ class AccueilController extends AbstractController
 
             return new JsonResponse($response, Response::HTTP_OK);
         }
+
+        $slot = new Slot();
+        $form = $this->createForm(AddPatientType::class, $slot);
+
+        return $this->render('accueil/index.html.twig', [
+            'title' => 'Accueil',
+            'controller_name' => 'AccueilController',
+            'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
+            'nbConsultation' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Consultation'])),
+            'nbEntretiens' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Entretien'])),
+            'nbAtelier' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Atelier'])),
+            'form' => $form->createView(),
+        ]);
     }
 
     private function createSlotCategorie(Array $slots, String $categorie)
@@ -98,7 +92,7 @@ class AccueilController extends AbstractController
     }
     
     /**
-     * @Route("/vue", name="redirect_vue_patient", methods="GET|POST")
+     * @Route("/redirect_vue_patient", name="redirect_vue_patient", methods="GET|POST")
      */
     public function redirect_vue_patient(Request $request)
     {
@@ -114,7 +108,7 @@ class AccueilController extends AbstractController
     }
 
     /**
-     * @Route("/add_patient", name="add_patient_slot", methods="GET|POST")
+     * @Route("/add_patient_slot", name="add_patient_slot", methods="GET|POST")
      */
     public function add_patient_slot(Request $request)
     {
@@ -150,7 +144,7 @@ class AccueilController extends AbstractController
     }
 
     /**
-     * @Route("/remove_patient", name="remove_patient_slot", methods="GET|POST")
+     * @Route("/remove_patient_slot", name="remove_patient_slot", methods="GET|POST")
      */
     public function remove_patient_slot(Request $request)
     {
