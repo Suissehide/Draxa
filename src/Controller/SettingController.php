@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Constant\ThematiqueConstants;
+
 use App\Entity\Semaine;
 use App\Entity\Slot;
 
@@ -27,6 +29,15 @@ class SettingController extends AbstractController
         $slot = new Slot();
         $slotForm = $this->createForm(SlotType::class, $slot);
 
+        $consultations = [];
+        foreach (ThematiqueConstants::CONSULTATION as $consultation) { $consultations[] = $consultation; }
+        $entretiens = [];
+        foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
+        $ateliers = [];
+        foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
+        $educatives = [];
+        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives );
+
         return $this->render('setting/index.html.twig', [
             'title' => 'Settings',
             'controller_name' => 'SettingController',
@@ -34,6 +45,8 @@ class SettingController extends AbstractController
             'semaineForm' => $semaineForm->createView(),
             'slotForm' => $slotForm->createView(),
             'dates_semaines' => $em->getRepository(Semaine::class)->findAllDates(),
+            
+            'thematiques' => $thematiques
         ]);
     }
 

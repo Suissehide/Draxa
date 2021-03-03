@@ -254,6 +254,8 @@
 
         var datesSemaines = {{ dates_semaines|json_encode|raw }};
 
+        var thematiques = {{ thematiques|json_encode|raw }};
+
         function updateDatepicker() {
             $('.datepicker, .input-daterange').datepicker({
                 language: 'fr',
@@ -732,6 +734,24 @@
                 $('.js-hide').hide();
             } else {
                 $('.js-hide').show();
+            }
+
+            $('#slot_thematique option').remove();
+            $('#slot_thematique').append(new Option('', ''));
+            if (thematique !== '') {
+                let index = 0;
+                if (thematique === 'entretien')
+                    index = 1;
+                else if (thematique === 'atelier')
+                    index = 2;
+                else if (thematique === 'educative')
+                    index = 3;
+                $.each(thematiques[index], function(key, value) {
+                    $('#slot_thematique')
+                        .append($("<option></option>")
+                        .attr("value", value)
+                        .text(value));
+                });
             }
         };
         changeThematique();

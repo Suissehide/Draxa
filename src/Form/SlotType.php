@@ -24,9 +24,6 @@ class SlotType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $thematiqueChoices = $this->buildThematiqueChoices();
-        $thematiqueChoiceAttr = $this->buildThematiqueChoiceAttr();
-
         $builder
             ->add('date', DateType::class, array(
                 'label' => 'Date',
@@ -73,8 +70,7 @@ class SlotType extends AbstractType
             ->add('thematique', ChoiceType::class, array(
                 'label' => 'Thématique',
                 'placeholder' => '',
-                'choices' => $thematiqueChoices,
-                'choice_attr' => $thematiqueChoiceAttr
+                'choices' => array()
             ))
             ->add('type', ChoiceType::class, array(
                 'label' => 'Type',
@@ -115,38 +111,6 @@ class SlotType extends AbstractType
                 ],
             ))
         ;
-    }
-
-    public function buildThematiqueChoices()
-    {
-        $choices = [];
-        $choices[''] = '';
-        foreach (ThematiqueConstants::ATELIER as $atelier) {
-            $choices[$atelier] = $atelier;
-        }
-        foreach (ThematiqueConstants::ENTRETIEN as $entretien) {
-            $choices[$entretien] = $entretien;
-        }
-        foreach (ThematiqueConstants::CONSULTATION as $consultation) {
-            $choices[$consultation] = $consultation;
-        }
-        return $choices;
-    }
-
-    public function buildThematiqueChoiceAttr()
-    {
-        $choices_attr = [];
-        $choices_attr[''] = ['data-thematique' => 'default'];
-        foreach (ThematiqueConstants::ATELIER as $atelier) {
-            $choices_attr[$atelier] = ['data-thematique' => 'atelier'];
-        }
-        foreach (ThematiqueConstants::ENTRETIEN as $entretien) {
-            $choices_attr[$entretien] = ['data-thematique' => 'entretien'];
-        }
-        foreach (ThematiqueConstants::CONSULTATION as $consultation) {
-            $choices_attr[$consultation] = ['data-thematique' => 'consultation'];
-        }
-        return $choices_attr;
     }
 
 
