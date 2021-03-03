@@ -49,11 +49,12 @@ class RendezVousController extends AbstractController
             $date = explode('/', $request->request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
-            $patientId = $request->request->get('patientId');
-            if ($em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $categorie) != [])
-                return new JsonResponse(false);
+            // $patientId = $request->request->get('patientId');
+            // if ($em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $categorie) != [])
+            //     return new JsonResponse(false);
 
             $slot->setThematique($request->request->get('thematique'));
+            $slot->setType($request->request->get('type'));
             $rendezVous = new RendezVous();
             $rendezVous->setCategorie($categorie);
             $rendezVous->setSlot($slot);
@@ -62,6 +63,7 @@ class RendezVousController extends AbstractController
             $rendezVous->setAccompagnant($request->request->get('accompagnant'));
             $rendezVous->setEtat($request->request->get('etat'));
             $rendezVous->setMotifRefus($request->request->get('motifRefus'));
+            $rendezVous->setNotes($request->request->get('notes'));
             $rendezVous->setPatient($em->getRepository(Patient::class)->findOneById($id));
 
             $em->persist($rendezVous);
@@ -111,12 +113,14 @@ class RendezVousController extends AbstractController
                     return new JsonResponse(false);
 
                 $slot->setThematique($request->request->get('thematique'));
+                $slot->setType($request->request->get('type'));
                 $rendezVous->setSlot($slot);
                 $rendezVous->setDate($new_date);
                 $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
                 $rendezVous->setAccompagnant($request->request->get('accompagnant'));
                 $rendezVous->setEtat($request->request->get('etat'));
                 $rendezVous->setMotifRefus($request->request->get('motifRefus'));
+                $rendezVous->setNotes($request->request->get('notes'));
 
                 $em->flush();
                 return new JsonResponse(true);

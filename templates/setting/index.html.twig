@@ -7,7 +7,13 @@
 {% block title %}Réglages{% endblock %}
 
 {% macro slot(slot) %}
-    <li class="slot" data-id={{ slot.id }} data-color="{% if slot.categorie|lower == 'atelier' %}chocolate{% elseif slot.categorie|lower == 'entretien' %}purple{% elseif slot.categorie|lower == 'consultation' %}limegreen{% endif %}">
+    <li class="slot" data-id={{ slot.id }} data-color="
+        {% if slot.categorie|lower == 'atelier' %}chocolate
+        {% elseif slot.categorie|lower == 'entretien' %}rebeccapurple
+        {% elseif slot.categorie|lower == 'consultation' %}seagreen
+        {% elseif slot.categorie|lower == 'educative' %}royalblue
+        {% endif %}
+    ">
         <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
         <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
         <div class="horaire">{{ slot.heureDebut|date("H:i") }} - {{ slot.heureFin|date("H:i") }}</div>
@@ -64,7 +70,7 @@
                             </ol>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+0 day")|date("d/m/Y") }}>
                                 <h3>Lundi</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+0days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -72,7 +78,7 @@
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+1day")|date("d/m/Y") }}>
                                 <h3>Mardi</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+1days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -80,7 +86,7 @@
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+2 day")|date("d/m/Y") }}>
                                <h3>Mercredi</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+2days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -88,7 +94,7 @@
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+3 day")|date("d/m/Y") }}>
                                 <h3>Jeudi</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+3days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -96,7 +102,7 @@
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+4 day")|date("d/m/Y") }}>
                                 <h3>Vendredi</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+4days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -104,7 +110,7 @@
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+5 day")|date("d/m/Y") }}>
                                 <h3>Samedi</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+5days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -112,7 +118,7 @@
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+6 day")|date("d/m/Y") }}>
                                 <h3>Dimanche</h3>
-                                {% for slot in semaine.slots %}
+                                {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+6days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
                                     {% endif %}
@@ -193,6 +199,8 @@
                     {{ form_start(slotForm) }}
                     {{ form_errors(slotForm) }}
 
+                    <div id="slot__error"><strong>Erreur :</strong></div>
+
                     <h3 data-date="">12 Mars 1997</h3>
 
                     <div class="form-group">
@@ -204,9 +212,22 @@
                         </div>
                     </div>
                     {{ form_row(slotForm.categorie) }}
-                    {{ form_row(slotForm.thematique) }}
-                    {{ form_row(slotForm.type) }}
-                    {{ form_row(slotForm.location) }}
+                    <div class="row js-hide">
+                        <div class="col-md-6">
+                            {{ form_row(slotForm.thematique) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(slotForm.type) }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_row(slotForm.location) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(slotForm.place) }}
+                        </div>
+                    </div>
                     {{ form_row(slotForm.soignant) }}
                     {{ form_row(slotForm.rendezVous) }}
                     {{ form_row(slotForm._token) }}
@@ -316,7 +337,6 @@
         $('ol, .modal').on('change', 'select', function() {
             setSelectColor($(this));
         });
-
 
 
         function formatDate(input) {
@@ -559,9 +579,14 @@
 
         {# Open #}
         $('.semaine-wrapper').on('click', '.semaine__header', function() {
-            $(this).parent().toggleClass("open");
+            let semaine = $(this).parent();
+            semaine.toggleClass("open");
             $('.semaine__header').not(this).parent().removeClass("open");
+            $('.jour').hide();
             $(this).find('.semaine__open-icon .glyphicon').toggleClass('glyphicon-chevron-down glyphicon-chevron-up');
+            setTimeout(function() { 
+                semaine.find('.jour').show() 
+            }, 200);
         })
 
 
@@ -696,17 +721,40 @@
             });
             if (thematique === 'atelier') {
                 $(".js-patient").select2({ multiple: true, matcher: matchCustom });
+                $(".js-patient").val(null).trigger('change');
+                $("#slot_place").val(null);
             } else {
                 $(".js-patient").select2({ multiple: false, matcher: matchCustom });
+                $(".js-patient").val(null).trigger('change');
+                $("#slot_place").val(1);
+            }
+            if (thematique === 'educative') {
+                $('.js-hide').hide();
+            } else {
+                $('.js-hide').show();
             }
         };
         changeThematique();
 
-        {# Add #}
+        {# Display #}
+        function getMaxDone(list) {
+            let max = 0;
+            let n = 0;
+            jQuery.each(list, function(i) {
+                if (max < $(this).attr('data-mul'))
+                    max = $(this).attr('data-mul');
+                
+                let done = $(this).attr('data-done');
+                if (typeof done !== typeof undefined && done !== false && n < parseInt(done))
+                    n = parseInt(done);
+            });
+            return {'max': max, 'done': n};
+        }
+
         function getSlotSameTime(slot, jour) {
             let slots = [];
             $('.slot', jour).each(function() {
-                if (slot.attr('data-id') !== $(this).attr('data-id') /* && typeof $(this).attr('data-mul') === 'undefined' */) {
+                if (slot.attr('data-id') !== $(this).attr('data-id')) {
                     let horaire = slot.find('.horaire').text().split(' - ');
                     let h = $(this).find('.horaire').text().split(' - ');
                     if ((horaire[0] >= h[0] && horaire[0] <= h[1] && horaire[0] != h[1])
@@ -718,9 +766,35 @@
             return slots;
         }
 
+        function sort_li(a, b){
+            return ($(b).attr('data-mul')) >= ($(a).attr('data-mul')) ? 1 : -1;    
+        }
+
         function displaySlot(heureDebut = '7:00') {
+            $('.slot').attr('data-done', '0');
             $('.semaine .jour').each(function(i, jour) {
                 $('.slot', this).each(function() {
+                    let slots = getSlotSameTime($(this), jour);
+                    if (slots.length) {
+                        let mul = slots.length + 1;
+                        $(this).attr('data-mul', mul);
+                    }
+                });
+
+                $(this).find('.slot').sort(sort_li).appendTo($(this));
+
+                $('.slot', this).each(function() {
+                    let slots = getSlotSameTime($(this), jour);
+                    if (slots.length) {
+                        let data = getMaxDone(slots);
+                        $(this).attr('data-mul', data.max);
+                        $(this).attr('data-done', data.done + 1);
+                        if (data.max <= data.done)
+                            $(this).css({'width': ((100 / data.max) - 1) + '%', 'left': ((100 / data.max) * (data.done % data.max)) + '%'})
+                        else
+                        $(this).css({'width': ((100 / data.max) - 1) + '%', 'left': ((100 / data.max) * (data.done)) + '%'})
+                    }
+
                     let horaire = $(this).find('.horaire').text();
                     horaire = horaire.split(' - ');
                     $(this).css({
@@ -728,21 +802,13 @@
                         height: (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60)) - 3 + 'px',
                         backgroundColor: $(this).attr('data-color'),
                     });
-                    let slots = getSlotSameTime($(this), jour);
-                    if (slots.length) {
-                        let mul = slots.length + 1;
-                        $(this).attr('data-mul', mul);
-                        $(this).css({'width': ((100 / mul) - 1) + '%', 'left': '0%'});
-                        jQuery.each(slots, function(j) {
-                            $(this).attr('data-mul', mul);
-                            $(this).css({'width': ((100 / mul) - 1) + '%', 'left': ((100 / mul) * (j + 1)) + '%'})
-                        });
-                    }
                 });
             });
         }
         displaySlot();
 
+
+        {# Add #}
         function getIdFromSelect2($select2) {
             let list = [];
             $select2.forEach(function(e) {
@@ -756,9 +822,11 @@
             if (data.categorie.toLowerCase() == 'atelier')
                 color = 'chocolate';
             else if (data.categorie.toLowerCase() == 'entretien')
-                color = 'purple';
+                color = 'rebeccapurple';
             else if (data.categorie.toLowerCase() == 'consultation')
-                color = 'limegreen';
+                color = 'seagreen';
+            else if (data.categorie.toLowerCase() == 'educative')
+                color = 'royalblue';
             let slot = (`
                 <li class="slot" data-id="` + data.id + `" data-color="` + color + `">
                     <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
@@ -793,6 +861,7 @@
             modal.find('.modal-body form').attr('data-semaineid', id);
             $("#slot_add, .modal__add").show();
             $("#slot_edit, .modal__edit").hide();
+
             modal.modal('show');
         });
 
@@ -805,6 +874,7 @@
             let thematique = $('#slot_thematique').val();
             let type = $('#slot_type').val();
             let location = $('#slot_location').val();
+            let place = $('#slot_place').val();
             let soignant = $('#slot_soignant option:selected').val();
             let patient = getIdFromSelect2($('.js-patient').select2('data'));
 
@@ -821,6 +891,7 @@
                     "thematique": thematique,
                     "type": type,
                     "location": location,
+                    "place": place,
                     "soignant": soignant,
                     "patient": patient
                 },
@@ -863,6 +934,7 @@
                         changeThematique();
                         $('#slot_type option[value="'+ res.type +'"]').prop('selected', true);
                         $('#slot_location').val(res.location);
+                        $('#slot_place').val(res.place);
 
                         if (res.soignant) {
                             if ($("#slot_soignant option[value='" + res.soignant.id + "']").length > 0)
@@ -898,6 +970,7 @@
             let thematique = $('#slot_thematique').val();
             let type = $('#slot_type').val();
             let location = $('#slot_location').val();
+            let place = $('#slot_place').val();
             let soignant = $('#slot_soignant option:selected').val();
             let patient = getIdFromSelect2($('.js-patient').select2('data'));
 
@@ -910,6 +983,7 @@
                     "thematique": thematique,
                     "type": type,
                     "location": location,
+                    "place": place,
                     "soignant": soignant,
                     "patient": patient
                 },

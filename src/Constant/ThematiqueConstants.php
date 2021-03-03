@@ -13,6 +13,7 @@ class ThematiqueConstants
     const ENTRETIEN = [
         'Activité physique' => 'Activité physique',
         'Athérosclérose' => 'Athérosclérose',
+        'Coaching PRM' => 'Coaching PRM',
         'Diabète' => 'Diabète',
         'HTA' => 'HTA',
         'Motivation AP' => 'Motivation AP',
@@ -36,14 +37,15 @@ class ThematiqueConstants
         'Cuisine F&L' => 'Cuisine F&L',
         'Cuisine MG' => 'Cuisine MG',
         'Cuisine Poisson' => 'Cuisine Poisson',
+        'Equilibre alimentaire' => 'Equilibre alimentaire',
         'FDR' => 'FDR',
-        'Pharma' => 'Pharma',
         'Prévention stress' => 'Prévention stress',
         'PRM1' => 'PRM1',
         'PRM2' => 'PRM2',
         'Manger Pleine Cse' => 'Manger Pleine Cse',
         'Navigation' => 'Navigation',
         'Orga Alim' => 'Orga Alim',
+        'Parcours de vie' => 'Parcours de vie',
         'Sensation Faim' => 'Sensation Faim',
         'Sensation Satiété' => 'Sensation Satiété',
         'Signes d\'alerte' => 'Signes d\'alerte',
@@ -51,6 +53,7 @@ class ThematiqueConstants
         'Stress aigu' => 'Stress aigu',
         'Sucres' => 'Sucres',
         'Tabac' => 'Tabac',
+        'Traitement' => 'Traitement',
         'Vécu/Cse de Soi' => 'Vécu/Cse de Soi',
     ];
 }

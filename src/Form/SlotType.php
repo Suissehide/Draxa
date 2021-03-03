@@ -17,6 +17,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class SlotType extends AbstractType
@@ -58,13 +59,15 @@ class SlotType extends AbstractType
                     '' => '',
                     'Entretien' => 'Entretien',
                     'Consultation' => 'Consultation',
-                    'Atelier' => 'Atelier'
+                    'Atelier' => 'Atelier',
+                    'Semaine éducative' => 'Educative'
                 ),
                 'choice_attr' => [
                     '' => ['class' => 'white', 'data-thematique' => ''],
-                    'Entretien' => ['class' => 'purple', 'data-thematique' => 'entretien'],
-                    'Consultation' => ['class' => 'limegreen', 'data-thematique' => 'consultation'],
-                    'Atelier' => ['class' => 'chocolate', 'data-thematique' => 'atelier']
+                    'Entretien' => ['class' => 'rebeccapurple', 'data-thematique' => 'entretien'],
+                    'Consultation' => ['class' => 'seagreen', 'data-thematique' => 'consultation'],
+                    'Atelier' => ['class' => 'chocolate', 'data-thematique' => 'atelier'],
+                    'Semaine éducative' => ['class' => 'royalblue', 'data-thematique' => 'educative']
                 ],
             ))
             ->add('thematique', ChoiceType::class, array(
@@ -86,6 +89,9 @@ class SlotType extends AbstractType
             ->add('location', TextType::class, array(
                 'label' => 'Lieu',
             ))
+            ->add('place', IntegerType::class, array(
+                'label' => 'Nombre de places',
+            ))
             ->add('soignant', EntityType::class, array(
                 'class' => Soignant::class,
                 'query_builder' => function (EntityRepository $qb) {
@@ -104,7 +110,6 @@ class SlotType extends AbstractType
                 'choice_label' => function(Patient $patient) {
                     return sprintf('%s %s', $patient->getPrenom(), $patient->getNom());
                 },
-                'placeholder' => '',
                 'attr' => [
                     'class' => 'js-patient'
                 ],

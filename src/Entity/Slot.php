@@ -80,6 +80,12 @@ class Slot
      */
     private $rendezVous;
 
+    /**
+     * @Groups({"slot"})
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $place;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
@@ -230,5 +236,17 @@ class Slot
 
     public function __toString() {
         return strval($this->id);
+    }
+
+    public function getPlace(): ?int
+    {
+        return $this->place;
+    }
+
+    public function setPlace(?int $place): self
+    {
+        $this->place = $place;
+
+        return $this;
     }
 }

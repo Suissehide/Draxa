@@ -57,6 +57,7 @@ class SlotController extends AbstractController
             $thematique = $request->request->get('thematique');
             $type = $request->request->get('type');
             $location = $request->request->get('location');
+            $place = $request->request->get('place');
             $soignant = $request->request->get('soignant');
             $patient = $request->request->get('patient');
 
@@ -70,6 +71,7 @@ class SlotController extends AbstractController
             $slot->setThematique($thematique);
             $slot->setType($type);
             $slot->setLocation($location);
+            $slot->setPlace($place === '' ? null : $place);
             $slot->setSoignant($em->getRepository(Soignant::class)->findOneById($soignant));
             
             if ($patient) {
@@ -116,6 +118,7 @@ class SlotController extends AbstractController
             $thematique = $request->request->get('thematique');
             $type = $request->request->get('type');
             $location = $request->request->get('location');
+            $place = $request->request->get('place');
             $soignant = $request->request->get('soignant');
             $patient = $request->request->get('patient');
 
@@ -125,6 +128,7 @@ class SlotController extends AbstractController
             $slot->setThematique($thematique);
             $slot->setType($type);
             $slot->setLocation($location);
+            $slot->setPlace($place === '' ? null : $place);
             $slot->setSoignant($em->getRepository(Soignant::class)->findOneById($soignant));
             if ($patient) {
                 foreach ($patient as $id) {

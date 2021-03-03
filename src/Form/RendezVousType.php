@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextAreaType;
 use Symfony\Component\Form\Extension\Core\Type\TimeType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -49,8 +50,8 @@ class RendezVousType extends AbstractType
             ))
             ->add('etat', ChoiceType::class, array(
                 'label' => 'A-t-il eu lieu ?',
-                'placeholder' => '',
                 'choices' => array(
+                    '' => '',
                     'Oui' => 'Oui',
                     'Non' => 'Non',
                 ),
@@ -63,6 +64,10 @@ class RendezVousType extends AbstractType
             ))
             ->add('motifRefus', TextType::class, array(
                 'label' => 'Motif de refus',
+                'required' => false,
+            ))
+            ->add('notes', TextAreaType::class, array(
+                'label' => 'Notes de transmission',
                 'required' => false,
             ))
     

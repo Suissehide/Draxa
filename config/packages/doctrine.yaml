@@ -19,3 +19,4 @@ doctrine:
         dql:
             string_functions:
                 DATE_FORMAT: DoctrineExtensions\Query\Mysql\DateFormat
+                TIME: DoctrineExtensions\Query\Mysql\Time

@@ -26,8 +26,8 @@
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
                             <th data-column-id="slot_type" data-width="10%">Type</th>
-                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
                             <th data-column-id="slot_patient" data-width="30%">Patient</th>
                         </tr>
                     </thead>
@@ -48,8 +48,8 @@
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
                             <th data-column-id="slot_type" data-width="10%">Type</th>
-                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
                             <th data-column-id="slot_patient" data-width="30%">Patient</th>
                         </tr>
                     </thead>
@@ -70,8 +70,8 @@
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
                             <th data-column-id="slot_type" data-width="10%">Type</th>
-                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
                             <th data-column-id="slot_patient" data-width="30%">Patient</th>
                         </tr>
                     </thead>
@@ -79,6 +79,66 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="separator">
+            <span class="separator-text">Rechercher un créneau</span>
+        </div>
+        <div>
+
+            <div class="lnb-item">
+                <div>
+                    <label>
+                        <input type="checkbox" class="checkbox-round" value="1" checked="">
+                        <span style="border-color: seagreen; background-color: seagreen;"></span>
+                        Consultation
+                    </label>
+                    <label>
+                        <input type="checkbox" class="checkbox-round" value="1" checked="">
+                        <span style="border-color: rebeccapurple; background-color: rebeccapurple;"></span>
+                        Entretien
+                    </label>
+                    <label>
+                        <input type="checkbox" class="checkbox-round" value="1" checked="">
+                        <span style="border-color: chocolate; background-color: chocolate;"></span>
+                        Atelier
+                    </label>
+                    <label>
+                        <input type="checkbox" class="checkbox-round" value="1" checked="">
+                        <span style="border-color: royalblue; background-color: royalblue;"></span>
+                        Semaine éducative
+                    </label>
+                </div>
+                <div class="input-group input-daterange">
+                    <input type="text" class="form-control" id="dateDebut">
+                    <div class="input-group-addon">à</div>
+                    <input type="text" class="form-control" id="dateFin">
+                </div>
+            </div>
+
+
+            <table id="rdv-grid" class="table table-condensed table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">ID</th>
+                        <th data-column-id="categorie"  data-width="33px" data-formatter="categorie" data-sortable="false"></th>
+                        <th data-column-id="date"       data-width="80px">Date</th>
+                        <th data-column-id="horaire"    data-width="100px" data-css-class='horaire'>Horaire</th>
+                        <th data-column-id="thematique" data-width="15%">Thématique</th>
+                        <th data-column-id="type"       data-width="5%">Type</th>
+                        <th data-column-id="location"   data-width="10%">Lieu</th>
+                        <th data-column-id="soignant"   data-width="10%" data-sortable="false">Soignant</th>
+                        <th data-column-id="patient"    data-width="25%" data-formatter="patient" data-sortable="false">Patient</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div class="separator">
+            <span class="separator-text">Statistiques</span>
         </div>
         <div class="stats-wrapper">
             <div class="box-sm">
@@ -206,7 +266,7 @@
                         if (res[0].length > 0) {
                             $.each(res[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, 'Consultation') + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
                                 .appendTo('#consultations');
                             });
                         } else {
@@ -215,7 +275,7 @@
                         if (res[1].length > 0) {
                             $.each(res[1], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, 'Entretien') + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
                                 .appendTo('#entretiens');
                             });
                         } else {
@@ -224,7 +284,7 @@
                         if (res[2].length > 0) {
                             $.each(res[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td>` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, 'Atelier') + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
                                 .appendTo('#ateliers');
                             });
                         } else {
@@ -259,12 +319,14 @@
         }
         updateWidth();
 
-        function createUser(data, c) {
+        function createUser(data, place) {
             let label = ''
-            label += '<div class="user-list">';
+            label += '<div class="user-list" data-place="' + place + '">';
             if (data.length !== 0) {
                 data.forEach(function(e, v) {
                     let checked = (e.send === 'Oui' ? 'checked' : '');
+                    let notes = (e.notes ?
+                    `<button class="js-comment tooltip2" data-tooltip="` + e.notes + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``) 
                     label += `
                         <div class="user-label" data-id="` + e.rendezVousId + `">
                             <div>
@@ -279,6 +341,7 @@
                                 <div class="user-name">` + e.prenom + ` ` + e.nom + `</div>
                             </div>
                             <div>
+                                ` + notes + `
                                 <button class="js-removePatient"><i class="glyphicon glyphicon-minus"></i></button>
                                 <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
                             </div>
@@ -286,7 +349,7 @@
                     `;
                 });
             }
-            if ((c == 'Atelier') || data.length === 0)
+            if (data.length < parseInt(place))
                 label += '<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>';
             label += '</div>';
             return label;
@@ -335,16 +398,19 @@
 
         $('tbody').on('click', '.js-addPatient', function() {
             let id = $(this).closest('tr').attr('data-row-id');
+            let len = $(this).closest('.user-list').find('.user-label').length;
+            let place = $(this).closest('.user-list').attr('data-place');
             $('#patientAdd').attr('data-id', id);
+            $('#patientAdd').attr('data-place', parseInt(place) - parseInt(len));
             $('#addPatient').modal('show');
         });
 
         $('#patientAdd').on('click', function() {
-            let slotId = $(this).data('id');
+            let slotId = $(this).attr('data-id');
             let tr = $('tbody tr[data-row-id="' + slotId + '"]');
             let patientId = $('#add_patient_rendezVous').val();
-
-            let heure = tr.find('td:first-child').text().split(' - ')[0];
+            let heure = tr.find('td.horaire').text().split(' - ')[0];
+            let place = $(this).attr('data-place');
 
             $.ajax({
                 url: "{{ path('add_patient_slot') }}",
@@ -379,7 +445,7 @@
                         </div>
                     `;
                     tr.find('.user-list').prepend(label);
-                    if (categorie != 'Atelier')
+                    if (parseInt(place) <= 1)
                         tr.find('.js-addPatient').remove();
                 }
             });
@@ -387,17 +453,20 @@
 
         $('tbody').on('click', '.js-removePatient', function() {
             let label = $(this).closest('.user-label');
-            let rendezVousId = label.data('id');
+            let rendezVousId = label.attr('data-id');
+            let slotId = $(this).closest('tr').attr('data-row-id');
+            let list = label.closest('.user-list');
             $.ajax({
                 url: "{{ path('remove_patient_slot') }}",
                 type: "POST",
                 dataType: "json",
                 data: {
                     rendezVousId: rendezVousId,
+                    slotId: slotId,
                 },
                 success: function (res) {
-                    if (categorie != 'Atelier') {
-                        label.after('<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>');
+                    if (list.find('.user-label').length <= list.attr('data-place')) {
+                        list.append('<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>');
                     }
                     label.remove();
                 }
@@ -411,6 +480,87 @@
             else if ($(this).closest('table').is("#ateliers"))
                 categorie = 'Atelier';
         });
+
+
+        /* RDV
+        ============================================================================== */
+
+        $('.input-daterange').datepicker({
+            language: 'fr',
+            format: 'dd/mm/yyyy',
+            todayBtn: true,
+            todayHighlight: false,
+            autoclose: false
+        });
+
+        $('#dateDebut').datepicker('setDate', new Date());
+        let endDate = new Date();
+        endDate.setDate(endDate.getDate() + (7 - endDate.getDay()));
+        $('#dateFin').datepicker('setDate', moment(endDate).format('DD/MM/YYYY'));
+        $('.input-daterange input').datepicker('update');
+
+        var categories = [];
+        $('.lnb-item label').click(function() {
+            let checkbox = $(this).find("input[type='checkbox']");
+            if (checkbox.prop('checked')) {
+                checkbox.prop('checked', false);
+                $(this).find('span').css('background-color', 'transparent');
+            } else {
+                checkbox.prop('checked', true);
+                let color = $(this).find('span').css('border-color');
+                $(this).find('span').css('background-color', color);
+            }
+            categories = [];
+            let val = ['Consultation', 'Entretien', 'Atelier', 'Educative'];
+            $('.lnb-item label :checkbox').each(function(i) {
+                if ($(this).prop('checked'))
+                    categories.push(val[i]);
+            });
+            $("#rdv-grid").bootgrid('reload');
+        });
+
+        $('.input-daterange input').on('changeDate', function() {
+            $('.input-daterange').datepicker('update');
+            $("#rdv-grid").bootgrid('reload');
+        });
+
+        $("#rdv-grid").bootgrid({
+            rowCount: [
+                25, 50, -1
+            ],
+            columnSelection: false,
+            ajax: true,
+            ajaxSettings: {
+                method: "POST",
+                cache: false
+            },
+            post: function () {
+                return {
+                    categories: categories,
+                    dateDebut: $('#dateDebut').val(),
+                    dateFin: $('#dateFin').val()
+                };
+            },
+            url: "{{ path('slot_list') }}",
+            formatters: {
+                "categorie": function(column, row) {
+                    if (row.categorie === 'Entretien')
+                        return "<div class=\"pastille rebeccapurple\"></div>";
+                    else if (row.categorie === 'Atelier')
+                        return "<div class=\"pastille chocolate\"></div>";
+                    else if (row.categorie === 'Consultation')
+                        return "<div class=\"pastille seagreen\"></div>";
+                    else if (row.categorie === 'Educative')
+                        return "<div class=\"pastille royalblue\"></div>";
+                },
+                "patient": function(column, row) {
+                    return createUser(row.patients, row.place)
+                }
+            }
+        }).on("loaded.rs.jquery.bootgrid", function() {
+            
+        });
+
 
     </script>
 {% endblock %}

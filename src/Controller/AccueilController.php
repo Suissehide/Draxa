@@ -29,7 +29,6 @@ class AccueilController extends AbstractController
         $em = $this->getDoctrine()->getManager();
 
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
             $date = $request->request->get('date');
             $startdatetime = \DateTime::createFromFormat("d/m/Y H:i:s", date($date . " 00:00:00"));
             $enddatetime = \DateTime::createFromFormat("d/m/Y H:i:s", date($date . " 23:59:59"));
@@ -73,7 +72,8 @@ class AccueilController extends AbstractController
                             'nom' => $p->getNom(),
                             'prenom' => $p->getPrenom(),
                             'rendezVousId' => $r->getId(),
-                            'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non'
+                            'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
+                            'notes' => $r->getNotes(),
                         );
                     }
                 }
@@ -84,11 +84,85 @@ class AccueilController extends AbstractController
                     "type" => $s->getType() == null ? "" : $s->getType(),
                     "soignant" => $s->getSoignant() == null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
                     "location" => $s->getLocation() == null ? "" : $s->getLocation(),
+                    "place" => $s->getPlace(),
                     "patients" => empty($rendezVous) ? "" : $patientsArray,
                 );
             }
         }
         return $jsonContent;
+    }
+
+    /**
+     * @Route("/slot", name="slot_list", methods="GET|POST")
+     */
+
+    public function slot_list(Request $request): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $categories = $request->request->get('categories');
+            $dateDebut = $request->request->get('dateDebut');
+            $dateFin = $request->request->get('dateFin');
+
+            $current = $request->request->get('current');
+            $rowCount = $request->request->get('rowCount');
+            $searchPhrase = $request->request->get('searchPhrase');
+            $sort = $request->request->get('sort');
+
+            $em = $this->getDoctrine()->getManager();
+            $slotRepository = $em->getRepository(Slot::class);
+            $slots = $slotRepository->findByFilter($sort, $searchPhrase, $categories, $dateDebut, $dateFin);
+            if ($searchPhrase != "" || $sort != "all") {
+                $count = count($slots->getQuery()->getResult());
+            } else {
+                $count = $slotRepository->compte();
+            }
+            if ($rowCount != -1) {
+                $min = ($current - 1) * $rowCount;
+                $max = $rowCount;
+                $slots->setMaxResults($max)->setFirstResult($min);
+            }
+
+            $jsonContent = [];
+            $slots = $slots->getQuery()->getResult();
+            foreach ($slots as $s) {
+                $patientsArray = array();
+                $rendezVous = $s->getRendezVous();
+                if (is_array($rendezVous) || is_object($rendezVous)) {
+                    foreach ($rendezVous as $r) {
+                        $p = $r->getPatient();
+                        $patientsArray[] = array(
+                            'patientId' => $p->getId(),
+                            'nom' => $p->getNom(),
+                            'prenom' => $p->getPrenom(),
+                            'rendezVousId' => $r->getId(),
+                            'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
+                            'notes' => $r->getNotes(),
+                        );
+                    }
+                }
+                $jsonContent[] = array(
+                    "id" => $s->getId(),
+                    "categorie" => $s->getCategorie(),
+                    "date" => $s->getDate()->format('d/m/Y'),
+                    "horaire" => $s->getHeureDebut()->format('H:i') . ' - ' . $s->getHeureFin()->format('H:i'),
+                    "thematique" => $s->getThematique(),
+                    "type" => $s->getType() == null ? "" : $s->getType(),
+                    "location" => $s->getLocation() == null ? "" : $s->getLocation(),
+                    "soignant" => $s->getSoignant() == null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
+                    "place" => $s->getPlace(),
+                    "patients" => empty($rendezVous) ? "" : $patientsArray,
+                );
+            }
+
+            $data = array(
+                "current" => intval($current),
+                "rowCount" => intval($rowCount),
+                "rows" => $jsonContent,
+                "total" => intval($count)
+            );
+            return new JsonResponse($data);
+        }
+        return new JsonResponse(false);
     }
     
     /**
@@ -152,9 +226,12 @@ class AccueilController extends AbstractController
             $em = $this->getDoctrine()->getManager();
 
             $rendezVousId = $request->request->get('rendezVousId');
+            $slotId = $request->request->get('slotId');
 
             $rendezVous = $em->getRepository(RendezVous::class)->findOneById($rendezVousId);
-            $em->remove($rendezVous);
+            $slot = $em->getRepository(Slot::class)->findOneById($slotId);
+            $slot->removeRendezVous($rendezVous);
+            // $em->remove($rendezVous);
             $em->flush();
             return new JsonResponse(true);
         }

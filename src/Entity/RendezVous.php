@@ -50,6 +50,12 @@ class RendezVous
     private $motifRefus;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
+    private $notes;
+
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="rendezVous")
      * @ORM\JoinColumn(nullable=false)
      * @Groups({"rendezVous", "slot"})
@@ -113,6 +119,18 @@ class RendezVous
     public function setMotifRefus(?string $motifRefus): self
     {
         $this->motifRefus = $motifRefus;
+
+        return $this;
+    }
+
+    public function getNotes(): ?string
+    {
+        return $this->notes;
+    }
+
+    public function setNotes(?string $notes): self
+    {
+        $this->notes = $notes;
 
         return $this;
     }

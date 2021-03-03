@@ -197,7 +197,7 @@ class PatientController extends AbstractController
                 $em->flush();
             }
 
-            return $this->redirectToRoute('patient');
+            return $this->redirectToRoute('patient_list');
         }
 
         $rendezVous = new RendezVous();
@@ -209,7 +209,8 @@ class PatientController extends AbstractController
         foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
         $ateliers = [];
         foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
-        $thematiques = array( $consultations, $entretiens, $ateliers );
+        $educatives = [];
+        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives );
 
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',
@@ -222,6 +223,7 @@ class PatientController extends AbstractController
             'dates_ateliers' => $em->getRepository(Slot::class)->findAllDates("Atelier"),
             'dates_consultations' => $em->getRepository(Slot::class)->findAllDates("Consultation"),
             'dates_entretiens' => $em->getRepository(Slot::class)->findAllDates("Entretien"),
+            'dates_educatives' => $em->getRepository(Slot::class)->findAllDates("Educative"),
 
             'thematiques' => $thematiques
         ]);

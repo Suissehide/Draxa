@@ -93,6 +93,59 @@ class SlotRepository extends ServiceEntityRepository
             ->getResult();
     } 
 
+    public function findByFilter($sort, $searchPhrase, $categories, $dateDebut, $dateFin)
+    {
+        $qb = $this->createQueryBuilder('s');
+
+        if ($searchPhrase != "") {
+            $qb->andWhere('s.date LIKE :search
+                OR s.heureDebut LIKE :search
+                OR s.heureFin LIKE :search
+                OR s.thematique LIKE :search
+                OR s.type LIKE :search
+                OR s.location LIKE :search
+            ')
+            ->setParameter('search', '%' . $searchPhrase . '%');
+        }
+        if ($dateDebut) {
+            $qb->andWhere("s.date >= :dateDebut")
+            ->setParameter('dateDebut', \DateTime::createFromFormat("d/m/Y H:i:s", date($dateDebut . " 00:00:00")));
+        }
+        if ($dateFin) {
+            $qb->andWhere("s.date <= :dateFin")
+            ->setParameter('dateFin', \DateTime::createFromFormat("d/m/Y H:i:s", date($dateFin . " 23:59:59")));
+        }
+        if ($categories) {
+            $query = '';
+            foreach ($categories as $key => $value) {
+                if ($key === count($categories) - 1)
+                    $query .= 's.categorie = :' . $value;
+                else
+                    $query .= 's.categorie = :' . $value . ' OR ';
+                $qb->setParameter($value, $value);
+            }
+            $qb->andWhere($query);
+        }
+        if ($sort) {
+            foreach ($sort as $key => $value) {
+                if ($key !== 'horaire')
+                    $qb->addOrderBy('s.' . $key, $value);
+                else {
+                    $qb
+                        ->addOrderBy('s.date', 'ASC')
+                        ->addOrderBy('TIME(s.heureDebut)', $value)
+                    ;
+                }
+            }
+        } else {
+            $qb
+            ->addOrderBy('s.date', 'ASC')
+            ->addOrderBy('TIME(s.heureDebut)', 'ASC')
+            ;
+        }
+        return $qb;
+    }
+
     // /**
     //  * @return Slot[] Returns an array of Slot objects
     //  */
