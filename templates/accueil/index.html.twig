@@ -262,7 +262,7 @@
                         "date": d
                     },
                     success: function (res) {
-                        $("tbody tr").remove();
+                        $(".box tbody tr").remove();
                         if (res[0].length > 0) {
                             $.each(res[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
