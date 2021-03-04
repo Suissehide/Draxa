@@ -79,6 +79,28 @@
                     </tbody>
                 </table>
             </div>
+
+            {# Semaines éducatives #}
+            <div class="box">
+                <div class="box-header">
+                    <div>Semaines éducatives</div>
+                    <span>prévues</span>
+                </div>
+                <table id="educatives" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
+                            <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
+                            <th data-column-id="slot_type" data-width="10%">Type</th>
+                            <th data-column-id="slot_location" data-width="15%">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
+                            <th data-column-id="slot_patient" data-width="30%">Patient</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="separator">
@@ -159,7 +181,7 @@
                 <span class="glyphicon glyphicon-fire"></span>
                 <div class="stats">
                     <h1>Entretiens</h1>
-                    <p>{{ nbEntretiens|number_format(0, ',', '.') }}</p>
+                    <p>{{ nbEntretien|number_format(0, ',', '.') }}</p>
                 </div>
             </div>
             <div class="box-sm">
@@ -167,6 +189,13 @@
                 <div class="stats">
                     <h1>Ateliers</h1>
                     <p>{{ nbAtelier|number_format(0, ',', '.') }}</p>
+                </div>
+            </div>
+            <div class="box-sm">
+                <span class="glyphicon glyphicon-tint"></span>
+                <div class="stats">
+                    <h1>Semaines éducatives</h1>
+                    <p>{{ nbEducative|number_format(0, ',', '.') }}</p>
                 </div>
             </div>
         </div>
@@ -289,6 +318,15 @@
                             });
                         } else {
                             $('<tr class="disabled text-center">').append('<td colspan="6">Aucun atelier</td>').appendTo('#ateliers');
+                        }
+                        if (res[3].length > 0) {
+                            $.each(res[3], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
+                                .appendTo('#educatives');
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">').append('<td colspan="6">Aucune semaine éducative</td>').appendTo('#educatives');
                         }
 
                         updateWidth();

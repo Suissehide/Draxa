@@ -39,6 +39,7 @@ class AccueilController extends AbstractController
             $response[] = $this->createSlotCategorie($slots, 'Consultation');
             $response[] = $this->createSlotCategorie($slots, 'Entretien');
             $response[] = $this->createSlotCategorie($slots, 'Atelier');
+            $response[] = $this->createSlotCategorie($slots, 'Educative');
 
             return new JsonResponse($response, Response::HTTP_OK);
         }
@@ -51,8 +52,9 @@ class AccueilController extends AbstractController
             'controller_name' => 'AccueilController',
             'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
             'nbConsultation' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Consultation'])),
-            'nbEntretiens' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Entretien'])),
+            'nbEntretien' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Entretien'])),
             'nbAtelier' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Atelier'])),
+            'nbEducative' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Educative'])),
             'form' => $form->createView(),
         ]);
     }
@@ -80,7 +82,7 @@ class AccueilController extends AbstractController
                 $jsonContent[] = array(
                     "id" => $s->getId(),
                     "horaire" => $s->getHeureDebut()->format('H:i') . ' - ' . $s->getHeureFin()->format('H:i'),
-                    "thematique" => $s->getThematique(),
+                    "thematique" => $s->getThematique() == null ? "" : $s->getThematique(),
                     "type" => $s->getType() == null ? "" : $s->getType(),
                     "soignant" => $s->getSoignant() == null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
                     "location" => $s->getLocation() == null ? "" : $s->getLocation(),
