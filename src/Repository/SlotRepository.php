@@ -98,13 +98,18 @@ class SlotRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('s');
 
         if ($searchPhrase != "") {
-            $qb->andWhere('s.date LIKE :search
+            $qb
+            ->leftJoin('s.soignant', 't')
+            ->andWhere("
+                DATE_FORMAT(s.date, '%d/%m/%Y') LIKE :search
                 OR s.heureDebut LIKE :search
                 OR s.heureFin LIKE :search
                 OR s.thematique LIKE :search
                 OR s.type LIKE :search
                 OR s.location LIKE :search
-            ')
+                OR t.nom LIKE :search
+                OR t.prenom LIKE :search
+            ")
             ->setParameter('search', '%' . $searchPhrase . '%');
         }
         if ($dateDebut) {
@@ -144,6 +149,22 @@ class SlotRepository extends ServiceEntityRepository
             ;
         }
         return $qb;
+    }
+
+    public function isAlreadyInSlot($slotId, $patientId)
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere("s.id = :slotId")
+            ->setParameter('slotId', $slotId)
+
+            ->leftJoin('s.rendezVous', 'r')
+            ->leftJoin('r.patient', 'p')
+            ->andWhere("p.id = :patientId")
+            ->setParameter('patientId', $patientId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 
     // /**

@@ -60,6 +60,8 @@ class RendezVousController extends AbstractController
             $rendezVous->setSlot($slot);
             $rendezVous->setDate($new_date);
             $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
+            $rendezVous->setThematique($request->request->get('thematique'));
+            $rendezVous->setType($request->request->get('type'));
             $rendezVous->setAccompagnant($request->request->get('accompagnant'));
             $rendezVous->setEtat($request->request->get('etat'));
             $rendezVous->setMotifRefus($request->request->get('motifRefus'));
@@ -98,12 +100,6 @@ class RendezVousController extends AbstractController
             if ($rendezVous) {
                 $slotId = $request->request->get('slotId');
 
-                if ($slotId == '')
-                    return new JsonResponse(false);
-                $slot = $em->getRepository(Slot::class)->find($slotId);
-                if (!$slot)
-                    return new JsonResponse(false);
-
                 $date = explode('/', $request->request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
@@ -112,15 +108,23 @@ class RendezVousController extends AbstractController
                 if ($t != [] && $t[0]->getDate() != $rendezVous->getDate())
                     return new JsonResponse(false);
 
-                $slot->setThematique($request->request->get('thematique'));
-                $slot->setType($request->request->get('type'));
-                $rendezVous->setSlot($slot);
                 $rendezVous->setDate($new_date);
                 $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
+                $rendezVous->setThematique($request->request->get('thematique'));
+                $rendezVous->setType($request->request->get('type'));
                 $rendezVous->setAccompagnant($request->request->get('accompagnant'));
                 $rendezVous->setEtat($request->request->get('etat'));
                 $rendezVous->setMotifRefus($request->request->get('motifRefus'));
                 $rendezVous->setNotes($request->request->get('notes'));
+
+                if ($slotId !== '') {
+                    $slot = $em->getRepository(Slot::class)->find($slotId);
+                    if ($slot) {
+                        $slot->setThematique($request->request->get('thematique'));
+                        $slot->setType($request->request->get('type'));
+                        $rendezVous->setSlot($slot);
+                    }
+                }
 
                 $em->flush();
                 return new JsonResponse(true);

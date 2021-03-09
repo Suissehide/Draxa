@@ -950,8 +950,8 @@
                         $('#slot_heureFin').val(moment(res.heureFin, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
                         $('#slot_categorie option[value="'+ res.categorie +'"]').prop('selected', true);
                         setSelectColor($('#slot_categorie'));
-                        $('#slot_thematique option[value="'+ res.thematique +'"]').prop('selected', true);
                         changeThematique();
+                        $('#slot_thematique option[value="'+ res.thematique +'"]').prop('selected', true);
                         $('#slot_type option[value="'+ res.type +'"]').prop('selected', true);
                         $('#slot_location').val(res.location);
                         $('#slot_place').val(res.place);

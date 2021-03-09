@@ -147,7 +147,7 @@
                         <th data-column-id="date"       data-width="80px">Date</th>
                         <th data-column-id="horaire"    data-width="100px" data-css-class='horaire'>Horaire</th>
                         <th data-column-id="thematique" data-width="15%">Thématique</th>
-                        <th data-column-id="type"       data-width="5%">Type</th>
+                        <th data-column-id="type"       data-width="8%">Type</th>
                         <th data-column-id="location"   data-width="10%">Lieu</th>
                         <th data-column-id="soignant"   data-width="10%" data-sortable="false">Soignant</th>
                         <th data-column-id="patient"    data-width="25%" data-formatter="patient" data-sortable="false">Patient</th>
@@ -245,7 +245,7 @@
     <script src="{{ asset('js/select2.min.js') }}"></script>
 
     <script>
-        var dateSelected = moment(new Date()).format('DD/MM/YYYY');
+        var dateSelected = localStorage.getItem('dateSelected') ? localStorage.getItem('dateSelected') : moment(new Date()).format('DD/MM/YYYY');
         var categorie = 'Consultation';
 
         var options = {
@@ -253,6 +253,7 @@
             selectedDate: dateSelected,
             onSelectedDateChanged: function (event, date) {
                 dateSelected = moment(date).format('DD/MM/YYYY');
+                localStorage.setItem('dateSelected', dateSelected);
                 ajaxAction(dateSelected);
             },
             language: 'fr',
@@ -380,7 +381,7 @@
                             </div>
                             <div>
                                 ` + notes + `
-                                <button class="js-removePatient"><i class="glyphicon glyphicon-minus"></i></button>
+                                <button class="js-removePatient" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
                                 <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
                             </div>
                         </div>
@@ -416,9 +417,27 @@
         ============================================================================== */
 
         $('tbody').on('click', '.js-redirect', function() {
-            let patientId = $(this).attr('data-id');
-            let anchor_list = ["consultations", "entretiens", "ateliers"];
-            let anchor = anchor_list[$(this).parents('.box').index()];
+            redirectToPatient($(this));
+        });
+
+        function redirectToPatient(ref) {
+            let patientId = ref.attr('data-id');
+            let anchor_list = ["consultations", "entretiens", "ateliers", "educatives"];
+            let anchor = "";
+            console.log(ref.parents('table').is('#rdv-grid'), ref.parents('.box').index());
+            if (ref.parents('table').is('#rdv-grid')) {
+                let pastille = ref.parents('tr').find('td:first-child .pastille');
+                if (pastille.hasClass('seagreen'))
+                    anchor = 'consultations';
+                else if (pastille.hasClass('rebeccapurple'))
+                    anchor = 'entretiens';
+                else if (pastille.hasClass('chocolate'))
+                    anchor = 'ateliers';
+                else if (pastille.hasClass('royalblue'))
+                    anchor = 'educatives';
+            } else {
+                anchor = anchor_list[ref.parents('.box').index()];
+            }
             $.ajax({
                 url: "{{ path('redirect_vue_patient') }}",
                 type: "POST",
@@ -431,7 +450,7 @@
                     window.location.href = res;
                 }
             });
-        });
+        }
 
 
         $('tbody').on('click', '.js-addPatient', function() {
@@ -447,7 +466,6 @@
             let slotId = $(this).attr('data-id');
             let tr = $('tbody tr[data-row-id="' + slotId + '"]');
             let patientId = $('#add_patient_rendezVous').val();
-            let heure = tr.find('td.horaire').text().split(' - ')[0];
             let place = $(this).attr('data-place');
 
             $.ajax({
@@ -455,41 +473,44 @@
                 type: "POST",
                 dataType: "json",
                 data: {
-                    date: dateSelected,
-                    heure: heure,
-                    categorie: categorie,
                     patientId: patientId,
                     slotId: slotId
                 },
                 success: function (res) {
-                    let checked = (res.send === 'Oui' ? 'checked' : '');
-                    let label = `
-                        <div class="user-label" data-id="` + res.rendezVousId + `">
-                            <div>
-                                <div class="user-send">
-                                    <input class="inp-cbx" id="` + res.rendezVousId + `" type="checkbox" ` + checked + `/>
-                                    <label class="cbx" for="` + res.rendezVousId + `">
-                                        <span>
-                                            <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
-                                        </span>     
-                                    </label>
+                    if (res) {
+                        let checked = (res.send === 'Oui' ? 'checked' : '');
+                        let label = `
+                            <div class="user-label" data-id="` + res.rendezVousId + `">
+                                <div>
+                                    <div class="user-send">
+                                        <input class="inp-cbx" id="` + res.rendezVousId + `" type="checkbox" ` + checked + `/>
+                                        <label class="cbx" for="` + res.rendezVousId + `">
+                                            <span>
+                                                <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
+                                            </span>     
+                                        </label>
+                                    </div>
+                                    <div class="user-name">` + res.prenom + ` ` + res.nom + `</div>
                                 </div>
-                                <div class="user-name">` + res.prenom + ` ` + res.nom + `</div>
+                                <div>
+                                    <button class="js-removePatient" data-id="` + patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
+                                    <button class="js-redirect" data-id="` + patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                                </div>
                             </div>
-                            <div>
-                                <button class="js-removePatient"><i class="glyphicon glyphicon-minus"></i></button>
-                                <button class="js-redirect" data-id="` + patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
-                            </div>
-                        </div>
-                    `;
-                    tr.find('.user-list').prepend(label);
-                    if (parseInt(place) <= 1)
-                        tr.find('.js-addPatient').remove();
-                }
+                        `;
+                        tr.find('.user-list').prepend(label);
+                        if (parseInt(place) <= 1)
+                            tr.find('.js-addPatient').remove();
+                        successAlert('Succès: patient ajouté !');
+                    } else {
+                        errorAlert('Erreur: ce patient est déjà inscrit !');
+                    }
+                },
             });
         })
 
         $('tbody').on('click', '.js-removePatient', function() {
+            let ref = $(this);
             let label = $(this).closest('.user-label');
             let rendezVousId = label.attr('data-id');
             let slotId = $(this).closest('tr').attr('data-row-id');
@@ -507,6 +528,8 @@
                         list.append('<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>');
                     }
                     label.remove();
+                    successAlert('Succès: patient supprimé !');
+                    redirectToPatient(ref);
                 }
             });
         });
@@ -532,9 +555,8 @@
         });
 
         $('#dateDebut').datepicker('setDate', new Date());
-        let endDate = new Date();
-        endDate.setDate(endDate.getDate() + (7 - endDate.getDay()));
-        $('#dateFin').datepicker('setDate', moment(endDate).format('DD/MM/YYYY'));
+        let endDate = moment().endOf('year').format('DD/MM/YYYY');
+        $('#dateFin').datepicker('setDate', endDate);
         $('.input-daterange input').datepicker('update');
 
         var categories = [];
@@ -599,6 +621,24 @@
             
         });
 
+        function errorAlert(msg) {
+            $('body').prepend(
+                `<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>
+                    `+ msg +`
+                </div>`
+            );
+            alert_pos += 72;
+        }
+
+        
+        function successAlert(msg) {
+            $('body').prepend(
+                `<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>
+                    `+ msg +`
+                </div>`
+            );
+            alert_pos += 72;
+        }
 
     </script>
 {% endblock %}

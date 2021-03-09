@@ -11,7 +11,7 @@
 
 {% block toolbar_component %}
     <button class="cd cd-save js-cd-save"><span class="glyphicon glyphicon-floppy-disk"></span></button>
-    <a class="cd cd-back js-cd-back" href="{{ url('patient_list') }}"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <a class="cd cd-back js-cd-back" href="#"><span class="glyphicon glyphicon-chevron-left"></span></a>
 {% endblock %}
 
 {% form_theme form 'form-theme.html.twig' %}
@@ -21,9 +21,9 @@
     <div class="wrapper scrollbar">
         <h1 id="top">Index |
             {{ patient.nom }}</h1>
-        <div class="well nav-bar" id="navMenu">
+        <div class="nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
-                <a href="{{ url('patient_list') }}" class="btn btn-default" id="btn-back">
+                <a href="#" class="btn btn-default js-cd-back" id="btn-back">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                     Retour
                 </a>
@@ -170,31 +170,31 @@
             </div>
 
             <!-- CONSULTATIONS -->
-            <section class="cd-horizontal-timeline" id="timeline-consultations">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
+            <section class="cd-h-timeline" id="timeline-consultations">
+                <div class="cd-h-timeline__container">
+                    <div class="cd-h-timeline__dates">
+                        <div class="cd-h-timeline__line">
                             <ol id="events-consultations">
-                                {% for consultation in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                                {% for consultation in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                                 {% if consultation.categorie == 'Consultation' %}
                                     <li>
-                                        <a href="#0" data-date="{{ consultation.date|date("d/m/Y") }}">
+                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}">
                                             {{ consultation.date|format_datetime(pattern="d MMM", locale='fr') }}
                                         </a>
                                     </li>
                                 {% endif %}
                                 {% endfor %}
                             </ol>
-                            <span class="filling-line" aria-hidden="true"></span>
+                            <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <ul class="cd-timeline-navigation">
+                    <ul>
                         <li>
-                            <a href="#0" class="prev inactive">Prev</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
-                            <a href="#0" class="next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
                         </li>
                     </ul>
 
@@ -203,16 +203,14 @@
                     </a>
                 </div>
 
-                <div class="events-content">
+                <div class="cd-h-timeline__events">
                     <ol id="events-content-consultations">
-                        {% for consultation in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                        {% for consultation in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
+                        {% set counter = (counter | default(0)) + 1 %}
                         {% if consultation.categorie == 'Consultation' %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li data-date="{{ consultation.date|date("d/m/Y") }}" data-id="{{ consultation.id }}">
-                                <h2>Consultation  
-                                    {{ counter }}
-                                </h2>
-                                <em>
+                            <li class="cd-h-timeline__event" data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}" data-id="{{ consultation.id }}">
+                                <h2 class="cd-h-timeline__event-title">Consultation</h2>
+                                <em class="cd-h-timeline__event-date">
                                     {{ consultation.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
                                 </em>
                                 <div>
@@ -239,10 +237,10 @@
                                                 <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_thematique" class="form-control thematique" value="{% if consultation.slot %} {{ consultation.slot.thematique }} {% endif %}">
-                                                    <option value="" {% if consultation.slot and consultation.slot.thematique == '' %} selected="selected" {% endif %}></option>
+                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_thematique" class="form-control thematique">
+                                                    <option value="" {% if consultation.thematique == '' %} selected="selected" {% endif %}></option>
                                                     {% for thematique in thematiques[0] %}
-                                                        <option value="{{thematique}}" {% if consultation.slot and consultation.slot.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                        <option value="{{thematique}}" {% if consultation.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -253,10 +251,10 @@
                                                     Type
                                                 </label>
                                                 <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_type" name="patient_creation_form[consultation][{{ consultation.id }}][type]" class="form-control type">
-                                                    <option value="" {% if consultation.slot and consultation.slot.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if consultation.slot and consultation.slot.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if consultation.slot and consultation.slot.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if consultation.slot and consultation.slot.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
+                                                    <option value="" {% if consultation.type == "" %} selected="selected" {% endif %}></option>
+                                                    <option value="Ambu" {% if consultation.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
+                                                    <option value="Tel" {% if consultation.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
+                                                    <option value="Hospit" {% if consultation.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
                                                 <select>
                                             </div>
                                         </div>
@@ -321,31 +319,31 @@
             </div>
 
             <!-- ENTRETIENS INDIVIDUELS -->
-            <section class="cd-horizontal-timeline" id="timeline-entretiens">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
+            <section class="cd-h-timeline" id="timeline-entretiens">
+                <div class="cd-h-timeline__container">
+                    <div class="cd-h-timeline__dates">
+                        <div class="cd-h-timeline__line">
                             <ol id="events-entretiens">
-                                {% for entretien in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                                {% for entretien in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                                 {% if entretien.categorie == 'Entretien' %}
                                     <li>
-                                        <a href="#0" data-date="{{ entretien.date|date("d/m/Y") }}">
+                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}">
                                             {{ entretien.date|format_datetime(pattern="d MMM", locale='fr') }}
                                         </a>
                                     </li>
                                 {% endif %}
                                 {% endfor %}
-                            </ol>
-                            <span class="filling-line" aria-hidden="true"></span>
+                           </ol>
+                            <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <ul class="cd-timeline-navigation">
+                    <ul>
                         <li>
-                            <a href="#0" class="prev inactive">Prev</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
-                            <a href="#0" class="next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
                         </li>
                     </ul>
 
@@ -354,16 +352,13 @@
                     </a>
                 </div>
 
-                <div class="events-content">
+                <div class="cd-h-timeline__events">
                     <ol id="events-content-entretiens">
-                        {% for entretien in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                        {% for entretien in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                         {% if entretien.categorie == 'Entretien' %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li data-date="{{ entretien.date|date("d/m/Y") }}" data-id="{{ entretien.id }}">
-                                <h2>Entretien  
-                                    {{ counter }}
-                                </h2>
-                                <em>
+                            <li class="cd-h-timeline__event" data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}" data-id="{{ entretien.id }}">
+                                <h2 class="cd-h-timeline__event-title">Entretien</h2>
+                                <em class="cd-h-timeline__event-date">
                                     {{ entretien.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
                                 </em>
                                 <div>
@@ -390,10 +385,10 @@
                                                 <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <select type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_thematique" class="form-control thematique" value="{% if entretien.slot %} {{ entretien.slot.thematique }} {% endif %}">
-                                                    <option value="" {% if entretien.slot and entretien.slot.thematique == '' %} selected="selected" {% endif %}></option>
+                                                <select type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_thematique" class="form-control thematique">
+                                                    <option value="" {% if entretien.thematique == '' %} selected="selected" {% endif %}></option>
                                                     {% for thematique in thematiques[1] %}
-                                                        <option value="{{thematique}}" {% if entretien.slot and entretien.slot.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                        <option value="{{thematique}}" {% if entretien.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
                                                     {% endfor %}²
                                                 </select>
                                             </div>
@@ -404,10 +399,10 @@
                                                     Type
                                                 </label>
                                                <select type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_type" name="patient_creation_form[entretien][{{ entretien.id }}][type]" class="form-control type">
-                                                    <option value="" {% if entretien.slot and entretien.slot.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if entretien.slot and entretien.slot.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if entretien.slot and entretien.slot.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if entretien.slot and entretien.slot.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
+                                                    <option value="" {% if entretien.type == "" %} selected="selected" {% endif %}></option>
+                                                    <option value="Ambu" {% if entretien.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
+                                                    <option value="Tel" {% if entretien.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
+                                                    <option value="Hospit" {% if entretien.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
                                                 <select>
                                             </div>
                                         </div>
@@ -472,31 +467,31 @@
             </div>
 
             <!-- ATELIER -->
-            <section class="cd-horizontal-timeline" id="timeline-ateliers">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
+            <section class="cd-h-timeline" id="timeline-ateliers">
+                <div class="cd-h-timeline__container">
+                    <div class="cd-h-timeline__dates">
+                        <div class="cd-h-timeline__line">
                             <ol id="events-ateliers">
-                                {% for atelier in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                                {% for atelier in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                                 {% if atelier.categorie == 'Atelier' %}
                                     <li>
-                                        <a href="#0" data-date="{{ atelier.date|date("d/m/Y") }}">
+                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}">
                                             {{ atelier.date|format_datetime(pattern="d MMM", locale='fr') }}
                                         </a>
                                     </li>
                                 {% endif %}
                                 {% endfor %}
                             </ol>
-                            <span class="filling-line" aria-hidden="true"></span>
+                            <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <ul class="cd-timeline-navigation">
+                    <ul>
                         <li>
-                            <a href="#0" class="prev inactive">Prev</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
-                            <a href="#0" class="next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
                         </li>
                     </ul>
 
@@ -505,16 +500,13 @@
                     </a>
                 </div>
 
-                <div class="events-content">
+                <div class="cd-h-timeline__events">
                     <ol id="events-content-ateliers">
-                        {% for atelier in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                        {% for atelier in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                         {% if atelier.categorie == 'Atelier' %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li data-date="{{ atelier.date|date("d/m/Y") }}" data-id="{{ atelier.id }}">
-                                <h2>Atelier  
-                                    {{ counter }}
-                                </h2>
-                                <em>
+                            <li class="cd-h-timeline__event" data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}" data-id="{{ atelier.id }}">
+                                <h2 class="cd-h-timeline__event-title">Atelier</h2>
+                                <em class="cd-h-timeline__event-date">
                                     {{ atelier.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
                                 </em>
                                 <div>
@@ -541,10 +533,10 @@
                                                 <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <select type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_thematique" class="form-control thematique" value="{% if atelier.slot %} {{ atelier.slot.thematique }} {% endif %}">
-                                                    <option value="" {% if atelier.slot and atelier.slot.thematique == '' %} selected="selected" {% endif %}></option>
+                                                <select type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_thematique" class="form-control thematique">
+                                                    <option value="" {% if atelier.thematique == '' %} selected="selected" {% endif %}></option>
                                                     {% for thematique in thematiques[2] %}
-                                                        <option value="{{thematique}}" {% if atelier.slot and atelier.slot.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                        <option value="{{thematique}}" {% if atelier.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
@@ -555,10 +547,10 @@
                                                     Type
                                                 </label>
                                                 <select type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_type" name="patient_creation_form[atelier][{{ atelier.id }}][type]" class="form-control type">
-                                                    <option value="" {% if atelier.slot and atelier.slot.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if atelier.slot and atelier.slot.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if atelier.slot and atelier.slot.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if atelier.slot and atelier.slot.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
+                                                    <option value="" {% if atelier.type == "" %} selected="selected" {% endif %}></option>
+                                                    <option value="Ambu" {% if atelier.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
+                                                    <option value="Tel" {% if atelier.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
+                                                    <option value="Hospit" {% if atelier.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
                                                 <select>
                                             </div>
                                         </div>
@@ -623,31 +615,31 @@
             </div>
 
             <!-- SEMAINE EDUCATIVE -->
-            <section class="cd-horizontal-timeline" id="timeline-educatives">
-                <div class="timeline">
-                    <div class="events-wrapper">
-                        <div class="events">
+            <section class="cd-h-timeline" id="timeline-educatives">
+                <div class="cd-h-timeline__container">
+                    <div class="cd-h-timeline__dates">
+                        <div class="cd-h-timeline__line">
                             <ol id="events-educatives">
-                                {% for educative in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                                {% for educative in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                                 {% if educative.categorie == 'Educative' %}
                                     <li>
-                                        <a href="#0" data-date="{{ educative.date|date("d/m/Y") }}">
+                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}">
                                             {{ educative.date|format_datetime(pattern="d MMM", locale='fr') }}
                                         </a>
                                     </li>
                                 {% endif %}
                                 {% endfor %}
                             </ol>
-                            <span class="filling-line" aria-hidden="true"></span>
+                            <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
                         </div>
                     </div>
 
-                    <ul class="cd-timeline-navigation">
+                    <ul>
                         <li>
-                            <a href="#0" class="prev inactive">Prev</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
-                            <a href="#0" class="next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
                         </li>
                     </ul>
 
@@ -656,16 +648,13 @@
                     </a>
                 </div>
 
-                <div class="events-content">
+                <div class="cd-h-timeline__events">
                     <ol id="events-content-educatives">
-                        {% for educative in patient.rendezVous|sort((a, b) => a.date <=> b.date) %}
+                        {% for educative in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                         {% if educative.categorie == 'Educative' %}
-                            {% set counter = (counter | default(0)) + 1 %}
-                            <li data-date="{{ educative.date|date("d/m/Y") }}" data-id="{{ educative.id }}">
-                                <h2>Semaine éducative  
-                                    {{ counter }}
-                                </h2>
-                                <em>
+                            <li class="cd-h-timeline__event" data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}" data-id="{{ educative.id }}">
+                                <h2 class="cd-h-timeline__event-title">Semaine éducative</h2>
+                                <em class="cd-h-timeline__event-date">
                                     {{ educative.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
                                 </em>
                                 <div>
@@ -742,7 +731,7 @@
 
             <div class="separator"></div>
             <div class="form-inline">
-                <a href="{{ url('patient_list') }}" class="btn btn-default">
+                <a href="#" class="btn btn-default js-cd-back">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                     Retour
                 </a>
@@ -895,7 +884,9 @@
 
 {% block javascripts %}
     <script src="{{ asset('js/script.js') }}"></script>
-    <script src="{{ asset('js/timeline.js') }}"></script>
+    <script src="{{ asset('js/timeline/util.js') }}"></script>
+    <script src="{{ asset('js/timeline/swipe-content.js') }}"></script>
+    <script src="{{ asset('js/timeline/main.js') }}"></script>
     <script type="text/javascript">
 
         //TODO : add date on delete to 'datesConsultations' or ...
@@ -912,48 +903,76 @@
 
         var thematiques = {{ thematiques|json_encode|raw }};
 
-        function sort_date1(a, b) {
-            let date1 = $(a).find('a').attr('data-date').split("/");
-            let date2 = $(b).find('a').attr('data-date').split("/");
-            return (new Date(date2[2], date2[1], date2[0])) < (new Date(date1[2], date1[1], date1[0])) ? 1 : -1;    
-        }
 
-        function sort_date2(a, b) {
-            let date1 = $(a).attr('data-date').split("/");
-            let date2 = $(b).attr('data-date').split("/");
-            return (new Date(date2[2], date2[1], date2[0])) < (new Date(date1[2], date1[1], date1[0])) ? 1 : -1;    
-        }
-
-        function orderTimeline() {
-            $('.cd-horizontal-timeline').each(function() {
-                let timeline = $(this).find('.timeline ol')
-                let events = $(this).find('.events-content ol')
-                timeline.find('li').sort(sort_date1).appendTo(timeline);
-                events.find('li').sort(sort_date2).appendTo(events);
-            });
-        }
-
-        function updateForm() {
-            orderTimeline();
-            $('#timeline_update').trigger('click');
-
-            updateEntretienDatepicker();
-            updateConsultationDatepicker();
-            updateAtelierDatepicker();
-            updateEducativeDatepicker();
-            changeSelectColor(null);
-            sortSelect();
-        }
-        
-        /* On start */
-        $('.events-content li:last-child').addClass('selected');
-        $('.events li:not(:last-child) a').addClass('older-event');
-        $('.events li:last-child a').addClass('selected');
-        updateForm();
+        $('.js-cd-back').on('click', function(e){
+            e.preventDefault();
+            window.history.back();
+        });
 
         $('.js-cd-save').on('click', function() {
             $('#patient_creation_form_validation').trigger('click');
         });
+
+        // Utils
+        function sortDate(a, b) {
+            let attr1 = $(a).attr('data-date');
+            if (typeof attr1 === typeof undefined || attr1 === false) {
+                attr1 = $(a).find('a').attr('data-date');
+            }
+            let attr2 = $(b).attr('data-date');
+            if (typeof attr2 === typeof undefined || attr2 === false) {
+                attr2 = $(b).find('a').attr('data-date');
+            }
+            let date1 = moment(attr1, 'DD/MM/YYYYTh:mm');
+            let date2 = moment(attr2, 'DD/MM/YYYYTh:mm');
+            return (date1 > date2 ? 1 : -1);
+        }
+
+        function orderTimeline() {
+            $('.cd-h-timeline').each(function() {
+                let timeline = $(this).find('.cd-h-timeline__container ol');
+                let events = $(this).find('.cd-h-timeline__events ol');
+                timeline.find('li').sort(sortDate).appendTo(timeline);
+                events.find('li').sort(sortDate).appendTo(events);
+            });
+        }
+
+        function setNumberEvent() {
+            $('.cd-h-timeline__events ol li.cd-h-timeline__event').each(function() {
+                let index = $(this).index() + 1;
+                let title = $(this).find('.cd-h-timeline__event-title').text();
+                let arr = title.split(' ');
+                if ($.isNumeric(arr[arr.length-1]))
+                    title = title.replace(' ' + arr[arr.length-1], '');
+                $(this).find('.cd-h-timeline__event-title').text(title + ' ' + index);
+            });
+        }
+
+        /* On start */
+        function updateForm() {
+            updateEntretienDatepicker();
+            updateConsultationDatepicker();
+            updateAtelierDatepicker();
+            updateEducativeDatepicker();
+
+            orderTimeline();
+            changeSelectColor(null);
+            sortSelect();
+            setNumberEvent();
+        }
+        updateForm();
+
+        var timelineConsultations, timelineEntretiens, timelineAteliers, timelineEducative;
+        $('.cd-h-timeline__cd-h-timeline__line li:last-child').addClass('cd-h-timeline__date');
+        $('.cd-h-timeline__line li:not(:last-child) a').addClass('cd-h-timeline__event--older-event');
+        $('.cd-h-timeline__line li:last-child a').addClass('cd-h-timeline__date--selected');
+        function resetTimeline() {
+            if ($('#events-consultations li').length) timelineConsultations = new HorizontalTimeline(document.getElementById('timeline-consultations'));
+            if ($('#events-entretiens li').length) timelineEntretiens = new HorizontalTimeline(document.getElementById('timeline-entretiens'));
+            if ($('#events-ateliers li').length) timelineAteliers = new HorizontalTimeline(document.getElementById('timeline-ateliers'));
+            if ($('#events-educatives li').length) timelineEducative = new HorizontalTimeline(document.getElementById('timeline-educatives'));
+        };
+        resetTimeline();
 
 
         {# Set select color #}
@@ -963,14 +982,15 @@
                 return;
             obj.css({background: color});
             let index = obj.parents('li').index();
-            let dot = obj.parents('.events-content').prev().find('ol li:eq(' + index + ') a');
-            if (dot.hasClass('selected'))
-                dot.removeClass().addClass('selected');
-            else if (dot.hasClass('older-event'))
-                dot.removeClass().addClass('older-event');
+            let dot = obj.parents('.cd-h-timeline__events').prev().find('ol li:eq(' + index + ') a');
+    
+            if (dot.hasClass('cd-h-timeline__date--selected'))
+                dot.removeClass().addClass('cd-h-timeline__date--selected');
+            else if (dot.hasClass('cd-h-timeline__date--older-event'))
+                dot.removeClass().addClass('cd-h-timeline__date--older-event');
             else
-                dot.removeClass()
-            dot.addClass(color + '-after');
+                dot.removeClass();
+            dot.addClass('cd-h-timeline__date ' + color + '-after');
         }
 
         function changeSelectColor(obj)  {
@@ -981,10 +1001,6 @@
                     setSelectColor($(this));
                 });
             }
-        }
-
-        function changeDotColor() {
-            $('cd-horizontal-timeline, events a.selected::after')
         }
 
         $('ol, .modal').on('change', 'select', function() {
@@ -1005,7 +1021,7 @@
             // $(this).parents("li").attr("data-date", $(this).val());
             $(this).parents("li").find("em").text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1] + " " + datetime[2]);
             let index = $(this).parents('li').index();
-            let dot = $(this).parents('.events-content').prev().find('ol li:eq(' + index + ') a');
+            let dot = $(this).parents('.cd-h-timeline__events').prev().find('ol li:eq(' + index + ') a');
             dot.attr('data-date', $(this).val());
             dot.text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1]);
         })
@@ -1033,16 +1049,16 @@
         }
 
         {# Delete #}
-        $('.cd-horizontal-timeline').on("click", ".btn-danger", function () {
+        $('.cd-h-timeline').on("click", ".btn-danger", function () {
             $("#removeModal").attr('data-id', $(this).closest('li').attr('data-id'));
-            $("#removeModal").modal()
+            $("#removeModal").modal();
         });
 
         $('#removeModal .btn-primary').on('click', function () {
             let id = $('#removeModal').attr('data-id');
-            let btn = $('.events-content li[data-id="' + id + '"] .btn-danger');
+            let btn = $('.cd-h-timeline__events li[data-id="' + id + '"] .btn-danger');
             let num = btn.closest('li').index();
-            let timeline = btn.parents('.cd-horizontal-timeline');
+            let timeline = btn.parents('.cd-h-timeline');
             let date = btn.closest('li').find('.datepicker').val();
 
             if (btn.closest('ol').is('#events-content-consultations'))
@@ -1060,11 +1076,11 @@
             timeline.find('ol').each(function () {
                 $(this).find('li:nth-child(' + (num + 1) + ')').remove();
             });
-            timeline.find('.events li a').removeClass("selected").addClass("older-event");
-            timeline.find('.events li:last-child a').removeClass("older-event").addClass("selected");
-            timeline.find('.events-content li').removeClass("selected");
-            timeline.find('.events-content li:last-child').addClass("selected");
-            $('#timeline_update').trigger('click');
+            timeline.find('.cd-h-timeline__line li a').removeClass("cd-h-timeline__date--selected").addClass("cd-h-timeline__date--older-event");
+            timeline.find('.cd-h-timeline__line li:last-child a').removeClass("cd-h-timeline__date--older-event").addClass("cd-h-timeline__date--selected");
+            timeline.find('.cd-h-timeline__timeline__events li').removeClass("cd-h-timeline__event--selected");
+            timeline.find('.cd-h-timeline__timeline__events li:last-child').addClass("cd-h-timeline__event--selected");
+            resetTimeline();
 
             let url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
             url = url.replace("rendezVous_id", id);
@@ -1215,17 +1231,15 @@
                         let date_h1 = new Intl.DateTimeFormat("fr-FR", { month: 'short', day: 'numeric' }).format(new_date);
                         let date_em = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_date);
                         let nb = $("#events-content-" + c + "s").find('li').length;
-                        let events = $('#events-' + c + 's');
-                        $('#events-' + c + 's li a').removeClass("selected");
-                        $('#events-' + c + 's li a').addClass("older-event");
-                        $(document.createElement('li'))
-                            .append('<a href=\"#0\" data-date=' + date + '>' + date_h1 + '</a>')
-                            .appendTo(events);
-                        $('#events-' + c + 's li:last-child a').addClass('selected');
-                        $('#events-' + c + 's li:last-child a').removeClass('older-event');
 
-                        let events_content = $('#events-content-' + c + 's');
-                        $('#events-content-' + c + 's li').removeClass("selected");
+                        let events = $('#events-' + c + 's');
+                        $('#events-' + c + 's li a').removeClass("cd-h-timeline__date--selected");
+                        $('#events-' + c + 's li a').addClass("cd-h-timeline__date--older-event");
+                        $(document.createElement('li'))
+                            .append('<a class="cd-h-timeline__date" href=\"#0\" data-date=' + date + 'T' + time + '>' + date_h1 + '</a>')
+                            .appendTo(events);
+                        $('#events-' + c + 's li:last-child a').removeClass('cd-h-timeline__date--older-event');
+                        $('#events-' + c + 's li:last-child a').addClass('cd-h-timeline__date--selected');
 
                         let index = 0
                         if (categorie === 'Entretien')
@@ -1240,11 +1254,14 @@
                         let title = categorie;
                         if (categorie === 'Educative')
                             title = "Semaine éducative";
+
+                        let events_content = $('#events-content-' + c + 's');
+                        $('#events-content-' + c + 's li').removeClass("cd-h-timeline__event--selected");
                         $(events_content)
                             .append(`
-                                <li data-date="` + date + `" data-id="` + res + `">
-                                    <h2>` + title + ` ` + (nb + 1) + `</h2>
-                                    <em>` + date_em + `</em>
+                                <li class="cd-h-timeline__event" data-date="` + date + `T` + time + `" data-id="` + res + `">
+                                    <h2 class="cd-h-timeline__event-title">` + title + `</h2>
+                                    <em class="cd-h-timeline__event-date">` + date_em + `</em>
                                     <div>
                                         <div class="error-msg"></div>
                                         <div class="row">
@@ -1341,7 +1358,7 @@
                         $('#patient_creation_form_' + c + 's_' + res + '_type').val(type);
                         $('#patient_creation_form_' + c + 's_' + res + '_accompagnant').val(accompagnant);
                         $('#patient_creation_form_' + c + 's_' + res + '_etat').val(etat);
-                        $('#events-content-' + c + 's li:last-child').addClass('selected');
+                        $('#events-content-' + c + 's li:last-child').addClass('cd-h-timeline__event--selected');
 
                         $('form[name="rendez_vous"')[0].reset();
                         $('form[name="rendez_vous"] #rendez_vous_etat').css({'background': 'white'});
@@ -1349,6 +1366,7 @@
                         if (categorie === 'Educative')
                         $('.js-delete').remove();
                         updateForm();
+                        resetTimeline();
                     } else {
                         errorAlert();
                     }

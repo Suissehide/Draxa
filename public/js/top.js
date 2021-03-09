@@ -90,11 +90,9 @@ function navTop() {
     var sticky = header.offsetTop;
     if (window.pageYOffset > sticky) {
         header.classList.add("sticky");
-        header.classList.remove("well");
         $('.title').css("visibility", "hidden");
         $('.nav-container').css("display", "none");
     } else {
-        header.classList.add("well");
         header.classList.remove("sticky");
         $('.title').css("visibility", "visible");
         $('.nav-container').css("display", "flex");

@@ -25,7 +25,7 @@ html {
 body {
     overflow-x: hidden;
     height: 100%;
-    background: #EFF3F6;
+    background: rgb(247, 247, 247);
     font-family: Ubuntu-Regular, sans-serif;
     font-size: 14px;
     padding-top: 56px;
@@ -484,9 +484,8 @@ nav {
     position: absolute;
     top: -18px;
     left: 0%;
-    /* margin-left: -22px; */
     padding: 0 15px 0 0;
-    background: #f3f3f4;
+    background: rgb(247, 247, 247);
     color: #8a8a8a;
     font-size: 22px;
 }
@@ -500,7 +499,7 @@ nav {
 
 .nav-bar {
     text-align: center;
-    margin-bottom: 50px;
+    margin: 35px;
 }
 
 .btn-nav {
@@ -523,10 +522,10 @@ nav {
 
 .sticky {
     z-index: 10;
-    width: 75%;
+    width: 100%;
     position: fixed;
-    left: 50%;
-    margin-left: -37.5%;
+    left: 0;
+    margin: 0;
     top: 11px;
 }
 
@@ -1191,12 +1190,12 @@ nav {
     background-color: hotpink;
 }
 
-.selected.hotpink-after:after {
+.cd-h-timeline__date--selected.hotpink-after:after {
     border-color: hotpink !important;
     background-color: hotpink !important;
 }
 
-.older-event.hotpink-after:after {
+.cd-h-timeline__date--older-event.hotpink-after:after {
     border-color: hotpink !important;
 }
 
@@ -1209,12 +1208,12 @@ nav {
     background-color: gold;
 }
 
-.selected.gold-after:after {
+.cd-h-timeline__date--selected.gold-after:after {
     border-color: gold !important;
     background-color: gold !important;
 }
 
-.older-event.gold-after:after {
+.cd-h-timeline__date--older-event.gold-after:after {
     border-color: gold !important;
 }
 
@@ -1507,6 +1506,10 @@ nav {
     position: absolute;
     top: 28px;
     right: 8px;
+}
+
+.semaine__body .semaine__full .slot .horaire {
+    
 }
 
 .semaine__body .semaine__full .slot .details {

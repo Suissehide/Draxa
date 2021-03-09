@@ -194,13 +194,19 @@ class AccueilController extends AbstractController
             $slotId = $request->request->get('slotId');
             $patientId = $request->request->get('patientId');
 
-            $slot = $em->getRepository(Slot::class)->findOneById($slotId);
+            $slotRepository = $em->getRepository(Slot::class);
+            if ($slotRepository->isAlreadyInSlot($slotId, $patientId))
+                return new JsonResponse(false);
+
+            $slot = $slotRepository->findOneById($slotId);
             $patient = $em->getRepository(Patient::class)->findOneById($patientId);
 
             $rendezVous = new RendezVous();
-            $rendezVous->setDate(\DateTime::createFromFormat('d/m/Y', $request->request->get('date')));
-            $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('heure')));
-            $rendezVous->setCategorie($request->request->get('categorie'));
+            $rendezVous->setDate($slot->getDate());
+            $rendezVous->setHeure($slot->getHeureDebut());
+            $rendezVous->setThematique($slot->getThematique());
+            $rendezVous->setType($slot->getType());
+            $rendezVous->setCategorie($slot->getCategorie());
             $rendezVous->setPatient($patient);
             $rendezVous->setSlot($slot);
             

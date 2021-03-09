@@ -35,6 +35,18 @@ class RendezVous
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"patient"})
      */
+    private $thematique;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"patient"})
+     */
     private $accompagnant;
 
     /**
@@ -98,6 +110,42 @@ class RendezVous
 
         return $this;
     }
+    
+    public function getHeure(): ?\DateTimeInterface
+    {
+        return $this->heure;
+    }
+
+    public function setHeure(?\DateTimeInterface $heure): self
+    {
+        $this->heure = $heure;
+
+        return $this;
+    }
+
+    public function getThematique(): ?string
+    {
+        return $this->thematique;
+    }
+
+    public function setThematique(?string $thematique): self
+    {
+        $this->thematique = $thematique;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
 
     public function getAccompagnant(): ?string
     {
@@ -155,18 +203,6 @@ class RendezVous
     public function setEtat(?string $etat): self
     {
         $this->etat = $etat;
-
-        return $this;
-    }
-
-    public function getHeure(): ?\DateTimeInterface
-    {
-        return $this->heure;
-    }
-
-    public function setHeure(?\DateTimeInterface $heure): self
-    {
-        $this->heure = $heure;
 
         return $this;
     }

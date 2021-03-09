@@ -130,18 +130,22 @@ class SlotController extends AbstractController
             $slot->setLocation($location);
             $slot->setPlace($place === '' ? null : $place);
             $slot->setSoignant($em->getRepository(Soignant::class)->findOneById($soignant));
+
+            $rdv = $slot->getRendezVous();
+            foreach($rdv as $r) {
+                $em->remove($r);
+            }
+
             if ($patient) {
                 foreach ($patient as $id) {
                     if ($id) {
                         $patient = $em->getRepository(Patient::class)->findOneById($id);
-                        $rdv = $slot->getRendezVous();
-                        foreach($rdv as $r) {
-                            $em->remove($r);
-                        }
                         $rendezVous = new RendezVous();
                         $rendezVous->setDate($slot->getDate());
                         $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $heureDebut));
                         $rendezVous->setCategorie($categorie);
+                        $rendezVous->setThematique($thematique);
+                        $rendezVous->setType($type);
                         $rendezVous->setPatient($patient);
                         $slot->addRendezVous($rendezVous);
                     }

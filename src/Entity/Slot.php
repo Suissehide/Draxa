@@ -43,8 +43,14 @@ class Slot
      * @Groups({"slot"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $type;
+    private $thematique;
 
+    /**
+     * @Groups({"slot"})
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $type;
+    
     /**
      * @Groups({"slot"})
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -56,12 +62,6 @@ class Slot
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $categorie;
-
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $thematique;
 
     /**
      * @Groups({"slot"})
