@@ -712,6 +712,24 @@
             changeThematique();
         });
 
+        $("#slot_place").change(function() {
+            updatePatientList();
+        });
+
+        function updatePatientList() {
+            let thematique = $("#slot_categorie option:selected").attr('data-thematique');
+            if (thematique === 'atelier') {
+                let length = parseInt($('#slot_place').val());
+                console.log(length);
+                $(".js-patient").select2({ multiple: true, matcher: matchCustom, maximumSelectionLength: length });
+                $(".js-patient").val(null).trigger('change');
+            } else {
+                $(".js-patient").select2({ multiple: false, matcher: matchCustom });
+                $(".js-patient").val(null).trigger('change');
+                $("#slot_place").val(1);
+            }
+        }
+
         function changeThematique() {
             let thematique = $("#slot_categorie option:selected").attr('data-thematique');
             $('#slot_thematique option').each(function() {
@@ -721,15 +739,9 @@
                     $(this).hide();
                 }
             });
-            if (thematique === 'atelier') {
-                $(".js-patient").select2({ multiple: true, matcher: matchCustom });
-                $(".js-patient").val(null).trigger('change');
-                $("#slot_place").val(null);
-            } else {
-                $(".js-patient").select2({ multiple: false, matcher: matchCustom });
-                $(".js-patient").val(null).trigger('change');
-                $("#slot_place").val(1);
-            }
+
+            updatePatientList();
+
             if (thematique === 'educative') {
                 $('.js-hide').hide();
             } else {
