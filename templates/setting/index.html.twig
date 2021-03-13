@@ -716,11 +716,11 @@
             updatePatientList();
         });
 
+        // SET PLACE && MULTI PATIENT ADD
         function updatePatientList() {
             let thematique = $("#slot_categorie option:selected").attr('data-thematique');
-            if (thematique === 'atelier') {
+            if (thematique === 'atelier' || thematique === 'educative') {
                 let length = parseInt($('#slot_place').val());
-                console.log(length);
                 $(".js-patient").select2({ multiple: true, matcher: matchCustom, maximumSelectionLength: length });
                 $(".js-patient").val(null).trigger('change');
             } else {

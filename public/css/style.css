@@ -1812,18 +1812,34 @@ nav {
 /* Checkbox round
 =================================================== */
 
+.filter {
+    display: flex;
+}
+
+.filter p {
+    margin-right: 15px;
+}
+
+#rdv-grid-header {
+    height: 75px;
+}
+
+#rdv-grid-header .actionBar {
+    text-align: left;
+    margin-left: 270px;
+}
+
 .lnb-item {
     z-index: 1;
-    height: 36px;
+    margin-top: 1px;
     position: absolute;
     display: flex;
-    align-items: center;
-    overflow: hidden;
+    flex-direction: column;
 }
 
 .lnb-item .input-daterange {
     width: 250px;
-    margin-left: 35px;
+    margin-bottom: 15px;
 }
 
 .lnb-item .input-group-addon {

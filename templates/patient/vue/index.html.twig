@@ -899,6 +899,7 @@
         var datesEntretiens = {{ dates_entretiens|json_encode|raw }};
         var datesAteliers = {{ dates_ateliers|json_encode|raw }};
         var datesEducatives = {{ dates_educatives|json_encode|raw }};
+        console.log(datesEducatives);
         var dates;
 
         var thematiques = {{ thematiques|json_encode|raw }};
@@ -1069,9 +1070,16 @@
                 dates = datesAteliers;
             else if (btn.closest('ol').is('#events-content-educatives'))
                 dates = datesEducatives;
+            
             let hasValue = hasValueDeep(dates, date);
             if (!hasValue)
-                dates.push({'date':  date});
+                dates.push({'date':  date, 'rendezVous' : "0", 'place':  1});
+            else {
+                dates.forEach(function(e, v) {
+                    if (e.date === date)
+                        e.place = e.place + 1;
+                });
+            }
 
             timeline.find('ol').each(function () {
                 $(this).find('li:nth-child(' + (num + 1) + ')').remove();
@@ -1141,6 +1149,7 @@
 
         {# Add RendezVous #}
         $('#rendezVousModal').on('show.bs.modal', function() {
+            $('#rendezVousModal .error-msg').hide();
             $(this).find('form[name="rendez_vous"]')[0].reset();
             let index = 0
             $('#rendezVousModal .modal-header h4').text('Ajouter une consultation');
@@ -1223,9 +1232,12 @@
                             dates = datesAteliers;
                         else if (categorie == 'Educative')
                             dates = datesEducatives;
+                        console.log(dates);
                         dates.forEach(function(e, v) {
-                            if (e['date'] == date) dates.splice(v, 1);
-                        })
+                            if (e['date'] == date)
+                                e.place = e.place - 1;
+                        });
+                        console.log(dates);
 
                         let new_date = new Date(formatDate(date));
                         let date_h1 = new Intl.DateTimeFormat("fr-FR", { month: 'short', day: 'numeric' }).format(new_date);
@@ -1364,7 +1376,7 @@
                         $('form[name="rendez_vous"] #rendez_vous_etat').css({'background': 'white'});
 
                         if (categorie === 'Educative')
-                        $('.js-delete').remove();
+                            $('.js-delete').remove();
                         updateForm();
                         resetTimeline();
                     } else {
@@ -1452,7 +1464,8 @@
                     let day = moment(currentDate).unix();
                     if (dates && dates.length > 0) {
                         for (let i = 0; i < dates.length; i++) {
-                            if (day == moment(dates[i]['date'], 'DD/MM/YYYY').unix()) {
+                            if (day == moment(dates[i]['date'], 'DD/MM/YYYY').unix()
+                            && dates[i]['place'] - dates[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1489,7 +1502,8 @@
                     let day = moment(currentDate).unix();
                     if (datesConsultations.length > 0) {
                         for (let i = 0; i < datesConsultations.length; i++) {
-                            if (day == moment(datesConsultations[i]['date'], 'DD/MM/YYYY').unix()) {
+                            if (day == moment(datesConsultations[i]['date'], 'DD/MM/YYYY').unix()
+                            && datesConsultations[i]['place'] - datesConsultations[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1543,7 +1557,8 @@
                     let day = moment(currentDate).unix();
                     if (datesEntretiens.length > 0) {
                         for (let i = 0; i < datesEntretiens.length; i++) {
-                            if (day == moment(datesEntretiens[i]['date'], 'DD/MM/YYYY').unix()) {
+                            if (day == moment(datesEntretiens[i]['date'], 'DD/MM/YYYY').unix()
+                            && datesEntretiens[i]['place'] - datesEntretiens[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1597,7 +1612,8 @@
                     let day = moment(currentDate).unix();
                     if (datesAteliers.length > 0) {
                         for (let i = 0; i < datesAteliers.length; i++) {
-                            if (day == moment(datesAteliers[i]['date'], 'DD/MM/YYYY').unix()) {
+                            if (day == moment(datesAteliers[i]['date'], 'DD/MM/YYYY').unix()
+                            && datesAteliers[i]['place'] - datesAteliers[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1650,7 +1666,8 @@
                     let day = moment(currentDate).unix();
                     if (datesEducatives.length > 0) {
                         for (let i = 0; i < datesEducatives.length; i++) {
-                            if (day == moment(datesEducatives[i]['date'], 'DD/MM/YYYY').unix()) {
+                            if (day == moment(datesEducatives[i]['date'], 'DD/MM/YYYY').unix()
+                            && datesEducatives[i]['place'] - datesEducatives[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }

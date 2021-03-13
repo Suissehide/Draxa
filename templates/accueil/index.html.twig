@@ -108,33 +108,37 @@
         </div>
         <div>
 
+
             <div class="lnb-item">
-                <div>
-                    <label>
-                        <input type="checkbox" class="checkbox-round" value="1" checked="">
-                        <span style="border-color: seagreen; background-color: seagreen;"></span>
-                        Consultation
-                    </label>
-                    <label>
-                        <input type="checkbox" class="checkbox-round" value="1" checked="">
-                        <span style="border-color: rebeccapurple; background-color: rebeccapurple;"></span>
-                        Entretien
-                    </label>
-                    <label>
-                        <input type="checkbox" class="checkbox-round" value="1" checked="">
-                        <span style="border-color: chocolate; background-color: chocolate;"></span>
-                        Atelier
-                    </label>
-                    <label>
-                        <input type="checkbox" class="checkbox-round" value="1" checked="">
-                        <span style="border-color: royalblue; background-color: royalblue;"></span>
-                        Semaine éducative
-                    </label>
-                </div>
                 <div class="input-group input-daterange">
                     <input type="text" class="form-control" id="dateDebut">
                     <div class="input-group-addon">à</div>
                     <input type="text" class="form-control" id="dateFin">
+                </div>
+                <div class="filter">
+                    <p>Filtrer par :</p>
+                    <div>
+                        <label>
+                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <span style="border-color: seagreen; background-color: seagreen;"></span>
+                            Consultation
+                        </label>
+                        <label>
+                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <span style="border-color: rebeccapurple; background-color: rebeccapurple;"></span>
+                            Entretien
+                        </label>
+                        <label>
+                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <span style="border-color: chocolate; background-color: chocolate;"></span>
+                            Atelier
+                        </label>
+                        <label>
+                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <span style="border-color: royalblue; background-color: royalblue;"></span>
+                            Semaine éducative
+                        </label>
+                    </div>
                 </div>
             </div>
 
@@ -417,16 +421,19 @@
         ============================================================================== */
 
         $('tbody').on('click', '.js-redirect', function() {
-            redirectToPatient($(this));
+            let isBox = $(this).parents('table').is('#rdv-grid') ? false : true;
+            let index, pastille;
+            if (isBox)
+                index = $(this).parents('.box').index();
+            else
+                pastille = $(this).parents('tr').find('td:first-child .pastille');
+            redirectToPatient($(this).attr('data-id'), isBox, index, pastille);
         });
 
-        function redirectToPatient(ref) {
-            let patientId = ref.attr('data-id');
+        function redirectToPatient(patientId, isBox, index, pastille) {
             let anchor_list = ["consultations", "entretiens", "ateliers", "educatives"];
             let anchor = "";
-            console.log(ref.parents('table').is('#rdv-grid'), ref.parents('.box').index());
-            if (ref.parents('table').is('#rdv-grid')) {
-                let pastille = ref.parents('tr').find('td:first-child .pastille');
+            if (!isBox) {
                 if (pastille.hasClass('seagreen'))
                     anchor = 'consultations';
                 else if (pastille.hasClass('rebeccapurple'))
@@ -436,7 +443,7 @@
                 else if (pastille.hasClass('royalblue'))
                     anchor = 'educatives';
             } else {
-                anchor = anchor_list[ref.parents('.box').index()];
+                anchor = anchor_list[index];
             }
             $.ajax({
                 url: "{{ path('redirect_vue_patient') }}",
@@ -510,7 +517,16 @@
         })
 
         $('tbody').on('click', '.js-removePatient', function() {
-            let ref = $(this);
+            let patientId = $(this).attr('data-id');
+            let isBox = $(this).parents('table').is('#rdv-grid') ? false : true;
+            let index, pastille;
+            if (isBox)
+                index = $(this).parents('.box').index();
+            else
+                pastille = $(this).parents('tr').find('td:first-child .pastille');
+            console.log(patientId, isBox, index, pastille)
+
+
             let label = $(this).closest('.user-label');
             let rendezVousId = label.attr('data-id');
             let slotId = $(this).closest('tr').attr('data-row-id');
@@ -529,7 +545,7 @@
                     }
                     label.remove();
                     successAlert('Succès: patient supprimé !');
-                    redirectToPatient(ref);
+                    redirectToPatient(patientId, isBox, index, pastille);
                 }
             });
         });

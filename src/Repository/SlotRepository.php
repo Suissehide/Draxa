@@ -58,10 +58,10 @@ class SlotRepository extends ServiceEntityRepository
 
         $qb->andWhere('s.categorie = :categorie')
             ->setParameter('categorie', $categorie)
-            ->select("DATE_FORMAT(s.date, '%d/%m/%Y') as date, SIZE(s.rendezVous) as HIDDEN rendezVous")
+            ->select("DATE_FORMAT(s.date, '%d/%m/%Y') as date, SIZE(s.rendezVous) as rendezVous, s.place as place")
             ->orderBy('s.date', 'ASC')
             ->groupBy('s.id')
-            ->having('rendezVous < 1')
+            ->having('rendezVous < place')
             ->distinct()
         ;
 
@@ -75,10 +75,10 @@ class SlotRepository extends ServiceEntityRepository
             ->setParameter('categorie', $categorie)
             ->andWhere("DATE_FORMAT(s.date, '%d/%m/%Y') = :date")
             ->setParameter('date', $date)
-            ->select("SIZE(s.rendezVous) as HIDDEN rendezVous, DATE_FORMAT(s.heureDebut, '%H:%i') as hour, s.id")
+            ->select("SIZE(s.rendezVous) as HIDDEN rendezVous, DATE_FORMAT(s.heureDebut, '%H:%i') as hour, s.id, s.place as HIDDEN place")
             ->orderBy('s.heureDebut', 'ASC')
             ->groupBy('s.id')
-            ->having('rendezVous < 1')
+            ->having('rendezVous < place')
             ->getQuery()
             ->getResult();
     }
