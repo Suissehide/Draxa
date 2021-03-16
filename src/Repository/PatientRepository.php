@@ -31,16 +31,24 @@ class PatientRepository extends ServiceEntityRepository
 
     public function findByFilter($sort, $searchPhrase, $etat)
     {
-        $qb = $this->createQueryBuilder('p');
+        $qb = $this
+            ->createQueryBuilder('p')
+            ->leftJoin('p.rendezVous', 'r')
+            ->leftJoin('r.slot', 's');
 
         if ($searchPhrase != "") {
-            $qb->andWhere('p.nom LIKE :search
+            $qb
+            ->andWhere("
+                p.nom LIKE :search
                 OR p.prenom LIKE :search
                 OR p.tel1 LIKE :search
-                OR p.tel2 LIKE :search
                 OR p.etp LIKE :search
-            ')
-                ->setParameter('search', '%' . $searchPhrase . '%');
+                OR p.objectif LIKE :search
+                OR r.categorie LIKE :search
+                OR DATE_FORMAT(r.date, '%d/%m/%Y') LIKE :search
+                OR s.thematique LIKE :search
+            ")
+            ->setParameter('search', '%' . $searchPhrase . '%');
         }
         if ($etat == "in") {
             $qb->andWhere('p.dentree IS NULL');
@@ -51,8 +59,12 @@ class PatientRepository extends ServiceEntityRepository
         }
         if ($sort) {
             foreach ($sort as $key => $value) {
-                if ($key != "date" && $key != "heure")
+                if ($key != "date" && $key != "categorie" && $key != "thematique")
                     $qb->orderBy('p.' . $key, $value);
+                else if ($key != "thematique")
+                    $qb->orderBy('r.' . $key, $value);
+                else
+                    $qb->orderBy('s.' . $key, $value);
             }
         } else {
             $qb->orderBy('p.nom', 'ASC');

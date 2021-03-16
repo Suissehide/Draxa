@@ -72,6 +72,7 @@ class PatientController extends AbstractController
                     "nom" => $patient->getNom(),
                     "prenom" => $patient->getPrenom(),
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
+                    "categorie" => $rdv[0],
                     "date" => $rdv[1],
                     "thematique" => $rdv[3],
                     "etp" => $patient->getEtp(),

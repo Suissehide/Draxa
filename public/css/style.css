@@ -1143,6 +1143,10 @@ nav {
 /* Radio button block
 =================================================== */
 
+.radio-block {
+    margin-top: 14px;
+}
+
 .radio-block input[type=radio] {
     position: absolute;
     visibility: hidden;
