@@ -15,6 +15,7 @@ class ThematiqueConstants
         'Athérosclérose' => 'Athérosclérose',
         'Coaching PRM' => 'Coaching PRM',
         'Diabète' => 'Diabète',
+        'Diagnostic éducatif' => 'Diagnostic éducatif',
         'HTA' => 'HTA',
         'Motivation AP' => 'Motivation AP',
         'Motivation FDR' => 'Motivation FDR',

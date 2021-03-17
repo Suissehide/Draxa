@@ -54,7 +54,7 @@ class RendezVousController extends AbstractController
             //     return new JsonResponse(false);
 
             $slot->setThematique($request->request->get('thematique'));
-            $slot->setType($request->request->get('type'));
+            // $slot->setType($request->request->get('type'));
             $rendezVous = new RendezVous();
             $rendezVous->setCategorie($categorie);
             $rendezVous->setSlot($slot);
@@ -121,7 +121,7 @@ class RendezVousController extends AbstractController
                     $slot = $em->getRepository(Slot::class)->find($slotId);
                     if ($slot) {
                         $slot->setThematique($request->request->get('thematique'));
-                        $slot->setType($request->request->get('type'));
+                        // $slot->setType($request->request->get('type'));
                         $rendezVous->setSlot($slot);
                     }
                 }

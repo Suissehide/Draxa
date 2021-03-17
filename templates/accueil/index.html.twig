@@ -25,10 +25,11 @@
                         <tr>
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
-                            <th data-column-id="slot_type" data-width="10%">Type</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
                             <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
-                            <th data-column-id="slot_patient" data-width="30%">Patient</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -47,10 +48,11 @@
                         <tr>
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
-                            <th data-column-id="slot_type" data-width="10%">Type</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
                             <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
-                            <th data-column-id="slot_patient" data-width="30%">Patient</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,10 +71,11 @@
                         <tr>
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
-                            <th data-column-id="slot_type" data-width="10%">Type</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
                             <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
-                            <th data-column-id="slot_patient" data-width="30%">Patient</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -91,10 +94,11 @@
                         <tr>
                             <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
                             <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
-                            <th data-column-id="slot_type" data-width="10%">Type</th>
                             <th data-column-id="slot_location" data-width="15%">Lieu</th>
                             <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
-                            <th data-column-id="slot_patient" data-width="30%">Patient</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -151,10 +155,11 @@
                         <th data-column-id="date"       data-width="80px">Date</th>
                         <th data-column-id="horaire"    data-width="100px" data-css-class='horaire'>Horaire</th>
                         <th data-column-id="thematique" data-width="15%">Thématique</th>
-                        <th data-column-id="type"       data-width="8%">Type</th>
                         <th data-column-id="location"   data-width="10%">Lieu</th>
                         <th data-column-id="soignant"   data-width="10%" data-sortable="false">Soignant</th>
-                        <th data-column-id="patient"    data-width="25%" data-formatter="patient" data-sortable="false">Patient</th>
+                        <th data-column-id="patient"    data-width="20%" data-formatter="patient" data-sortable="false">Patient</th>
+                        <th data-column-id="type"       data-width="10%" data-formatter="type" data-sortable="false">Type</th>
+                        <th data-column-id="action"     data-width="120px" data-formatter="action" data-sortable="false">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -300,7 +305,7 @@
                         if (res[0].length > 0) {
                             $.each(res[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#consultations');
                             });
                         } else {
@@ -309,7 +314,7 @@
                         if (res[1].length > 0) {
                             $.each(res[1], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#entretiens');
                             });
                         } else {
@@ -318,7 +323,7 @@
                         if (res[2].length > 0) {
                             $.each(res[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#ateliers');
                             });
                         } else {
@@ -327,7 +332,7 @@
                         if (res[3].length > 0) {
                             $.each(res[3], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.type + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + createUser(val.patients, val.place) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#educatives');
                             });
                         } else {
@@ -362,38 +367,60 @@
         }
         updateWidth();
 
-        function createUser(data, place) {
+        function displayPatient(data, place) {
             let label = ''
             label += '<div class="user-list" data-place="' + place + '">';
             if (data.length !== 0) {
                 data.forEach(function(e, v) {
-                    let checked = (e.send === 'Oui' ? 'checked' : '');
-                    let notes = (e.notes ?
-                    `<button class="js-comment tooltip2" data-tooltip="` + e.notes + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``) 
+ 
                     label += `
                         <div class="user-label" data-id="` + e.rendezVousId + `">
-                            <div>
-                                <div class="user-send">
-                                    <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
-                                    <label class="cbx" for="` + e.rendezVousId + `">
-                                        <span>
-                                            <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
-                                        </span>     
-                                    </label>
-                                </div>
-                                <div class="user-name">` + e.prenom + ` ` + e.nom + `</div>
-                            </div>
-                            <div>
-                                ` + notes + `
-                                <button class="js-removePatient" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
-                                <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
-                            </div>
+                            <div class="user-name">` + e.prenom + ` ` + e.nom + `</div>
                         </div>
                     `;
                 });
             }
             if (data.length < parseInt(place))
                 label += '<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>';
+            label += '</div>';
+            return label;
+        }
+
+        function displayPatientType(data) {
+            let label = '<ul class="type-list">';
+            if (data.length !== 0) {
+                data.forEach(function(e, v) {
+                    label += `
+                        <li>` + e.type + `</div>
+                    `;
+                });
+            }
+            label += '</ul>';
+            return label;
+        }
+
+        function displayPatientActions(data) {
+            let label = '<div class="actions-list">';
+            if (data.length !== 0) {
+                data.forEach(function(e, v) {
+                    let checked = (e.send === 'Oui' ? 'checked' : '');
+                    let notes = (e.notes ?
+                    `<button class="js-comment tooltip2" data-tooltip="` + e.notes + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
+                    label += `
+                        <div class="user-send" data-id="` + e.rendezVousId + `">
+                            <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
+                            <label class="cbx" for="` + e.rendezVousId + `">
+                                <span>
+                                    <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
+                                </span>     
+                            </label>
+                            <button class="js-removePatient" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
+                            <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                            ` + notes + `
+                        </div>
+                    `;
+                });
+            }
             label += '</div>';
             return label;
         }
@@ -485,29 +512,8 @@
                 },
                 success: function (res) {
                     if (res) {
-                        let checked = (res.send === 'Oui' ? 'checked' : '');
-                        let label = `
-                            <div class="user-label" data-id="` + res.rendezVousId + `">
-                                <div>
-                                    <div class="user-send">
-                                        <input class="inp-cbx" id="` + res.rendezVousId + `" type="checkbox" ` + checked + `/>
-                                        <label class="cbx" for="` + res.rendezVousId + `">
-                                            <span>
-                                                <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
-                                            </span>     
-                                        </label>
-                                    </div>
-                                    <div class="user-name">` + res.prenom + ` ` + res.nom + `</div>
-                                </div>
-                                <div>
-                                    <button class="js-removePatient" data-id="` + patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
-                                    <button class="js-redirect" data-id="` + patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
-                                </div>
-                            </div>
-                        `;
-                        tr.find('.user-list').prepend(label);
-                        if (parseInt(place) <= 1)
-                            tr.find('.js-addPatient').remove();
+                        ajaxAction(dateSelected);
+                        $("#rdv-grid").bootgrid('reload');
                         successAlert('Succès: patient ajouté !');
                     } else {
                         errorAlert('Erreur: ce patient est déjà inscrit !');
@@ -524,13 +530,9 @@
                 index = $(this).parents('.box').index();
             else
                 pastille = $(this).parents('tr').find('td:first-child .pastille');
-            console.log(patientId, isBox, index, pastille)
 
-
-            let label = $(this).closest('.user-label');
-            let rendezVousId = label.attr('data-id');
+            let rendezVousId = $(this).closest('.user-send').attr('data-id');
             let slotId = $(this).closest('tr').attr('data-row-id');
-            let list = label.closest('.user-list');
             $.ajax({
                 url: "{{ path('remove_patient_slot') }}",
                 type: "POST",
@@ -540,10 +542,8 @@
                     slotId: slotId,
                 },
                 success: function (res) {
-                    if (list.find('.user-label').length <= list.attr('data-place')) {
-                        list.append('<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>');
-                    }
-                    label.remove();
+                    ajaxAction(dateSelected);
+                    $("#rdv-grid").bootgrid('reload');
                     successAlert('Succès: patient supprimé !');
                     redirectToPatient(patientId, isBox, index, pastille);
                 }
@@ -630,8 +630,14 @@
                         return "<div class=\"pastille royalblue\"></div>";
                 },
                 "patient": function(column, row) {
-                    return createUser(row.patients, row.place)
-                }
+                    return displayPatient(row.patients, row.place)
+                },
+                "type": function(column, row) {
+                    return displayPatientType(row.patients)
+                },
+                "action": function(column, row) {
+                    return displayPatientActions(row.patients)
+                },
             }
         }).on("loaded.rs.jquery.bootgrid", function() {
             

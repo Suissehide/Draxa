@@ -76,6 +76,7 @@ class AccueilController extends AbstractController
                             'rendezVousId' => $r->getId(),
                             'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
+                            'type' => $r->getType() == null ? "" : $r->getType(),
                         );
                     }
                 }
@@ -139,6 +140,7 @@ class AccueilController extends AbstractController
                             'rendezVousId' => $r->getId(),
                             'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
+                            'type' => $r->getType() == null ? "" : $r->getType(),
                         );
                     }
                 }

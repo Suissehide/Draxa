@@ -911,7 +911,20 @@ nav {
     background-color: #f8f8f8;
 }
 
+.type-list > li:not(:last-child) {
+    margin-bottom: 5px;
+}
+
 .user-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.type-list {
+    margin: 0;
+}
+
+.actions-list {
     display: flex;
     flex-direction: column;
 }
@@ -931,7 +944,11 @@ nav {
     align-items: center;
 }
 
-.user-list button {
+.actions-list .user-send:not(:last-child) {
+    margin-bottom: 5px;
+}
+
+.actions-list button, .user-list button {
     position: relative;
     background-color: #ccc;
     border: 1px solid #ccc;
@@ -941,11 +958,11 @@ nav {
     transition: 0.2s ease;
 }
 
-.user-list button:hover {
+.actions-list button:hover, .user-list button:hover {
     border: 1px solid #000;
 }
 
-.user-list button .glyphicon {
+.actions-list button .glyphicon, .user-list button .glyphicon {
     color: #121212;
     transition: 0.2s ease;
     font-size: 12px;
@@ -954,28 +971,29 @@ nav {
     left: 3px;
 }
 
-.user-list button.js-comment {
-    margin-right: 5px;
+.actions-list button.js-redirect {
+    margin-right: 8px;
 }
 
-.user-list button.js-removePatient {
+.actions-list button.js-removePatient {
     background-color: red;
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
-.user-list button.js-removePatient .glyphicon {
+.actions-list button.js-removePatient .glyphicon {
     color: #fff;
 }
 
 .user-list button.js-addPatient {
     background-color: #07a8a0;
-    margin-right: 5px;
+    margin-right: 8px;
+    margin-bottom: 5px;
 }
 
 .user-list button.js-addPatient .glyphicon {
     color: #fff;
-    left: 5px;
-    font-size: 11px;
+    left: 3px;
+    font-size: 12px;
 }
 
 .user-send {
@@ -1833,6 +1851,15 @@ nav {
     margin-left: 270px;
 }
 
+.table#rdv-grid>tbody>tr>td {
+    vertical-align: top;
+    padding-top: 8px;
+}
+
+.table#rdv-grid .pastille {
+    margin-top: 2px;
+}
+ 
 .lnb-item {
     z-index: 1;
     margin-top: 1px;
