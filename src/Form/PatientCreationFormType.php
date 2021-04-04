@@ -92,6 +92,7 @@ class PatientCreationFormType extends AbstractType
                     'Ouvriers' => 'Ouvriers',
                     'Agriculteur' => 'Agriculteur',
                     'Mère au foyer' => 'Mère au foyer',
+                    'Autre' => 'Autre'
                 ),
                 'required' => false
             ))

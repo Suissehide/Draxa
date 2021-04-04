@@ -280,8 +280,8 @@
                 return null;
             }
 
-            if (data.text.indexOf(params.term) > -1) {
-                return $.extend({}, data, true);;
+            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                return $.extend({}, data, true);
             }
             return null;
         }
@@ -305,7 +305,7 @@
                         if (res[0].length > 0) {
                             $.each(res[0], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#consultations');
                             });
                         } else {
@@ -314,7 +314,7 @@
                         if (res[1].length > 0) {
                             $.each(res[1], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#entretiens');
                             });
                         } else {
@@ -323,7 +323,7 @@
                         if (res[2].length > 0) {
                             $.each(res[2], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#ateliers');
                             });
                         } else {
@@ -332,7 +332,7 @@
                         if (res[3].length > 0) {
                             $.each(res[3], function (index, val) {
                                 $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.soignant + `</td><td>` + val.location + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                 .appendTo('#educatives');
                             });
                         } else {

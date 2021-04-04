@@ -96,15 +96,19 @@ class SlotType extends AbstractType
                         ->orderBy('s.nom', 'ASC');
                 },
                 'choice_label' => function(Soignant $soignant) {
-                    return $soignant ? sprintf('%s %s', $soignant->getPrenom(), $soignant->getNom()) : '';
+                    return $soignant ? sprintf('%s %s', $soignant->getNom(), $soignant->getPrenom()) : '';
                 },
                 'placeholder' => '',
             ))
             ->add('rendezVous', EntityType::class, array(
                 'label' => 'Patient',
                 'class' => Patient::class,
+                'query_builder' => function (EntityRepository $qb) {
+                    return $qb->createQueryBuilder('p')
+                        ->orderBy('p.nom', 'ASC');
+                },
                 'choice_label' => function(Patient $patient) {
-                    return sprintf('%s %s', $patient->getPrenom(), $patient->getNom());
+                    return sprintf('%s %s', $patient->getNom(), $patient->getPrenom());
                 },
                 'attr' => [
                     'class' => 'js-patient'

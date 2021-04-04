@@ -8,6 +8,7 @@ class ThematiqueConstants
         'Consultation diététicienne' => 'Consultation diététicienne',
         'Consultation pharmacienne' => 'Consultation pharmacienne',
         'Consultation psychologue' => 'Consultation psychologue',
+        'Diagnostic Educatif' => 'Diagnostic Educatif'
     ];
     
     const ENTRETIEN = [
@@ -29,7 +30,7 @@ class ThematiqueConstants
         'Réactu 5' => 'Réactu 5',
         'Réactu 6' => 'Réactu 6',
         'Signes alerte et CAT' => 'Signes alerte et CAT',
-        'Tabac' => 'Tabac',
+        'Tabac' => 'Tabac'
     ];
 
     const ATELIER = [
@@ -55,6 +56,6 @@ class ThematiqueConstants
         'Sucres' => 'Sucres',
         'Tabac' => 'Tabac',
         'Traitement' => 'Traitement',
-        'Vécu/Cse de Soi' => 'Vécu/Cse de Soi',
+        'Vécu/Cse de Soi' => 'Vécu/Cse de Soi'
     ];
 }

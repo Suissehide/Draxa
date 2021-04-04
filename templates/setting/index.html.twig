@@ -694,8 +694,8 @@
                 return null;
             }
 
-            if (data.text.indexOf(params.term) > -1) {
-                return $.extend({}, data, true);;
+            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+                return $.extend({}, data, true);
             }
             return null;
         }

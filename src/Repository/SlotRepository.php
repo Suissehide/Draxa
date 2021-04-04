@@ -47,6 +47,7 @@ class SlotRepository extends ServiceEntityRepository
             ->andWhere('s.date <= :date2')
             ->setParameter('date1', $date1)
             ->setParameter('date2', $date2)
+            ->orderBy('s.heureDebut', 'ASC')
             ->getQuery()
             ->getResult();
     }
