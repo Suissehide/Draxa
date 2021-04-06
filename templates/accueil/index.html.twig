@@ -141,24 +141,29 @@
                     <p>Filtrer par :</p>
                     <div>
                         <label>
-                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <input type="checkbox" class="checkbox-round" checked="">
                             <span style="border-color: seagreen; background-color: seagreen;"></span>
                             Consultation
                         </label>
                         <label>
-                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <input type="checkbox" class="checkbox-round" checked="">
                             <span style="border-color: rebeccapurple; background-color: rebeccapurple;"></span>
                             Entretien
                         </label>
                         <label>
-                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <input type="checkbox" class="checkbox-round" checked="">
                             <span style="border-color: chocolate; background-color: chocolate;"></span>
                             Atelier
                         </label>
                         <label>
-                            <input type="checkbox" class="checkbox-round" value="1" checked="">
+                            <input type="checkbox" class="checkbox-round" checked="">
                             <span style="border-color: royalblue; background-color: royalblue;"></span>
                             Semaine éducative
+                        </label>
+                        <label>
+                            <input type="checkbox" class="checkbox-round" checked="">
+                            <span style="border-color: goldenrod; background-color: goldenrod;"></span>
+                            Coaching RPM
                         </label>
                     </div>
                 </div>
@@ -170,7 +175,7 @@
                     <tr>
                         <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">ID</th>
                         <th data-column-id="categorie"  data-width="33px" data-formatter="categorie" data-sortable="false"></th>
-                        <th data-column-id="date"       data-width="80px">Date</th>
+                        <th data-column-id="date"       data-width="90px">Date</th>
                         <th data-column-id="horaire"    data-width="100px" data-css-class='horaire'>Horaire</th>
                         <th data-column-id="thematique" data-width="15%">Thématique</th>
                         <th data-column-id="location"   data-width="10%">Lieu</th>
@@ -212,7 +217,7 @@
                 </div>
             </div>
             <div class="box-sm">
-                <span class="glyphicon glyphicon-tint"></span>
+                <span class="glyphicon glyphicon-grain"></span>
                 <div class="stats">
                     <h1>Ateliers</h1>
                     <p>{{ nbAtelier|number_format(0, ',', '.') }}</p>
@@ -226,7 +231,7 @@
                 </div>
             </div>
             <div class="box-sm">
-                <span class="glyphicon glyphicon-tint"></span>
+                <span class="glyphicon glyphicon-apple"></span>
                 <div class="stats">
                     <h1>Coachings PRM</h1>
                     <p>{{ nbCoaching|number_format(0, ',', '.') }}</p>

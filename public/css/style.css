@@ -837,7 +837,6 @@ nav {
     margin-bottom: 20px;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-between;
 }
 
 .box-sm {
@@ -848,8 +847,8 @@ nav {
     padding: 15px;
     background-color: #fcfcfc;
     border: #e0e0e0 1px solid;
-    width: calc(25% - 15px);
-    border-radius: 5px;
+    width: calc(25% - 14px);
+    margin: 7px;
     /* box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.3); */
 }
 
@@ -883,19 +882,33 @@ nav {
 }
 
 .box-sm .glyphicon-leaf {
-    background-color: yellowgreen;
+    color: yellowgreen;
+    border: 2px solid yellowgreen;
 }
 
 .box-sm .glyphicon-fire {
-    background-color: red;
+    color: red;
+    border: 2px solid red;
 }
 
 .box-sm .glyphicon-tint {
-    background-color: blue;
+    color: blue;
+    border: 2px solid blue;
 }
 
 .box-sm .glyphicon-user {
-    background-color: violet;
+    color: violet;
+    border: 2px solid violet;
+}
+
+.box-sm .glyphicon-grain {
+    color:lightsalmon;
+    border: 2px solid lightsalmon;
+}
+
+.box-sm .glyphicon-apple {
+    color: goldenrod;
+    border: 2px solid goldenrod;
 }
 
 @media (max-width: 950px) {
