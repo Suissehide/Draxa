@@ -12,6 +12,7 @@
         {% elseif slot.categorie|lower == 'entretien' %}rebeccapurple
         {% elseif slot.categorie|lower == 'consultation' %}seagreen
         {% elseif slot.categorie|lower == 'educative' %}royalblue
+        {% elseif slot.categorie|lower == 'coaching' %}goldenrod
         {% endif %}
     ">
         <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
@@ -719,7 +720,7 @@
         // SET PLACE && MULTI PATIENT ADD
         function updatePatientList() {
             let thematique = $("#slot_categorie option:selected").attr('data-thematique');
-            if (thematique === 'atelier' || thematique === 'educative') {
+            if (thematique === 'atelier' || thematique === 'educative' || thematique === 'coaching') {
                 let length = parseInt($('#slot_place').val());
                 $(".js-patient").select2({ multiple: true, matcher: matchCustom, maximumSelectionLength: length });
                 $(".js-patient").val(null).trigger('change');
@@ -742,7 +743,7 @@
 
             updatePatientList();
 
-            if (thematique === 'educative') {
+            if (thematique === 'educative' || thematique === 'coaching') {
                 $('.js-hide').hide();
             } else {
                 $('.js-hide').show();
@@ -758,6 +759,8 @@
                     index = 2;
                 else if (thematique === 'educative')
                     index = 3;
+                else if (thematique === 'coaching')
+                    index = 4;
                 $.each(thematiques[index], function(key, value) {
                     $('#slot_thematique')
                         .append($("<option></option>")
@@ -859,6 +862,8 @@
                 color = 'seagreen';
             else if (data.categorie.toLowerCase() == 'educative')
                 color = 'royalblue';
+            else if (data.categorie.toLowerCase() == 'coaching')
+                color = 'goldenrod';
             let slot = (`
                 <li class="slot" data-id="` + data.id + `" data-color="` + color + `">
                     <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>

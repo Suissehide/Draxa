@@ -82,10 +82,82 @@ class SoignantController extends AbstractController
 
             $soignantsId = $request->request->get('soignants');
             $status = $request->request->get('status');
+            $priorityMax = $em->getRepository(Soignant::class)->getPriorityMax();
+
+            dump($priorityMax);
 
             foreach ($soignantsId as $soignantId) {
                 $soignant = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
                 $soignant->setStatus($status == 'true' ? 1 : 0);
+                if ($status == 'true') {
+                    $priorityMax += 1;
+                    $soignant->setPriority($priorityMax);
+                } else {
+                    $soignant->setPriority(0);
+                }
+            }
+            $em->flush();
+            return new JsonResponse(true);
+        }
+    }
+
+    /**
+     * @Route("/priority/set", name="status_priority_set", methods="POST")
+     */
+    public function priority(Request $request) : Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $soignantsId = $request->request->get('soignants');
+            $priorityMax = $em->getRepository(Soignant::class)->getPriorityMax();
+            
+            foreach ($soignantsId as $soignantId) {
+                $priorityMax += 1;
+                $soignant = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
+                $soignant->setPriority($priorityMax);
+            }
+            $em->flush();
+            return new JsonResponse(true);
+        }
+    }
+
+    
+    /**
+     * @Route("/priority/swap", name="status_priority_swap", methods="POST")
+     */
+    public function swap(Request $request) : Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $soignantId1 = $request->request->get('soignant1');
+            $soignantId2 = $request->request->get('soignant2');
+
+            $soignant1 = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId1));
+            $soignant2 = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId2));
+            $priority_temp = $soignant1->getPriority();
+            $soignant1->setPriority($soignant2->getPriority());
+            $soignant2->setPriority($priority_temp);
+
+            $em->flush();
+            return new JsonResponse(true);
+        }
+    }
+
+    /**
+     * @Route("/priority/reset", name="status_priority_reset", methods="POST")
+     */
+    public function reset(Request $request) : Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $soignantsId = $request->request->get('soignants');
+
+            foreach ($soignantsId as $soignantId) {
+                $soignant = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
+                $soignant->setPriority(0);
             }
             $em->flush();
             return new JsonResponse(true);

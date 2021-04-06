@@ -57,6 +57,11 @@ class PatientRepository extends ServiceEntityRepository
             $qb->andWhere('p.dentree LIKE :val')
             ->setParameter('val', '%');
         }
+        else if ($etat == "all") {}
+        else {
+            $qb->andWhere('p.offre LIKE :etat')
+            ->setParameter('etat', $etat);
+        }
         if ($sort) {
             foreach ($sort as $key => $value) {
                 if ($key != "date" && $key != "categorie" && $key != "thematique")

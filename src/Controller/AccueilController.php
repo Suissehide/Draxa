@@ -40,6 +40,7 @@ class AccueilController extends AbstractController
             $response[] = $this->createSlotCategorie($slots, 'Entretien');
             $response[] = $this->createSlotCategorie($slots, 'Atelier');
             $response[] = $this->createSlotCategorie($slots, 'Educative');
+            $response[] = $this->createSlotCategorie($slots, 'Coaching');
 
             return new JsonResponse($response, Response::HTTP_OK);
         }
@@ -55,6 +56,7 @@ class AccueilController extends AbstractController
             'nbEntretien' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Entretien'])),
             'nbAtelier' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Atelier'])),
             'nbEducative' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Educative'])),
+            'nbCoaching' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Coaching'])),
             'form' => $form->createView(),
         ]);
     }

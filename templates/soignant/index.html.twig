@@ -21,9 +21,13 @@
             <div id="actif" class="list-soignant">
                 <h2>Actifs</h2>
                 <ul>
-                    {% for soignant in soignants %}
+                    {% for soignant in soignants|sort((a, b) => a.priority <=> b.priority) %}
                         {% if soignant.status == true %}
-                            <li class="soignant" data-id="{{ soignant.id }}">{{ soignant.prenom }} {{ soignant.nom }}<button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>
+                            <li class="soignant" data-id="{{ soignant.id }}">
+                                {{ soignant.prenom }} {{ soignant.nom }}
+                                <button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button>
+                                <button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button>
+                            </li>
                         {% endif %}
                     {% endfor %}
                 </ul>
@@ -39,7 +43,11 @@
                 <ul>
                     {% for soignant in soignants %}
                         {% if soignant.status == false %}
-                            <li class="soignant" data-id="{{ soignant.id }}">{{ soignant.prenom }} {{ soignant.nom }}<button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>
+                            <li class="soignant" data-id="{{ soignant.id }}">
+                                {{ soignant.prenom }} {{ soignant.nom }}
+                                <button type="button" class="moveup-btn" style={display: "none"}><span class="glyphicon glyphicon-chevron-up"><span></button>
+                                <button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button>
+                            </li>
                         {% endif %}
                     {% endfor %}
                 </ul>
@@ -85,6 +93,35 @@
 {% block javascripts %}
 
 <script type="text/javascript">
+
+    $('.list-soignant .soignant:first-child .moveup-btn').hide();
+
+    $('#actif').on('click', '.moveup-btn', function(e) {
+        e.stopPropagation();
+        let index = ($(this).parent()).index()
+        $(this).parent().insertBefore('#actif li:eq(' + (index - 1) + ')');
+
+        $.ajax({
+            url: "{{ path('status_priority_swap') }}",
+            type: "POST",
+            dataType: "json",
+            data: {
+                "soignant1": $('#actif li:eq(' + (index - 1) + ')').attr('data-id'),
+                "soignant2": $('#actif li:eq(' + index + ')').attr('data-id'),
+            },
+            success: function (resp) {
+                if (resp) {
+                    $('#actif .soignant .moveup-btn').show();
+                    $('#actif .soignant:first-child .moveup-btn').hide();
+                } else {
+                    errorAlert();
+                }
+            }
+        });
+    });
+
+
+    /* */
 
     $('.list-soignant').on('click', '.soignant', function(e) {
         $(this).toggleClass('selected');
@@ -144,10 +181,14 @@
             },
             success: function (resp) {
                 if (resp) {
-                    if (status)
+                    if (status) {
+                        $('#inactif li.soignant.selected .moveup-btn').show();
                         $('#inactif li.soignant.selected').appendTo('#actif ul');
-                    else
+                    }
+                    else {
+                        $('#actif li.soignant.selected .moveup-btn').hide();
                         $('#actif li.soignant.selected').appendTo('#inactif ul');
+                    }
                     $('.soignant.selected').toggleClass('selected');
                     updateTransfertButtons();
                 } else {
@@ -173,7 +214,7 @@
             success: function (resp) {
                 if (resp) {
                     $('#actif ul')
-                        .append(`<li class="soignant" data-id="` + resp + `">` + prenom + ' ' + nom + `<button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
+                        .append(`<li class="soignant" data-id="` + resp + `">` + prenom + ' ' + nom + `<button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button><button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
                 } else {
                     errorAlert();
                 }

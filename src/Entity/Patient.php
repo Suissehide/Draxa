@@ -171,6 +171,21 @@ class Patient
      */
     private $rendezVous;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $soignantReferent;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $mode;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $offre;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
@@ -496,6 +511,42 @@ class Patient
                 $rendezVous->setPatient(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSoignantReferent(): ?string
+    {
+        return $this->soignantReferent;
+    }
+
+    public function setSoignantReferent(?string $soignantReferent): self
+    {
+        $this->soignantReferent = $soignantReferent;
+
+        return $this;
+    }
+
+    public function getMode(): ?string
+    {
+        return $this->mode;
+    }
+
+    public function setMode(?string $mode): self
+    {
+        $this->mode = $mode;
+
+        return $this;
+    }
+
+    public function getOffre(): ?string
+    {
+        return $this->offre;
+    }
+
+    public function setOffre(?string $offre): self
+    {
+        $this->offre = $offre;
 
         return $this;
     }

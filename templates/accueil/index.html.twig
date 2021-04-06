@@ -32,8 +32,7 @@
                             <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
@@ -55,8 +54,7 @@
                             <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
@@ -78,8 +76,7 @@
                             <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
@@ -101,8 +98,29 @@
                             <th data-column-id="slot_type" data-width="100px">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                    </tbody>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            {# Coachings PRM #}
+            <div class="box">
+                <div class="box-header">
+                    <div>Coachings PRM</div>
+                    <span>prévues</span>
+                </div>
+                <table id="coachings" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="slot_horaire" data-width="10%">Horaire</th>
+                            <th data-column-id="slot_thematique" data-width="20%">Thématique</th>
+                            <th data-column-id="slot_location" data-width="15%">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%">Soignant</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
                 </table>
             </div>
         </div>
@@ -207,6 +225,13 @@
                     <p>{{ nbEducative|number_format(0, ',', '.') }}</p>
                 </div>
             </div>
+            <div class="box-sm">
+                <span class="glyphicon glyphicon-tint"></span>
+                <div class="stats">
+                    <h1>Coachings PRM</h1>
+                    <p>{{ nbCoaching|number_format(0, ',', '.') }}</p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -292,6 +317,8 @@
         });
 
         {#    #}
+        const anchorList = ['consultations', 'entretiens', 'ateliers', 'educatives', 'coachings'];
+
         function ajaxAction(d) {
             $.ajax({
                     url: "{{ path('accueil') }}",
@@ -301,44 +328,21 @@
                         "date": d
                     },
                     success: function (res) {
+                        const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun atelier', 'Aucune semaine éducative', 'Aucun coaching PRM'];
                         $(".box tbody tr").remove();
-                        if (res[0].length > 0) {
-                            $.each(res[0], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
-                                .appendTo('#consultations');
-                            });
-                        } else {
-                            $('<tr class="disabled text-center">').append('<td colspan="6">Aucune consultation</td>').appendTo('#consultations');
+                        for (let i = 0; i < res.length; i++) {
+                            if (res[i].length > 0) {
+                                $.each(res[i], function (index, val) {
+                                    $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                    .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                    .appendTo('#' + anchorList[i]);
+                                });
+                            } else {
+                                $('<tr class="disabled text-center">')
+                                .append('<td colspan="7">' + emptyPhraseList[i] + '</td>')
+                                .appendTo('#' + anchorList[i]);
+                            }
                         }
-                        if (res[1].length > 0) {
-                            $.each(res[1], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
-                                .appendTo('#entretiens');
-                            });
-                        } else {
-                            $('<tr class="disabled text-center">').append('<td colspan="6">Aucun entretien</td>').appendTo('#entretiens');
-                        }
-                        if (res[2].length > 0) {
-                            $.each(res[2], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
-                                .appendTo('#ateliers');
-                            });
-                        } else {
-                            $('<tr class="disabled text-center">').append('<td colspan="6">Aucun atelier</td>').appendTo('#ateliers');
-                        }
-                        if (res[3].length > 0) {
-                            $.each(res[3], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
-                                .appendTo('#educatives');
-                            });
-                        } else {
-                            $('<tr class="disabled text-center">').append('<td colspan="6">Aucune semaine éducative</td>').appendTo('#educatives');
-                        }
-
                         updateWidth();
                     }
                 });
@@ -458,7 +462,6 @@
         });
 
         function redirectToPatient(patientId, isBox, index, pastille) {
-            let anchor_list = ["consultations", "entretiens", "ateliers", "educatives"];
             let anchor = "";
             if (!isBox) {
                 if (pastille.hasClass('seagreen'))
@@ -469,8 +472,10 @@
                     anchor = 'ateliers';
                 else if (pastille.hasClass('royalblue'))
                     anchor = 'educatives';
+                else if (pastille.hasClass('goldenrod'))
+                    anchor = 'coachings';
             } else {
-                anchor = anchor_list[index];
+                anchor = anchorList[index];
             }
             $.ajax({
                 url: "{{ path('redirect_vue_patient') }}",
@@ -587,7 +592,7 @@
                 $(this).find('span').css('background-color', color);
             }
             categories = [];
-            let val = ['Consultation', 'Entretien', 'Atelier', 'Educative'];
+            let val = ['Consultation', 'Entretien', 'Atelier', 'Educative', 'Coaching'];
             $('.lnb-item label :checkbox').each(function(i) {
                 if ($(this).prop('checked'))
                     categories.push(val[i]);
@@ -628,6 +633,8 @@
                         return "<div class=\"pastille seagreen\"></div>";
                     else if (row.categorie === 'Educative')
                         return "<div class=\"pastille royalblue\"></div>";
+                    else if (row.categorie === 'Coaching')
+                        return "<div class=\"pastille goldenrod\"></div>";
                 },
                 "patient": function(column, row) {
                     return displayPatient(row.patients, row.place)

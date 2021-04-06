@@ -36,7 +36,8 @@ class SettingController extends AbstractController
         $ateliers = [];
         foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
         $educatives = [];
-        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives );
+        $coachings = [];
+        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives, $coachings );
 
         return $this->render('setting/index.html.twig', [
             'title' => 'Settings',

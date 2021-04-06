@@ -211,7 +211,8 @@ class PatientController extends AbstractController
         $ateliers = [];
         foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
         $educatives = [];
-        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives );
+        $coachings = [];
+        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives, $coachings );
 
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',
@@ -225,6 +226,7 @@ class PatientController extends AbstractController
             'dates_consultations' => $em->getRepository(Slot::class)->findAllDates("Consultation"),
             'dates_entretiens' => $em->getRepository(Slot::class)->findAllDates("Entretien"),
             'dates_educatives' => $em->getRepository(Slot::class)->findAllDates("Educative"),
+            'dates_coachings' => $em->getRepository(Slot::class)->findAllDates("Coaching"),
 
             'thematiques' => $thematiques
         ]);

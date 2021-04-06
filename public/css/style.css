@@ -499,7 +499,7 @@ nav {
 
 .nav-bar {
     text-align: center;
-    margin: 35px;
+    margin: 35px 0;
 }
 
 .btn-nav {
@@ -534,9 +534,6 @@ nav {
 }
 
 @media only screen and (max-width: 1400px) {
-    .btn-nav .btn {
-        font-size: 11px;
-    }
     #page-title, #userLink {
         display: none;
     }
@@ -911,7 +908,7 @@ nav {
     background-color: #f8f8f8;
 }
 
-.type-list > li:not(:last-child) {
+.type-list>li:not(:last-child) {
     margin-bottom: 5px;
 }
 
@@ -1194,11 +1191,67 @@ nav {
 
 .radio-block .radio-group {
     z-index: 1;
-    position: absolute;
+    /* position: absolute; */
     display: inline-block;
-    margin-top: 2px;
-    border-radius: 10px;
+    /* margin-top: 2px; */
+    border-radius: 5px;
     overflow: hidden;
+}
+
+/* */
+
+.cntr .radio > input {
+    display: none;
+}
+
+.cntr .radio {
+    position: relative;
+    cursor: pointer;
+    line-height: 20px;
+    font-size: 14px;
+    margin: 10px;
+    font-weight: normal;
+}
+
+.cntr .radio .label {
+    position: relative;
+    display: block;
+    float: left;
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #c8ccd4;
+    border-radius: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.cntr .radio .label:after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background: #07a8a0;
+    transform: scale(0);
+    transition: all 0.2s ease;
+    opacity: 0.08;
+    pointer-events: none;
+}
+
+.cntr .radio:hover .label:after {
+    transform: scale(3.6);
+}
+
+.cntr input[type="radio"]:checked+.label {
+    border-color: #07a8a0;
+}
+
+.cntr input[type="radio"]:checked+.label:after {
+    transform: scale(1);
+    transition: all 0.2s cubic-bezier(0.35, 0.9, 0.4, 0.9);
+    opacity: 1;
 }
 
 /* RDV
@@ -1484,7 +1537,7 @@ nav {
 
 .semaine__body .semaine__full .jour h3 {
     text-align: center;
-    font-size: 18px;
+    font-size: 14px;
     margin-top: 0;
     font-family: Ubuntu-bold;
 }
@@ -1496,14 +1549,14 @@ nav {
     flex-direction: column;
     background-color: white;
     color: white;
-    padding: 8px;
+    padding: 5px;
     border-radius: 5px;
-    font-size: 12px;
-    transition: 0.2s ease-in-out;
+    font-size: 11px;
+    transition: 0.1s ease-in-out;
 }
 
 .semaine__body .semaine__full .slot:hover {
-    padding: 8px 24px 8px 8px;
+    padding: 5px 24px 5px 5px;
 }
 
 .semaine__body .semaine__full .slot:hover .duplicate-btn, .semaine__body .semaine__full .slot:hover .delete-btn {
@@ -1530,9 +1583,7 @@ nav {
     right: 8px;
 }
 
-.semaine__body .semaine__full .slot .horaire {
-    
-}
+.semaine__body .semaine__full .slot .horaire {}
 
 .semaine__body .semaine__full .slot .details {
     display: flex;
@@ -1627,24 +1678,31 @@ nav {
     margin-bottom: 5px;
 }
 
-.soignant .remove-btn {
+.soignant button {
     position: absolute;
     display: flex;
     align-items: center;
-    right: 0px;
     top: 0px;
     height: 100%;
     padding: 0 10px;
     border: none;
     background-color: transparent;
-    transition: 0.2s ease-in-out;
+    transition: 0.1s ease-in-out;
 }
 
-.soignant .remove-btn:hover {
+.soignant .remove-btn {
+    right: 0px;
+}
+
+.soignant .moveup-btn {
+    right: 25px;
+}
+
+.soignant button:hover {
     color: #07a8a0;
 }
 
-.soignant.selected .remove-btn:hover {
+.soignant.selected button:hover {
     color: black;
 }
 
@@ -1851,6 +1909,10 @@ nav {
     margin-left: 270px;
 }
 
+#patient-grid-header .actionBar {
+    text-align: left;
+}
+
 .table#rdv-grid>tbody>tr>td {
     vertical-align: top;
     padding-top: 8px;
@@ -1859,7 +1921,7 @@ nav {
 .table#rdv-grid .pastille {
     margin-top: 2px;
 }
- 
+
 .lnb-item {
     z-index: 1;
     margin-top: 1px;

@@ -19,6 +19,17 @@ class SoignantRepository extends ServiceEntityRepository
         parent::__construct($registry, Soignant::class);
     }
 
+    public function getPriorityMax()
+    {
+        return $this->createQueryBuilder('s')
+            ->select('s.priority')
+            ->orderBy('s.priority', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     // /**
     //  * @return Soignant[] Returns an array of Soignant objects
     //  */

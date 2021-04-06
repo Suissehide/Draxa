@@ -24,6 +24,10 @@ class PatientCreationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('soignantReferent', TextareaType::class, array(
+                'label' => 'Soignant référent',
+                'required' => false
+            ))
             ->add('observ', TextareaType::class, array(
                 'label' => 'Suivi à régulariser',
                 'required' => false
@@ -41,6 +45,7 @@ class PatientCreationFormType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy',
                 'attr' => [
+                    'autocomplete' => 'off',
                     'class' => 'datepicker',
                 ],
                 'html5' => false
@@ -127,10 +132,22 @@ class PatientCreationFormType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy',
                 'attr' => [
+                    'autocomplete' => 'off',
                     'class' => 'datepicker',
                 ],
                 'required' => false,
                 'html5' => false
+            ))
+            ->add('mode', ChoiceType::class, array(
+                'label' => 'Mode de prise en charge',
+                'choices' => array(
+                    '' => '',
+                    'Ambu' => 'Ambu',
+                    'HDS' => 'HDS',
+                    'HDJ' => 'HDJ',
+                    'Hospit' => 'Hospit'
+                ),
+                'required' => false
             ))
             ->add('orientation', ChoiceType::class, array(
                 'label' => 'Orientation',
@@ -247,10 +264,29 @@ class PatientCreationFormType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'dd/MM/yyyy',
                 'attr' => [
+                    'autocomplete' => 'off',
                     'class' => 'datepicker',
                 ],
                 'required' => false,
                 'html5' => false
+            ))
+
+            ->add('offre', ChoiceType::class, array(
+                'label' => 'Offres',
+                'multiple' => false,
+                'expanded' => true,
+                'attr' => [
+                    'class' => 'cntr',
+                ],
+                'placeholder' => 'Aucune offre en cours',
+                'choices' => array(
+                    'En cours d\'offre initiale' => 'initiale',
+                    'En cours d\'offre de suivi' => 'suivi',
+                    'En cours d\'offre de renforcement' => 'renforcement',
+                    'En cours d\'offre de consolidation' => 'consolidation',
+                    'En cours d\'offre supplémentaire' => 'supplementaire'
+                ),
+                'required' => false
             ))
 
             ->add('validation', SubmitType::class, array('label' => 'Enregistrer'))

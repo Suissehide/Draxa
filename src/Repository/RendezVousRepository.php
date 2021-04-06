@@ -26,6 +26,8 @@ class RendezVousRepository extends ServiceEntityRepository
 
             ->andWhere('a.date >= :date')
             ->setParameter('date', $date)
+            ->andWhere('a.etat = :etat OR a.etat is NULL')
+            ->setParameter('etat', '')
             ->orderBy('a.date', 'ASC')
 
             ->leftJoin('a.patient', 'p')

@@ -57,14 +57,16 @@ class SlotType extends AbstractType
                     'Entretien' => 'Entretien',
                     'Consultation' => 'Consultation',
                     'Atelier' => 'Atelier',
-                    'Semaine éducative' => 'Educative'
+                    'Semaine éducative' => 'Educative',
+                    'Coaching PRM' => 'Coaching'
                 ),
                 'choice_attr' => [
                     '' => ['class' => 'white', 'data-thematique' => ''],
                     'Entretien' => ['class' => 'rebeccapurple', 'data-thematique' => 'entretien'],
                     'Consultation' => ['class' => 'seagreen', 'data-thematique' => 'consultation'],
                     'Atelier' => ['class' => 'chocolate', 'data-thematique' => 'atelier'],
-                    'Semaine éducative' => ['class' => 'royalblue', 'data-thematique' => 'educative']
+                    'Semaine éducative' => ['class' => 'royalblue', 'data-thematique' => 'educative'],
+                    'Coaching PRM' => ['class' => 'goldenrod', 'data-thematique' => 'coaching']
                 ],
             ))
             ->add('thematique', ChoiceType::class, array(

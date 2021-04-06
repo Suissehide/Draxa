@@ -41,6 +41,11 @@ class Soignant
      */
     private $slots;
 
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $priority;
+
     public function __construct()
     {
         $this->slots = new ArrayCollection();
@@ -124,5 +129,17 @@ class Soignant
     public function __toString()
     {
         return $this->prenom . ' ' . $this->nom;
+    }
+
+    public function getPriority(): ?int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(?int $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
     }
 }

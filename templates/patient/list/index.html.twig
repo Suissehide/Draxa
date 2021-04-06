@@ -6,29 +6,38 @@
     <div class="wrapper">
         <h1>Liste des patients</h1>
         <div class="col-sm-16">
-            <div class="clearfix">
+            <div class="nav-bar clearfix">
                 <div class="pull-left">
-                    <a href="{{ url('csv') }}" type="button" class="btn btn-light btn-primary" id="command-add" data-row-id="0">
-                        <span class="glyphicon glyphicon-save"></span>
-                        Exporter CSV
-                    </a>
-                </div>
-                <div class="pull-right">
                     <a href="{{ path('patient_add') }}" class="btn btn-primary" id="command-add" data-row-id="0">
                         <span class="glyphicon glyphicon-plus"></span>
                         Nouveau patient
                     </a>
                 </div>
+                <div class="pull-right">
+                    <a href="{{ url('csv') }}" type="button" class="btn btn-light btn-primary" id="command-add" data-row-id="0">
+                        <span class="glyphicon glyphicon-save"></span>
+                        Exporter CSV
+                    </a>
+                </div>
             </div>
 
+            <div class="separator"></div>
             <form class="radio-block">
                 <div class="radio-group">
-                    <input type="radio" id="option-one" name="selector">
-                    <label for="option-one">Tous</label>
-                    <input type="radio" id="option-two" name="selector" checked>
-                    <label for="option-two">Actuels</label>
-                    <input type="radio" id="option-three" name="selector">
-                    <label for="option-three">Sortis</label>
+                    <input type="radio" id="option-tous" name="selector" checked>
+                    <label for="option-tous">Tous</label>
+                    <input type="radio" id="option-initiale" name="selector">
+                    <label for="option-initiale">Initiale</label>
+                    <input type="radio" id="option-suivi" name="selector">
+                    <label for="option-suivi">Suivi</label>
+                    <input type="radio" id="option-renforcement" name="selector">
+                    <label for="option-renforcement">Renforcement</label>
+                    <input type="radio" id="option-consolidation" name="selector">
+                    <label for="option-consolidation">Consolidation</label>
+                    <input type="radio" id="option-supplementaire" name="selector">
+                    <label for="option-supplementaire">Supplémentaire</label>
+                    <input type="radio" id="option-sortis" name="selector">
+                    <label for="option-sortis">Sortis</label>
                 </div>
             </form>
             <table id="patient-grid" class="table table-condensed table-hover table-striped" cellspacing="0">
@@ -56,7 +65,7 @@
 {% block javascripts %}
     <script src="{{ asset('js/script.js') }}"></script>
     <script>
-        $etat = "in";
+        var etat = "all";
 
         var grid = $("#patient-grid").bootgrid({
             rowCount: [
@@ -70,7 +79,7 @@
                 2: "aomi",
             },
             requestHandler: function (request) {
-                request.etat = $etat;
+                request.etat = etat;
                 return request;
             },
             url: "{{ path('patient_list') }}",
@@ -89,12 +98,22 @@
         });
 
     $(".radio-block input[type=radio]").on("change", function() {
-        if (this.id == "option-one")
-            $etat = "all";
-        else if (this.id == "option-two")
-            $etat = "in";
-        else if (this.id == "option-three")
-            $etat = "out";
+        if (this.id == "option-tous")
+            etat = "all";
+        else if (this.id == "option-actuels")
+            etat = "in";
+        else if (this.id == "option-initiale")
+            etat = "initiale";
+        else if (this.id == "option-suivi")
+            etat = "suivi";
+        else if (this.id == "option-renforcement")
+            etat = "renforcement";
+        else if (this.id == "option-consolidation")
+            etat = "consolidation";
+        else if (this.id == "option-supplementaire")
+            etat = "supplementaire";    
+        else if (this.id == "option-sortis")
+            etat = "out";
         $("#patient-grid").bootgrid('reload');
     })
     </script>
