@@ -815,6 +815,10 @@ nav {
     border-radius: 0;
 }
 
+.box tr th:nth-child(1), .box tr th:nth-child(2), .box tr th:nth-child(3), .box tr th:nth-child(4) {
+    cursor: pointer;
+}
+
 .box .table tr td {
     padding: 10px;
     transition: 0.2s ease-in-out;
@@ -997,7 +1001,7 @@ nav {
 .user-list button.js-addPatient {
     background-color: #07a8a0;
     margin-right: 8px;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
 }
 
 .user-list button.js-addPatient .glyphicon {
