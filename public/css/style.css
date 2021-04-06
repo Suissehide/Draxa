@@ -1317,6 +1317,11 @@ nav {
     color: white;
 }
 
+.goldenrod {
+    background-color: goldenrod !important;
+    color: white;
+}
+
 #slot_categorie option:hover {
     background-color: #cccccc50;
 }
