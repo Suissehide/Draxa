@@ -1,4 +1,7 @@
 {% extends 'base.html.twig' %}
+
+{% use 'todo/index.html.twig' %}
+
 {% block body %}
     <nav class="barMenu">
         <div class="nav-container">
@@ -6,6 +9,11 @@
                 WebApp CEPTA
             </a>
             <ul class="menu">
+                <li class="menu-item">
+                    <button class="user-link user-alone" id="todo-list">
+                        <span class="glyphicon glyphicon glyphicon-pushpin"></span>
+                    </button>
+                </li>
                 <li class="menu-item {{ title=='Accueil' ? 'active' : '' }}">
                     <a class="user-link" href="{{ path('accueil') }}">
                         <span class="glyphicon glyphicon-home"></span>
@@ -31,9 +39,9 @@
                             </a>
                         </i>
                         <li class="menu-item">
-                            <a class="user-link" href="#">
+                            <a class="user-link" href="{{ path('year') }}">
                                 <span class="glyphicon glyphicon-book"></span>
-                                Aperçu de l'année
+                                Aperçu des années
                             </a>
                         </i>
                         <li class="menu-item">
@@ -61,6 +69,10 @@
         <a class="cd cd-top js-cd-top" href="#0"><span class="glyphicon glyphicon-chevron-up"></span></a>
         {% block toolbar_component %}{% endblock %}
     </div>
+
+    <!-- Todo -->
+    {% block todo %}{{ parent() }}{% endblock %}
+
     <!-- Footer -->
     <div class="bas">
         <section class="footer-minimal footer-dark" id="footer">
@@ -74,6 +86,11 @@
             </div>
         </section>
     </div>
-    <!-- Footer -->
+    
 {% endblock %}
-{% block javascripts %}{% endblock %}
+
+{% block default_javascripts %}
+
+{% block todo_javascripts %}{{ parent() }}{% endblock %}
+
+{% endblock %}

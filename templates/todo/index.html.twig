@@ -1,0 +1,239 @@
+{% block todo %}
+
+	<div class="modal fade" id="todoModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="todo__content">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div class="todo__header">
+                    <div class="todo__date"></div>
+                    <div>
+                        <div class="todo__task-count">4 Tâches</div>
+                        <button class="btn btn-primary todo__clear">Vider la liste</button>
+                    </div>
+                </div>
+                <div class="todo__tasks">
+                    <div class="todo__input">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        <input type="text" id="todo__add" name="todo__add" required="required" class="form-control" placeholder="Saisissez votre tâche">
+                    </div>
+                    <ul class="todo__list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block todo_javascripts %}
+
+    <script type="text/javascript">
+        $('#todo-list').on('click', function() {
+            $('#todoModal').modal('toggle')
+        })
+
+        var tasksNb = 0
+
+        function loadTodos() {
+            $.ajax({
+                url: "{{ path('todo_get') }}",
+                type: "GET",
+                dataType: "json",
+                success: function (resp) {
+                    if (resp) {
+                        tasksNb = Object.keys(resp).length;
+                        setTaskNumber();
+                        $.each(resp, function(i, obj) {
+                            let new_date = new Date(formatDate(obj.datetime));
+                            let date_task = new Intl.DateTimeFormat("fr-FR", { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new_date);
+                            let enable = obj.enable ? 'checked' : '';
+                            let task = `
+                            <li data-id="` + obj.id + `">
+                                <div class="form-check">
+                                    <input class="inp-cbx" id="task_` + obj.id + `" type="checkbox" ` + enable + `/>
+                                    <label class="cbx" for="task_` + obj.id + `">
+                                        <span>
+                                            <svg width="12px" height="10px">
+                                                <use xlink:href="#check"></use>
+                                            </svg>
+                                        </span>
+                                        <span class="todo__action">` + obj.description + `</span>
+                                    </label>
+                                </div>
+                                <div class="todo__flex">
+                                    <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
+                                    <div class="todo__time">` + date_task + `</div>
+                                </div>
+                            </li>`
+                            $(".todo__list").append(task);
+                        });
+                    } else {
+                        errorAlert('impossible de récuperer la liste des tâches');
+                    }
+                }
+            })
+        }
+
+        function setTodoDate() {
+            let today = new Date();
+            let day = new Intl.DateTimeFormat("fr-FR", { weekday: 'long', day: '2-digit' }).format(today);
+            let month = new Intl.DateTimeFormat("fr-FR", { month: 'long' }).format(today);
+
+            let dateDiv = `
+                <div>`+ day +`</div>
+                <div>`+ month +`</div>
+            `;
+
+            $('.todo__date').append(dateDiv);
+        }
+
+        loadTodos();
+        setTodoDate();
+
+        function setTaskNumber() {
+            $('.todo__task-count').text(tasksNb + ((tasksNb > 1) ? ' Tâches' : ' Tâche'));
+        }
+
+        /***** ADD *****/
+        $('#todo__add').bind("enterKey",function(e){
+            addTask();
+        });
+
+        $('#todo__add').keyup(function(e){
+            if(e.keyCode == 13) $(this).trigger("enterKey");
+        });
+
+        $('.todo__input .glyphicon').on('click', function() {
+            addTask();
+        })
+
+        function addTask() {
+            let today = new Date();
+            let time = new Intl.DateTimeFormat("fr-FR", { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(today);
+            let text = $('#todo__add').val();
+
+            $('#todo__add').val('');
+
+            $.ajax({
+                url: "{{ path('todo_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    description: text
+                },
+                success: function (id) {
+                    if (id) {
+                        let task = `
+                        <li data-id="` + id + `">
+                            <div class="form-check">
+                                <input class="inp-cbx" id="task_` + id + `" type="checkbox"/>
+                                <label class="cbx" for="task_` + id + `">
+                                    <span>
+                                        <svg width="12px" height="10px">
+                                            <use xlink:href="#check"></use>
+                                        </svg>
+                                    </span>
+                                    <span class="todo__action">` + text + `</span>
+                                </label>
+                            </div>
+                            <div class="todo__flex">
+                                <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
+                                <div class="todo__time">` + time + `</div>
+                            </div>
+                        </li>`
+                        $(".todo__list").append(task);
+
+                        tasksNb += 1;
+                        setTaskNumber();
+                    } else {
+                        errorAlert('impossible d\'ajouter une tâche');
+                    }
+                }
+            })
+        }
+
+        /***** REMOVE *****/
+        $('.todo__list').on('click', '.todo__delete', function() {
+            let id = $(this).parents('li').attr('data-id');
+            removeTask(id);
+        })
+
+        function removeTask(taskId) {
+            $.ajax({
+                url: "{{ path('todo_remove') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    taskId: taskId,
+                },
+                success: function (resp) {
+                    if (resp) {
+                        tasksNb -= 1;
+                        setTaskNumber();
+                        $('li[data-id=' + taskId +']').remove();
+                    } else {
+                        errorAlert('impossible de vider la liste des tâches');
+                    }
+                }
+            })
+        }
+
+        $('.todo__clear').on('click', function() {
+            $.ajax({
+                url: "{{ path('todo_clear') }}",
+                type: "POST",
+                dataType: "json",
+                data: {},
+                success: function (resp) {
+                    if (resp) {
+                        tasksNb = 0;
+                        setTaskNumber();
+                        $('.todo__list > li').remove();
+                    } else {
+                        errorAlert('impossible de vider la liste des tâches');
+                    }
+                }
+            })
+        });
+
+        $('.todo__list').on('click', '.form-check', function() {
+            let taskId = $(this).parents('li').attr('data-id');
+            let enable = $(this).find('.inp-cbx').is(':checked');
+            $.ajax({
+                url: "{{ path('todo_enable') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    taskId: taskId,
+                    enable: enable
+                },
+                success: function (resp) {
+                    if (resp) {
+                        return;
+                    } else {
+                        errorAlert('impossible de vider la liste des tâches');
+                    }
+                }
+            })
+        });
+
+
+        var alert_pos = 0;
+        function errorAlert(message) {
+            $('body').prepend(
+                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
+            );
+            alert_pos += 72;
+        }
+
+        function formatDate(input) {
+            let datePart = input.match(/\d+/g),
+                year = datePart[2] //.substring(2),  get only two digits
+                month = datePart[1],
+                day = datePart[0];
+            return year + '-' + month + '-' + day;
+        }
+    </script>
+
+{% endblock %}

@@ -11,6 +11,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class AddPatientType extends AbstractType
 {
@@ -24,7 +25,7 @@ class AddPatientType extends AbstractType
                     return $qb->createQueryBuilder('p')
                         ->orderBy('p.nom', 'ASC');
                 },
-                'choice_label' => function(Patient $patient) {
+                'choice_label' => function (Patient $patient) {
                     return sprintf('%s %s', $patient->getNom(), $patient->getPrenom());
                 },
                 'placeholder' => '',
@@ -32,7 +33,21 @@ class AddPatientType extends AbstractType
                     'class' => 'js-patient'
                 ],
             ))
-        ;
+            ->add('thematique', ChoiceType::class, array(
+                'label' => 'Thématique',
+                'placeholder' => '',
+                'choices' => array()
+            ))
+            ->add('type', ChoiceType::class, array(
+                'label' => 'Type',
+                'placeholder' => '',
+                'choices' => array(
+                    '' => '',
+                    'Ambu' => 'Ambu',
+                    'Tel' => 'Tel',
+                    'Hospit' => 'Hospit',
+                )
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

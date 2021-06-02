@@ -56,17 +56,17 @@ class SlotType extends AbstractType
                     '' => '',
                     'Entretien' => 'Entretien',
                     'Consultation' => 'Consultation',
+                    'Coaching PRM' => 'Coaching',
                     'Atelier' => 'Atelier',
                     'Semaine éducative' => 'Educative',
-                    'Coaching PRM' => 'Coaching'
                 ),
                 'choice_attr' => [
                     '' => ['class' => 'white', 'data-thematique' => ''],
                     'Entretien' => ['class' => 'rebeccapurple', 'data-thematique' => 'entretien'],
                     'Consultation' => ['class' => 'seagreen', 'data-thematique' => 'consultation'],
+                    'Coaching PRM' => ['class' => 'goldenrod', 'data-thematique' => 'coaching'],
                     'Atelier' => ['class' => 'chocolate', 'data-thematique' => 'atelier'],
                     'Semaine éducative' => ['class' => 'royalblue', 'data-thematique' => 'educative'],
-                    'Coaching PRM' => ['class' => 'goldenrod', 'data-thematique' => 'coaching']
                 ],
             ))
             ->add('thematique', ChoiceType::class, array(
@@ -97,7 +97,7 @@ class SlotType extends AbstractType
                         ->where('s.status = 1')
                         ->orderBy('s.nom', 'ASC');
                 },
-                'choice_label' => function(Soignant $soignant) {
+                'choice_label' => function (Soignant $soignant) {
                     return $soignant ? sprintf('%s %s', $soignant->getNom(), $soignant->getPrenom()) : '';
                 },
                 'placeholder' => '',
@@ -109,14 +109,13 @@ class SlotType extends AbstractType
                     return $qb->createQueryBuilder('p')
                         ->orderBy('p.nom', 'ASC');
                 },
-                'choice_label' => function(Patient $patient) {
+                'choice_label' => function (Patient $patient) {
                     return sprintf('%s %s', $patient->getNom(), $patient->getPrenom());
                 },
                 'attr' => [
                     'class' => 'js-patient'
                 ],
-            ))
-        ;
+            ));
     }
 
 

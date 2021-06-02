@@ -470,6 +470,10 @@ nav {
     margin-bottom: 3px;
 }
 
+.user-link.user-alone>span {
+    margin-right: 0;
+}
+
 /* Separator 
 =================================================== */
 
@@ -906,7 +910,7 @@ nav {
 }
 
 .box-sm .glyphicon-grain {
-    color:lightsalmon;
+    color: lightsalmon;
     border: 2px solid lightsalmon;
 }
 
@@ -1217,7 +1221,7 @@ nav {
 
 /* */
 
-.cntr .radio > input {
+.cntr .radio>input {
     display: none;
 }
 
@@ -1749,6 +1753,165 @@ nav {
     margin-bottom: 10px;
 }
 
+/* TODO
+=================================================== */
+
+.todo__content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 5px;
+}
+
+.todo__content .close {
+    background-color: transparent;
+    color: #424242 !important;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+.todo__content .close:hover, .todo__content .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.todo__header {
+    padding-top: 15px;
+    padding-bottom: 25px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc;
+}
+
+.todo__date > div:first-child {
+    text-transform: capitalize;
+    color: #07a8a0;
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+
+.todo__date > div:last-child {
+    color: #888;
+    text-transform: capitalize;
+}
+
+.todo__task-count {
+    color: #888;
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+.todo__tasks {
+    padding-top: 25px;
+}
+
+.todo__input {
+    display: flex;
+    align-items: center;
+    color: #888;
+    padding-left: 10px;
+    margin-bottom: 3px;
+}
+
+.todo__input .glyphicon {
+    cursor: pointer;
+    top: 0;
+    font-size: 16px;
+    transition: 0.2s ease;
+}
+
+.todo__input .glyphicon:hover {
+    color: black;
+}
+
+.todo__input .form-control {
+    border: none;
+    box-shadow: none;
+    font-size: 18px;
+    padding-left: 15px;
+    font-family: Ubuntu-Regular, sans-serif;
+}
+
+.todo__input input.form-control:focus {
+    outline: none;
+}
+
+ul.todo__list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+}
+
+ul.todo__list li .form-check {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+ul.todo__list li .cbx {
+    margin: 0;
+}
+
+ul.todo__list li .cbx span:last-child {
+    padding-left: 15px;
+}
+
+.todo__flex {
+    display: flex;
+}
+
+.todo__delete {
+    opacity: 0;
+    visibility: hidden;
+    color: red;
+    cursor: pointer;
+    padding: 0 15px;
+    transition: 0.2s ease;
+}
+
+.todo__delete:hover {
+    color: darkred;
+}
+
+ul.todo__list li:hover .todo__delete {
+    opacity: 1;
+    visibility: visible;
+}
+
+.form-check input:checked + .cbx .todo__action {
+    font-weight: normal;
+    text-decoration: line-through;
+}
+
+.todo__time {
+    color: #888;
+}
+
+/* Calendar
+=================================================== */
+
+.calendar {
+    padding: 30px 20px;
+    overflow: hidden;
+}
+
+.calendar .calendar-header {
+    border: none;
+}
+
+.calendar .months-container .month-container {
+    margin-bottom: 20px;
+}
+
+.calendar table.month th.day-header {
+    color: #07a8a0;
+}
+
 /* Select2
 =================================================== */
 
@@ -1793,6 +1956,19 @@ nav {
     width: 16px;
     height: 16px;
     border: 1px solid white;
+}
+
+.pastille.white {
+    border: 1px solid gray;
+    background-color: white;
+}
+
+.pastille.gold {
+    background-color: gold;
+}
+
+.pastille.hotpink {
+    background-color: hotpink;
 }
 
 .glyphicon-star {

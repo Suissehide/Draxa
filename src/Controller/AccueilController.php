@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Constant\ThematiqueConstants;
+
 use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
@@ -48,6 +50,17 @@ class AccueilController extends AbstractController
         $slot = new Slot();
         $form = $this->createForm(AddPatientType::class, $slot);
 
+        $consultations = [];
+        foreach (ThematiqueConstants::CONSULTATION as $consultation) { $consultations[] = $consultation; }
+        $entretiens = [];
+        foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
+        $ateliers = [];
+        foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
+        $coachings = [];
+        foreach (ThematiqueConstants::COACHING as $coaching) { $coachings[] = $coaching; }
+        $educatives = [];
+        $thematiques = array( $consultations, $entretiens, $ateliers, $coachings, $educatives );
+
         return $this->render('accueil/index.html.twig', [
             'title' => 'Accueil',
             'controller_name' => 'AccueilController',
@@ -58,10 +71,12 @@ class AccueilController extends AbstractController
             'nbEducative' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Educative'])),
             'nbCoaching' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Coaching'])),
             'form' => $form->createView(),
+
+            'thematiques' => $thematiques
         ]);
     }
 
-    private function createSlotCategorie(Array $slots, String $categorie)
+    private function createSlotCategorie(array $slots, String $categorie)
     {
         $jsonContent = array();
         foreach ($slots as $s) {
@@ -170,7 +185,7 @@ class AccueilController extends AbstractController
         }
         return new JsonResponse(false);
     }
-    
+
     /**
      * @Route("/redirect_vue_patient", name="redirect_vue_patient", methods="GET|POST")
      */
@@ -197,6 +212,8 @@ class AccueilController extends AbstractController
 
             $slotId = $request->request->get('slotId');
             $patientId = $request->request->get('patientId');
+            $thematique = $request->request->get('thematique');
+            $type = $request->request->get('type');
 
             $slotRepository = $em->getRepository(Slot::class);
             if ($slotRepository->isAlreadyInSlot($slotId, $patientId))
@@ -208,12 +225,14 @@ class AccueilController extends AbstractController
             $rendezVous = new RendezVous();
             $rendezVous->setDate($slot->getDate());
             $rendezVous->setHeure($slot->getHeureDebut());
-            $rendezVous->setThematique($slot->getThematique());
-            $rendezVous->setType($slot->getType());
+            $rendezVous->setThematique($thematique ? $thematique : $slot->getThematique());
+            $rendezVous->setType($type ? $type : $slot->getType());
             $rendezVous->setCategorie($slot->getCategorie());
             $rendezVous->setPatient($patient);
             $rendezVous->setSlot($slot);
-            
+
+            $slot->setThematique($thematique ? $thematique : $slot->getThematique());
+
             $em->persist($rendezVous);
             $em->flush();
 

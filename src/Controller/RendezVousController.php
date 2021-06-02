@@ -120,7 +120,7 @@ class RendezVousController extends AbstractController
                 if ($slotId !== '') {
                     $slot = $em->getRepository(Slot::class)->find($slotId);
                     if ($slot) {
-                        // $slot->setThematique($request->request->get('thematique'));
+                        $slot->setThematique($request->request->get('thematique'));
                         // $slot->setType($request->request->get('type'));
                         $rendezVous->setSlot($slot);
                     }

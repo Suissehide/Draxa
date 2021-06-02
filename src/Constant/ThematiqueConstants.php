@@ -58,4 +58,10 @@ class ThematiqueConstants
         'Traitement' => 'Traitement',
         'Vécu/Cse de Soi' => 'Vécu/Cse de Soi'
     ];
+
+    const COACHING = [
+        'M1/M2' => 'M1/M2',
+        'M2/M3' => 'M2/M3',
+        'M3 et +' => 'M3 et +'
+    ];
 }

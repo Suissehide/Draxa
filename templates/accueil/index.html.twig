@@ -46,53 +46,9 @@
                     <thead>
                         <tr>
                             <th data-column-id="slot_horaire" data-width="10%" onclick="sortTable('entretiens', 0)">Horaire</th>
-                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('entretiens', 0)">Thématique</th>
-                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('entretiens', 0)">Lieu</th>
-                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('entretiens', 0)">Soignant</th>
-                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
-                            <th data-column-id="slot_type" data-width="5%">Type</th>
-                            <th data-column-id="slot_type" data-width="100px">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            {# Ateliers #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Ateliers</div>
-                    <span>prévus</span>
-                </div>
-                <table id="ateliers" class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th data-column-id="slot_horaire" data-width="10%" onclick="sortTable('ateliers', 0)">Horaire</th>
-                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('ateliers', 0)">Thématique</th>
-                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('ateliers', 0)">Lieu</th>
-                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('ateliers', 0)">Soignant</th>
-                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
-                            <th data-column-id="slot_type" data-width="5%">Type</th>
-                            <th data-column-id="slot_type" data-width="100px">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            {# Semaines éducatives #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Semaines éducatives</div>
-                    <span>prévues</span>
-                </div>
-                <table id="educatives" class="table table-condensed table-striped">
-                    <thead>
-                        <tr>
-                            <th data-column-id="slot_horaire" data-width="10%" onclick="sortTable('educatives', 0)">Horaire</th>
-                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('educatives', 0)">Thématique</th>
-                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('educatives', 0)">Lieu</th>
-                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('educatives', 0)">Soignant</th>
+                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('entretiens', 1)">Thématique</th>
+                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('entretiens', 2)">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('entretiens', 3)">Soignant</th>
                             <th data-column-id="slot_patient" data-width="20%">Patient</th>
                             <th data-column-id="slot_type" data-width="5%">Type</th>
                             <th data-column-id="slot_type" data-width="100px">Actions</th>
@@ -112,9 +68,53 @@
                     <thead>
                         <tr>
                             <th data-column-id="slot_horaire" data-width="10%" onclick="sortTable('coachings', 0)">Horaire</th>
-                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('coachings', 0)">Thématique</th>
-                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('coachings', 0)">Lieu</th>
-                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('coachings', 0)">Soignant</th>
+                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('coachings', 1)">Thématique</th>
+                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('coachings', 2)">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('coachings', 3)">Soignant</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            {# Ateliers #}
+            <div class="box">
+                <div class="box-header">
+                    <div>Ateliers</div>
+                    <span>prévus</span>
+                </div>
+                <table id="ateliers" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="slot_horaire" data-width="10%" onclick="sortTable('ateliers', 0)">Horaire</th>
+                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('ateliers', 1)">Thématique</th>
+                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('ateliers', 2)">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('ateliers', 3)">Soignant</th>
+                            <th data-column-id="slot_patient" data-width="20%">Patient</th>
+                            <th data-column-id="slot_type" data-width="5%">Type</th>
+                            <th data-column-id="slot_type" data-width="100px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            {# Semaines éducatives #}
+            <div class="box">
+                <div class="box-header">
+                    <div>Semaines éducatives</div>
+                    <span>prévues</span>
+                </div>
+                <table id="educatives" class="table table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th data-column-id="slot_horaire" data-width="10%" onclick="sortTable('educatives', 0)">Horaire</th>
+                            <th data-column-id="slot_thematique" data-width="20%" onclick="sortTable('educatives', 1)">Thématique</th>
+                            <th data-column-id="slot_location" data-width="15%" onclick="sortTable('educatives', 2)">Lieu</th>
+                            <th data-column-id="slot_soignant" data-width="15%" onclick="sortTable('educatives', 3)">Soignant</th>
                             <th data-column-id="slot_patient" data-width="20%">Patient</th>
                             <th data-column-id="slot_type" data-width="5%">Type</th>
                             <th data-column-id="slot_type" data-width="100px">Actions</th>
@@ -163,7 +163,7 @@
                         <label>
                             <input type="checkbox" class="checkbox-round" checked="">
                             <span style="border-color: goldenrod; background-color: goldenrod;"></span>
-                            Coaching RPM
+                            Coaching PRM
                         </label>
                     </div>
                 </div>
@@ -177,7 +177,7 @@
                         <th data-column-id="categorie"  data-width="33px" data-formatter="categorie" data-sortable="false"></th>
                         <th data-column-id="date"       data-width="90px">Date</th>
                         <th data-column-id="horaire"    data-width="100px" data-css-class='horaire'>Horaire</th>
-                        <th data-column-id="thematique" data-width="15%">Thématique</th>
+                        <th data-column-id="thematique" data-width="15%" data-css-class='thematique'>Thématique</th>
                         <th data-column-id="location"   data-width="10%">Lieu</th>
                         <th data-column-id="soignant"   data-width="10%" data-sortable="false">Soignant</th>
                         <th data-column-id="patient"    data-width="20%" data-formatter="patient" data-sortable="false">Patient</th>
@@ -265,6 +265,12 @@
                     {{ form_errors(form) }}
 
                     {{ form_row(form.rendezVous) }}
+                    <div class="js-hide">
+                        {{ form_row(form.thematique) }}
+                    </div>
+                    <div class="js-hide">
+                        {{ form_row(form.type) }}
+                    </div>
                     {{ form_row(form._token) }}
                     {{ form_end(form, {'render_rest' : false}) }}
                     <button id="patientAdd" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
@@ -284,6 +290,8 @@
     <script src="{{ asset('js/select2.min.js') }}"></script>
 
     <script>
+        var thematiques = {{ thematiques|json_encode|raw }};
+
         var dateSelected = localStorage.getItem('dateSelected') ? localStorage.getItem('dateSelected') : moment(new Date()).format('DD/MM/YYYY');
         var categorie = 'Consultation';
 
@@ -339,7 +347,7 @@
                             if (res[i].length > 0) {
                                 $.each(res[i], function (index, val) {
                                     $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                    .append(`<td class="horaire">` + val.horaire + `</td><td>` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                    .append(`<td class="horaire">` + val.horaire + `</td><td class="thematique">` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
                                     .appendTo('#' + anchorList[i]);
                                 });
                             } else {
@@ -496,7 +504,6 @@
             });
         }
 
-
         $('tbody').on('click', '.js-addPatient', function() {
             let id = $(this).closest('tr').attr('data-row-id');
             let len = $(this).closest('.user-list').find('.user-label').length;
@@ -504,12 +511,32 @@
             $('#patientAdd').attr('data-id', id);
             $('#patientAdd').attr('data-place', parseInt(place) - parseInt(len));
             $('#addPatient').modal('show');
+
+            $('.js-hide').show();
+            let index = 0;
+            let tableParent = $(this).parents('table');
+            if (tableParent.is('#entretiens')) index = 1;
+            if (tableParent.is('#ateliers')) index = 2;
+            if (tableParent.is('#coachings')) index = 3;
+            if (tableParent.is('#educatives')) $('.js-hide').hide();
+            $('#add_patient_thematique').empty().append('<option value=""></option>');
+            $.each(thematiques[index], function(key, value) {
+                $('#add_patient_thematique')
+                    .append($("<option></option>")
+                    .attr("value", value)
+                    .text(value));
+            });
+            let selected = $(this).parents('tr').find('.thematique').text();
+            $('#add_patient_thematique option[value="' + selected + '"]').prop('selected', true);
+            $('#add_patient_type option[value=""]').prop('selected', true);
         });
 
         $('#patientAdd').on('click', function() {
             let slotId = $(this).attr('data-id');
             let tr = $('tbody tr[data-row-id="' + slotId + '"]');
             let patientId = $('#add_patient_rendezVous').val();
+            let thematique = $('#add_patient_thematique').val();
+            let type = $('#add_patient_type').val();
             let place = $(this).attr('data-place');
 
             $.ajax({
@@ -518,7 +545,9 @@
                 dataType: "json",
                 data: {
                     patientId: patientId,
-                    slotId: slotId
+                    slotId: slotId,
+                    thematique: thematique,
+                    type:  type
                 },
                 success: function (res) {
                     if (res) {

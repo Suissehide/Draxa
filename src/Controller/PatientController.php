@@ -72,11 +72,12 @@ class PatientController extends AbstractController
                     "nom" => $patient->getNom(),
                     "prenom" => $patient->getPrenom(),
                     "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
-                    "categorie" => $rdv[0],
-                    "date" => $rdv[1],
-                    "thematique" => $rdv[3],
                     "etp" => $patient->getEtp(),
                     "objectif" => $patient->getObjectif(),
+                    "date" => $rdv[1],
+                    "categorie" => $rdv[0],
+                    "thematique" => $rdv[3],
+                    "venu" => $rdv[4],
                     "status" => $sortie,
                     "observ" => $observ,
                     "divers" => $divers
@@ -140,13 +141,14 @@ class PatientController extends AbstractController
 
         $rendezVous = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
 
-        $rdv = ["", "", "", ""];
+        $rdv = ["", "", "", "", ""];
         if ($rendezVous) {
             $rdv = [
                 $rendezVous->getCategorie(),
                 $rendezVous->getDate()->format('d/m/Y'),
                 $rendezVous->getHeure() ? $rendezVous->getHeure()->format('H:i') : "",
                 $rendezVous->getSlot() ? $rendezVous->getSlot()->getThematique() : "",
+                $rendezVous->getEtat() ? $rendezVous->getEtat() : "",
             ];
         }
 
@@ -210,9 +212,10 @@ class PatientController extends AbstractController
         foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
         $ateliers = [];
         foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
-        $educatives = [];
         $coachings = [];
-        $thematiques = array( $consultations, $entretiens, $ateliers, $educatives, $coachings );
+        foreach (ThematiqueConstants::COACHING as $coaching) { $coachings[] = $coaching; }
+        $educatives = [];
+        $thematiques = array( $consultations, $entretiens, $ateliers, $coachings, $educatives );
 
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',

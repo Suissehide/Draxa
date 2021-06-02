@@ -475,6 +475,154 @@
 
 
             <div class="separator">
+                <span id="coachings" class="separator-text">Coachings PRM</span>
+            </div>
+
+            <!-- COACHING PRM -->
+            <section class="cd-h-timeline" id="timeline-coachings">
+                <div class="cd-h-timeline__container">
+                    <div class="cd-h-timeline__dates">
+                        <div class="cd-h-timeline__line">
+                            <ol id="events-coachings">
+                                {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
+                                {% if coaching.categorie == 'Coaching' %}
+                                    <li>
+                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}">
+                                            {{ coaching.date|format_datetime(pattern="d MMM", locale='fr') }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% endfor %}
+                            </ol>
+                            <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <ul>
+                        <li>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                        </li>
+                        <li>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
+                        </li>
+                    </ul>
+
+                    <a id="js-coaching" class="new" data-toggle="modal" data-target="#rendezVousModal">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </div>
+
+                <div class="cd-h-timeline__events">
+                    <ol id="events-content-coachings">
+                        {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
+                        {% if coaching.categorie == 'Coaching' %}
+                            <li class="cd-h-timeline__event" data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}" data-id="{{ coaching.id }}">
+                                <h2 class="cd-h-timeline__event-title">Coaching PRM</h2>
+                                <em class="cd-h-timeline__event-date">
+                                    {{ coaching.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
+                                </em>
+                                <div>
+                                    <div class="error-msg"></div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label required" for="patient_creation_form_coachings_{{ coaching.id }}_date">Date prévue</label>
+                                                <input type="text" id="patient_creation_form_coachings_{{ coaching.id }}_date" name="patient_creation_form[coaching][{{ coaching.id }}][date]" required="required" class="datepicker form-control" value="{{ coaching.date|date("d/m/Y") }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label required" for="patient_creation_form_coachings_{{ coaching.id }}_heure">Heure</label>
+                                                <select disabled type="text" id="patient_creation_form_coachings_{{ coaching.id }}_heure" name="patient_creation_form[coaching][{{ coaching.id }}][heure]" required="required" class="form-control heure">
+                                                    <option value="{{ coaching.slot }}" selected>{{ coaching.heure|date("H:i") }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_thematique">
+                                                    Thématique
+                                                </label>
+                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_thematique" class="form-control thematique">
+                                                    <option value="" {% if consultation.thematique == '' %} selected="selected" {% endif %}></option>
+                                                    {% for thematique in thematiques[3] %}
+                                                        <option value="{{thematique}}" {% if consultation.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_type">
+                                                    Type
+                                                </label>
+                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_type" name="patient_creation_form[consultation][{{ consultation.id }}][type]" class="form-control type">
+                                                    <option value="" {% if consultation.type == "" %} selected="selected" {% endif %}></option>
+                                                    <option value="Ambu" {% if consultation.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
+                                                    <option value="Tel" {% if consultation.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
+                                                    <option value="Hospit" {% if consultation.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
+                                                <select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_accompagnant">Accompagnant</label>
+                                                <select id="patient_creation_form_coachings_{{ coaching.id }}_accompagnant" name="patient_creation_form[coaching][{{ coaching.id }}][accompagnant]" class="form-control">
+                                                    <option value="" {% if coaching.accompagnant == '' %} selected="selected" {% endif %}></option>
+                                                    <option value="Non" {% if coaching.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
+                                                    <option value="Oui" {% if coaching.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_etat">A-t-il eu lieu ?</label>
+                                                <select id="patient_creation_form_coachings_{{ coaching.id }}_etat" name="patient_creation_form[coaching][{{ coaching.id }}][etat]" class="form-control" style="background: gold;">
+                                                    <option value="" class="white" {% if coaching.etat == '' %} selected="selected" {% endif %}></option>
+                                                    <option value="Non" class="gold" {% if coaching.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
+                                                    <option value="Oui" class="hotpink" {% if coaching.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_motifRefus">Motif de refus</label>
+                                                <input type="text" id="patient_creation_form_coachings_{{ coaching.id }}_motifRefus" name="patient_creation_form[coaching][{{ coaching.id }}][motifRefus]" class="form-control" value="{{ coaching.motifRefus }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_notes">Notes de transmission</label>
+                                                <textarea type="text" id="patient_creation_form_coachings_{{ coaching.id }}_notes" name="patient_creation_form[coaching][{{ coaching.id }}][notes]" class="form-control">{{ coaching.notes }}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
+                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                        {% endfor %}
+                    </ol>
+
+                </div>
+            </section>
+
+
+
+            <div class="separator">
                 <span id="ateliers" class="separator-text">Ateliers</span>
             </div>
 
@@ -742,125 +890,6 @@
 
 
 
-            <div class="separator">
-                <span id="coachings" class="separator-text">Coachings PRM</span>
-            </div>
-
-            <!-- COACHING PRM -->
-            <section class="cd-h-timeline" id="timeline-coachings">
-                <div class="cd-h-timeline__container">
-                    <div class="cd-h-timeline__dates">
-                        <div class="cd-h-timeline__line">
-                            <ol id="events-coachings">
-                                {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                                {% if coaching.categorie == 'Coaching' %}
-                                    <li>
-                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}">
-                                            {{ coaching.date|format_datetime(pattern="d MMM", locale='fr') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% endfor %}
-                            </ol>
-                            <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
-                        </div>
-                    </div>
-
-                    <ul>
-                        <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
-                        </li>
-                        <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
-                        </li>
-                    </ul>
-
-                    <a id="js-coaching" class="new" data-toggle="modal" data-target="#rendezVousModal">
-                        <span class="glyphicon glyphicon-plus"></span>
-                    </a>
-                </div>
-
-                <div class="cd-h-timeline__events">
-                    <ol id="events-content-coachings">
-                        {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                        {% if coaching.categorie == 'Coaching' %}
-                            <li class="cd-h-timeline__event" data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}" data-id="{{ coaching.id }}">
-                                <h2 class="cd-h-timeline__event-title">Coaching PRM</h2>
-                                <em class="cd-h-timeline__event-date">
-                                    {{ coaching.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
-                                </em>
-                                <div>
-                                    <div class="error-msg"></div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_coachings_{{ coaching.id }}_date">Date prévue</label>
-                                                <input type="text" id="patient_creation_form_coachings_{{ coaching.id }}_date" name="patient_creation_form[coaching][{{ coaching.id }}][date]" required="required" class="datepicker form-control" value="{{ coaching.date|date("d/m/Y") }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_coachings_{{ coaching.id }}_heure">Heure</label>
-                                                <select disabled type="text" id="patient_creation_form_coachings_{{ coaching.id }}_heure" name="patient_creation_form[coaching][{{ coaching.id }}][heure]" required="required" class="form-control heure">
-                                                    <option value="{{ coaching.slot }}" selected>{{ coaching.heure|date("H:i") }}</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_accompagnant">Accompagnant</label>
-                                                <select id="patient_creation_form_coachings_{{ coaching.id }}_accompagnant" name="patient_creation_form[coaching][{{ coaching.id }}][accompagnant]" class="form-control">
-                                                    <option value="" {% if coaching.accompagnant == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" {% if coaching.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" {% if coaching.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_etat">A-t-il eu lieu ?</label>
-                                                <select id="patient_creation_form_coachings_{{ coaching.id }}_etat" name="patient_creation_form[coaching][{{ coaching.id }}][etat]" class="form-control" style="background: gold;">
-                                                    <option value="" class="white" {% if coaching.etat == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" class="gold" {% if coaching.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" class="hotpink" {% if coaching.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_motifRefus">Motif de refus</label>
-                                                <input type="text" id="patient_creation_form_coachings_{{ coaching.id }}_motifRefus" name="patient_creation_form[coaching][{{ coaching.id }}][motifRefus]" class="form-control" value="{{ coaching.motifRefus }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_notes">Notes de transmission</label>
-                                                <textarea type="text" id="patient_creation_form_coachings_{{ coaching.id }}_notes" name="patient_creation_form[coaching][{{ coaching.id }}][notes]" class="form-control">{{ coaching.notes }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ol>
-
-                </div>
-            </section>
-
-
             <div class="separator"></div>
             <div class="row">
                 <div class="col-md-12">
@@ -1043,7 +1072,6 @@
         var dates;
 
         var thematiques = {{ thematiques|json_encode|raw }};
-
 
         $('.js-cd-back').on('click', function(e){
             e.preventDefault();
@@ -1303,12 +1331,12 @@
             } else if (categorie == 'Atelier') {
                 index = 2;
                 $('#rendezVousModal .modal-header h4').text('Ajouter un atelier');
-            } else if (categorie == 'Educative') {
-                index = 3;
-                $('#rendezVousModal .modal-header h4').text('Ajouter une semaine éducative');
             } else if (categorie == 'Coaching') {
-                index = 4;
+                index = 3;
                 $('#rendezVousModal .modal-header h4').text('Ajouter un coaching PRM');
+            } else if (categorie == 'Educative') {
+                index = 4;
+                $('#rendezVousModal .modal-header h4').text('Ajouter une semaine éducative');
             }
             $('#rendez_vous_date').datepicker('update', '');
             $('#rendez_vous_heure option').remove();
@@ -1319,7 +1347,7 @@
                     .attr("value", value)
                     .text(value));
             });
-            if (categorie == 'Educative' || categorie == 'Coaching') {
+            if (categorie == 'Educative') {
                 $('.js-hide').hide();
             } else {
                 $('.js-hide').show();
@@ -1381,12 +1409,11 @@
                             dates = datesEducatives;
                         else if (categorie == 'Coaching')
                             dates = datesCoachings;
-                        console.log(dates);
+
                         dates.forEach(function(e, v) {
                             if (e['date'] == date)
                                 e.place = e.place - 1;
                         });
-                        console.log(dates);
 
                         let new_date = new Date(formatDate(date));
                         let date_h1 = new Intl.DateTimeFormat("fr-FR", { month: 'short', day: 'numeric' }).format(new_date);
@@ -1407,7 +1434,9 @@
                             index = 1;
                         else if (categorie === 'Atelier')
                             index = 2;
-                        let options
+                        else if (categorie === 'Coaching')
+                            index = 3;
+                        let options;
                         $.each(thematiques[index], function(key, value) {
                             options += '<option value="' + value + '">' + value + '</option>'
                         });
@@ -1526,7 +1555,7 @@
                         $('form[name="rendez_vous"')[0].reset();
                         $('form[name="rendez_vous"] #rendez_vous_etat').css({'background': 'white'});
 
-                        if (categorie === 'Educative' || categorie === 'Coaching')
+                        if (categorie === 'Educative')
                             $('.js-delete').remove();
                         updateForm();
                         resetTimeline();

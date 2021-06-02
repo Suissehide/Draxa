@@ -1,0 +1,44 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/js-year-calendar.min.css') }}">
+{% endblock %}
+
+{% block title %}Calendrier des années{% endblock %}
+
+{% block page_content %}
+	<div class="calendar"></div>
+{% endblock page_content %}
+
+{% block javascripts %}
+
+    <script src="{{ asset('js/js-year-calendar/js-year-calendar.min.js') }}"></script>
+    <script src="{{ asset('js/js-year-calendar/js-year-calendar.fr.js') }}"></script>
+
+	<script type="text/javascript">
+
+        var dataSource  = {{ data|json_encode|raw }};
+
+        const toDate = (dateStr) => {
+            const [day, month, year] = dateStr.split("/")
+            return new Date(year, month - 1, day)
+        }
+
+        $.each(dataSource, function(index, o) {
+            o.startDate = toDate(o.startDate);
+            o.endDate = toDate(o.endDate);
+        });
+
+		new Calendar('.calendar', {
+            language: 'fr',
+            dataSource: dataSource,
+            style: 'custom',
+            customDataSourceRenderer: function(element, date, event) {
+                $(element).css('background-color', event[0].color);
+                $(element).css('color', 'white');
+                $(element).css('border-radius', '0px');
+            },
+        });
+	</script>
+
+{% endblock %}

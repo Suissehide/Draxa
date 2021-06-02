@@ -49,11 +49,13 @@
                         <th data-column-id="nom" data-width="10%">Nom</th>
                         <th data-column-id="prenom" data-width="10%">Prénom</th>
                         <th data-column-id="tel1" data-width="11%">Téléphone</th>
+                        <th data-column-id="etp" data-width="15%">Point final parcours ETP</th>
+                        <th data-column-id="objectif" data-width="15%" data-searchable="false">Objectif</th>
                         <th data-column-id="date" data-width="10%">Date</th>
                         <th data-column-id="categorie" data-width="10%">Catégorie</th>
                         <th data-column-id="thematique" data-width="15%">Thématique</th>
-                        <th data-column-id="etp" data-width="15%">Point final parcours ETP</th>
-                        <th data-column-id="objectif" data-width="15%" data-searchable="false">Objectif</th>
+                        <th data-column-id="venu" data-formatter="venu" data-sortable="false" data-width="33px"></th>
+
                         <th data-column-id="status" data-visible="false" data-searchable="false">Status</th>
                     </tr>
                 </thead>
@@ -91,6 +93,14 @@
                 "divers": function(column, row) {
                     if (row.divers)
                         return "<div class=\"glyphicon glyphicon-star\"></div>";
+                },
+                "venu": function(column, row) {
+                    if (row.venu === 'Oui')
+                        return "<div class=\"pastille hotpink\"></div>";
+                    else if (row.venu === 'Non')
+                        return "<div class=\"pastille gold\"></div>";
+                    else if (row.date)
+                        return "<div class=\"pastille white\"></div>";
                 }
             }
         }).on("loaded.rs.jquery.bootgrid", function() {

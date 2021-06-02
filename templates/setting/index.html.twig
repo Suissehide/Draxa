@@ -283,7 +283,7 @@
             $('.datepicker, .input-daterange').datepicker('update');
         }
         updateDatepicker();
-
+        
         /* Scrolling horizontally with mouse
         ============================================================================== */
 
@@ -743,7 +743,7 @@
 
             updatePatientList();
 
-            if (thematique === 'educative' || thematique === 'coaching') {
+            if (thematique === 'educative') {
                 $('.js-hide').hide();
             } else {
                 $('.js-hide').show();
@@ -757,9 +757,9 @@
                     index = 1;
                 else if (thematique === 'atelier')
                     index = 2;
-                else if (thematique === 'educative')
-                    index = 3;
                 else if (thematique === 'coaching')
+                    index = 3;
+                else if (thematique === 'educative')
                     index = 4;
                 $.each(thematiques[index], function(key, value) {
                     $('#slot_thematique')
@@ -772,75 +772,129 @@
         changeThematique();
 
         {# Display #}
-        function getMaxDone(list) {
-            let max = 0;
-            let n = 0;
-            jQuery.each(list, function(i) {
-                if (max < $(this).attr('data-mul'))
-                    max = $(this).attr('data-mul');
-                
-                let done = $(this).attr('data-done');
-                if (typeof done !== typeof undefined && done !== false && n < parseInt(done))
-                    n = parseInt(done);
-            });
-            return {'max': max, 'done': n};
-        }
+        var column_index = 0;
 
-        function getSlotSameTime(slot, jour) {
-            let slots = [];
-            $('.slot', jour).each(function() {
-                if (slot.attr('data-id') !== $(this).attr('data-id')) {
-                    let horaire = slot.find('.horaire').text().split(' - ');
-                    let h = $(this).find('.horaire').text().split(' - ');
-                    if ((horaire[0] >= h[0] && horaire[0] <= h[1] && horaire[0] != h[1])
-                    || (h[0] >= horaire[0] && h[0] <= horaire[1] && h[0] != horaire[1])) {
-                        slots.push($(this));
-                    }
-                }
-            });
-            return slots;
-        }
+        function displaySlot() {
+            $('.semaine-wrapper .semaine .jour').each( function() {
 
-        function sort_li(a, b){
-            return ($(b).attr('data-mul')) >= ($(a).attr('data-mul')) ? 1 : -1;    
-        }
+                let block_width = $(this).width();
+                let columns = [];
+                let lastEventEnding = null;
 
-        function displaySlot(heureDebut = '7:00') {
-            $('.slot').attr('data-done', '0');
-            $('.semaine .jour').each(function(i, jour) {
-                $('.slot', this).each(function() {
-                    let slots = getSlotSameTime($(this), jour);
-                    if (slots.length) {
-                        let mul = slots.length + 1;
-                        $(this).attr('data-mul', mul);
-                    }
-                });
-
-                $(this).find('.slot').sort(sort_li).appendTo($(this));
-
-                $('.slot', this).each(function() {
-                    let slots = getSlotSameTime($(this), jour);
-                    if (slots.length) {
-                        let data = getMaxDone(slots);
-                        $(this).attr('data-mul', data.max);
-                        $(this).attr('data-done', data.done + 1);
-                        if (data.max <= data.done)
-                            $(this).css({'width': ((100 / data.max) - 1) + '%', 'left': ((100 / data.max) * (data.done % data.max)) + '%'})
-                        else
-                        $(this).css({'width': ((100 / data.max) - 1) + '%', 'left': ((100 / data.max) * (data.done)) + '%'})
-                    }
-
-                    let horaire = $(this).find('.horaire').text();
+                // Create an array of all events
+                var events = $('.slot', this).map(function(index, o) {
+                    o = $(o);
+                    
+                    let heureDebut = '7:00';
+                    let horaire = o.find('.horaire').text();
                     horaire = horaire.split(' - ');
-                    $(this).css({
-                        top: (((parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1])) - (parseInt(heureDebut.split(':')[0]) * 60 + parseInt(heureDebut.split(':')[1]))) * (70 / 60)) + 50 + 'px',
-                        height: (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60)) - 3 + 'px',
-                        backgroundColor: $(this).attr('data-color'),
+                    let top = (((parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1])) - (parseInt(heureDebut.split(':')[0]) * 60 + parseInt(heureDebut.split(':')[1]))) * (70 / 60)) + 50;
+                    let height = (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60)) - 3;
+                    o.css({
+                        top: top + 'px',
+                        height: height + 'px',
+                        backgroundColor: o.attr('data-color'),
                     });
+
+                    return {
+                        'obj': o,
+                        'top': top,
+                        'bottom': top + height
+                    };
+                }).get();
+
+                // Sort it by starting time, and then by ending time.
+                events = events.sort(function(e1,e2) {
+                    if (e1.top < e2.top) return -1;
+                    if (e1.top > e2.top) return 1;
+                    if (e1.bottom < e2.bottom) return -1;
+                    if (e1.bottom > e2.bottom) return 1;
+                    return 0;
                 });
+
+                // Iterate over the sorted array
+                $(events).each(function(index, e) {
+
+                    // Check if a new event group needs to be started
+                    if (lastEventEnding !== null && e.top >= lastEventEnding) {
+                        // The latest event is later than any of the event in the 
+                        // current group. There is no overlap. Output the current 
+                        // event group and start a new event group.
+                        PackEvents( columns, block_width );
+                        columns = [];  // This starts new event group.
+                        lastEventEnding = null;
+                    }
+
+                    // Try to place the event inside the existing columns
+                    let placed = false;
+                    for (let i = 0; i < columns.length; i++) {                   
+                        let col = columns[ i ];
+                        if (!collidesWith( col[col.length-1], e ) ) {
+                            col.push(e);
+                            placed = true;
+                            break;
+                        }
+                    }
+
+                    // It was not possible to place the event. Add a new column 
+                    // for the current event group.
+                    if (!placed) {
+                        columns.push([e]);
+                    }
+
+                    // Remember the latest event end time of the current group. 
+                    // This is later used to determine if a new groups starts.
+                    if (lastEventEnding === null || e.bottom > lastEventEnding) {
+                        lastEventEnding = e.bottom;
+                    }
+                });
+
+                if (columns.length > 0) {
+                    PackEvents( columns, block_width );
+                }
             });
         }
         displaySlot();
+
+
+        // Function does the layout for a group of events.
+        function PackEvents( columns, block_width ) {
+            let n = columns.length;
+            for (let i = 0; i < n; i++) {
+                let col = columns[ i ];
+                for (let j = 0; j < col.length; j++) {
+                    let slot = col[j];
+                    let colSpan = ExpandEvent(slot, i, columns);
+                    slot.obj.css( 'left', (i / n)*100 + '%' );
+                    slot.obj.css( 'width', block_width * colSpan / n - 1 );
+                }
+            }
+        }
+
+        // Check if two events collide.
+        function collidesWith( a, b ) {
+            return a.bottom > b.top && a.top < b.bottom;
+        }
+
+        // Expand events at the far right to use up any remaining space. 
+        // Checks how many columns the event can expand into, without 
+        // colliding with other events.
+        function ExpandEvent(ev, iColumn, columns)
+        {
+            let colSpan = 1;
+            for (let i = iColumn + 1; i < columns.length; i++) {
+                let col = columns[i];
+                for (let j = 0; j < col.length; j++) {
+                    let ev1 = col[j];
+                    if (collidesWith(ev, ev1)) {
+                        return colSpan;
+                    }
+                }
+                colSpan++;
+            }
+            return colSpan;
+        }
+
 
 
         {# Add #}
@@ -1085,6 +1139,21 @@
                 }
             });
         });
+
+
+        /* Scroll
+        ============================================================================== */
+        function scrollToDate() {
+            let anchorOffset = 60;
+            let d = new Date();
+            d.setDate(d.getDate() + (1 + 7 - d.getDay()) % 7);
+            let data = new Intl.DateTimeFormat('fr-FR').format(d);
+
+            $('html, body').animate({ 
+                scrollTop: $('.semaine[data-date="' + data + '"]').offset().top - anchorOffset
+            }, 500);        
+        }
+        scrollToDate();
 
         /* Alert
         ============================================================================== */
