@@ -94,6 +94,7 @@ class AccueilController extends AbstractController
                             'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
                             'type' => $r->getType() == null ? "" : $r->getType(),
+                            'venu' => $r->getEtat() ? $r->getEtat() : ""
                         );
                     }
                 }
@@ -158,6 +159,7 @@ class AccueilController extends AbstractController
                             'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
                             'type' => $r->getType() == null ? "" : $r->getType(),
+                            'venu' => $r->getEtat() ? $r->getEtat() : ""
                         );
                     }
                 }
@@ -261,8 +263,16 @@ class AccueilController extends AbstractController
 
             $rendezVous = $em->getRepository(RendezVous::class)->findOneById($rendezVousId);
             $slot = $em->getRepository(Slot::class)->findOneById($slotId);
+            
             $slot->removeRendezVous($rendezVous);
             // $em->remove($rendezVous);
+            
+            if ($slot) {
+                if (count($slot->getRendezVous()) == 0) {
+                    $slot->setThematique('');
+                }
+            }
+
             $em->flush();
             return new JsonResponse(true);
         }

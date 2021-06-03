@@ -1,7 +1,7 @@
 {% block todo %}
 
 	<div class="modal fade" id="todoModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+        <div class="modal-dialog modal-md" role="document">
             <div class="todo__content">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -44,6 +44,7 @@
                     if (resp) {
                         tasksNb = Object.keys(resp).length;
                         setTaskNumber();
+                        setTaskNotification();
                         $.each(resp, function(i, obj) {
                             let new_date = new Date(formatDate(obj.datetime));
                             let date_task = new Intl.DateTimeFormat("fr-FR", { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new_date);
@@ -93,6 +94,10 @@
 
         function setTaskNumber() {
             $('.todo__task-count').text(tasksNb + ((tasksNb > 1) ? ' Tâches' : ' Tâche'));
+        }
+
+        function setTaskNotification() {
+            $('.todo__notification').text((tasksNb > 9) ? '9+' : tasksNb);
         }
 
         /***** ADD *****/
@@ -146,6 +151,7 @@
 
                         tasksNb += 1;
                         setTaskNumber();
+                        setTaskNotification();
                     } else {
                         errorAlert('impossible d\'ajouter une tâche');
                     }
@@ -171,6 +177,7 @@
                     if (resp) {
                         tasksNb -= 1;
                         setTaskNumber();
+                        setTaskNotification();
                         $('li[data-id=' + taskId +']').remove();
                     } else {
                         errorAlert('impossible de vider la liste des tâches');
@@ -189,6 +196,7 @@
                     if (resp) {
                         tasksNb = 0;
                         setTaskNumber();
+                        setTaskNotification();
                         $('.todo__list > li').remove();
                     } else {
                         errorAlert('impossible de vider la liste des tâches');

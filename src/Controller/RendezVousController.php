@@ -82,7 +82,15 @@ class RendezVousController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
             if ($rendezVous) {
+                $slot = $rendezVous->getSlot();
+                $slot->removeRendezVous($rendezVous);
                 $em->remove($rendezVous);
+
+                if ($slot) {
+                    if (count($slot->getRendezVous()) == 0) {
+                        $slot->setThematique('');
+                    }
+                }
                 $em->flush();
                 return new JsonResponse(true);
             }

@@ -174,15 +174,15 @@
                 <thead>
                     <tr>
                         <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">ID</th>
-                        <th data-column-id="categorie"  data-width="33px" data-formatter="categorie" data-sortable="false"></th>
+                        <th data-column-id="categorie"  data-width="33px"   data-formatter="categorie" data-sortable="false"></th>
                         <th data-column-id="date"       data-width="90px">Date</th>
-                        <th data-column-id="horaire"    data-width="100px" data-css-class='horaire'>Horaire</th>
-                        <th data-column-id="thematique" data-width="15%" data-css-class='thematique'>Thématique</th>
-                        <th data-column-id="location"   data-width="10%">Lieu</th>
-                        <th data-column-id="soignant"   data-width="10%" data-sortable="false">Soignant</th>
-                        <th data-column-id="patient"    data-width="20%" data-formatter="patient" data-sortable="false">Patient</th>
-                        <th data-column-id="type"       data-width="10%" data-formatter="type" data-sortable="false">Type</th>
-                        <th data-column-id="action"     data-width="120px" data-formatter="action" data-sortable="false">Actions</th>
+                        <th data-column-id="horaire"    data-width="100px"  data-css-class='horaire'                         >Horaire</th>
+                        <th data-column-id="thematique" data-width="15%"    data-css-class='thematique'                      >Thématique</th>
+                        <th data-column-id="location"   data-width="10%"                                                     >Lieu</th>
+                        <th data-column-id="soignant"   data-width="10%"                                data-sortable="false">Soignant</th>
+                        <th data-column-id="patient"    data-width="20%"    data-formatter="patient"    data-sortable="false">Patient</th>
+                        <th data-column-id="type"       data-width="10%"    data-formatter="type"       data-sortable="false">Type</th>
+                        <th data-column-id="action"     data-width="146px"  data-formatter="action"     data-sortable="false">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -423,6 +423,13 @@
                     let checked = (e.send === 'Oui' ? 'checked' : '');
                     let notes = (e.notes ?
                     `<button class="js-comment tooltip2" data-tooltip="` + e.notes + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
+
+                    let venu = "<div class=\"pastille white\"></div>";
+                    if (e.venu === 'Oui')
+                        venu = "<div class=\"pastille hotpink\"></div>";
+                    else if (e.venu === 'Non')
+                        venu = "<div class=\"pastille gold\"></div>";
+                    
                     label += `
                         <div class="user-send" data-id="` + e.rendezVousId + `">
                             <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
@@ -433,6 +440,7 @@
                             </label>
                             <button class="js-removePatient" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
                             <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                            ` + venu + `
                             ` + notes + `
                         </div>
                     `;
@@ -514,11 +522,20 @@
 
             $('.js-hide').show();
             let index = 0;
+
             let tableParent = $(this).parents('table');
-            if (tableParent.is('#entretiens')) index = 1;
-            if (tableParent.is('#ateliers')) index = 2;
-            if (tableParent.is('#coachings')) index = 3;
-            if (tableParent.is('#educatives')) $('.js-hide').hide();
+            if (tableParent.is('#rdv-grid')) {
+                if ($(this).parents('tr').find('.pastille').hasClass('rebeccapurple')) index = 1;
+                if ($(this).parents('tr').find('.pastille').hasClass('chocolate')) index = 2;
+                if ($(this).parents('tr').find('.pastille').hasClass('goldenrod')) index = 3;
+                if ($(this).parents('tr').find('.pastille').hasClass('royalblue')) $('.js-hide').hide();
+            } else {
+                if (tableParent.is('#entretiens')) index = 1;
+                if (tableParent.is('#ateliers')) index = 2;
+                if (tableParent.is('#coachings')) index = 3;
+                if (tableParent.is('#educatives')) $('.js-hide').hide();
+            }
+
             $('#add_patient_thematique').empty().append('<option value=""></option>');
             $.each(thematiques[index], function(key, value) {
                 $('#add_patient_thematique')
@@ -678,7 +695,7 @@
                 },
                 "action": function(column, row) {
                     return displayPatientActions(row.patients)
-                },
+                }
             }
         }).on("loaded.rs.jquery.bootgrid", function() {
             

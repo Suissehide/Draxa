@@ -1002,6 +1002,12 @@ nav {
     color: #fff;
 }
 
+.actions-list .pastille {
+    margin-right: 8px;
+    margin-top: 0!important;
+    cursor: default;
+}
+
 .user-list button.js-addPatient {
     background-color: #07a8a0;
     margin-right: 8px;
@@ -1761,6 +1767,7 @@ nav {
     padding: 20px;
     border: 1px solid #888;
     border-radius: 5px;
+    height: auto;
 }
 
 .todo__content .close {
@@ -1780,7 +1787,7 @@ nav {
 
 .todo__header {
     padding-top: 15px;
-    padding-bottom: 25px;
+    padding-bottom: 15px;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -1806,7 +1813,9 @@ nav {
 }
 
 .todo__tasks {
-    padding-top: 25px;
+    padding-top: 15px;
+    height: auto;
+    background-color: #fefefe;
 }
 
 .todo__input {
@@ -1840,10 +1849,15 @@ nav {
     outline: none;
 }
 
+ul.todo__list {
+    overflow: auto;
+    max-height: 400px;
+    padding-right: 10px;
+}
+
 ul.todo__list li {
     display: flex;
     justify-content: space-between;
-    align-items: center;
     padding: 5px 0;
 }
 
@@ -1855,6 +1869,7 @@ ul.todo__list li .form-check {
 
 ul.todo__list li .cbx {
     margin: 0;
+    display: flex;
 }
 
 ul.todo__list li .cbx span:last-child {
@@ -1863,11 +1878,14 @@ ul.todo__list li .cbx span:last-child {
 
 .todo__flex {
     display: flex;
+    flex: none;
+    padding: 6px 0;
 }
 
 .todo__delete {
     opacity: 0;
     visibility: hidden;
+    margin-top: 1px;
     color: red;
     cursor: pointer;
     padding: 0 15px;
@@ -1883,6 +1901,10 @@ ul.todo__list li:hover .todo__delete {
     visibility: visible;
 }
 
+.todo__action {
+    flex: 1;
+}
+
 .form-check input:checked + .cbx .todo__action {
     font-weight: normal;
     text-decoration: line-through;
@@ -1890,6 +1912,21 @@ ul.todo__list li:hover .todo__delete {
 
 .todo__time {
     color: #888;
+}
+
+.todo__notification {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+    font-size: 11px;
+    background-color: red;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Calendar
