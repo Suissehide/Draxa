@@ -73,6 +73,11 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
+                    {{ form_row(form.email, {'attr': {'pattern': '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,63}$'}}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
                     {{ form_row(form.distance) }}
                 </div>
             </div>

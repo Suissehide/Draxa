@@ -186,6 +186,11 @@ class Patient
      */
     private $offre;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
@@ -547,6 +552,18 @@ class Patient
     public function setOffre(?string $offre): self
     {
         $this->offre = $offre;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
 
         return $this;
     }
