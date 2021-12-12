@@ -366,6 +366,7 @@ button, button:focus, button:active, button:visited {
     from {
         -webkit-filter: hue-rotate(45deg);
     }
+
     to {
         -webkit-filter: hue-rotate(-45deg);
     }
@@ -1004,7 +1005,7 @@ nav {
 
 .actions-list .pastille {
     margin-right: 8px;
-    margin-top: 0!important;
+    margin-top: 0 !important;
     cursor: default;
 }
 
@@ -1762,18 +1763,28 @@ nav {
 /* TODO
 =================================================== */
 
-.todo__content {
+.todo__container {
+    display: none;
+    z-index: 9;
+    position: fixed;
+    width: 100%;
     background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    border-radius: 5px;
+    padding: 15px 20px;
     height: auto;
+    border-bottom: 1px solid #ccc;
+}
+
+.todo__content {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1080px;
 }
 
 .todo__content .close {
     background-color: transparent;
-    color: #424242 !important;
-    float: right;
+    color: #121212 !important;
+    display: flex;
+    justify-content: flex-end;
     font-size: 28px;
     font-weight: bold;
     transition: 0.2s ease;
@@ -1786,44 +1797,58 @@ nav {
 }
 
 .todo__header {
-    padding-top: 15px;
-    padding-bottom: 15px;
     width: 100%;
     display: flex;
     justify-content: space-between;
-    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
 }
 
-.todo__date > div:first-child {
-    text-transform: capitalize;
+.todo__title h3 {
     color: #07a8a0;
     font-size: 24px;
     margin-bottom: 5px;
+    margin-top: 0;
 }
 
-.todo__date > div:last-child {
+.todo__title .todo__flex {
     color: #888;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.todo__column {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: column;
+}
+
+.todo__date {
     text-transform: capitalize;
 }
 
 .todo__task-count {
-    color: #888;
     text-align: right;
-    margin-bottom: 10px;
 }
 
 .todo__tasks {
-    padding-top: 15px;
+    padding-top: 5px;
     height: auto;
     background-color: #fefefe;
 }
 
+.input__flex {
+    display: flex;
+    gap: 15px;
+}
+
 .todo__input {
+    flex: 1;
     display: flex;
     align-items: center;
     color: #888;
-    padding-left: 10px;
-    margin-bottom: 3px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ccc;
 }
 
 .todo__input .glyphicon {
@@ -1840,7 +1865,6 @@ nav {
 .todo__input .form-control {
     border: none;
     box-shadow: none;
-    font-size: 18px;
     padding-left: 15px;
     font-family: Ubuntu-Regular, sans-serif;
 }
@@ -1851,14 +1875,21 @@ nav {
 
 ul.todo__list {
     overflow: auto;
-    max-height: 400px;
-    padding-right: 10px;
+    max-height: 200px;
+    margin-bottom: 0;
 }
 
 ul.todo__list li {
     display: flex;
     justify-content: space-between;
-    padding: 5px 0;
+    align-items: stretch;
+    padding: 5px 10px 5px 0;
+    transition: 0.2s ease;
+    border-radius: 5px;
+}
+
+ul.todo__list li:hover {
+    background-color: rgba(0, 119, 255, 0.06);
 }
 
 ul.todo__list li .form-check {
@@ -1876,10 +1907,9 @@ ul.todo__list li .cbx span:last-child {
     padding-left: 15px;
 }
 
-.todo__flex {
+.todo__button-bar {
     display: flex;
-    flex: none;
-    padding: 6px 0;
+    align-items: center;
 }
 
 .todo__delete {
@@ -1905,7 +1935,7 @@ ul.todo__list li:hover .todo__delete {
     flex: 1;
 }
 
-.form-check input:checked + .cbx .todo__action {
+.form-check input:checked+.cbx .todo__action {
     font-weight: normal;
     text-decoration: line-through;
 }
@@ -2041,31 +2071,60 @@ ul.todo__list li:hover .todo__delete {
     transform: translate3d(0, 0, 0);
 }
 
-.cbx span:first-child {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    transform: scale(1);
-    border: 1px solid #cccfdb;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 1px rgba(0, 16, 75, 0.05);
+.inp-cbx {
+    position: absolute;
+    left: 0;
+    opacity: 0.01;
+    animation: wave 0.4s ease;
 }
 
-.cbx span:first-child svg {
+.inp-cbx+label {
+    position: relative;
+    padding-left: 2.3em;
+    font-size: 1.05em;
+    line-height: 1.7;
+    cursor: pointer;
+}
+
+.inp-cbx:not(:checked)+label::before,
+.inp-cbx:checked+label::before {
+    content: '';
     position: absolute;
-    top: 3px;
-    left: 2px;
-    fill: none;
-    stroke: #fff;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 16px;
-    stroke-dashoffset: 16px;
-    transition: all 0.3s ease;
-    transition-delay: 0.1s;
-    transform: translate3d(0, 0, 0);
+    left: 6px;
+    top: 6px;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #aaa;
+    background: #FFF;
+    border-radius: .2em;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .1), 0 0 0 rgba(203, 34, 237, .2);
+    transition: all .275s;
+}
+
+.inp-cbx:checked+label::before {
+    border-color: #07a8a0;
+}
+
+.inp-cbx:not(:checked)+label::after,
+.inp-cbx:checked+label::after {
+    content: '✓';
+    position: absolute;
+    top: 15px;
+    left: 9px;
+    font-size: 16px;
+    color: #07a8a0;
+    line-height: 0;
+    transition: all .2s;
+}
+
+.inp-cbx:not(:checked)+label::after {
+    opacity: 0;
+    transform: scale(0);
+}
+
+.inp-cbx:checked+label::after {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .cbx span:last-child {
@@ -2080,12 +2139,6 @@ ul.todo__list li:hover .todo__delete {
 .inp-cbx {
     position: absolute;
     visibility: hidden;
-}
-
-.inp-cbx:checked+.cbx span:first-child {
-    background: #07a8a0;
-    border-color: #07a8a0;
-    animation: wave 0.4s ease;
 }
 
 .inp-cbx:checked+.cbx span:first-child svg {

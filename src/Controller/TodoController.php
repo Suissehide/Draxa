@@ -111,7 +111,8 @@ class TodoController extends AbstractController
             $taskId = $request->request->get('taskId');
 
             $todo = $em->getRepository(Todo::class)->find($taskId);
-            $todo->setEnable($enable);
+
+            $todo->setEnable($enable === "true");
             $em->flush();
 
             return new JsonResponse(true);

@@ -1,25 +1,30 @@
 {% block todo %}
 
-	<div class="modal fade" id="todoModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-md" role="document">
-            <div class="todo__content">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+    <div class="todo__container">
+        <div class="todo__content">
+            <div class="todo__header">
+                <div class="todo__title">
+                    <h3>Liste des tâches</h3>
+                    <div class="todo__flex">
+                        <div class="todo__date">01/01/2022</div>
+                        ●
+                        <div class="todo__task-count">4 tâches</div>
+                    </div>
+                </div>
+                <button type="button" class="close">
+                    &times;
                 </button>
-                <div class="todo__header">
-                    <div class="todo__date"></div>
-                    <div>
-                        <div class="todo__task-count">4 Tâches</div>
-                        <button class="btn btn-primary todo__clear">Vider la liste</button>
-                    </div>
+            </div>
+            <div class="input__flex">
+                <div class="todo__input">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <input type="text" id="todo__add" name="todo__add" required="required" class="form-control" placeholder="Saisissez votre tâche">
                 </div>
-                <div class="todo__tasks">
-                    <div class="todo__input">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        <input type="text" id="todo__add" name="todo__add" required="required" class="form-control" placeholder="Saisissez votre tâche">
-                    </div>
-                    <ul class="todo__list"></ul>
-                </div>
+                <button class="btn btn-primary todo__add">Ajouter la tâche</button>
+                <button class="btn btn-primary todo__clear">Vider la liste</button>
+            </div>
+            <div class="todo__tasks">
+                <ul class="todo__list"></ul>
             </div>
         </div>
     </div>
@@ -29,9 +34,20 @@
 {% block todo_javascripts %}
 
     <script type="text/javascript">
-        $('#todo-list').on('click', function() {
-            $('#todoModal').modal('toggle')
+        let open = localStorage.getItem('openTodo') === 'true';
+        if (open) openTodo();
+
+        $('#todo-list, .todo__content .close').on('click', function() {
+            localStorage.setItem('openTodo', !open);
+            open = !open;
+            openTodo();
         })
+
+        function openTodo() {
+            $('.todo__container').toggle();
+            if (open) $('.container-fluid').css({paddingTop: 350 + 'px'})
+            else $('.container-fluid').css({paddingTop: 0 + 'px'})
+        }
 
         var tasksNb = 0
 
@@ -46,7 +62,8 @@
                         setTaskNumber();
                         setTaskNotification();
                         $.each(resp, function(i, obj) {
-                            let new_date = new Date(formatDate(obj.datetime));
+                            let split = obj.datetime.split(' ');
+                            let new_date = new Date(split[0].split('/')[2], split[0].split('/')[1] - 1, split[0].split('/')[0], split[1].split(':')[0], split[1].split(':')[1]);
                             let date_task = new Intl.DateTimeFormat("fr-FR", { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new_date);
                             let enable = obj.enable ? 'checked' : '';
                             let task = `
@@ -54,15 +71,10 @@
                                 <div class="form-check">
                                     <input class="inp-cbx" id="task_` + obj.id + `" type="checkbox" ` + enable + `/>
                                     <label class="cbx" for="task_` + obj.id + `">
-                                        <span>
-                                            <svg width="12px" height="10px">
-                                                <use xlink:href="#check"></use>
-                                            </svg>
-                                        </span>
                                         <span class="todo__action">` + obj.description + `</span>
                                     </label>
                                 </div>
-                                <div class="todo__flex">
+                                <div class="todo__button-bar">
                                     <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
                                     <div class="todo__time">` + date_task + `</div>
                                 </div>
@@ -78,22 +90,21 @@
 
         function setTodoDate() {
             let today = new Date();
-            let day = new Intl.DateTimeFormat("fr-FR", { weekday: 'long', day: '2-digit' }).format(today);
-            let month = new Intl.DateTimeFormat("fr-FR", { month: 'long' }).format(today);
+            var options = {
+                year: "numeric",
+                month: "2-digit",
+                day: "numeric"
+            };
+            let date = new Intl.DateTimeFormat("fr-FR", options).format(today);
 
-            let dateDiv = `
-                <div>`+ day +`</div>
-                <div>`+ month +`</div>
-            `;
-
-            $('.todo__date').append(dateDiv);
+            $('.todo__date').text(date);
         }
 
         loadTodos();
         setTodoDate();
 
         function setTaskNumber() {
-            $('.todo__task-count').text(tasksNb + ((tasksNb > 1) ? ' Tâches' : ' Tâche'));
+            $('.todo__task-count').text(tasksNb + ((tasksNb > 1) ? ' tâches' : ' tâche'));
         }
 
         function setTaskNotification() {
@@ -107,6 +118,10 @@
 
         $('#todo__add').keyup(function(e){
             if(e.keyCode == 13) $(this).trigger("enterKey");
+        });
+
+        $('.todo__add').click(function() {
+            addTask();
         });
 
         $('.todo__input .glyphicon').on('click', function() {
@@ -134,15 +149,10 @@
                             <div class="form-check">
                                 <input class="inp-cbx" id="task_` + id + `" type="checkbox"/>
                                 <label class="cbx" for="task_` + id + `">
-                                    <span>
-                                        <svg width="12px" height="10px">
-                                            <use xlink:href="#check"></use>
-                                        </svg>
-                                    </span>
                                     <span class="todo__action">` + text + `</span>
                                 </label>
                             </div>
-                            <div class="todo__flex">
+                            <div class="todo__button-bar">
                                 <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
                                 <div class="todo__time">` + time + `</div>
                             </div>
@@ -187,6 +197,8 @@
         }
 
         $('.todo__clear').on('click', function() {
+            let r = confirm("Êtes-vous sûr de vouloir vider la liste des tâches ?");
+            if (!r) return;
             $.ajax({
                 url: "{{ path('todo_clear') }}",
                 type: "POST",
@@ -205,9 +217,10 @@
             })
         });
 
-        $('.todo__list').on('click', '.form-check', function() {
+        $('.todo__list').on('change', '.form-check input', function() {
             let taskId = $(this).parents('li').attr('data-id');
-            let enable = $(this).find('.inp-cbx').is(':checked');
+            let enable = $(this).is(':checked');
+
             $.ajax({
                 url: "{{ path('todo_enable') }}",
                 type: "POST",
@@ -220,7 +233,7 @@
                     if (resp) {
                         return;
                     } else {
-                        errorAlert('impossible de vider la liste des tâches');
+                        errorAlert('impossible de changer l\'état de la tâche');
                     }
                 }
             })

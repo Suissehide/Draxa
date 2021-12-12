@@ -63,6 +63,10 @@
             </ul>
         </div>
     </nav>
+
+    <!-- Todo -->
+    {% block todo %}{{ parent() }}{% endblock %}
+
     <div class="container-fluid">
         {% block page_content %}{% endblock %}
     </div>
@@ -70,9 +74,6 @@
         <a class="cd cd-top js-cd-top" href="#0"><span class="glyphicon glyphicon-chevron-up"></span></a>
         {% block toolbar_component %}{% endblock %}
     </div>
-
-    <!-- Todo -->
-    {% block todo %}{{ parent() }}{% endblock %}
 
     <!-- Footer -->
     <div class="bas">
