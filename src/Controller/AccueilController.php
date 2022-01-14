@@ -40,9 +40,9 @@ class AccueilController extends AbstractController
             $response = array();
             $response[] = $this->createSlotCategorie($slots, 'Consultation');
             $response[] = $this->createSlotCategorie($slots, 'Entretien');
+            $response[] = $this->createSlotCategorie($slots, 'Coaching');
             $response[] = $this->createSlotCategorie($slots, 'Atelier');
             $response[] = $this->createSlotCategorie($slots, 'Educative');
-            $response[] = $this->createSlotCategorie($slots, 'Coaching');
 
             return new JsonResponse($response, Response::HTTP_OK);
         }
@@ -94,7 +94,9 @@ class AccueilController extends AbstractController
                             'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
                             'type' => $r->getType() == null ? "" : $r->getType(),
-                            'venu' => $r->getEtat() ? $r->getEtat() : ""
+                            'venu' => $r->getEtat() ? $r->getEtat() : "",
+                            'theraflow' => $p->getDivers(),
+                            'progetp' => $p->getProgetp()
                         );
                     }
                 }
@@ -159,7 +161,9 @@ class AccueilController extends AbstractController
                             'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
                             'type' => $r->getType() == null ? "" : $r->getType(),
-                            'venu' => $r->getEtat() ? $r->getEtat() : ""
+                            'venu' => $r->getEtat() ? $r->getEtat() : "",
+                            'theraflow' => $p->getDivers(),
+                            'progetp' => $p->getProgetp()
                         );
                     }
                 }

@@ -125,6 +125,18 @@
             </div>
         </div>
 
+        <div class="legende">
+            <div class="legende__type">Légende :</div>
+            <div class="legende__type">
+                <span class="legende__color" style="background-color: deeppink"></span> 
+                Theraflow   
+            </div>
+            <div class="legende__type">
+                <span class="legende__color" style="background-color: seagreen"></span> 
+                ViVa module AOMI
+            </div>
+        </div>
+
         <div class="separator">
             <span class="separator-text">Rechercher un créneau</span>
         </div>
@@ -330,7 +342,7 @@
         });
 
         {#    #}
-        const anchorList = ['consultations', 'entretiens', 'ateliers', 'educatives', 'coachings'];
+        const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
 
         function ajaxAction(d) {
             $.ajax({
@@ -341,13 +353,21 @@
                         "date": d
                     },
                     success: function (res) {
-                        const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun atelier', 'Aucune semaine éducative', 'Aucun coaching PRM'];
+                        const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun coaching PRM', 'Aucun atelier', 'Aucune semaine éducative'];
                         $(".box tbody tr").remove();
                         for (let i = 0; i < res.length; i++) {
                             if (res[i].length > 0) {
                                 $.each(res[i], function (index, val) {
                                     $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                    .append(`<td class="horaire">` + val.horaire + `</td><td class="thematique">` + val.thematique + `</td><td>` + val.location + `</td><td>` + val.soignant + `</td><td>` + displayPatient(val.patients, val.place) + `</td><td>` + displayPatientType(val.patients) + `</td><td>` + displayPatientActions(val.patients) + `</td>`)
+                                    .append(
+                                        `<td class="horaire">` + val.horaire + `</td>
+                                        <td class="thematique">` + val.thematique + `</td>
+                                        <td>` + val.location + `</td>
+                                        <td>` + val.soignant + `</td>
+                                        <td>` + displayPatient(val.patients, val.place) + `</td>
+                                        <td>` + displayPatientType(val.patients) + `</td>
+                                        <td>` + displayPatientActions(val.patients) + `</td>`
+                                    )
                                     .appendTo('#' + anchorList[i]);
                                 });
                             } else {
@@ -385,14 +405,17 @@
         updateWidth();
 
         function displayPatient(data, place) {
-            let label = ''
+            let label = '';
             label += '<div class="user-list" data-place="' + place + '">';
             if (data.length !== 0) {
+                console.log(data);
                 data.forEach(function(e, v) {
- 
+                    console.log(e.theraflow, e.progetp)
+                    let theraflow = e.theraflow ? ' theraflow' : '';
+                    let progetp = e.progetp === 'ViVa module AOMI' ? ' progetp' : '';
                     label += `
                         <div class="user-label" data-id="` + e.rendezVousId + `">
-                            <div class="user-name">` + e.prenom + ` ` + e.nom + `</div>
+                            <div class="user-name` + theraflow + progetp + `">` + e.prenom + ` ` + e.nom + `</div>
                         </div>
                     `;
                 });
@@ -433,11 +456,7 @@
                     label += `
                         <div class="user-send" data-id="` + e.rendezVousId + `">
                             <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
-                            <label class="cbx" for="` + e.rendezVousId + `">
-                                <span>
-                                    <svg width="12px" height="10px"><use xlink:href="#check"></use></svg>
-                                </span>     
-                            </label>
+                            <label class="cbx" for="` + e.rendezVousId + `"></label>
                             <button class="js-removePatient" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
                             <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
                             ` + venu + `

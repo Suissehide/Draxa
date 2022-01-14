@@ -547,27 +547,27 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_thematique">
+                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_thematique">
                                                     Thématique
                                                 </label>
-                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_thematique" class="form-control thematique">
-                                                    <option value="" {% if consultation.thematique == '' %} selected="selected" {% endif %}></option>
+                                                <select type="text" id="patient_creation_form_coachings_{{ coaching.id }}_thematique" class="form-control thematique">
+                                                    <option value="" {% if coaching.thematique == '' %} selected="selected" {% endif %}></option>
                                                     {% for thematique in thematiques[3] %}
-                                                        <option value="{{thematique}}" {% if consultation.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
+                                                        <option value="{{thematique}}" {% if coaching.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_type">
+                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_type">
                                                     Type
                                                 </label>
-                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_type" name="patient_creation_form[consultation][{{ consultation.id }}][type]" class="form-control type">
-                                                    <option value="" {% if consultation.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if consultation.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if consultation.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if consultation.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
+                                                <select type="text" id="patient_creation_form_coachings_{{ coaching.id }}_type" name="patient_creation_form[coaching][{{ coaching.id }}][type]" class="form-control type">
+                                                    <option value="" {% if coaching.type == "" %} selected="selected" {% endif %}></option>
+                                                    <option value="Ambu" {% if coaching.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
+                                                    <option value="Tel" {% if coaching.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
+                                                    <option value="Hospit" {% if coaching.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
                                                 <select>
                                             </div>
                                         </div>

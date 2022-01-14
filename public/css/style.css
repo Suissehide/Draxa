@@ -821,10 +821,11 @@ nav {
 }
 
 .box tr th:nth-child(1), .box tr th:nth-child(2), .box tr th:nth-child(3), .box tr th:nth-child(4) {
-    cursor: pointer;
+    /* cursor: pointer; */
 }
 
 .box .table tr td {
+    cursor: default;
     padding: 10px;
     transition: 0.2s ease-in-out;
 }
@@ -963,6 +964,14 @@ nav {
     align-items: center;
 }
 
+.user-name.theraflow {
+    color: deeppink;
+}
+
+.user-name.progetp {
+    color: seagreen;
+}
+
 .actions-list .user-send:not(:last-child) {
     margin-bottom: 5px;
 }
@@ -1029,6 +1038,20 @@ nav {
 .user-send label.cbx {
     margin: 0 8px 0 0;
     padding: 1px;
+}
+
+.legende {
+    display: flex;
+}
+
+.legende__type {
+    display: flex;
+    margin-right: 15px;
+}
+
+.legende__color {
+    width: 25px;
+    margin-right: 5px;
 }
 
 /* Login
