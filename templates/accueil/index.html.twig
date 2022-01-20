@@ -408,9 +408,7 @@
             let label = '';
             label += '<div class="user-list" data-place="' + place + '">';
             if (data.length !== 0) {
-                console.log(data);
                 data.forEach(function(e, v) {
-                    console.log(e.theraflow, e.progetp)
                     let theraflow = e.theraflow ? ' theraflow' : '';
                     let progetp = e.progetp === 'ViVa module AOMI' ? ' progetp' : '';
                     label += `

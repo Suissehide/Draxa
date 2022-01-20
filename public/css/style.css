@@ -1013,7 +1013,7 @@ nav {
 }
 
 .actions-list .pastille {
-    margin-right: 8px;
+    /* margin-right: 8px; */
     margin-top: 0 !important;
     cursor: default;
 }
@@ -1037,7 +1037,19 @@ nav {
 
 .user-send label.cbx {
     margin: 0 8px 0 0;
-    padding: 1px;
+    padding: 10px;
+}
+
+.user-send .inp-cbx:not(:checked)+label::before,
+.user-send .inp-cbx:checked+label::before {
+    left: 1px;
+    top: 1px;
+}
+
+.user-send .inp-cbx:not(:checked)+label::after,
+.user-send .inp-cbx:checked+label::after {
+    top: 10px;
+    left: 4px;
 }
 
 .legende {
