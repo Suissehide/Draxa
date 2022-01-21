@@ -2121,6 +2121,10 @@ ul.todo__list li:hover .todo__delete {
     cursor: pointer;
 }
 
+.todo__list .inp-cbx+label {
+    min-height: 30px;
+}
+
 .inp-cbx:not(:checked)+label::before,
 .inp-cbx:checked+label::before {
     content: '';
