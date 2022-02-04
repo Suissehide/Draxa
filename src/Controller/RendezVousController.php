@@ -101,7 +101,7 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/patch/{id}", name="rendezVous_patch", methods="GET|POST")
      */
-    public function rendezVous_patch(Request $request, RendezVous $rendezVous): JsonResponse
+    public function rendezVous_patch(Request $request, RendezVous $rendezVous): Response
     {
         if ($request->isXmlHttpRequest()) {
             $em = $this->getDoctrine()->getManager();
@@ -113,8 +113,9 @@ class RendezVousController extends AbstractController
 
                 $patientId = $request->request->get('patientId');
                 $t = $em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $rendezVous->getCategorie());
-                if ($t != [] && $t[0]->getDate() != $rendezVous->getDate())
-                    return new JsonResponse(false);
+                if ($t != [] && $t[0]->getDate() != $rendezVous->getDate()) {
+                    return new Response(null, 500);
+                }
 
                 $rendezVous->setDate($new_date);
                 $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
@@ -135,10 +136,11 @@ class RendezVousController extends AbstractController
                 }
 
                 $em->flush();
-                return new JsonResponse(true);
+                return new Response(null, 204);
             }
-            return new JsonResponse(false);
+            return new Response(null, 500);
         }
+        return new Response(null, 500);
     }
 
     /**

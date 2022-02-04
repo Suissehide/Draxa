@@ -71,8 +71,9 @@
                                 <div class="form-check">
                                     <input class="inp-cbx" id="task_` + obj.id + `" type="checkbox" ` + enable + `/>
                                     <label class="cbx" for="task_` + obj.id + `">
-                                        <span class="todo__action">` + obj.description + `</span>
+                                        
                                     </label>
+                                    <span class="todo__action" contenteditable="true">` + obj.description + `</span>
                                 </div>
                                 <div class="todo__button-bar">
                                     <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
@@ -228,6 +229,28 @@
                 data: {
                     taskId: taskId,
                     enable: enable
+                },
+                success: function (resp) {
+                    if (resp) {
+                        return;
+                    } else {
+                        errorAlert('impossible de changer l\'état de la tâche');
+                    }
+                }
+            })
+        });
+
+        $('.todo__list').on('keyup', '.form-check .todo__action', function() {
+            let taskId = $(this).parents('li').attr('data-id');
+            let description = $(this).text();
+
+            $.ajax({
+                url: "{{ path('todo_edit') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    taskId: taskId,
+                    description: description
                 },
                 success: function (resp) {
                     if (resp) {

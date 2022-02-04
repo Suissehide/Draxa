@@ -26,7 +26,7 @@ class AddPatientType extends AbstractType
                         ->orderBy('p.nom', 'ASC');
                 },
                 'choice_label' => function (Patient $patient) {
-                    return sprintf('%s %s', $patient->getNom(), $patient->getPrenom());
+                    return sprintf('%s %s - %s', $patient->getNom(), $patient->getPrenom(), $patient->getDate()->format("d/m/Y"));
                 },
                 'placeholder' => '',
                 'attr' => [

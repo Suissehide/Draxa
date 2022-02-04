@@ -118,4 +118,23 @@ class TodoController extends AbstractController
             return new JsonResponse(true);
         }
     }
+    
+    /**
+     * @Route("/edit", name="todo_edit", methods="GET|POST")
+     */
+    public function edit(Request $request): Response
+    {
+        if ($request->isXmlHttpRequest()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $description = $request->request->get('description');
+            $taskId = $request->request->get('taskId');
+
+            $todo = $em->getRepository(Todo::class)->find($taskId);
+            $todo->setDescription($description);
+            $em->flush();
+
+            return new JsonResponse(true);
+        }
+    }
 }

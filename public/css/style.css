@@ -342,6 +342,10 @@ button, button:focus, button:active, button:visited {
     margin-bottom: 15px;
 }
 
+.form-group textarea {
+    min-height: 100px;
+}
+
 /* Menu
 =================================================== */
 
@@ -1016,6 +1020,10 @@ nav {
     /* margin-right: 8px; */
     margin-top: 0 !important;
     cursor: default;
+}
+
+.actions .btn-group {
+    z-index: 1;
 }
 
 .user-list button.js-addPatient {
@@ -1918,7 +1926,7 @@ ul.todo__list li {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
-    padding: 5px 10px 5px 0;
+    padding: 3px 10px 3px 0;
     transition: 0.2s ease;
     border-radius: 5px;
 }
@@ -1936,10 +1944,6 @@ ul.todo__list li .form-check {
 ul.todo__list li .cbx {
     margin: 0;
     display: flex;
-}
-
-ul.todo__list li .cbx span:last-child {
-    padding-left: 15px;
 }
 
 .todo__button-bar {
@@ -1968,9 +1972,19 @@ ul.todo__list li:hover .todo__delete {
 
 .todo__action {
     flex: 1;
+    margin-left: 10px;
+    padding: 5px 5px;
 }
 
-.form-check input:checked+.cbx .todo__action {
+[contenteditable="true"]:active,
+[contenteditable="true"]:focus {
+    border: 1px solid #07a8a0;
+    border-radius: 3px;
+    outline: none;
+    padding: 4px 4px;
+}
+
+.form-check input:checked ~ .todo__action {
     font-weight: normal;
     text-decoration: line-through;
 }
@@ -2115,7 +2129,7 @@ ul.todo__list li:hover .todo__delete {
 
 .inp-cbx+label {
     position: relative;
-    padding-left: 2.3em;
+    padding-left: 1.5em;
     font-size: 1.05em;
     line-height: 1.7;
     cursor: pointer;
@@ -2330,6 +2344,7 @@ input[type='checkbox'].checkbox-round+span {
 
 .tooltip2[data-tooltip] {
     position: relative;
+    margin-left: 8px;
 }
 
 .tooltip2[data-tooltip]:after, .tooltip2[data-tooltip]:before {
@@ -2349,7 +2364,9 @@ input[type='checkbox'].checkbox-round+span {
     padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
-    min-width: 350px;
+    min-width: 700px;
+    white-space: break-spaces;
+    text-align: left;
 }
 
 .tooltip2[data-tooltip]:after {

@@ -443,7 +443,7 @@
                 data.forEach(function(e, v) {
                     let checked = (e.send === 'Oui' ? 'checked' : '');
                     let notes = (e.notes ?
-                    `<button class="js-comment tooltip2" data-tooltip="` + e.notes + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
+                    `<button class="js-comment tooltip2" data-tooltip="` + e.notes.replace(/"/g, "'") + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
 
                     let venu = "<div class=\"pastille white\"></div>";
                     if (e.venu === 'Oui')
