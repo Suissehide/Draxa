@@ -235,6 +235,34 @@ class PatientController extends AbstractController
         ]);
     }
 
+        /**
+     * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET|POST")
+     */
+    public function patient_vue_diagnostic(Patient $patient, Request $request): Response
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $form = $this->createForm(PatientDiagnosticType::class, $patient);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ($form->get('validation')->isClicked()) {
+                $patient = $form->getData();
+
+                $em->flush();
+            }
+
+            return $this->redirectToRoute('patient_vue_diagnostic');
+        }
+
+        return $this->render('patient/vue/diagostic.html.twig', [
+            'title' => 'Diagnostic',
+            'controller_name' => 'PatientDiagnosticController',
+            'patient' => $patient,
+            'form' => $form->createView(),
+        ]);
+    }
+
     /**
      * @Route("/csv", name="csv", methods="GET|POST")
      *

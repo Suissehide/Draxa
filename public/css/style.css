@@ -810,6 +810,7 @@ nav {
 }
 
 .box .table {
+    table-layout: fixed;
     border: none;
     border-radius: 0;
     margin-bottom: 0;
@@ -963,9 +964,10 @@ nav {
     margin-bottom: 5px;
 }
 
-.user-label>div {
-    display: flex;
-    align-items: center;
+.user-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .user-name.theraflow {
