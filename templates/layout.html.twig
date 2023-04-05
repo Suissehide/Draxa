@@ -23,8 +23,14 @@
                 </li>
                 <li class="menu-item {{ title=='Liste des patients' ? 'active' : '' }}">
                     <a class="user-link" href="{{ path('patient_list') }}">
-                        <span class="glyphicon glyphicon glyphicon-list-alt"></span>
+                        <span class="glyphicon glyphicon-list-alt"></span>
                         Liste des patients
+                    </a>
+                </li>
+                <li class="menu-item {{ title=='Statistiques' ? 'active' : '' }}">
+                    <a class="user-link" href="{{ path('statistiques') }}">
+                        <span class="glyphicon glyphicon-stats"></span>
+                        Statistiques
                     </a>
                 </li>
                 <li class="menu-item {{ title=='Settings' ? 'active' : '' }}">

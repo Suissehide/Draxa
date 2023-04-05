@@ -10,6 +10,8 @@ use App\Form\RendezVousType;
 
 use App\Repository\RendezVousRepository;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +23,16 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class RendezVousController extends AbstractController
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
     /**
      * @Route("/", name="rendez_vous_index", methods="GET")
      */
@@ -35,41 +47,40 @@ class RendezVousController extends AbstractController
     public function rendezVous_add(Request $request): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            $id = $request->request->get('id');
-            $slotId = $request->request->get('slotId');
-            $categorie = $request->request->get('categorie');
+            $id = $request->get('id');
+            $slotId = $request->get('slotId');
+            $categorie = $request->get('categorie');
 
             if ($slotId == '')
                 return new JsonResponse(false);
-            $slot = $em->getRepository(Slot::class)->find($slotId);
+            $slot = $this->em->getRepository(Slot::class)->find($slotId);
             if (!$slot)
                 return new JsonResponse(false);
 
-            $date = explode('/', $request->request->get('date'));
+            $date = explode('/', $request->get('date'));
             $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
-            // $patientId = $request->request->get('patientId');
-            // if ($em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $categorie) != [])
+            // $patientId = $request->get('patientId');
+            // if ($this->em->getRepository(RendezVous::class)->findSameDate($request->get('date'), $patientId, $categorie) != [])
             //     return new JsonResponse(false);
 
-            // $slot->setThematique($request->request->get('thematique'));
-            // $slot->setType($request->request->get('type'));
+            // $slot->setThematique($request->get('thematique'));
+            // $slot->setType($request->get('type'));
             $rendezVous = new RendezVous();
             $rendezVous->setCategorie($categorie);
             $rendezVous->setSlot($slot);
             $rendezVous->setDate($new_date);
-            $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
-            $rendezVous->setThematique($request->request->get('thematique'));
-            $rendezVous->setType($request->request->get('type'));
-            $rendezVous->setAccompagnant($request->request->get('accompagnant'));
-            $rendezVous->setEtat($request->request->get('etat'));
-            $rendezVous->setMotifRefus($request->request->get('motifRefus'));
-            $rendezVous->setNotes($request->request->get('notes'));
-            $rendezVous->setPatient($em->getRepository(Patient::class)->findOneById($id));
+            $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->get('time')));
+            $rendezVous->setThematique($request->get('thematique'));
+            $rendezVous->setType($request->get('type'));
+            $rendezVous->setAccompagnant($request->get('accompagnant'));
+            $rendezVous->setEtat($request->get('etat'));
+            $rendezVous->setMotifRefus($request->get('motifRefus'));
+            $rendezVous->setNotes($request->get('notes'));
+            $rendezVous->setPatient($this->em->getRepository(Patient::class)->findOneById($id));
 
-            $em->persist($rendezVous);
-            $em->flush();
+            $this->em->persist($rendezVous);
+            $this->em->flush();
             return new JsonResponse($rendezVous->getId());
         }
     }
@@ -77,21 +88,21 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/remove/{id}", name="rendezVous_remove", methods="DELETE")
      */
-    public function rendezVous_remove(Request $request, RendezVous $rendezVous): JsonResponse
+    public function rendezVous_remove(Request $request, ManagerRegistry $doctrine, int $id): JsonResponse
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $rendezVous = $doctrine->getRepository(RendezVous::class)->find($id);
             if ($rendezVous) {
                 $slot = $rendezVous->getSlot();
                 $slot->removeRendezVous($rendezVous);
-                $em->remove($rendezVous);
+                $this->em->remove($rendezVous);
 
                 if ($slot) {
                     if (count($slot->getRendezVous()) == 0) {
                         $slot->setThematique('');
                     }
                 }
-                $em->flush();
+                $this->em->flush();
                 return new JsonResponse(true);
             }
             return new JsonResponse(false);
@@ -101,41 +112,41 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/patch/{id}", name="rendezVous_patch", methods="GET|POST")
      */
-    public function rendezVous_patch(Request $request, RendezVous $rendezVous): Response
+    public function rendezVous_patch(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $rendezVous = $doctrine->getRepository(RendezVous::class)->find($id);
             if ($rendezVous) {
-                $slotId = $request->request->get('slotId');
+                $slotId = $request->get('slotId');
 
-                $date = explode('/', $request->request->get('date'));
+                $date = explode('/', $request->get('date'));
                 $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
 
-                $patientId = $request->request->get('patientId');
-                $t = $em->getRepository(RendezVous::class)->findSameDate($request->request->get('date'), $patientId, $rendezVous->getCategorie());
+                $patientId = $request->get('patientId');
+                $t = $this->em->getRepository(RendezVous::class)->findSameDate($request->get('date'), $patientId, $rendezVous->getCategorie());
                 if ($t != [] && $t[0]->getDate() != $rendezVous->getDate()) {
                     return new Response(null, 500);
                 }
 
                 $rendezVous->setDate($new_date);
-                $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->request->get('time')));
-                $rendezVous->setThematique($request->request->get('thematique'));
-                $rendezVous->setType($request->request->get('type'));
-                $rendezVous->setAccompagnant($request->request->get('accompagnant'));
-                $rendezVous->setEtat($request->request->get('etat'));
-                $rendezVous->setMotifRefus($request->request->get('motifRefus'));
-                $rendezVous->setNotes($request->request->get('notes'));
+                $rendezVous->setHeure(\DateTime::createFromFormat('H:i', $request->get('time')));
+                $rendezVous->setThematique($request->get('thematique'));
+                $rendezVous->setType($request->get('type'));
+                $rendezVous->setAccompagnant($request->get('accompagnant'));
+                $rendezVous->setEtat($request->get('etat'));
+                $rendezVous->setMotifRefus($request->get('motifRefus'));
+                $rendezVous->setNotes($request->get('notes'));
 
                 if ($slotId !== '') {
-                    $slot = $em->getRepository(Slot::class)->find($slotId);
+                    $slot = $this->em->getRepository(Slot::class)->find($slotId);
                     if ($slot) {
-                        $slot->setThematique($request->request->get('thematique'));
-                        // $slot->setType($request->request->get('type'));
+                        $slot->setThematique($request->get('thematique'));
+                        // $slot->setType($request->get('type'));
                         $rendezVous->setSlot($slot);
                     }
                 }
 
-                $em->flush();
+                $this->em->flush();
                 return new Response(null, 204);
             }
             return new Response(null, 500);
@@ -150,14 +161,12 @@ class RendezVousController extends AbstractController
     public function rendezVous_send(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $id = $request->get('id');
+            $send = $request->get('send');
 
-            $id = $request->request->get('id');
-            $send = $request->request->get('send');
-
-            $rendezVous = $em->getRepository(RendezVous::class)->find($id);
+            $rendezVous = $this->em->getRepository(RendezVous::class)->find($id);
             $rendezVous->setSend($send);
-            $em->flush();
+            $this->em->flush();
 
             return new JsonResponse(true);
         }
@@ -179,9 +188,8 @@ class RendezVousController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($rendezVous);
-            $em->flush();
+            $this->em->persist($rendezVous);
+            $this->em->flush();
 
             return $this->redirectToRoute('rendez_vous_index');
         }
@@ -195,16 +203,18 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/{id}", name="rendez_vous_show", methods="GET")
      */
-    public function show(RendezVous $rendezVous): Response
+    public function show(ManagerRegistry $doctrine, int $id): Response
     {
+        $rendezVous = $doctrine->getRepository(RendezVous::class)->find($id);
         return $this->render('rendez_vous/show.html.twig', ['rendez_vous' => $rendezVous]);
     }
 
     /**
      * @Route("/{id}/edit", name="rendez_vous_edit", methods="GET|POST")
      */
-    public function edit(Request $request, RendezVous $rendezVous): Response
+    public function edit(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
+        $rendezVous = $doctrine->getRepository(RendezVous::class)->find($id);
         $form = $this->createForm(RendezVousType::class, $rendezVous);
         $form->handleRequest($request);
 
@@ -223,13 +233,13 @@ class RendezVousController extends AbstractController
     /**
      * @Route("/{id}", name="rendez_vous_delete", methods="DELETE")
      */
-    public function delete(Request $request, RendezVous $rendezVous): Response
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $rendezVous->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $rendezVous->setSlot();
-            $em->remove($rendezVous);
-            $em->flush();
+        $rendezVous = $doctrine->getRepository(RendezVous::class)->find($id);
+        if ($this->isCsrfTokenValid('delete' . $rendezVous->getId(), $request->get('_token'))) {
+            $rendezVous->setSlot(null);
+            $this->em->remove($rendezVous);
+            $this->em->flush();
         }
 
         return $this->redirectToRoute('rendez_vous_index');

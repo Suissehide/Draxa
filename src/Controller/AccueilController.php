@@ -8,10 +8,9 @@ use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
 
-use App\Repository\PatientRepository;
-
 use App\Form\AddPatientType;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,18 +23,26 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class AccueilController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/", name="accueil", methods="GET|POST")
      */
     public function accueil(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-
         if ($request->isXmlHttpRequest()) {
-            $date = $request->request->get('date');
+            $date = $request->get('date');
             $startdatetime = \DateTime::createFromFormat("d/m/Y H:i:s", date($date . " 00:00:00"));
             $enddatetime = \DateTime::createFromFormat("d/m/Y H:i:s", date($date . " 23:59:59"));
 
-            $slots = $em->getRepository(Slot::class)->findByDate($startdatetime, $enddatetime);
+            $slots = $this->em->getRepository(Slot::class)->findByDate($startdatetime, $enddatetime);
 
             $response = array();
             $response[] = $this->createSlotCategorie($slots, 'Consultation');
@@ -64,14 +71,7 @@ class AccueilController extends AbstractController
         return $this->render('accueil/index.html.twig', [
             'title' => 'Accueil',
             'controller_name' => 'AccueilController',
-            'nbPatients' => count($em->getRepository(Patient::class)->findAll()),
-            'nbConsultation' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Consultation'])),
-            'nbEntretien' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Entretien'])),
-            'nbAtelier' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Atelier'])),
-            'nbEducative' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Educative'])),
-            'nbCoaching' => count($em->getRepository(RendezVous::class)->findBy(['categorie' => 'Coaching'])),
             'form' => $form->createView(),
-
             'thematiques' => $thematiques
         ]);
     }
@@ -122,17 +122,16 @@ class AccueilController extends AbstractController
     public function slot_list(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $categories = $request->request->get('categories');
-            $dateDebut = $request->request->get('dateDebut');
-            $dateFin = $request->request->get('dateFin');
+            $categories = $request->get('categories');
+            $dateDebut = $request->get('dateDebut');
+            $dateFin = $request->get('dateFin');
 
-            $current = $request->request->get('current');
-            $rowCount = $request->request->get('rowCount');
-            $searchPhrase = $request->request->get('searchPhrase');
-            $sort = $request->request->get('sort');
+            $current = $request->get('current');
+            $rowCount = $request->get('rowCount');
+            $searchPhrase = $request->get('searchPhrase');
+            $sort = $request->get('sort');
 
-            $em = $this->getDoctrine()->getManager();
-            $slotRepository = $em->getRepository(Slot::class);
+            $slotRepository = $this->em->getRepository(Slot::class);
             $slots = $slotRepository->findByFilter($sort, $searchPhrase, $categories, $dateDebut, $dateFin);
             if ($searchPhrase != "" || $sort != "all") {
                 $count = count($slots->getQuery()->getResult());
@@ -198,10 +197,8 @@ class AccueilController extends AbstractController
     public function redirect_vue_patient(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $id = $request->request->get('id');
-            $anchor = $request->request->get('anchor');
+            $id = $request->get('id');
+            $anchor = $request->get('anchor');
 
             return new JsonResponse($this->generateUrl('patient_vue', array('id' => $id)) . '#' . $anchor);
         }
@@ -214,19 +211,17 @@ class AccueilController extends AbstractController
     public function add_patient_slot(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $slotId = $request->get('slotId');
+            $patientId = $request->get('patientId');
+            $thematique = $request->get('thematique');
+            $type = $request->get('type');
 
-            $slotId = $request->request->get('slotId');
-            $patientId = $request->request->get('patientId');
-            $thematique = $request->request->get('thematique');
-            $type = $request->request->get('type');
-
-            $slotRepository = $em->getRepository(Slot::class);
+            $slotRepository = $this->em->getRepository(Slot::class);
             if ($slotRepository->isAlreadyInSlot($slotId, $patientId))
                 return new JsonResponse(false);
 
             $slot = $slotRepository->findOneById($slotId);
-            $patient = $em->getRepository(Patient::class)->findOneById($patientId);
+            $patient = $this->em->getRepository(Patient::class)->findOneById($patientId);
 
             $rendezVous = new RendezVous();
             $rendezVous->setDate($slot->getDate());
@@ -239,8 +234,8 @@ class AccueilController extends AbstractController
 
             $slot->setThematique($thematique ? $thematique : $slot->getThematique());
 
-            $em->persist($rendezVous);
-            $em->flush();
+            $this->em->persist($rendezVous);
+            $this->em->flush();
 
             return new JsonResponse(
                 array(
@@ -260,16 +255,14 @@ class AccueilController extends AbstractController
     public function remove_patient_slot(Request $request)
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $rendezVousId = $request->get('rendezVousId');
+            $slotId = $request->get('slotId');
 
-            $rendezVousId = $request->request->get('rendezVousId');
-            $slotId = $request->request->get('slotId');
-
-            $rendezVous = $em->getRepository(RendezVous::class)->findOneById($rendezVousId);
-            $slot = $em->getRepository(Slot::class)->findOneById($slotId);
+            $rendezVous = $this->em->getRepository(RendezVous::class)->findOneById($rendezVousId);
+            $slot = $this->em->getRepository(Slot::class)->findOneById($slotId);
             
             $slot->removeRendezVous($rendezVous);
-            // $em->remove($rendezVous);
+            // $this->em->remove($rendezVous);
             
             if ($slot) {
                 if (count($slot->getRendezVous()) == 0) {
@@ -277,7 +270,7 @@ class AccueilController extends AbstractController
                 }
             }
 
-            $em->flush();
+            $this->em->flush();
             return new JsonResponse(true);
         }
         return new JsonResponse(false);

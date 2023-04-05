@@ -70,14 +70,12 @@
                             <li data-id="` + obj.id + `">
                                 <div class="form-check">
                                     <input class="inp-cbx" id="task_` + obj.id + `" type="checkbox" ` + enable + `/>
-                                    <label class="cbx" for="task_` + obj.id + `">
-                                        
-                                    </label>
+                                    <label class="cbx" for="task_` + obj.id + `"></label>
                                     <span class="todo__action" contenteditable="true">` + obj.description + `</span>
                                 </div>
                                 <div class="todo__button-bar">
-                                    <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
                                     <div class="todo__time">` + date_task + `</div>
+                                    <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
                                 </div>
                             </li>`
                             $(".todo__list").append(task);
@@ -149,13 +147,12 @@
                         <li data-id="` + id + `">
                             <div class="form-check">
                                 <input class="inp-cbx" id="task_` + id + `" type="checkbox"/>
-                                <label class="cbx" for="task_` + id + `">
-                                    <span class="todo__action">` + text + `</span>
-                                </label>
+                                <label class="cbx" for="task_` + id + `"></label>
+                                <span class="todo__action" contenteditable="true">` + text + `</span>
                             </div>
                             <div class="todo__button-bar">
-                                <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
                                 <div class="todo__time">` + time + `</div>
+                                <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
                             </div>
                         </li>`
                         $(".todo__list").append(task);

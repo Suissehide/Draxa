@@ -4,7 +4,6 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\EquatableInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -53,8 +52,6 @@ class AppUser implements UserInterface
     {
         $this->isActive = true;
         // $this->roles = array();
-        // may not be needed, see section on salt below
-        // $this->salt = md5(uniqid('', true));
     }
 
     public function getId(): ?int
@@ -128,15 +125,11 @@ class AppUser implements UserInterface
 
     public function isEqualTo(UserInterface $user)
     {
-        if (!$user instanceof Utilisateurs) {
+        if (!$user instanceof AppUser) {
             return false;
         }
 
         if ($this->password !== $user->getPassword()) {
-            return false;
-        }
-
-        if ($this->salt !== $user->getSalt()) {
             return false;
         }
 

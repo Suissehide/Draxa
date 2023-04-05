@@ -3,9 +3,14 @@
 namespace App\Controller;
 
 use App\Entity\AppUser;
+
 use App\Form\AppUserFormType;
 use App\Form\AppUserType;
+
 use App\Repository\AppUserRepository;
+
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,6 +23,15 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class AppUserController extends AbstractController
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
 
     /**
      * @Route("/default", name="default", methods="GET")
@@ -29,7 +43,7 @@ class AppUserController extends AbstractController
     /**
      * @Route("/login", name="login", methods="GET|POST")
      */
-    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -62,15 +76,13 @@ class AppUserController extends AbstractController
         $form = $this->createForm(AppUserFormType::class, $user);
 
         $form->handleRequest($request);
-        $error = 0;
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('validation')->isClicked()) {
                 $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
                 $user->setPassword($password);
                 // $user->setRoles(array('ROLE_USER'));
-                $em = $this->getDoctrine()->getManager();
-                $em->persist($user);
-                $em->flush();
+                $this->em->persist($user);
+                $this->em->flush();
                 $session->getFlashBag()->add('success', 'Félicitations ! Votre compte a été créé avec succès !');
 
                 return $this->redirectToRoute('login');
@@ -99,9 +111,8 @@ class AppUserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($appUser);
-            $em->flush();
+            $this->em->persist($appUser);
+            $this->em->flush();
 
             return $this->redirectToRoute('app_user_index');
         }
@@ -115,16 +126,18 @@ class AppUserController extends AbstractController
     /**
      * @Route("/app/user/{id}", name="app_user_show", methods="GET")
      */
-    public function show(AppUser $appUser): Response
+    public function show(ManagerRegistry $doctrine, int $id): Response
     {
+        $appUser = $doctrine->getRepository(AppUser::class)->find($id);
         return $this->render('app_user/show.html.twig', ['app_user' => $appUser]);
     }
 
     /**
      * @Route("/app/user/{id}/edit", name="app_user_edit", methods="GET|POST")
      */
-    public function edit(Request $request, AppUser $appUser): Response
+    public function edit(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
+        $appUser = $doctrine->getRepository(AppUser::class)->find($id);
         $form = $this->createForm(AppUserType::class, $appUser);
         $form->handleRequest($request);
 
@@ -143,12 +156,12 @@ class AppUserController extends AbstractController
     /**
      * @Route("/app/user/{id}", name="app_user_delete", methods="DELETE")
      */
-    public function delete(Request $request, AppUser $appUser): Response
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $appUser->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($appUser);
-            $em->flush();
+        $appUser = $doctrine->getRepository(AppUser::class)->find($id);
+        if ($this->isCsrfTokenValid('delete' . $appUser->getId(), $request->get('_token'))) {
+            $this->em->remove($appUser);
+            $this->em->flush();
         }
 
         return $this->redirectToRoute('app_user_index');

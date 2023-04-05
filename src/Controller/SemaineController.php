@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Semaine;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,26 +18,35 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SemaineController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/add", name="semaine_add", methods="POST")
      */
     public function add(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            if ($em->getRepository(Semaine::class)->findSemaineAtSameDate($request->request->get('dateDebut')) != [])
+            if ($this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut')) != [])
                 return new JsonResponse(false);
 
-            $dateDebut = explode('/', $request->request->get('dateDebut'));
+            $dateDebut = explode('/', $request->get('dateDebut'));
             $new_dateDebut = date_create(date("y-m-d", mktime(0, 0, 0, $dateDebut[1], $dateDebut[0], $dateDebut[2])));
 
-            $dateFin = explode('/', $request->request->get('dateFin'));
+            $dateFin = explode('/', $request->get('dateFin'));
             $new_dateFin = date_create(date("y-m-d", mktime(0, 0, 0, $dateFin[1], $dateFin[0], $dateFin[2])));
 
             $semaine = new Semaine();
             $semaine->setDateDebut($new_dateDebut);
             $semaine->setDateFin($new_dateFin);
-            $em->persist($semaine);
-            $em->flush();
+            $this->em->persist($semaine);
+            $this->em->flush();
 
             return new JsonResponse($semaine->getId());
         }
@@ -47,8 +58,7 @@ class SemaineController extends AbstractController
     public function semaine_date(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-            $isSemaine = $em->getRepository(Semaine::class)->findSemaineAtSameDate($request->request->get('dateDebut'));
+            $isSemaine = $this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut'));
 
             return new JsonResponse($isSemaine ? false : true);
         }
@@ -57,13 +67,13 @@ class SemaineController extends AbstractController
     /**
      * @Route("/{id}", name="semaine_delete", methods="DELETE")
      */
-    public function delete(Request $request, semaine $semaine) : Response
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $semaine = $doctrine->getRepository(Semaine::class)->find($id);
             if ($semaine) {
-                $em->remove($semaine);
-                $em->flush();
+                $this->em->remove($semaine);
+                $this->em->flush();
                 return new JsonResponse(true);
             }
             return new JsonResponse(false);
@@ -73,19 +83,19 @@ class SemaineController extends AbstractController
     /**
      * @Route("/duplicate/{id}", name="semaine_duplicate", methods="POST")
      */
-    public function duplicate(Request $request, Semaine $semaine): Response
+    public function duplicate(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $semaine = $doctrine->getRepository(Semaine::class)->find($id);
             if ($semaine) {
-                if ($em->getRepository(Semaine::class)->findSemaineAtSameDate($request->request->get('dateDebut')) != [])
+                if ($this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut')) != [])
                     return new JsonResponse(false);
 
                 $newSemaine = clone $semaine;
 
-                $dateDebut = explode('/', $request->request->get('dateDebut'));
+                $dateDebut = explode('/', $request->get('dateDebut'));
                 $new_dateDebut = date_create(date("y-m-d", mktime(0, 0, 0, $dateDebut[1], $dateDebut[0], $dateDebut[2])));
-                $dateFin = explode('/', $request->request->get('dateFin'));
+                $dateFin = explode('/', $request->get('dateFin'));
                 $new_dateFin = date_create(date("y-m-d", mktime(0, 0, 0, $dateFin[1], $dateFin[0], $dateFin[2])));
 
                 $newSemaine->setDateDebut($new_dateDebut);
@@ -100,8 +110,8 @@ class SemaineController extends AbstractController
                     $newSlot->setDate(date_sub($d, $diff));
                     $newSemaine->addSlot($newSlot);
 
-                    $em->persist($newSemaine);
-                    $em->flush();
+                    $this->em->persist($newSemaine);
+                    $this->em->flush();
 
                     $slotsJson[] = array(
                         'id' => $newSlot->getId(),

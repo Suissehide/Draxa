@@ -6,10 +6,12 @@ use App\Constant\ThematiqueConstants;
 
 use App\Entity\Semaine;
 use App\Entity\Slot;
+use App\Entity\Soignant;
 
 use App\Form\SemaineType;
 use App\Form\SlotType;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,12 +19,20 @@ use Symfony\Component\Routing\Annotation\Route;
 class SettingController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+    
+    /**
      * @Route("/settings", name="settings")
      */
     public function index(): Response
     {
-        $em = $this->getDoctrine()->getManager();
-
         $semaine = new Semaine();
         $semaineForm = $this->createForm(SemaineType::class, $semaine);
 
@@ -43,10 +53,10 @@ class SettingController extends AbstractController
         return $this->render('setting/index.html.twig', [
             'title' => 'Settings',
             'controller_name' => 'SettingController',
-            'semaines' => $em->getRepository(Semaine::class)->findBy([], ['dateDebut' => 'ASC']),
+            'semaines' => $this->em->getRepository(Semaine::class)->findBy([], ['dateDebut' => 'ASC']),
             'semaineForm' => $semaineForm->createView(),
             'slotForm' => $slotForm->createView(),
-            'dates_semaines' => $em->getRepository(Semaine::class)->findAllDates(),
+            'dates_semaines' => $this->em->getRepository(Semaine::class)->findAllDates(),
             
             'thematiques' => $thematiques
         ]);
@@ -57,15 +67,13 @@ class SettingController extends AbstractController
      */
     public function soignant(): Response
     {
-        $em = $this->getDoctrine()->getManager();
-
         $soignant = new Soignant();
         $soignantForm = $this->createForm(SoignantType::class, $soignant);
 
         return $this->render('setting/soignant.html.twig', [
             'title' => 'Soignants',
             'controller_name' => 'SoignantController',
-            'soignants' => $em->getRepository(Soignant::class)->findAll(),
+            'soignants' => $this->em->getRepository(Soignant::class)->findAll(),
             'soignantForm' => $soignantForm->createView(),
         ]);
     }

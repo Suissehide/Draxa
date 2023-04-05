@@ -201,55 +201,6 @@
                 </tbody>
             </table>
         </div>
-
-
-        <div class="separator">
-            <span class="separator-text">Statistiques</span>
-        </div>
-        <div class="stats-wrapper">
-            <div class="box-sm">
-                <span class="glyphicon glyphicon-user"></span>
-                <div class="stats">
-                    <h1>Patients</h1>
-                    <p>{{ nbPatients|number_format(0, ',', '.') }}</p>
-                </div>
-            </div>
-            <div class="box-sm">
-                <span class="glyphicon glyphicon-leaf"></span>
-                <div class="stats">
-                    <h1>Consultations</h1>
-                    <p>{{ nbConsultation|number_format(0, ',', '.') }}</p>
-                </div>
-            </div>
-            <div class="box-sm">
-                <span class="glyphicon glyphicon-fire"></span>
-                <div class="stats">
-                    <h1>Entretiens</h1>
-                    <p>{{ nbEntretien|number_format(0, ',', '.') }}</p>
-                </div>
-            </div>
-            <div class="box-sm">
-                <span class="glyphicon glyphicon-grain"></span>
-                <div class="stats">
-                    <h1>Ateliers</h1>
-                    <p>{{ nbAtelier|number_format(0, ',', '.') }}</p>
-                </div>
-            </div>
-            <div class="box-sm">
-                <span class="glyphicon glyphicon-tint"></span>
-                <div class="stats">
-                    <h1>Semaines éducatives</h1>
-                    <p>{{ nbEducative|number_format(0, ',', '.') }}</p>
-                </div>
-            </div>
-            <div class="box-sm">
-                <span class="glyphicon glyphicon-apple"></span>
-                <div class="stats">
-                    <h1>Coachings PRM</h1>
-                    <p>{{ nbCoaching|number_format(0, ',', '.') }}</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!--SVG Sprites-->
@@ -346,39 +297,39 @@
 
         function ajaxAction(d) {
             $.ajax({
-                    url: "{{ path('accueil') }}",
-                    type: "POST",
-                    dataType: "json",
-                    data: {
-                        "date": d
-                    },
-                    success: function (res) {
-                        const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun coaching PRM', 'Aucun atelier', 'Aucune semaine éducative'];
-                        $(".box tbody tr").remove();
-                        for (let i = 0; i < res.length; i++) {
-                            if (res[i].length > 0) {
-                                $.each(res[i], function (index, val) {
-                                    $('<tr data-row-id=' + val.id + ' class="text-left">')
-                                    .append(
-                                        `<td class="horaire">` + val.horaire + `</td>
-                                        <td class="thematique">` + val.thematique + `</td>
-                                        <td>` + val.location + `</td>
-                                        <td>` + val.soignant + `</td>
-                                        <td>` + displayPatient(val.patients, val.place) + `</td>
-                                        <td>` + displayPatientType(val.patients) + `</td>
-                                        <td>` + displayPatientActions(val.patients) + `</td>`
-                                    )
-                                    .appendTo('#' + anchorList[i]);
-                                });
-                            } else {
-                                $('<tr class="disabled text-center">')
-                                .append('<td colspan="7">' + emptyPhraseList[i] + '</td>')
+                url: "{{ path('accueil') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "date": d
+                },
+                success: function (res) {
+                    const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun coaching PRM', 'Aucun atelier', 'Aucune semaine éducative'];
+                    $(".box tbody tr").remove();
+                    for (let i = 0; i < res.length; i++) {
+                        if (res[i].length > 0) {
+                            $.each(res[i], function (index, val) {
+                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                .append(
+                                    `<td class="horaire">` + val.horaire + `</td>
+                                    <td class="thematique">` + val.thematique + `</td>
+                                    <td>` + val.location + `</td>
+                                    <td>` + val.soignant + `</td>
+                                    <td>` + displayPatient(val.patients, val.place) + `</td>
+                                    <td>` + displayPatientType(val.patients) + `</td>
+                                    <td>` + displayPatientActions(val.patients) + `</td>`
+                                )
                                 .appendTo('#' + anchorList[i]);
-                            }
+                            });
+                        } else {
+                            $('<tr class="disabled text-center">')
+                            .append('<td colspan="7">' + emptyPhraseList[i] + '</td>')
+                            .appendTo('#' + anchorList[i]);
                         }
-                        updateWidth();
                     }
-                });
+                    updateWidth();
+                }
+            });
         }
         ajaxAction(dateSelected);
 

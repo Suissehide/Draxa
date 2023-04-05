@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Semaine;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,13 +15,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class YearController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/", name="year")
      */
     public function index(): Response
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $semaines = $em->getRepository(Semaine::class)->findAll();
+        $semaines = $this->em->getRepository(Semaine::class)->findAll();
         $data = [];
         foreach($semaines as $semaine) {
             $data[] = [

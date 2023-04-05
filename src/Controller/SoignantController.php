@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Soignant;
 use App\Form\SoignantType;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,19 +19,27 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class SoignantController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/", name="soignant")
      */
     public function index(): Response
     {
-        $em = $this->getDoctrine()->getManager();
-
         $soignant = new Soignant();
         $soignantForm = $this->createForm(SoignantType::class, $soignant);
 
         return $this->render('soignant/index.html.twig', [
             'title' => 'Soignants',
             'controller_name' => 'SoignantController',
-            'soignants' => $em->getRepository(Soignant::class)->findAll(),
+            'soignants' => $this->em->getRepository(Soignant::class)->findAll(),
             'soignantForm' => $soignantForm->createView(),
         ]);
     }
@@ -40,17 +50,15 @@ class SoignantController extends AbstractController
     public function add(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $nom = $request->request->get('nom');
-            $prenom = $request->request->get('prenom');
+            $nom = $request->get('nom');
+            $prenom = $request->get('prenom');
 
             $soignant = new Soignant();
             $soignant->setNom($nom);
             $soignant->setPrenom($prenom);
             $soignant->setStatus(true);
-            $em->persist($soignant);
-            $em->flush();
+            $this->em->persist($soignant);
+            $this->em->flush();
 
             return new JsonResponse($soignant->getId());
         }
@@ -59,13 +67,13 @@ class SoignantController extends AbstractController
     /**
      * @Route("/{id}", name="soignant_delete", methods="DELETE")
      */
-    public function delete(Request $request, Soignant $soignant) : Response
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id) : Response
     {
+        $soignant = $doctrine->getRepository(Soignant::class)->find($id);
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
             if ($soignant) {
-                $em->remove($soignant);
-                $em->flush();
+                $this->em->remove($soignant);
+                $this->em->flush();
                 return new JsonResponse(true);
             }
             return new JsonResponse(false);
@@ -78,16 +86,14 @@ class SoignantController extends AbstractController
     public function update(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $soignantsId = $request->request->get('soignants');
-            $status = $request->request->get('status');
-            $priorityMax = $em->getRepository(Soignant::class)->getPriorityMax();
+            $soignantsId = $request->get('soignants');
+            $status = $request->get('status');
+            $priorityMax = $this->em->getRepository(Soignant::class)->getPriorityMax();
 
             dump($priorityMax);
 
             foreach ($soignantsId as $soignantId) {
-                $soignant = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
+                $soignant = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
                 $soignant->setStatus($status == 'true' ? 1 : 0);
                 if ($status == 'true') {
                     $priorityMax += 1;
@@ -96,7 +102,7 @@ class SoignantController extends AbstractController
                     $soignant->setPriority(0);
                 }
             }
-            $em->flush();
+            $this->em->flush();
             return new JsonResponse(true);
         }
     }
@@ -107,17 +113,15 @@ class SoignantController extends AbstractController
     public function priority(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $soignantsId = $request->request->get('soignants');
-            $priorityMax = $em->getRepository(Soignant::class)->getPriorityMax();
+            $soignantsId = $request->get('soignants');
+            $priorityMax = $this->em->getRepository(Soignant::class)->getPriorityMax();
             
             foreach ($soignantsId as $soignantId) {
                 $priorityMax += 1;
-                $soignant = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
+                $soignant = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
                 $soignant->setPriority($priorityMax);
             }
-            $em->flush();
+            $this->em->flush();
             return new JsonResponse(true);
         }
     }
@@ -129,18 +133,16 @@ class SoignantController extends AbstractController
     public function swap(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $soignantId1 = $request->get('soignant1');
+            $soignantId2 = $request->get('soignant2');
 
-            $soignantId1 = $request->request->get('soignant1');
-            $soignantId2 = $request->request->get('soignant2');
-
-            $soignant1 = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId1));
-            $soignant2 = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId2));
+            $soignant1 = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId1));
+            $soignant2 = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId2));
             $priority_temp = $soignant1->getPriority();
             $soignant1->setPriority($soignant2->getPriority());
             $soignant2->setPriority($priority_temp);
 
-            $em->flush();
+            $this->em->flush();
             return new JsonResponse(true);
         }
     }
@@ -151,15 +153,13 @@ class SoignantController extends AbstractController
     public function reset(Request $request) : Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $soignantsId = $request->request->get('soignants');
+            $soignantsId = $request->get('soignants');
 
             foreach ($soignantsId as $soignantId) {
-                $soignant = $em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
+                $soignant = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
                 $soignant->setPriority(0);
             }
-            $em->flush();
+            $this->em->flush();
             return new JsonResponse(true);
         }
     }

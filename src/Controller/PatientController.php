@@ -11,9 +11,12 @@ use App\Entity\Slot;
 use App\Form\PatientCreationFormType;
 use App\Form\PatientType;
 use App\Form\RendezVousType;
+use App\Form\DiagnosticEducatifType;
 
 use App\Repository\PatientRepository;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,17 +35,26 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class PatientController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/", name="patient_list", methods="GET|POST")
      */
-
     public function patient_list(PatientRepository $patientRepository, Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $etat = $request->request->get('etat');
-            $current = $request->request->get('current');
-            $rowCount = $request->request->get('rowCount');
-            $searchPhrase = $request->request->get('searchPhrase');
-            $sort = $request->request->get('sort');
+            $etat = $request->get('etat');
+            $current = $request->get('current');
+            $rowCount = $request->get('rowCount');
+            $searchPhrase = $request->get('searchPhrase');
+            $sort = $request->get('sort');
 
             $patients = $patientRepository->findByFilter($sort, $searchPhrase, $etat);
             if ($searchPhrase != "" || $sort != "all") {
@@ -136,10 +148,9 @@ class PatientController extends AbstractController
 
     private function getNextRdv(Patient $patient)
     {
-        $em = $this->getDoctrine()->getManager();
         $date = \DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
 
-        $rendezVous = $em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
+        $rendezVous = $this->em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
 
         $rdv = ["", "", "", "", ""];
         if ($rendezVous) {
@@ -163,14 +174,13 @@ class PatientController extends AbstractController
         $patient = new Patient();
         $form = $this->createForm(PatientCreationFormType::class, $patient);
 
-        $em = $this->getDoctrine()->getManager();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('validation')->isClicked()) {
                 $patient = $form->getData();
 
-                $em->persist($patient);
-                $em->flush();
+                $this->em->persist($patient);
+                $this->em->flush();
             }
 
             return $this->redirectToRoute('patient_vue', ['id' => $patient->getId()]);
@@ -186,10 +196,9 @@ class PatientController extends AbstractController
     /**
      * @Route("/vue/{id}", name="patient_vue", methods="GET|POST")
      */
-    public function patient_vue(Patient $patient, Request $request): Response
+    public function patient_vue(ManagerRegistry $doctrine, int $id, Request $request): Response
     {
-        $em = $this->getDoctrine()->getManager();
-
+        $patient = $doctrine->getRepository(Patient::class)->find($id);
         $form = $this->createForm(PatientCreationFormType::class, $patient);
         $form->handleRequest($request);
 
@@ -197,7 +206,7 @@ class PatientController extends AbstractController
             if ($form->get('validation')->isClicked()) {
                 $patient = $form->getData();
 
-                $em->flush();
+                $this->em->flush();
             }
 
             return $this->redirectToRoute('patient_list');
@@ -225,37 +234,37 @@ class PatientController extends AbstractController
 
             'formRendezVous' => $formRendezVous->createView(),
 
-            'dates_ateliers' => $em->getRepository(Slot::class)->findAllDates("Atelier"),
-            'dates_consultations' => $em->getRepository(Slot::class)->findAllDates("Consultation"),
-            'dates_entretiens' => $em->getRepository(Slot::class)->findAllDates("Entretien"),
-            'dates_educatives' => $em->getRepository(Slot::class)->findAllDates("Educative"),
-            'dates_coachings' => $em->getRepository(Slot::class)->findAllDates("Coaching"),
+            'dates_ateliers' => $this->em->getRepository(Slot::class)->findAllDates("Atelier"),
+            'dates_consultations' => $this->em->getRepository(Slot::class)->findAllDates("Consultation"),
+            'dates_entretiens' => $this->em->getRepository(Slot::class)->findAllDates("Entretien"),
+            'dates_educatives' => $this->em->getRepository(Slot::class)->findAllDates("Educative"),
+            'dates_coachings' => $this->em->getRepository(Slot::class)->findAllDates("Coaching"),
 
             'thematiques' => $thematiques
         ]);
     }
 
-        /**
+    /**
      * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET|POST")
      */
-    public function patient_vue_diagnostic(Patient $patient, Request $request): Response
+    public function patient_vue_diagnostic(ManagerRegistry $doctrine, int $id, Request $request): Response
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $form = $this->createForm(PatientDiagnosticType::class, $patient);
+        $patient = $doctrine->getRepository(Patient::class)->find($id);
+        $form = $this->createForm(DiagnosticEducatifType::class, $patient->getDiagnosticEducatif());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('validation')->isClicked()) {
                 $patient = $form->getData();
+                
 
-                $em->flush();
+                $this->em->flush();
             }
 
-            return $this->redirectToRoute('patient_vue_diagnostic');
+            return $this->redirectToRoute('patient_vue_diagnostic', ['id' => $id]);
         }
 
-        return $this->render('patient/vue/diagostic.html.twig', [
+        return $this->render('patient/vue/diagnostic_educatif.html.twig', [
             'title' => 'Diagnostic',
             'controller_name' => 'PatientDiagnosticController',
             'patient' => $patient,
@@ -264,8 +273,7 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/csv", name="csv", methods="GET|POST")
-     *
+     * @Route("/csv", name="csv", methods="GET|POST") 
      */
     public function generateCsvAction(PatientRepository $patientRepository): Response
     {
@@ -328,9 +336,8 @@ class PatientController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($patient);
-            $em->flush();
+            $this->em->persist($patient);
+            $this->em->flush();
 
             return $this->redirectToRoute('patient_index');
         }
@@ -344,16 +351,18 @@ class PatientController extends AbstractController
     /**
      * @Route("/{id}", name="patient_show", methods="GET")
      */
-    public function show(Patient $patient): Response
+    public function show(ManagerRegistry $doctrine, int $id): Response
     {
+        $patient = $doctrine->getRepository(Patient::class)->find($id);
         return $this->render('patient/show.html.twig', ['patient' => $patient]);
     }
 
     /**
      * @Route("/{id}/edit", name="patient_edit", methods="GET|POST")
      */
-    public function edit(Request $request, Patient $patient): Response
+    public function edit(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
+        $patient = $doctrine->getRepository(Patient::class)->find($id);
         $form = $this->createForm(PatientType::class, $patient);
         $form->handleRequest($request);
 
@@ -372,12 +381,12 @@ class PatientController extends AbstractController
     /**
      * @Route("/{id}", name="patient_delete", methods="DELETE")
      */
-    public function delete(Request $request, Patient $patient): Response
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $patient->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($patient);
-            $em->flush();
+        $patient = $doctrine->getRepository(Patient::class)->find($id);
+        if ($this->isCsrfTokenValid('delete' . $patient->getId(), $request->get('_token'))) {
+            $this->em->remove($patient);
+            $this->em->flush();
         }
 
         return $this->redirectToRoute('patient_index');

@@ -191,6 +191,11 @@ class Patient
      */
     private $email;
 
+    /**
+     * @ORM\OneToOne(targetEntity=DiagnosticEducatif::class, cascade={"persist", "remove"})
+     */
+    private $diagnosticEducatif;
+
     public function __construct()
     {
         $this->rendezVous = new ArrayCollection();
@@ -564,6 +569,18 @@ class Patient
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getDiagnosticEducatif(): ?DiagnosticEducatif
+    {
+        return $this->diagnosticEducatif;
+    }
+
+    public function setDiagnosticEducatif(?DiagnosticEducatif $diagnosticEducatif): self
+    {
+        $this->diagnosticEducatif = $diagnosticEducatif;
 
         return $this;
     }

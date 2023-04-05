@@ -4,12 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Todo;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * @Route("/todo")
@@ -17,12 +17,21 @@ use Symfony\Component\Validator\Constraints\DateTime;
 class TodoController extends AbstractController
 {
     /**
+     * @var EntityManagerInterface
+     */
+    private $em;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
+
+    /**
      * @Route("/getTodos", name="todo_get", methods="GET")
      */
     public function getTodos(Request $request): Response
     {
-        $em = $this->getDoctrine()->getManager();
-        $todoObjects = $em->getRepository(Todo::class)->findAll();
+        $todoObjects = $this->em->getRepository(Todo::class)->findAll();
 
         if ($request->isXmlHttpRequest()) {
             $todos = [];
@@ -46,17 +55,16 @@ class TodoController extends AbstractController
     public function add(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
             $todo = new Todo();
 
-            $description = $request->request->get('description');
+            $description = $request->get('description');
 
             $todo->setEnable(false);
             $todo->setDatetime(new \DateTime());
             $todo->setDescription($description);
 
-            $em->persist($todo);
-            $em->flush();
+            $this->em->persist($todo);
+            $this->em->flush();
 
             return new JsonResponse($todo->getId());
         }
@@ -68,14 +76,12 @@ class TodoController extends AbstractController
     public function remove(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $taskId = $request->get('taskId');
 
-            $taskId = $request->request->get('taskId');
+            $todo = $this->em->getRepository(Todo::class)->find($taskId);
 
-            $todo = $em->getRepository(Todo::class)->find($taskId);
-
-            $em->remove($todo);
-            $em->flush();
+            $this->em->remove($todo);
+            $this->em->flush();
 
             return new JsonResponse(true);
         }
@@ -87,13 +93,11 @@ class TodoController extends AbstractController
     public function clear(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $todos = $em->getRepository(Todo::class)->findAll();
+            $todos = $this->em->getRepository(Todo::class)->findAll();
             foreach($todos as $todo) {
-                $em->remove($todo);
+                $this->em->remove($todo);
             }
-            $em->flush();
+            $this->em->flush();
 
             return new JsonResponse(true);
         }
@@ -105,15 +109,13 @@ class TodoController extends AbstractController
     public function enable(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $enable = $request->get('enable');
+            $taskId = $request->get('taskId');
 
-            $enable = $request->request->get('enable');
-            $taskId = $request->request->get('taskId');
-
-            $todo = $em->getRepository(Todo::class)->find($taskId);
+            $todo = $this->em->getRepository(Todo::class)->find($taskId);
 
             $todo->setEnable($enable === "true");
-            $em->flush();
+            $this->em->flush();
 
             return new JsonResponse(true);
         }
@@ -125,14 +127,12 @@ class TodoController extends AbstractController
     public function edit(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $em = $this->getDoctrine()->getManager();
+            $description = $request->get('description');
+            $taskId = $request->get('taskId');
 
-            $description = $request->request->get('description');
-            $taskId = $request->request->get('taskId');
-
-            $todo = $em->getRepository(Todo::class)->find($taskId);
+            $todo = $this->em->getRepository(Todo::class)->find($taskId);
             $todo->setDescription($description);
-            $em->flush();
+            $this->em->flush();
 
             return new JsonResponse(true);
         }

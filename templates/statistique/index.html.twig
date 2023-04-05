@@ -1,0 +1,233 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+    
+{% endblock %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block page_content %}
+
+<div class="wrapper">
+    <h1>Statistiques</h1>
+
+    <div class="aspect-wrapper">
+
+        <div class="aspect-tab">
+            <input id="item-1" type="checkbox" class="aspect-input" name="aspect">
+            <label for="item-1" class="aspect-label"></label>
+            <div class="aspect-content">
+                <div class="aspect-info">
+                    <span class="aspect-name">Entrée dans le programme</span>
+                </div>
+                <div class="aspect-stat"></div>
+            </div>
+            <div class="aspect-tab-content">
+                <div class="stats-wrapper">
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant bénéficié d'un diagnostic éducatif</div>
+                            <div class="stats-number">{{ statistiques.entree.1 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients orientés par un professionnel de santé en dehors d'un hôpital (dont médecin traitant)</div>
+                            <div class="stats-number">{{ statistiques.entree.2 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients orientés par un professionnel de santé au cours d'une hospitalisation</div>
+                            <div class="stats-number">{{ statistiques.entree.3 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients orientés par un professionnel de santé à l'hôpital en consultation externe</div>
+                            <div class="stats-number">{{ statistiques.entree.4 }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aspect-tab">
+            <input id="item-2" type="checkbox" class="aspect-input" name="aspect">
+            <label for="item-2" class="aspect-label"></label>
+            <div class="aspect-content">
+                <div class="aspect-info">
+                    <span class="aspect-name">Séances d'ETP et mode de prise en charge</span>
+                </div>
+                <div class="aspect-stat">
+
+                </div>
+            </div>
+            <div class="aspect-tab-content">
+                <div class="stats-wrapper">
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients pris en charge au cours d'une hospitalisation (de jour, de semaine, complète) en établissement de santé uniquement</div>
+                            <div class="stats-number">{{ statistiques.seance.1 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients pris en charge en soins externes d'un établissement de santé uniquement (le patient vient à l'hôpital pour une séance d'ETP)</div>
+                            <div class="stats-number">{{ statistiques.seance.2 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients pris en charge en soins de ville uniquement (MSP, association, ex-réseau de PS libéraux…)</div>
+                            <div class="stats-number">{{ statistiques.seance.3 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients pris en charge en programme mixte (hospitalisation + soins externes) si la majorité des séances a eu lieu en soins externes</div>
+                            <div class="stats-number">{{ statistiques.seance.4 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Autre type de prise en charge à chiffrer et à expliquer</div>
+                            <div class="stats-number">{{ statistiques.seance.5 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre total de séances individuelles d'ETP réalisées</div>
+                            <div class="stats-number">{{ statistiques.seance.6 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre total de séances collectives d'ETP réalisées</div>
+                            <div class="stats-number">{{ statistiques.seance.7 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre moyen de patients par séance collective</div>
+                            <div class="stats-number">{{ statistiques.seance.8 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de proches et/ou aidants du patient ayant participé au programme</div>
+                            <div class="stats-number">{{ statistiques.seance.9 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre total de séances d'ETP avec une participation de proches et/ou aidants du patient</div>
+                            <div class="stats-number">{{ statistiques.seance.10 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre total de séances destinées exclusivement aux proches et/ou aidants du patient</div>
+                            <div class="stats-number">{{ statistiques.seance.11 }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aspect-tab">
+            <input id="item-3" type="checkbox" class="aspect-input" name="aspect">
+            <label for="item-3" class="aspect-label"></label>
+            <div class="aspect-content">
+                <div class="aspect-info">
+                    <span class="aspect-name">Sortie du programme</span>
+                </div>
+                <div class="aspect-stat">
+                    
+                </div>
+            </div>
+            <div class="aspect-tab-content">
+                <div class="stats-wrapper">
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Quel que soit le mode de prise en charge)</div>
+                            <div class="stats-number">{{ statistiques.sortie.1 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une hospitalisation complète ou de jour)</div>
+                            <div class="stats-number">{{ statistiques.sortie.2 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une venue en soins externes)</div>
+                            <div class="stats-number">{{ statistiques.sortie.3 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une venue d'une venue mixte : hospitalisation suivi de séances d'ETP pratiquée en soins externes)</div>
+                            <div class="stats-number">{{ statistiques.sortie.4 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours de séances d'ETP pratiquées en soins de ville)</div>
+                            <div class="stats-number">{{ statistiques.sortie.5 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant bénéficié d'une évaluation individuelle des compétences acquises de l'ETP</div>
+                            <div class="stats-number">{{ statistiques.sortie.6 }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aspect-tab">
+            <input id="item-4" type="checkbox" class="aspect-input" name="aspect">
+            <label for="item-4" class="aspect-label"></label>
+            <div class="aspect-content">
+                <div class="aspect-info">
+                    <span class="aspect-name">Modalités de suivi - Coordination du parcours de soins</span>
+                </div>
+                <div class="aspect-stat"></div>
+            </div>
+            <div class="aspect-tab-content">
+                <div class="stats-wrapper">
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre initiale d'ETP contenant les étapes suivantes : diagnostic éducatif + au moins 2 séance collective/individuelle + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
+                            <div class="stats-number">{{ statistiques.modalite.1 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Une offre de suivi ou de renforcement  dans un nouveau programme est-elle proposée au sein de la structure ?</div>
+                            <div class="stats-number">{{ statistiques.modalite.2 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre de suivi ou de renforcement  d'ETP contenant les étapes suivantes : actualisation du diagnostic éducatif + au moins 2 séance collective/individuelle + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
+                            <div class="stats-number">{{ statistiques.modalite.3 }}</div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">Nombre de patients ayant bénéficié d'un programme personnalisé d'ETP pour lesquels la synthèse de l'évaluation des compétences acquises accompagnée d'une proposition de modalité de suivi éducatif a été transmise au moins à leur médecin traitant</div>
+                            <div class="stats-number">{{ statistiques.modalite.4 }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
