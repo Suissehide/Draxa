@@ -11,6 +11,17 @@
 <div class="wrapper">
     <h1>Statistiques</h1>
 
+    <div class="btn-container">
+        <div class="input-group input-daterange">
+            <input type="text" class="form-control" id="dateDebut">
+            <div class="input-group-addon">à</div>
+            <input type="text" class="form-control" id="dateFin">
+        </div>
+        <button type="submit" class="btn btn-default" id="update">
+            Mettre à jour
+        </button>
+    </div>
+
     <div class="aspect-wrapper">
 
         <div class="aspect-tab">
@@ -327,6 +338,19 @@
 
 {% block javascripts %}
 <script>
+    $('.input-daterange').datepicker({
+        language: 'fr',
+        format: 'dd/mm/yyyy',
+        todayBtn: true,
+        todayHighlight: false,
+        autoclose: false
+    });
+
+    $('#dateDebut').datepicker('setDate', new Date());
+    let endDate = moment().endOf('year').format('DD/MM/YYYY');
+    $('#dateFin').datepicker('setDate', endDate);
+    $('.input-daterange input').datepicker('update');
+
     const thematiques = {{ thematiques|json_encode|raw }};
     const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
 
@@ -335,6 +359,10 @@
             url: "{{ path('statistiques') }}",
             type: "POST",
             dataType: "json",
+            data: {
+                dateStart: $('#dateDebut').val(),
+                dateEnd: $('#dateFin').val()
+            },
             success: function (res) {
                 $(".box tbody tr").remove();
                 for (let thematique in res) {
@@ -358,6 +386,10 @@
     }
     ajaxAction();
 
+    $("#update").click(function() {
+        ajaxAction();
+        console.log("hey");
+    })
 
     var $table = $('table'),
         $headCells = $('table:first thead tr').children(),

@@ -2485,12 +2485,15 @@ ul.todo__list li:hover .todo__delete {
     flex-direction: column;
 }
 
-.lnb-item .input-daterange {
+.input-daterange {
     width: 250px;
+}
+
+.lnb-item .input-daterange {
     margin-bottom: 15px;
 }
 
-.lnb-item .input-group-addon {
+.input-group-addon {
     width: 30px;
 }
 
@@ -2662,8 +2665,15 @@ input[type="checkbox"].checkbox-round + span {
     margin-top: 4px;
 }
 
-/* Link & button
+/* Statistique
 =================================================== */
+
+.btn-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 25px;
+}
 
 .aspect-wrapper {
     margin: 25px 0 0;

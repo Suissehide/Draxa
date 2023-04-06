@@ -126,6 +126,8 @@ class StatistiqueController extends AbstractController
         ];
 
         if ($request->isXmlHttpRequest()) {
+            $dateStart = \DateTime::createFromFormat("d/m/Y", date($request->get('dateStart')));
+            $dateEnd = \DateTime::createFromFormat("d/m/Y", date($request->get('dateEnd')));
             $slots = $this->em->getRepository(Slot::class)->findByDate($dateStart, $dateEnd);
 
             $response = [];
