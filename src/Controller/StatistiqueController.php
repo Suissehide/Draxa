@@ -163,7 +163,7 @@ class StatistiqueController extends AbstractController
                 if ($s->getCategorie() === $categorie) {
                     $thematique = array_search($r->getThematique(), $thematiques);
                     if (!$thematique)
-                        dump($r->getThematique());
+                        $thematique = "";
                     $etat = strtolower($r->getEtat());
                     if ($etat == "oui")
                         $jsonContent[$thematique]["oui"] += 1;
