@@ -342,13 +342,11 @@
                         let line = $('<tr data-row-id=' + 0 + ' class="text-left">');
                         line.append('<td class="">' + thematiques[thematique][etat] + '</td>')
                         $.each(res[thematique][etat], function (index, val) {
-
                             let color = "";
                             if (index == 0)
                                 color = "hotpink";
                             else if (index == 1)
                                 color = "gold";
-
                             line.append('<td class="' + color + '">' + val + '</td>')
                         });
                         line.appendTo('#' + thematique);

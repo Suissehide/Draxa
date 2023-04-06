@@ -7,8 +7,6 @@ use App\Entity\Slot;
 
 use App\Constant\ThematiqueConstants;
 
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,7 +33,7 @@ class StatistiqueController extends AbstractController
     {
         $patients = $this->em->getRepository(Patient::class)->findAll();
         $dateStart = date_create_from_format("d/m/Y", "01/01/2022");
-        $dateEnd = date_create_from_format("d/m/Y", "31/12/2023");
+        $dateEnd = date_create_from_format("d/m/Y", "31/12/2022");
 
         $statistiques = [
             'entree' => [
@@ -158,6 +156,8 @@ class StatistiqueController extends AbstractController
             foreach ($rendezVous as $r) {
                 if ($s->getCategorie() === $categorie) {
                     $thematique = array_search($r->getThematique(), $thematiques);
+                    if (!$thematique)
+                        $jsonContent[$r->getThematique()]["oui"] += 1;
                     $etat = strtolower($r->getEtat());
                     if ($etat == "oui")
                         $jsonContent[$thematique]["oui"] += 1;
