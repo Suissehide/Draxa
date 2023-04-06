@@ -111,6 +111,12 @@ class StatistiqueController extends AbstractController
         foreach (ThematiqueConstants::ENTRETIEN as $k => $v) { $entretiens[$k] = $v; }
         foreach (ThematiqueConstants::ATELIER as $k => $v) { $ateliers[$k] = $v; }
         foreach (ThematiqueConstants::COACHING as $k => $v) { $coachings[$k] = $v; }
+
+        $consultations[""] = "";
+        $entretiens[""] = "";
+        $ateliers[""] = "";
+        $coachings[""] = "";
+
         $thematiques = [
             "consultations" => $consultations,
             "entretiens" => $entretiens,
