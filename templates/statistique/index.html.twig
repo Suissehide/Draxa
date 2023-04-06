@@ -227,7 +227,155 @@
             </div>
         </div>
 
+        <div class="box">
+            <div class="box-header">
+                <div>Consultations</div>
+                <span></span>
+            </div>
+            <table id="consultations" class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id="">A-t-il eu lieu ?</th>
+                        <th data-column-id="">Oui</th>
+                        <th data-column-id="">Non</th>
+                        <th data-column-id=""></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Entretiens individuels</div>
+                <span></span>
+            </div>
+            <table id="entretiens" class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id=""></th>
+                        <th data-column-id="">Oui</th>
+                        <th data-column-id="">Non</th>
+                        <th data-column-id=""></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Coachings PRM</div>
+                <span></span>
+            </div>
+            <table id="coachings" class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id=""></th>
+                        <th data-column-id="">Oui</th>
+                        <th data-column-id="">Non</th>
+                        <th data-column-id=""></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Ateliers</div>
+                <span></span>
+            </div>
+            <table id="ateliers" class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id=""></th>
+                        <th data-column-id="">Oui</th>
+                        <th data-column-id="">Non</th>
+                        <th data-column-id=""></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Semaines éducatives</div>
+                <span></span>
+            </div>
+            <table id="educatives" class="table table-condensed table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id=""></th>
+                        <th data-column-id="">Oui</th>
+                        <th data-column-id="">Non</th>
+                        <th data-column-id=""></th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
     </div>
+
+
 </div>
 
+{% endblock %}
+
+
+{% block javascripts %}
+<script>
+    const thematiques = {{ thematiques|json_encode|raw }};
+    const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
+
+    function ajaxAction() {
+        $.ajax({
+            url: "{{ path('statistiques') }}",
+            type: "POST",
+            dataType: "json",
+            success: function (res) {
+                $(".box tbody tr").remove();
+                for (let thematique in res) {
+                    for (let etat in res[thematique]) {
+                        let line = $('<tr data-row-id=' + 0 + ' class="text-left">');
+                        line.append('<td class="">' + thematiques[thematique][etat] + '</td>')
+                        $.each(res[thematique][etat], function (index, val) {
+
+                            let color = "";
+                            if (index == 0)
+                                color = "hotpink";
+                            else if (index == 1)
+                                color = "gold";
+
+                            line.append('<td class="' + color + '">' + val + '</td>')
+                        });
+                        line.appendTo('#' + thematique);
+                    };
+                }
+                updateWidth();
+            }
+        });
+    }
+    ajaxAction();
+
+
+    var $table = $('table'),
+        $headCells = $('table:first thead tr').children(),
+        headWidth;
+
+    // Get the tbody columns width array
+    headWidth = $headCells.map(function() {
+        return $(this).data('width');
+    }).get();
+
+    function updateWidth() {
+        $table.find('tbody tr').each(function(i, v) {
+            $(v).children().each(function(j, s) {
+                $(s).width(headWidth[j]);
+            });
+        });
+    }
+</script>
 {% endblock %}

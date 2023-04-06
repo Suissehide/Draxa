@@ -170,6 +170,34 @@ class SlotRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findSlotEducative($dateStart, $dateEnd)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s.id)')
+            ->andWhere('s.date BETWEEN :dateStart AND :dateEnd')
+            ->setParameter('dateStart', $dateStart->format('Y-m-d'))
+            ->setParameter('dateEnd', $dateEnd->format('Y-m-d'))
+            ->andWhere('s.categorie = :categorie')
+            ->setParameter('categorie', "Educative")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
+    public function findSlotAtelier($dateStart, $dateEnd)
+    {
+        return $this->createQueryBuilder('s')
+            ->select('count(s.id)')
+            ->andWhere('s.date BETWEEN :dateStart AND :dateEnd')
+            ->setParameter('dateStart', $dateStart->format('Y-m-d'))
+            ->setParameter('dateEnd', $dateEnd->format('Y-m-d'))
+            ->andWhere('s.categorie = :categorie')
+            ->setParameter('categorie', "Atelier")
+            ->getQuery()
+            ->getSingleScalarResult()
+        ;
+    }
+
     // /**
     //  * @return Slot[] Returns an array of Slot objects
     //  */

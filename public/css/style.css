@@ -2150,6 +2150,7 @@ ul.todo__list li .cbx {
 .todo__button-bar {
     display: flex;
     align-items: center;
+    padding: 0px 5px;
 }
 
 .todo__delete {
@@ -2192,6 +2193,7 @@ ul.todo__list li:hover .todo__delete {
 
 .todo__time {
     color: #888;
+    white-space: nowrap;
 }
 
 .todo__notification {
@@ -2674,7 +2676,6 @@ input[type="checkbox"].checkbox-round + span {
 .aspect-tab {
     position: relative;
     width: 100%;
-    max-width: 1000px;
     margin: 0 0 10px;
     border-radius: 4px;
     background-color: #fff;
