@@ -1456,7 +1456,7 @@ nav {
     position: relative;
     padding-left: 2.3em;
     cursor: pointer;
-    background-color: #e6e6e6;
+    /* background-color: #e6e6e6; */
 }
 
 .radio-row [type="checkbox"]:not(:checked) + label:before,
@@ -1514,10 +1514,9 @@ nav {
     flex-direction: row;
     justify-content: left;
     align-items: center;
-    background-color: #e6e6e6;
+    /* background-color: #e6e6e6; */
     height: 42px;
     line-height: 42px;
-    /* border-radius: 3px; */
 }
 
 /* RDV

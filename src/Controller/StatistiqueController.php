@@ -31,82 +31,6 @@ class StatistiqueController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        $patients = $this->em->getRepository(Patient::class)->findAll();
-        $dateStart = date_create_from_format("d/m/Y", "01/01/2022");
-        $dateEnd = date_create_from_format("d/m/Y", "31/12/2022");
-
-        $statistiques = [
-            'entree' => [
-                1 => 0,
-                2 => 0,
-                3 => 0,
-                4 => 0
-            ],
-            'seance' => [
-                1 => 0,
-                2 => 0,
-                3 => 0,
-                4 => 0,
-                5 => 0,
-                6 => 0,
-                7 => 0,
-                8 => 0,
-                9 => 0,
-                10 => 0,
-                11 => 0
-            ],
-            'sortie' => [
-                1 => 0,
-                2 => 0,
-                3 => 0,
-                4 => 0,
-                5 => 0,
-                6 => 0
-            ],
-            'modalite' => [
-                1 => 0,
-                2 => 0,
-                3 => 0,
-                4 => 0
-            ]
-        ];
-
-        $statistiques['seance']['7'] += $this->statistique27($dateStart, $dateEnd);
-        $statistiques['seance']['8'] += $this->statistique28($dateStart, $dateEnd);
-
-        foreach ($patients as $patient) {
-            $rdv = $patient->getRendezVous();
-
-            $statistiques['entree']['1'] += $this->statistique11($rdv, $dateStart, $dateEnd);
-            $statistiques['entree']['2'] += $this->statistique12($patient, $dateStart, $dateEnd);
-            $statistiques['entree']['3'] += $this->statistique13($patient, $dateStart, $dateEnd);
-            $statistiques['entree']['4'] += $this->statistique14($patient, $dateStart, $dateEnd);
-
-            $statistiques['seance']['1'] += $this->statistique21($rdv, $dateStart, $dateEnd);
-            $statistiques['seance']['2'] += $this->statistique22($rdv, $dateStart, $dateEnd);
-            $statistiques['seance']['3'] += $this->statistique23($rdv, $dateStart, $dateEnd);
-            $statistiques['seance']['4'] += $this->statistique24($rdv, $dateStart, $dateEnd);
-            $statistiques['seance']['5'] += $this->statistique25($rdv, $dateStart, $dateEnd);
-
-            $statistiques['seance']['6'] += $this->statistique26($rdv, $dateStart, $dateEnd);
-
-            $statistiques['seance']['9'] += $this->statistique29($rdv, $dateStart, $dateEnd);
-            $statistiques['seance']['10'] += $this->statistique210($rdv, $dateStart, $dateEnd);
-            $statistiques['seance']['11'] += $this->statistique211($rdv, $dateStart, $dateEnd);
-
-            $statistiques['sortie']['1'] += $this->statistique31($rdv, $dateStart, $dateEnd);
-            $statistiques['sortie']['2'] += $this->statistique32($rdv, $dateStart, $dateEnd);
-            $statistiques['sortie']['3'] += $this->statistique33($rdv, $dateStart, $dateEnd);
-            $statistiques['sortie']['4'] += $this->statistique34($rdv, $dateStart, $dateEnd);
-            $statistiques['sortie']['5'] += $this->statistique35($rdv, $dateStart, $dateEnd);
-            $statistiques['sortie']['6'] += $this->statistique36($rdv, $dateStart, $dateEnd);
-
-            $statistiques['modalite']['1'] += $this->statistique41($rdv, $dateStart, $dateEnd);
-            $statistiques['modalite']['2'] = "Oui";
-            $statistiques['modalite']['3'] += $this->statistique43($rdv, $dateStart, $dateEnd);
-            $statistiques['modalite']['4'] += $this->statistique44($rdv, $dateStart, $dateEnd);
-        }
-
         foreach (ThematiqueConstants::CONSULTATION as $k => $v) { $consultations[$k] = $v; }
         foreach (ThematiqueConstants::ENTRETIEN as $k => $v) { $entretiens[$k] = $v; }
         foreach (ThematiqueConstants::ATELIER as $k => $v) { $ateliers[$k] = $v; }
@@ -129,20 +53,95 @@ class StatistiqueController extends AbstractController
             $dateStart = \DateTime::createFromFormat("d/m/Y", date($request->get('dateStart')));
             $dateEnd = \DateTime::createFromFormat("d/m/Y", date($request->get('dateEnd')));
             $slots = $this->em->getRepository(Slot::class)->findByDate($dateStart, $dateEnd);
+            $patients = $this->em->getRepository(Patient::class)->findAll();
 
-            $response = [];
-            $response['consultations'] = $this->createSlotCategorie($slots, $thematiques["consultations"], 'Consultation');
-            $response['entretiens'] = $this->createSlotCategorie($slots, $thematiques["entretiens"], 'Entretien');
-            $response['ateliers'] = $this->createSlotCategorie($slots, $thematiques["ateliers"], 'Atelier');
-            $response['coachings'] = $this->createSlotCategorie($slots, $thematiques["coachings"], 'Coaching');
-            $response['educatives'] = $this->createSlotCategorie($slots, $thematiques["educatives"], 'Educative');
+            $statistiques = [
+                'entree' => [
+                    1 => 0,
+                    2 => 0,
+                    3 => 0,
+                    4 => 0
+                ],
+                'seance' => [
+                    1 => 0,
+                    2 => 0,
+                    3 => 0,
+                    4 => 0,
+                    5 => 0,
+                    6 => 0,
+                    7 => 0,
+                    8 => 0,
+                    9 => 0,
+                    10 => 0,
+                    11 => 0
+                ],
+                'sortie' => [
+                    1 => 0,
+                    2 => 0,
+                    3 => 0,
+                    4 => 0,
+                    5 => 0,
+                    6 => 0
+                ],
+                'modalite' => [
+                    1 => 0,
+                    2 => 0,
+                    3 => 0,
+                    4 => 0
+                ]
+            ];
+
+            $statistiques['seance']['7'] += $this->statistique27($dateStart, $dateEnd);
+            $statistiques['seance']['8'] += $this->statistique28($dateStart, $dateEnd);
+
+            foreach ($patients as $patient) {
+                $rdv = $patient->getRendezVous();
+
+                $statistiques['entree']['1'] += $this->statistique11($rdv, $dateStart, $dateEnd);
+                $statistiques['entree']['2'] += $this->statistique12($patient, $dateStart, $dateEnd);
+                $statistiques['entree']['3'] += $this->statistique13($patient, $dateStart, $dateEnd);
+                $statistiques['entree']['4'] += $this->statistique14($patient, $dateStart, $dateEnd);
+
+                $statistiques['seance']['1'] += $this->statistique21($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['2'] += $this->statistique22($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['3'] += $this->statistique23($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['4'] += $this->statistique24($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['5'] += $this->statistique25($rdv, $dateStart, $dateEnd);
+
+                $statistiques['seance']['6'] += $this->statistique26($rdv, $dateStart, $dateEnd);
+
+                $statistiques['seance']['9'] += $this->statistique29($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['10'] += $this->statistique210($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['11'] += $this->statistique211($rdv, $dateStart, $dateEnd);
+
+                $statistiques['sortie']['1'] += $this->statistique31($rdv, $dateStart, $dateEnd);
+                $statistiques['sortie']['2'] += $this->statistique32($rdv, $dateStart, $dateEnd);
+                $statistiques['sortie']['3'] += $this->statistique33($rdv, $dateStart, $dateEnd);
+                $statistiques['sortie']['4'] += $this->statistique34($rdv, $dateStart, $dateEnd);
+                $statistiques['sortie']['5'] += $this->statistique35($rdv, $dateStart, $dateEnd);
+                $statistiques['sortie']['6'] += $this->statistique36($rdv, $dateStart, $dateEnd);
+
+                $statistiques['modalite']['1'] += $this->statistique41($rdv, $dateStart, $dateEnd);
+                $statistiques['modalite']['2'] = "Oui";
+                $statistiques['modalite']['3'] += $this->statistique43($rdv, $dateStart, $dateEnd);
+                $statistiques['modalite']['4'] += $this->statistique44($rdv, $dateStart, $dateEnd);
+            }
+
+            $s = [];
+            $s['consultations'] = $this->createSlotCategorie($slots, $thematiques["consultations"], 'Consultation');
+            $s['entretiens'] = $this->createSlotCategorie($slots, $thematiques["entretiens"], 'Entretien');
+            $s['ateliers'] = $this->createSlotCategorie($slots, $thematiques["ateliers"], 'Atelier');
+            $s['coachings'] = $this->createSlotCategorie($slots, $thematiques["coachings"], 'Coaching');
+            $s['educatives'] = $this->createSlotCategorie($slots, $thematiques["educatives"], 'Educative');
+
+            $response['slots'] = $s;
+            $response['statistiques'] = $statistiques;
 
             return new JsonResponse($response, Response::HTTP_OK);
         }
 
         return $this->render('statistique/index.html.twig', [
             'controller_name' => 'StatistiqueController',
-            'statistiques' => $statistiques,
             'title' => 'Statistiques',
             'thematiques' => $thematiques
         ]);
@@ -391,7 +390,9 @@ class StatistiqueController extends AbstractController
         $totalSlotEducative = $this->em->getRepository(Slot::class)->findSlotEducative($dateStart, $dateEnd);
         $totalSlotAtelier = $this->em->getRepository(Slot::class)->findSlotAtelier($dateStart, $dateEnd);
 
-        return round($totalSeance / ((($totalSlotEducative / 3) * 10) + $totalSlotAtelier), 2);
+        $total = (($totalSlotEducative / 3) * 10) + $totalSlotAtelier;
+
+        return $total > 0 ? round($totalSeance / $total, 2) : 0;
     }
 
     private function statistique29($rendezVous, $dateStart, $dateEnd): int
