@@ -32,6 +32,14 @@ body {
     margin-bottom: 100px;
 }
 
+h2 {
+    margin-top: 25px;
+}
+
+h3 {
+    margin-top: 15px;
+}
+
 /* Link & button
 =================================================== */
 
@@ -448,6 +456,7 @@ button:visited {
 
 .form-group textarea {
     min-height: 100px;
+    resize: none;
 }
 
 /* Menu
@@ -590,7 +599,7 @@ nav {
 =================================================== */
 
 .separator {
-    margin: 40px 0 20px 0;
+    margin: 30px 0 20px 0;
     border-top: 2px solid #cccccc;
     position: relative;
 }
@@ -1454,7 +1463,7 @@ nav {
 .radio-row [type="checkbox"]:not(:checked) + label,
 .radio-row [type="checkbox"]:checked + label {
     position: relative;
-    padding-left: 2.3em;
+    padding-left: 1.9em;
     cursor: pointer;
     /* background-color: #e6e6e6; */
 }
@@ -1503,9 +1512,8 @@ nav {
     display: flex;
     position: relative;
     flex-flow: row wrap;
-    gap: 15px;
+    gap: 5px 15px;
     height: auto;
-    /* padding: 0 15px; */
 }
 
 .radio-container {
@@ -2899,4 +2907,85 @@ input[type="checkbox"].checkbox-round + span {
     .all-opinions + div > span:first-child {
         margin: 0;
     }
+}
+
+/* Diagnostic
+=================================================== */
+
+.rapatrier__container {
+    display: flex;
+}
+
+.rapatrier__container .form-group {
+    flex: 1;
+    padding-left: 10px;
+}
+
+.rapatrier__container label {
+    user-select: none;
+}
+
+.rapatrier__container .switch {
+    margin-top: 3px;
+}
+
+.switch {
+    display: inline-block;
+    width: 30px;
+    height: 17px;
+    position: relative;
+}
+
+.toggle-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #F87171;
+    border-radius: 40px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.toggle-thumb:before {
+    content: "";
+    height: 13px;
+    width: 13px;
+    position: absolute;
+    left: 2px;
+    bottom: 2px;
+    border-radius: 50%;
+    background-color: #e2e8f0;
+    transition: 0.4s all ease;
+}
+
+.switch .checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch .checkbox:checked + .toggle-thumb:before {
+    transform: translateX(13px);
+}
+
+.switch svg {
+    transition: 0.4s all ease;
+}
+
+.switch svg:nth-child(1) {
+    position: relative;
+    left: -13px;
+}
+
+.switch .checkbox:checked + .toggle-thumb {
+    background-color: #08c1b8;
+}
+
+.switch .checkbox:checked + .toggle-thumb > svg {
+    transform: translateX(13px);
 }

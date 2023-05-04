@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Constant\ThematiqueConstants;
-
+use App\Entity\DiagnosticEducatif;
 use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
@@ -245,30 +245,51 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET|POST")
+     * @Route("/edit/{id}/diagnostic", name="patient_edit_diagnostic", methods="GET|POST")
      */
-    public function patient_vue_diagnostic(ManagerRegistry $doctrine, int $id, Request $request): Response
+    public function patient_edit_diagnostic(ManagerRegistry $doctrine, int $id, Request $request): Response
     {
         $patient = $doctrine->getRepository(Patient::class)->find($id);
+        if (!$patient->getDiagnosticEducatif()) {
+            $patient->setDiagnosticEducatif(new DiagnosticEducatif());
+            $this->em->flush();
+        }
         $form = $this->createForm(DiagnosticEducatifType::class, $patient->getDiagnosticEducatif());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('validation')->isClicked()) {
                 $patient = $form->getData();
-                
-
                 $this->em->flush();
             }
 
             return $this->redirectToRoute('patient_vue_diagnostic', ['id' => $id]);
         }
 
-        return $this->render('patient/vue/diagnostic_educatif.html.twig', [
-            'title' => 'Diagnostic',
+        return $this->render('patient/vue/diagnostic_educatif_edit.html.twig', [
+            'title' => 'Diagnostic éducatif',
             'controller_name' => 'PatientDiagnosticController',
             'patient' => $patient,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET|POST")
+     */
+    public function patient_vue_diagnostic(ManagerRegistry $doctrine, int $id, Request $request): Response
+    {
+        $patient = $doctrine->getRepository(Patient::class)->find($id);
+        if (!$patient->getDiagnosticEducatif()) {
+            $patient->setDiagnosticEducatif(new DiagnosticEducatif());
+            $this->em->flush();
+        }
+
+
+        return $this->render('patient/vue/diagnostic_educatif_vue.html.twig', [
+            'title' => 'Diagnostic éducatif',
+            'controller_name' => 'PatientDiagnosticController',
+            'patient' => $patient
         ]);
     }
 

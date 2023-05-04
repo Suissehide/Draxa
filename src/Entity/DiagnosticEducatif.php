@@ -117,7 +117,7 @@ class DiagnosticEducatif
     private $identificationFDRLibre;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="array", length=255, nullable=true)
      */
     private $ometFDR;
 
@@ -337,7 +337,7 @@ class DiagnosticEducatif
     private $objectifsPatient;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="array", nullable=true)
      */
     private $objectifsSoignants;
 
@@ -345,6 +345,11 @@ class DiagnosticEducatif
      * @ORM\Column(type="text", nullable=true)
      */
     private $suiviEducatifNegocie;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $rapatrier;
 
     public function getId(): ?int
     {
@@ -591,12 +596,12 @@ class DiagnosticEducatif
         return $this;
     }
 
-    public function getOmetFDR(): ?string
+    public function getOmetFDR(): ?array
     {
         return $this->ometFDR;
     }
 
-    public function setOmetFDR(?string $ometFDR): self
+    public function setOmetFDR(?array $ometFDR): self
     {
         $this->ometFDR = $ometFDR;
 
@@ -1119,12 +1124,12 @@ class DiagnosticEducatif
         return $this;
     }
 
-    public function getObjectifsSoignants(): ?string
+    public function getObjectifsSoignants(): ?array
     {
         return $this->objectifsSoignants;
     }
 
-    public function setObjectifsSoignants(?string $objectifsSoignants): self
+    public function setObjectifsSoignants(?array $objectifsSoignants): self
     {
         $this->objectifsSoignants = $objectifsSoignants;
 
@@ -1139,6 +1144,18 @@ class DiagnosticEducatif
     public function setSuiviEducatifNegocie(?string $suiviEducatifNegocie): self
     {
         $this->suiviEducatifNegocie = $suiviEducatifNegocie;
+
+        return $this;
+    }
+
+    public function getRapatrier(): ?string
+    {
+        return $this->rapatrier;
+    }
+
+    public function setRapatrier(?string $rapatrier): self
+    {
+        $this->rapatrier = $rapatrier;
 
         return $this;
     }

@@ -1,0 +1,234 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block title %}
+    Diagnostic {{ patient.nom }}
+{% endblock %}
+
+{% block toolbar_component %}
+    <button class="cd cd-save js-cd-save"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+    <a class="cd cd-back js-cd-back" href="#"><span class="glyphicon glyphicon-chevron-left"></span></a>
+{% endblock %}
+
+{% form_theme form 'patient/vue/form-theme_de.html.twig' %}
+
+{% block page_content %}
+
+    <div class="wrapper scrollbar">
+        <h1 id="top">Diagnostic éducatif | {{ patient.nom }}</h1>
+        <div class="nav-bar" id="navMenu">
+            <div class="btn-group btn-nav">
+                <a href="#" class="btn btn-default js-cd-back" id="btn-back">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    Retour
+                </a>
+                <a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-search"></span>
+                    Informations
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+
+            <div class="row">
+                <div class="col-md-12">
+                    {{ form_row(form.facteursRisque) }}
+                </div>
+            </div>
+
+            <h2>Qu'est-ce qu'il fait ?</h2>
+
+            <div class="separator">
+                <span class="separator-text">Qualité de vie</span>
+            </div>
+            {{ form_row(form.qualiteVie, {'required': false}) }}
+            {{ form_row(form.qualiteVieLibre, {'required': false}) }}
+            {{ form_row(form.viePersonnelle, {'required': false}) }}
+            {{ form_row(form.vieProfessionnelle, {'required': false}) }}
+            {{ form_row(form.occupations, {'required': false}) }}
+            {{ form_row(form.loisirs, {'required': false}) }}
+
+            <h2>Qu'est-ce qu'il a ?</h2>
+
+            <div class="separator">
+                <span class="separator-text">Implication</span>
+            </div>
+            {{ form_row(form.implication, {'required': false}) }}
+            {{ form_row(form.implicationLibre, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Priorité de santé</span>
+            </div>
+            {{ form_row(form.prioriteSante, {'required': false}) }}
+            {{ form_row(form.prioriteSanteLibre, {'required': false}) }}
+
+            <h2>Qu'est-ce qu'il sait ?</span>
+            <h3>Savoir</h3>
+
+            <div class="separator">
+                <span class="separator-text">Connaissances sur la maladie CV</span>
+            </div>
+            {{ form_row(form.connaissancesMaladie, {'required': false}) }}
+            {{ form_row(form.connaissancesMaladieLibre, {'required': false}) }}
+            {{ form_row(form.mecanismes, {'required': false}) }}
+            {{ form_row(form.localisations, {'required': false}) }}
+            {{ form_row(form.symptomes, {'required': false}) }}
+            {{ form_row(form.chronicite, {'required': false}) }}
+            {{ form_row(form.reagirSignesAlerte, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Identification de ses FDR</span>
+            </div>
+            {{ form_row(form.identificationFDR, {'required': false}) }}
+            {{ form_row(form.identificationFDRLibre, {'required': false}) }}
+            {{ form_row(form.ometFDR, {'required': false}) }}
+
+            <h3>Savoir-faire / Savoir-être</h3>
+
+            <div class="separator">
+                <span class="separator-text">Gestion de la tension artérielle</span>
+            </div>
+            {{ form_row(form.gestionTensionArterielle, {'required': false}) }}
+            {{ form_row(form.gestionTensionArterielleLibre, {'required': false}) }}
+            {{ form_row(form.gestionTensionArterielleSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.gestionTensionArterielleEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Gestion de l’Hba1c</span>
+            </div>
+            {{ form_row(form.gestionHba1c, {'required': false}) }}
+            {{ form_row(form.gestionHba1cLibre, {'required': false}) }}
+            {{ form_row(form.gestionHba1cSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.gestionHba1cEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Gestion du LDL</span>
+            </div>
+            {{ form_row(form.gestionLDL, {'required': false}) }}
+            {{ form_row(form.gestionLDLLibre, {'required': false}) }}
+            {{ form_row(form.gestionLDLSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.gestionLDLEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Adhésion au traitement</span>
+            </div>
+            {{ form_row(form.adhesionTraitement, {'required': false}) }}
+            {{ form_row(form.adhesionTraitementLibre, {'required': false}) }}
+            {{ form_row(form.adhesionTraitementSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.adhesionTraitementEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Alimentation</span>
+            </div>
+            {{ form_row(form.alimentation, {'required': false}) }}
+            {{ form_row(form.alimentationLibre, {'required': false}) }}
+            {{ form_row(form.alimentationSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.alimentationEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Gestion du stress</span>
+            </div>
+            {{ form_row(form.gestionStress, {'required': false}) }}
+            {{ form_row(form.gestionStressLibre, {'required': false}) }}
+            {{ form_row(form.gestionStressSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.gestionStressEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Consommation de tabac</span>
+            </div>
+            {{ form_row(form.consommationTabac, {'required': false}) }}
+            {{ form_row(form.consommationTabacNombreCigaretteJour, {'required': false}) }}
+            {{ form_row(form.consommationTabacLibre, {'required': false}) }}
+            {{ form_row(form.consommationTabacSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.consommationTabacEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Gestion du tour de taille</span>
+            </div>
+            {{ form_row(form.gestionTourTaille, {'required': false}) }}
+            {{ form_row(form.gestionTourTailleLibre, {'required': false}) }}
+            {{ form_row(form.gestionTourTailleSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.gestionTourTailleEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Activité physique</span>
+            </div>
+            {{ form_row(form.activitePhysique, {'required': false}) }}
+            {{ form_row(form.activitePhysiqueLibre, {'required': false}) }}
+            {{ form_row(form.activitePhysiqueSentimentAutoEfficacite, {'required': false}) }}
+            {{ form_row(form.activitePhysiqueEtapeChangement, {'required': false}) }}
+
+            <div class="separator">
+                <span class="separator-text">Gestion des FDR</span>
+            </div>
+            {{ form_row(form.gestionFDR, {'required': false}) }}
+
+
+            <h2>Qui est-il ?</h2>
+
+            {{ form_row(form.impactSurQualiteVie, {'required': false}) }}
+            {{ form_row(form.stadeAcceptationMaladie, {'required': false}) }}
+            {{ form_row(form.soutienSocial, {'required': false}) }}
+            {{ form_row(form.projetDeVie, {'required': false}) }}
+            {{ form_row(form.objectifsPatient, {'required': false}) }}
+            {{ form_row(form.objectifsSoignants, {'required': false}) }}
+            {{ form_row(form.suiviEducatifNegocie, {'required': false}) }}
+
+            {{ form_row(form.rapatrier, {'required': false}) }}
+
+            <div class="separator"></div>
+            <div class="form-inline">
+                <a href="#" class="btn btn-default js-cd-back">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    Retour
+                </a>
+                {{ form_row(form.validation, {'attr': {'class': 'btn btn-primary'} }) }}
+            </div>
+
+            {{ form_row(form._token) }}
+            {{ form_end(form, {'render_rest' : false}) }}
+        </div>
+        <!-- End content -->
+    </div>
+{% endblock page_content %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+    <script type="text/javascript">
+        $('.js-cd-back').on('click', function(e){
+            e.preventDefault();
+            window.history.back();
+        });
+
+        $('.js-cd-save').on('click', function() {
+            $('#diagnostic_educatif_validation').trigger('click');
+        });
+
+        if ($('#diagnostic_educatif_rapatrier').val()) {
+            var active = JSON.parse($('#diagnostic_educatif_rapatrier').val());
+        } else {
+            var active = new Array($('.switch :checkbox').length).fill(true);
+            $('#diagnostic_educatif_rapatrier').val(JSON.stringify(active));
+        }
+
+        $.each(active, function( key, value ) {
+            $('.switch :checkbox').eq(key).prop("checked", value);
+        });
+
+        $('.switch :checkbox').on('change', function() {
+            active = [];
+            $.each($('.switch :checkbox'), function( key, value ) {
+                active.push($(this).prop('checked'));
+            });
+            $('#diagnostic_educatif_rapatrier').val(JSON.stringify(active));
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'layout.html.twig' %}
+
+{% block stylesheets %}
+
+{% endblock %}
+
+{% block title %}
+    Diagnostic {{ patient.nom }}
+{% endblock %}
+
+{% block toolbar_component %}
+    <button class="cd cd-save js-cd-save"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+    <a class="cd cd-back js-cd-back" href="#"><span class="glyphicon glyphicon-chevron-left"></span></a>
+{% endblock %}
+
+{% block page_content %}
+
+    <div class="wrapper scrollbar">
+        <h1 id="top">Diagnostic éducatif | {{ patient.nom }}</h1>
+        <div class="nav-bar" id="navMenu">
+            <div class="btn-group btn-nav">
+                <a href="#" class="btn btn-default js-cd-back" id="btn-back">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    Retour
+                </a>
+                <a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-search"></span>
+                    Informations
+                </a>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="field">
+                        <strong>Facteurs de risque : </strong>
+                        {% for facteursRisque in patient.diagnosticEducatif.facteursRisque %}
+                            {{ facteursRisque }}{% if not loop.last %},{% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <h2>Qu'est-ce qu'il fait ?</h2>
+
+            <div class="separator">
+                <span class="separator-text">Qualité de vie</span>
+            </div>
+            <div class="field"><strong>Qualité de vie : </strong>{{ patient.diagnosticEducatif.qualiteVie }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.qualiteVieLibre }}</div>
+            <div class="field"><strong>Vie personnelle : </strong>{{ patient.diagnosticEducatif.viePersonnelle }}</div>
+            <div class="field"><strong>Vie professionnelle : </strong>{{ patient.diagnosticEducatif.vieProfessionnelle }}</div>
+            <div class="field"><strong>Occupations : </strong>{{ patient.diagnosticEducatif.occupations }}</div>
+            <div class="field"><strong>Loisirs : </strong>{{ patient.diagnosticEducatif.loisirs }}</div>
+
+            <h2>Qu'est-ce qu'il a ?</h2>
+
+            <div class="separator">
+                <span class="separator-text">Implication</span>
+            </div>
+            <div class="field"><strong>Implication : </strong>{{ patient.diagnosticEducatif.implication }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.implicationLibre }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Priorité de santé</span>
+            </div>
+            <div class="field"><strong>Priorité de santé : </strong>{{ patient.diagnosticEducatif.prioriteSante }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.prioriteSanteLibre }}</div>
+
+            <h2>Qu'est-ce qu'il sait ?</span>
+            <h3>Savoir</h3>
+
+            <div class="separator">
+                <span class="separator-text">Connaissances sur la maladie CV</span>
+            </div>
+            <div class="field"><strong>Connaissances sur la maladie : </strong>{{ patient.diagnosticEducatif.connaissancesMaladie }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.connaissancesMaladieLibre }}</div>
+            <div class="field"><strong>Mécanismes : </strong>{{ patient.diagnosticEducatif.mecanismes }}</div>
+            <div class="field"><strong>Localisations : </strong>{{ patient.diagnosticEducatif.localisations }}</div>
+            <div class="field"><strong>Symptômes : </strong>{{ patient.diagnosticEducatif.symptomes }}</div>
+            <div class="field"><strong>Chronicité : </strong>{{ patient.diagnosticEducatif.chronicite }}</div>
+            <div class="field"><strong>Réagir aux signes d'alerte : </strong>{{ patient.diagnosticEducatif.reagirSignesAlerte }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Identification de ses FDR</span>
+            </div>
+            <div class="field"><strong>Identification de ses FDR : </strong>{{ patient.diagnosticEducatif.identificationFDR }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.identificationFDRLibre }}</div>
+            <div class="field">
+                <strong>Omet de parler de : </strong>
+                {% for ometFDR in patient.diagnosticEducatif.ometFDR %}
+                    {{ ometFDR }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            </div>
+
+            <h3>Savoir-faire / Savoir-être</h3>
+
+            <div class="separator">
+                <span class="separator-text">Gestion de la tension artérielle</span>
+            </div>
+            <div class="field"><strong>Gestion de la tension artérielle : </strong>{{ patient.diagnosticEducatif.gestionTensionArterielle }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.gestionTensionArterielleLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.gestionTensionArterielleSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.gestionTensionArterielleEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Gestion de l'Hba1c</span>
+            </div>
+            <div class="field"><strong>Gestion de l'Hba1c : </strong>{{ patient.diagnosticEducatif.gestionHba1c }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.gestionHba1cLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.gestionHba1cSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.gestionHba1cEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Gestion du LDL</span>
+            </div>
+            <div class="field"><strong>Gestion du LDL : </strong>{{ patient.diagnosticEducatif.gestionLDL }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.gestionLDLLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.gestionLDLSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.gestionLDLEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Adhésion au traitement</span>
+            </div>
+            <div class="field"><strong>Adhésion au traitement : </strong>{{ patient.diagnosticEducatif.adhesionTraitement }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.adhesionTraitementLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.adhesionTraitementSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.adhesionTraitementEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Alimentation</span>
+            </div>
+            <div class="field"><strong>Alimentation : </strong>{{ patient.diagnosticEducatif.alimentation }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.alimentationLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.alimentationSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.alimentationEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Gestion du stress</span>
+            </div>
+            <div class="field"><strong>Gestion du stress : </strong>{{ patient.diagnosticEducatif.gestionStress }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.gestionStressLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.gestionStressSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.gestionStressEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Consommation de tabac</span>
+            </div>
+            <div class="field"><strong>Consommation de tabac : </strong>{{ patient.diagnosticEducatif.consommationTabac }}</div>
+            <div class="field"><strong>Nombre de cigarette/jour : </strong>{{ patient.diagnosticEducatif.consommationTabacNombreCigaretteJour }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.consommationTabacLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.consommationTabacSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.consommationTabacEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Gestion du tour de taille</span>
+            </div>
+            <div class="field"><strong>Gestion du tour de taille : </strong>{{ patient.diagnosticEducatif.gestionTourTaille }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.gestionTourTailleLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.gestionTourTailleSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.gestionTourTailleEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Activité physique</span>
+            </div>
+            <div class="field"><strong>Activité physique : </strong>{{ patient.diagnosticEducatif.activitePhysique }}</div>
+            <div class="field"><strong>Texte libre : </strong>{{ patient.diagnosticEducatif.activitePhysiqueLibre }}</div>
+            <div class="field"><strong>Sentiment d'auto-efficacité : </strong>{{ patient.diagnosticEducatif.activitePhysiqueSentimentAutoEfficacite }}</div>
+            <div class="field"><strong>Étape de changement : </strong>{{ patient.diagnosticEducatif.activitePhysiqueEtapeChangement }}</div>
+
+            <div class="separator">
+                <span class="separator-text">Gestion des FDR</span>
+            </div>
+            <div class="field"><strong>Gestion des FDR : </strong>{{ patient.diagnosticEducatif.gestionFDR }}</div>
+
+
+            <h2>Qui est-il ?</h2>
+            <div class="field"><strong>Impact sur sa qualité de vie : </strong>{{ patient.diagnosticEducatif.impactSurQualiteVie }}</div>
+            <div class="field"><strong>Stade d'acceptation de la maladie : </strong>{{ patient.diagnosticEducatif.stadeAcceptationMaladie }}</div>
+            <div class="field"><strong>Soutien social : </strong>{{ patient.diagnosticEducatif.soutienSocial }}</div>
+            <div class="field"><strong>Projet de vie : </strong>{{ patient.diagnosticEducatif.projetDeVie }}</div>
+            <div class="field"><strong>Objectifs du patient : </strong>{{ patient.diagnosticEducatif.objectifsPatient }}</div>
+            <div class="field">
+                <strong>Objectifs des soignants : </strong>
+                {% for objectifsSoignants in patient.diagnosticEducatif.objectifsSoignants %}
+                    {{ objectifsSoignants }}{% if not loop.last %},{% endif %}
+                {% endfor %}
+            </div>
+            <div class="field"><strong>Suivi éducatif négocié avec le patient : </strong>{{ patient.diagnosticEducatif.suiviEducatifNegocie }}</div>
+        </div>
+        <!-- End content -->
+
+        <div class="separator"></div>
+        <div class="form-inline">
+            <a href="#" class="btn btn-default js-cd-back">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                Retour
+            </a>
+            <button class="btn btn-primary" id="copy">
+                <span class="glyphicon glyphicon-copy"></span>
+                Copier
+            </button>
+        </div>
+    </div>
+{% endblock page_content %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+    <script type="text/javascript">
+        var active = JSON.parse('{{ patient.diagnosticEducatif.rapatrier }}');
+        $.each(active, function( key, value ) {
+            if (!value) {
+                $('.field').eq(key).hide();
+            }
+        });
+
+        /*
+        * COPY
+        **********************************************************************/
+        $('#copy').click(function() {
+			var $temp = $("<div>");
+			$("body").append($temp);
+			$temp.attr("contenteditable", true)
+				.html($(".content").html()).select()
+				.on("focus", function() { document.execCommand('selectAll',false,null); })
+				.focus();
+			document.execCommand("copy");
+			$temp.remove();
+        });
+    </script>
+
+{% endblock %}

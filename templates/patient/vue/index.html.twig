@@ -905,10 +905,9 @@
             <div class="separator">
                 <span id="diagnosticEducatif" class="separator-text">Diagnostic éducatif</span>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <a href="{{ path('patient_vue_diagnostic', {'id': patient.id }) }}" class="btn btn-primary pull-left">Voir</a>
-                </div>
+            <div class="form-inline">
+                <a href="{{ path('patient_edit_diagnostic', {'id': patient.id }) }}" class="btn btn-primary">Modifier</a>
+                <a href="{{ path('patient_vue_diagnostic', {'id': patient.id }) }}" class="btn btn-primary">Voir</a>
             </div>
             
 
