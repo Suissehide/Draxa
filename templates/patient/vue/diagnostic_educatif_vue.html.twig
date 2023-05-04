@@ -208,7 +208,7 @@
 {% block javascripts %}
     <script src="{{ asset('js/script.js') }}"></script>
     <script type="text/javascript">
-        var active = JSON.parse('{{ patient.diagnosticEducatif.rapatrier }}');
+        var active = '{{ patient.diagnosticEducatif.rapatrier }}' ? JSON.parse('{{ patient.diagnosticEducatif.rapatrier }}') : [];
         $.each(active, function( key, value ) {
             if (!value) {
                 $('.field').eq(key).hide();
