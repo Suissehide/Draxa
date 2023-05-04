@@ -365,7 +365,6 @@
             },
             success: function (res) {
                 $(".box tbody tr").remove();
-                console.log(res);
 
                 for (let statistique in res['statistiques']) {
                     for (let data in res['statistiques'][statistique]) {
@@ -396,7 +395,6 @@
 
     $("#update").click(function() {
         ajaxAction();
-        console.log("hey");
     })
 
     var $table = $('table'),
