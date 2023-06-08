@@ -2,25 +2,27 @@ security:
     encoders:
         App\Entity\AppUser: bcrypt
     role_hierarchy:
-      ROLE_CLIENT: ROLE_USER
-      ROLE_ADMIN: [ROLE_USER, ROLE_ADMIN]
+        ROLE_CLIENT: ROLE_USER
+        ROLE_ADMIN: [ROLE_USER, ROLE_ADMIN]
 
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-          users:
-                name: user_provider
-                entity:
-                    class: App\Entity\AppUser
-                    property: username
-          in_memory: { memory: ~ }
+        users:
+            name: user_provider
+            entity:
+                class: App\Entity\AppUser
+                property: username
+        in_memory: { memory: ~ }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             remember_me:
-                secret: '%kernel.secret%'
-                lifetime: 604800
+                secret: "%kernel.secret%"
+                lifetime: 86400
+                always_remember_me: true
+
             pattern: ^/
             form_login:
                 login_path: login
@@ -50,9 +52,9 @@ security:
         - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, roles: ROLE_ADMIN }
-        
+
         - { path: ^/accueil, role: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/patient, role: IS_AUTHENTICATED_REMEMBERED }
 
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/, role: ROLE_ADMIN}
+        - { path: ^/, role: ROLE_ADMIN }
