@@ -51,7 +51,7 @@ class RendezVousController extends AbstractController
             $slotId = $request->get('slotId');
             $categorie = $request->get('categorie');
 
-            if ($slotId == '')
+            if ($slotId === '')
                 return new JsonResponse(false);
             $slot = $this->em->getRepository(Slot::class)->find($slotId);
             if (!$slot)
@@ -98,7 +98,7 @@ class RendezVousController extends AbstractController
                 $this->em->remove($rendezVous);
 
                 if ($slot) {
-                    if (count($slot->getRendezVous()) == 0) {
+                    if (count($slot->getRendezVous()) === 0) {
                         $slot->setThematique('');
                     }
                 }

@@ -116,7 +116,7 @@
         });
 
         $('#todo__add').keyup(function(e){
-            if(e.keyCode == 13) $(this).trigger("enterKey");
+            if(e.keyCode === 13) $(this).trigger("enterKey");
         });
 
         $('.todo__add').click(function() {

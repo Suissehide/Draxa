@@ -9,12 +9,13 @@ use App\Entity\RendezVous;
 use App\Entity\Slot;
 
 use App\Form\PatientCreationFormType;
-use App\Form\PatientType;
 use App\Form\RendezVousType;
 use App\Form\DiagnosticEducatifType;
 
 use App\Repository\PatientRepository;
 
+use Closure;
+use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -37,7 +38,7 @@ class PatientController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -60,7 +61,7 @@ class PatientController extends AbstractController
             if ($searchPhrase != "" || $sort != "all") {
                 $count = count($patients->getQuery()->getResult());
             } else {
-                $count = $patientRepository->compte();
+                $count = $patientRepository->countPatient();
             }
             if ($rowCount != -1) {
                 $min = ($current - 1) * $rowCount;
@@ -77,7 +78,7 @@ class PatientController extends AbstractController
                 $sortie = 0;
                 if ($patient->getDentree())
                     $sortie = 1;
-                else if ($patient->getProgetp() == "ViVa module AOMI")
+                else if ($patient->getProgetp() === "ViVa module AOMI")
                     $sortie = 2;
                 $row = array(
                     "id" => $patient->getId(),
@@ -94,12 +95,12 @@ class PatientController extends AbstractController
                     "observ" => $observ,
                     "divers" => $divers
                 );
-                array_push($rows, $row);
+                $rows[] = $row;
             }
 
-            if ($sort && key($sort) == 'heure')
+            if ($sort && key($sort) === 'heure')
                 usort($rows, $this->build_sorter_heure("date", key($sort), reset($sort)));
-            else if ($sort && key($sort) == 'date')
+            else if ($sort && key($sort) === 'date')
                 usort($rows, $this->build_sorter_date(key($sort), reset($sort)));
 
             $data = array(
@@ -118,37 +119,39 @@ class PatientController extends AbstractController
         ]);
     }
 
-    private function build_sorter_heure($date, $hour, $dir='ASC') {
+    private function build_sorter_heure($date, $hour, $dir='ASC'): Closure
+    {
         return function ($a, $b) use ($date, $hour, $dir) {
             $date1 = is_array($a) ? $a[$date] : $a->$date;
             $date2 = is_array($b) ? $b[$date] : $b->$date;
             $time1 = is_array($a) ? $a[$hour] : $a->$hour;
             $time2 = is_array($b) ? $b[$hour] : $b->$hour;
-            $time1 = (($time1 == '' && strtoupper($dir) == 'ASC') ? '23:59' : $time1);
-            $time1 = (($time1 == '' && strtoupper($dir) == 'DESC') ? '00:00' : $time1);
-            $time2 = (($time2 == '' && strtoupper($dir) == 'ASC') ? '23:59' : $time2);
-            $time2 = (($time2 == '' && strtoupper($dir) == 'DESC') ? '00:00' : $time2);
-            $t1 = date_create_from_format("d/m/Y H:i", (($date1 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date1) . ' ' . $time1);
-            $t2 = date_create_from_format("d/m/Y H:i", (($date2 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $date2) . ' ' . $time2);
-            if ($t1 == $t2) return 0;
-            return (strtoupper($dir) == 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
+            $time1 = (($time1 === '' && strtoupper($dir) === 'ASC') ? '23:59' : $time1);
+            $time1 = (($time1 === '' && strtoupper($dir) === 'DESC') ? '00:00' : $time1);
+            $time2 = (($time2 === '' && strtoupper($dir) === 'ASC') ? '23:59' : $time2);
+            $time2 = (($time2 === '' && strtoupper($dir) === 'DESC') ? '00:00' : $time2);
+            $t1 = date_create_from_format("d/m/Y H:i", (($date1 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $date1) . ' ' . $time1);
+            $t2 = date_create_from_format("d/m/Y H:i", (($date2 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $date2) . ' ' . $time2);
+            if ($t1 === $t2) return 0;
+            return (strtoupper($dir) === 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
         };
     }
 
-    private function build_sorter_date($key, $dir='ASC') {
+    private function build_sorter_date($key, $dir='ASC'): Closure
+    {
         return function ($a, $b) use ($key, $dir) {
             $t1 = is_array($a) ? $a[$key] : $a->$key;
             $t2 = is_array($b) ? $b[$key] : $b->$key;
-            $t1 = date_create_from_format("d/m/Y", ($t1 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $t1);
-            $t2 = date_create_from_format("d/m/Y", ($t2 == '' && strtoupper($dir) == 'ASC') ? '01/01/2999' : $t2);
-            if ($t1 == $t2) return 0;
-            return (strtoupper($dir) == 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
+            $t1 = date_create_from_format("d/m/Y", ($t1 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $t1);
+            $t2 = date_create_from_format("d/m/Y", ($t2 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $t2);
+            if ($t1 === $t2) return 0;
+            return (strtoupper($dir) === 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
         };
     }
 
-    private function getNextRdv(Patient $patient)
+    private function getNextRdv(Patient $patient): array
     {
-        $date = \DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
+        $date = DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
 
         $rendezVous = $this->em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
 
@@ -277,7 +280,7 @@ class PatientController extends AbstractController
     /**
      * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET|POST")
      */
-    public function patient_vue_diagnostic(ManagerRegistry $doctrine, int $id, Request $request): Response
+    public function patient_vue_diagnostic(ManagerRegistry $doctrine, int $id): Response
     {
         $patient = $doctrine->getRepository(Patient::class)->find($id);
         if (!$patient->getDiagnosticEducatif()) {
@@ -294,7 +297,7 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/csv", name="csv", methods="GET|POST") 
+     * @Route("/csv", name="csv", methods="GET|POST")
      */
     public function generateCsvAction(PatientRepository $patientRepository): Response
     {
@@ -304,13 +307,13 @@ class PatientController extends AbstractController
         $serializer = new Serializer(array($normalizer), array($encoder));
 
         $callback = function ($dateTime) {
-            return $dateTime instanceof \DateTime
+            return $dateTime instanceof DateTime
             ? $dateTime->format('d/m/y')
             : '';
         };
 
         $callback2 = function ($dateTime) {
-            return $dateTime instanceof \DateTime
+            return $dateTime instanceof DateTime
             ? $dateTime->format('H:i')
             : '';
         };
@@ -345,58 +348,7 @@ class PatientController extends AbstractController
      */
     public function index(PatientRepository $patientRepository): Response
     {
-        return $this->render('patient/index.html.twig', ['patients' => $patientRepository->findAll()]);
-    }
-
-    /**
-     * @Route("/new", name="patient_new", methods="GET|POST")
-     */
-    function new (Request $request): Response {
-        $patient = new Patient();
-        $form = $this->createForm(PatientType::class, $patient);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->em->persist($patient);
-            $this->em->flush();
-
-            return $this->redirectToRoute('patient_index');
-        }
-
-        return $this->render('patient/new.html.twig', [
-            'patient' => $patient,
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * @Route("/{id}", name="patient_show", methods="GET")
-     */
-    public function show(ManagerRegistry $doctrine, int $id): Response
-    {
-        $patient = $doctrine->getRepository(Patient::class)->find($id);
-        return $this->render('patient/show.html.twig', ['patient' => $patient]);
-    }
-
-    /**
-     * @Route("/{id}/edit", name="patient_edit", methods="GET|POST")
-     */
-    public function edit(Request $request, ManagerRegistry $doctrine, int $id): Response
-    {
-        $patient = $doctrine->getRepository(Patient::class)->find($id);
-        $form = $this->createForm(PatientType::class, $patient);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('patient_edit', ['id' => $patient->getId()]);
-        }
-
-        return $this->render('patient/edit.html.twig', [
-            'patient' => $patient,
-            'form' => $form->createView(),
-        ]);
+        return $this->render('patient/list/index.html.twig', ['patients' => $patientRepository->findAll()]);
     }
 
     /**

@@ -3,16 +3,13 @@
 namespace App\Form;
 
 use App\Entity\RendezVous;
-use App\Entity\Slot;
 
+use DateTime;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextAreaType;
-use Symfony\Component\Form\Extension\Core\Type\TimeType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -87,7 +84,7 @@ class RendezVousType extends AbstractType
                 function ($tagsAsDate) {
                     if ($tagsAsDate != null) {
                         $t = explode(':', $tagsAsDate);
-                        $time = new \DateTime();
+                        $time = new DateTime();
                         return $time->setTime($t[0], $t[1]);
                     }
                 }
@@ -95,7 +92,7 @@ class RendezVousType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => RendezVous::class,

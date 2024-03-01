@@ -25,8 +25,11 @@
                         {% if soignant.status == true %}
                             <li class="soignant" data-id="{{ soignant.id }}">
                                 {{ soignant.prenom }} {{ soignant.nom }}
-                                <button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button>
-                                <button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button>
+                                <button type="button" class="moveup-btn"><span
+                                            class="glyphicon glyphicon-chevron-up"></span></button>
+                                <button type="button" class="remove-btn"><span
+                                            class="glyphicon glyphicon-remove"></span>
+                                </button>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -45,8 +48,12 @@
                         {% if soignant.status == false %}
                             <li class="soignant" data-id="{{ soignant.id }}">
                                 {{ soignant.prenom }} {{ soignant.nom }}
-                                <button type="button" class="moveup-btn" style={display: "none"}><span class="glyphicon glyphicon-chevron-up"><span></button>
-                                <button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button>
+                                <button type="button" class="moveup-btn" style="display: none">
+                                    <span class="glyphicon glyphicon-chevron-up"></span>
+                                </button>
+                                <button type="button" class="remove-btn">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </button>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -55,7 +62,7 @@
         </div>
 
     </div>
-        
+
     <!-- Modal addSoignant -->
     <div id="soignantModal" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -92,169 +99,168 @@
 
 {% block javascripts %}
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    $('.list-soignant .soignant:first-child .moveup-btn').hide();
+        $('.list-soignant .soignant:first-child .moveup-btn').hide();
 
-    $('#actif').on('click', '.moveup-btn', function(e) {
-        e.stopPropagation();
-        let index = ($(this).parent()).index()
-        $(this).parent().insertBefore('#actif li:eq(' + (index - 1) + ')');
+        $('#actif').on('click', '.moveup-btn', function (e) {
+            e.stopPropagation();
+            let index = ($(this).parent()).index()
+            $(this).parent().insertBefore('#actif li:eq(' + (index - 1) + ')');
 
-        $.ajax({
-            url: "{{ path('status_priority_swap') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                "soignant1": $('#actif li:eq(' + (index - 1) + ')').attr('data-id'),
-                "soignant2": $('#actif li:eq(' + index + ')').attr('data-id'),
-            },
-            success: function (resp) {
-                if (resp) {
-                    $('#actif .soignant .moveup-btn').show();
-                    $('#actif .soignant:first-child .moveup-btn').hide();
-                } else {
-                    errorAlert();
+            $.ajax({
+                url: "{{ path('status_priority_swap') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "soignant1": $('#actif li:eq(' + (index - 1) + ')').attr('data-id'),
+                    "soignant2": $('#actif li:eq(' + index + ')').attr('data-id'),
+                },
+                success: function (resp) {
+                    if (resp) {
+                        $('#actif .soignant .moveup-btn').show();
+                        $('#actif .soignant:first-child .moveup-btn').hide();
+                    } else {
+                        errorAlert();
+                    }
                 }
-            }
+            });
         });
-    });
 
 
-    /* */
+        /* */
 
-    $('.list-soignant').on('click', '.soignant', function(e) {
-        $(this).toggleClass('selected');
-        updateTransfertButtons();
-    });
+        $('.list-soignant').on('click', '.soignant', function (e) {
+            $(this).toggleClass('selected');
+            updateTransfertButtons();
+        });
 
-    function updateTransfertButtons() {
-        if ($('#inactif .soignant.selected').length > 0)
-            toggleButton($('.js-add'), true);
-        else
-            toggleButton($('.js-add'), false);
+        function updateTransfertButtons() {
+            if ($('#inactif .soignant.selected').length > 0)
+                toggleButton($('.js-add'), true);
+            else
+                toggleButton($('.js-add'), false);
 
-        if ($('#actif .soignant.selected').length > 0)
-            toggleButton($('.js-remove'), true);
-        else
-            toggleButton($('.js-remove'), false);
-    }
-
-    function toggleButton(obj, bool) {
-        if (bool) {
-            obj.prop("disabled", false);
-            obj.addClass('active');
-        } else {
-            obj.prop("disabled", true);
-            obj.removeClass('active');
-        }
-    }
-
-    $('.js-add').click(function() {
-        soignantUpdate(true);
-    });
-
-    $('.js-remove').click(function() {
-        soignantUpdate(false);
-    });
-
-    function soignantUpdate(status) {
-        let soignants = [];
-        
-        if (status) {
-            $('#inactif .soignant.selected').each(function() {
-                soignants.push($(this).data('id'));
-            });
-        } else {
-            $('#actif .soignant.selected').each(function() {
-                soignants.push($(this).data('id'));
-            });
+            if ($('#actif .soignant.selected').length > 0)
+                toggleButton($('.js-remove'), true);
+            else
+                toggleButton($('.js-remove'), false);
         }
 
-        $.ajax({
-            url: "{{ path('status_update') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                "soignants": soignants,
-                "status": status,
-            },
-            success: function (resp) {
-                if (resp) {
-                    if (status) {
-                        $('#inactif li.soignant.selected .moveup-btn').show();
-                        $('#inactif li.soignant.selected').appendTo('#actif ul');
+        function toggleButton(obj, bool) {
+            if (bool) {
+                obj.prop("disabled", false);
+                obj.addClass('active');
+            } else {
+                obj.prop("disabled", true);
+                obj.removeClass('active');
+            }
+        }
+
+        $('.js-add').click(function () {
+            soignantUpdate(true);
+        });
+
+        $('.js-remove').click(function () {
+            soignantUpdate(false);
+        });
+
+        function soignantUpdate(status) {
+            let soignants = [];
+
+            if (status) {
+                $('#inactif .soignant.selected').each(function () {
+                    soignants.push($(this).data('id'));
+                });
+            } else {
+                $('#actif .soignant.selected').each(function () {
+                    soignants.push($(this).data('id'));
+                });
+            }
+
+            $.ajax({
+                url: "{{ path('status_update') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "soignants": soignants,
+                    "status": status,
+                },
+                success: function (resp) {
+                    if (resp) {
+                        if (status) {
+                            $('#inactif li.soignant.selected .moveup-btn').show();
+                            $('#inactif li.soignant.selected').appendTo('#actif ul');
+                        } else {
+                            $('#actif li.soignant.selected .moveup-btn').hide();
+                            $('#actif li.soignant.selected').appendTo('#inactif ul');
+                        }
+                        $('.soignant.selected').toggleClass('selected');
+                        updateTransfertButtons();
+                    } else {
+                        errorAlert();
                     }
-                    else {
-                        $('#actif li.soignant.selected .moveup-btn').hide();
-                        $('#actif li.soignant.selected').appendTo('#inactif ul');
+                }
+            });
+        }
+
+
+        $('#soignant_add').click(function () {
+            var nom = $('#soignant_nom').val();
+            var prenom = $('#soignant_prenom').val();
+
+            $.ajax({
+                url: "{{ path('soignant_add') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    "nom": nom,
+                    "prenom": prenom,
+                },
+                success: function (resp) {
+                    if (resp) {
+                        $('#actif ul')
+                            .append(`<li class="soignant" data-id="` + resp + `">` + prenom + ' ' + nom + `<button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button><button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
+                    } else {
+                        errorAlert();
                     }
-                    $('.soignant.selected').toggleClass('selected');
-                    updateTransfertButtons();
-                } else {
-                    errorAlert();
                 }
-            }
+            });
         });
-    }
 
-
-    $('#soignant_add').click(function() {
-        var nom = $('#soignant_nom').val();
-        var prenom = $('#soignant_prenom').val();
-
-        $.ajax({
-            url: "{{ path('soignant_add') }}",
-            type: "POST",
-            dataType: "json",
-            data: {
-                "nom": nom,
-                "prenom": prenom,
-            },
-            success: function (resp) {
-                if (resp) {
-                    $('#actif ul')
-                        .append(`<li class="soignant" data-id="` + resp + `">` + prenom + ' ' + nom + `<button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button><button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
-                } else {
-                    errorAlert();
+        $('.list-soignant').on('click', '.remove-btn', function (e) {
+            e.stopPropagation();
+            let id = $(this).parents('.soignant').data('id');
+            let url = "{{ path('soignant_delete', { 'id': 'soignant_id' }) }}";
+            url = url.replace("soignant_id", id);
+            $.ajax({
+                url: url,
+                type: "DELETE",
+                dataType: "json",
+                data: {},
+                success: function (resp) {
+                    if (resp) {
+                        $('*[data-id="' + id + '"]').remove();
+                    } else {
+                        errorAlert('impossible de supprimer cette personne');
+                    }
                 }
-            }
+            });
         });
-    });
-
-    $('.list-soignant').on('click', '.remove-btn', function(e) {
-        e.stopPropagation();
-        let id = $(this).parents('.soignant').data('id');
-        let url = "{{ path('soignant_delete', { 'id': 'soignant_id' }) }}";
-        url = url.replace("soignant_id", id);
-        $.ajax({
-            url: url,
-            type: "DELETE",
-            dataType: "json",
-            data: {},
-            success: function (resp) {
-                if (resp) {
-                    $('*[data-id="' + id + '"]').remove();
-                } else {
-                    errorAlert('impossible de supprimer cette personne');
-                }
-            }
-        });
-    });
 
 
-    /* Alert
-    ============================================================================== */
+        /* Alert
+        ============================================================================== */
 
-    var alert_pos = {{ top }};
+        var alert_pos = {{ top }};
 
-    function errorAlert(message) {
-        $('body').prepend(
-            '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
-        );
-        alert_pos += 72;
-    }
+        function errorAlert(message) {
+            $('body').prepend(
+                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
+            );
+            alert_pos += 72;
+        }
 
-</script>
+    </script>
 
 {% endblock %}

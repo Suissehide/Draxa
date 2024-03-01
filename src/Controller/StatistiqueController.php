@@ -173,9 +173,9 @@ class StatistiqueController extends AbstractController
                     if (!$thematique)
                         $thematique = "";
                     $etat = strtolower($r->getEtat());
-                    if ($etat == "oui")
+                    if ($etat === "oui")
                         $jsonContent[$thematique]["oui"] += 1;
-                    else if ($etat == "non")
+                    else if ($etat === "non")
                         $jsonContent[$thematique]["non"] += 1;
                     else
                         $jsonContent[$thematique]["null"] += 1;
@@ -190,15 +190,15 @@ class StatistiqueController extends AbstractController
      */
     private function statistique11(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
     {
-        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())){
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
             return 1;
         }
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
             ) {
                 return 1;
             }
@@ -211,7 +211,7 @@ class StatistiqueController extends AbstractController
         if (
             $patient->getDedate() != null
             && $this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())
-            && $patient->getOrientation() == "Orientation pro santé ext hôpital"
+            && $patient->getOrientation() === "Orientation pro santé ext hôpital"
         ) {
             return 1;
         }
@@ -223,7 +223,7 @@ class StatistiqueController extends AbstractController
         if (
             $patient->getDedate()
             && $this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())
-            && $patient->getOrientation() == "Orientation pro santé au cours hospit"
+            && $patient->getOrientation() === "Orientation pro santé au cours hospit"
         ) {
             return 1;
         }
@@ -235,7 +235,7 @@ class StatistiqueController extends AbstractController
         if (
             $patient->getDedate()
             && $this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())
-            && $patient->getOrientation() == "Orientation pro santé en Cs"
+            && $patient->getOrientation() === "Orientation pro santé en Cs"
         ) {
             return 1;
         }
@@ -249,62 +249,73 @@ class StatistiqueController extends AbstractController
     {
         $newDateStart = $dateStart;
         $hasDiagnosticEducatif = false;
+        $onlyHospit = true;
+
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate()) &&
+            ($patient->getMode() === "HDJ"
+                || $patient->getMode() === "HDS"
+                || $patient->getMode() === "Hospit")) {
+            $hasDiagnosticEducatif = true;
+            $newDateStart = $patient->getDedate();
+        }
         foreach ($rendezVous as $r) {
             if (
-                ($r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
-                && $r->getType() == "Hospit"
-                && !$hasDiagnosticEducatif)
-                || $patient->getMode() === "HDJ"
-                || $patient->getMode() === "HDS"
-                || $patient->getMode() === "Hospit"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
+                && $r->getType() === "Hospit"
+                && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
                 $newDateStart = $r->getDate();
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getType() == "Hospit"
+                && $r->getType() !== "Hospit"
                 && $hasDiagnosticEducatif
             ) {
-                return 1;
+                $onlyHospit = false;
             }
         }
-        return 0;
+        return $hasDiagnosticEducatif && $onlyHospit ? 1 : 0;
     }
 
     private function statistique22(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
     {
         $newDateStart = $dateStart;
         $hasDiagnosticEducatif = false;
+        $onlyAmbuTel = true;
+
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate()) && $patient->getMode() === "Ambu") {
+            $hasDiagnosticEducatif = true;
+            $newDateStart = $patient->getDedate();
+        }
         foreach ($rendezVous as $r) {
             if (
-                ($r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
-                && ($r->getType() == "Ambu" || $r->getType() == "Tel")
-                && !$hasDiagnosticEducatif)
-                || $patient->getMode() === "Ambu"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
+                && ($r->getType() === "Ambu" || $r->getType() === "Tel")
+                && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
                 $newDateStart = $r->getDate();
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && ($r->getType() == "Ambu" || $r->getType() == "Tel")
+                && ($r->getType() !== "Ambu" && $r->getType() !== "Tel")
                 && $hasDiagnosticEducatif
             ) {
-                return 1;
+                $onlyAmbuTel = false;
             }
         }
-        return 0;
+        return $hasDiagnosticEducatif && $onlyAmbuTel ? 1 : 0;
     }
 
     private function statistique23(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
@@ -319,18 +330,23 @@ class StatistiqueController extends AbstractController
         $hasIntern = false;
         $hasExtern = false;
 
-        if ($patient->getMode() == "Hospit") {
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate()) &&
+            ($patient->getMode() === "HDJ"
+                || $patient->getMode() === "HDS"
+                || $patient->getMode() === "Hospit")) {
             $hasIntern = true;
-        } else if ($patient->getMode() == "Ambu" || $patient->getMode() == "Tel") {
+            $newDateStart = $patient->getDedate();
+        } else if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate()) && $patient->getMode() === "Ambu") {
             $hasExtern = true;
+            $newDateStart = $patient->getDedate();
         }
 
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
@@ -338,12 +354,12 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
             ) {
-                if ($r->getType() == "Hospit") {
+                if ($r->getType() === "Hospit") {
                     $hasIntern = true;
-                } else if ($r->getType() == "Ambu" || $r->getType() == "Tel") {
+                } else if ($r->getType() === "Ambu" || $r->getType() === "Tel") {
                     $hasExtern = true;
                 }
             }
@@ -367,9 +383,9 @@ class StatistiqueController extends AbstractController
         $ret = 0;
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
-                && ($r->getCategorie() == "Entretien" || $r->getCategorie() == "Consultation" || $r->getCategorie() == "Coaching")
+                && ($r->getCategorie() === "Entretien" || $r->getCategorie() === "Consultation" || $r->getCategorie() === "Coaching")
             ) {
                 $ret += 1;
             }
@@ -386,17 +402,17 @@ class StatistiqueController extends AbstractController
             $rendezVous = $s->getRendezVous();
             foreach ($rendezVous as $r) {
                 if (
-                    $r->getEtat() == "Oui"
+                    $r->getEtat() === "Oui"
                     && $this->isInDateRange($dateStart, $dateEnd, $s->getDate())
-                    && $r->getCategorie() == "Educative"
+                    && $r->getCategorie() === "Educative"
                 ) {
                     $educative += 1;
                 }
 
                 if (
-                    $r->getEtat() == "Oui"
+                    $r->getEtat() === "Oui"
                     && $this->isInDateRange($dateStart, $dateEnd, $s->getDate())
-                    && $r->getCategorie() == "Atelier"
+                    && $r->getCategorie() === "Atelier"
                 ) {
                     $atelier += 1;
                 }
@@ -441,15 +457,15 @@ class StatistiqueController extends AbstractController
         $seance = false;
         $reactu = false;
 
-        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())){
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
             $hasDiagnosticEducatif = true;
         }
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
@@ -457,15 +473,15 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) == 0
+                && $r->getCategorie() === "Entretien"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
                 && $hasDiagnosticEducatif
             ) {
                 $reactu = true;
             } else if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $hasDiagnosticEducatif
             ) {
@@ -483,11 +499,11 @@ class StatistiqueController extends AbstractController
         $reactu = false;
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getType() == "Hospit"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getType() === "Hospit"
+                && $r->getThematique() === "Diagnostic éducatif"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
@@ -495,7 +511,7 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $r->getType() != "Hospit"
             ) {
@@ -503,15 +519,15 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) == 0
+                && $r->getCategorie() === "Entretien"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
                 && $hasDiagnosticEducatif
             ) {
                 $reactu = true;
             } else if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $hasDiagnosticEducatif
             ) {
@@ -529,11 +545,11 @@ class StatistiqueController extends AbstractController
         $reactu = false;
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getType() == "Ambu"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getType() === "Ambu"
+                && $r->getThematique() === "Diagnostic éducatif"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
@@ -541,7 +557,7 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $r->getType() != "Ambu"
             ) {
@@ -549,15 +565,15 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) == 0
+                && $r->getCategorie() === "Entretien"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
                 && $hasDiagnosticEducatif
             ) {
                 $reactu = true;
             } else if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $hasDiagnosticEducatif
             ) {
@@ -581,10 +597,10 @@ class StatistiqueController extends AbstractController
     {
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) == 0
+                && $r->getCategorie() === "Entretien"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
             ) {
                 return 1;
             }
@@ -602,15 +618,15 @@ class StatistiqueController extends AbstractController
         $seance = 0;
         $evaluation = 0;
 
-        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())){
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
             $hasDiagnosticEducatif = true;
         }
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
@@ -618,7 +634,7 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $hasDiagnosticEducatif
             ) {
@@ -626,10 +642,10 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Réactu1"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Réactu1"
                 && $hasDiagnosticEducatif
             ) {
                 $evaluation += 1;
@@ -646,10 +662,10 @@ class StatistiqueController extends AbstractController
         $evaluation = 0;
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getThematique() == "Diagnostic éducatif"
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
@@ -657,7 +673,7 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $hasDiagnosticEducatif
             ) {
@@ -665,27 +681,27 @@ class StatistiqueController extends AbstractController
             }
 
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) == 0
+                && $r->getCategorie() === "Entretien"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
                 && $hasDiagnosticEducatif
             ) {
                 $evaluation += 1;
             }
         }
-        return $hasDiagnosticEducatif && $seance >= 2 && $evaluation >= 1 ? 1 : 0;
+        return ($hasDiagnosticEducatif && $seance >= 2 && $evaluation >= 1) ? 1 : 0;
     }
 
     private function statistique44(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
     {
         foreach ($rendezVous as $r) {
             if (
-                $r->getEtat() == "Oui"
+                $r->getEtat() === "Oui"
                 && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
-                && $r->getCategorie() == "Entretien"
-                && $r->getType() == "Hospit"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) == 0
+                && $r->getCategorie() === "Entretien"
+                && $r->getType() === "Hospit"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
             ) {
                 return 1;
             }

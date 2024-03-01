@@ -61,7 +61,7 @@ jQuery(document).ready(function ($) {
 
     $('tbody').on("click", "tr", function () {
         var npatient = $(this).attr('data-row-id');
-	if (npatient == undefined)
+	if (npatient === undefined)
 		return;
         var pathArray = window.location.pathname.split("/");
         var url = window.location.protocol + "//" + window.location.host;

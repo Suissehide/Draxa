@@ -94,8 +94,8 @@ class SoignantController extends AbstractController
 
             foreach ($soignantsId as $soignantId) {
                 $soignant = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
-                $soignant->setStatus($status == 'true' ? 1 : 0);
-                if ($status == 'true') {
+                $soignant->setStatus($status === 'true' ? 1 : 0);
+                if ($status === 'true') {
                     $priorityMax += 1;
                     $soignant->setPriority($priorityMax);
                 } else {

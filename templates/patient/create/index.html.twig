@@ -10,18 +10,18 @@
     <div class="wrapper">
         <h1 id="top">Nouveau patient</h1>
 
-		<div class="nav-bar" id="navMenu">
-			<div class="btn-group btn-nav">
-				<a href="{{ url('patient_list') }}" class="btn btn-default">
-					<span class="glyphicon glyphicon-chevron-left"></span>
-					Retour
-				</a>
-				<a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
-					<span class="glyphicon glyphicon-search"></span>
-					Informations
-				</a>
-			</div>
-		</div>
+        <div class="nav-bar" id="navMenu">
+            <div class="btn-group btn-nav">
+                <a href="{{ url('patient_list') }}" class="btn btn-default">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                    Retour
+                </a>
+                <a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-search"></span>
+                    Informations
+                </a>
+            </div>
+        </div>
 
         <div class="content">
             {{ form_start(form) }}
@@ -135,10 +135,10 @@
                 <span id="fin" class="separator-text">Données à la sortie</span>
             </div>
             <div class="row">
-		        <div class="col-md-3">
+                <div class="col-md-3">
                     {{ form_row(form.dentree) }}
                 </div>
-	        </div>
+            </div>
             <div class="row">
                 <div class="col-md-4">
                     {{ form_row(form.motif) }}
@@ -175,15 +175,18 @@
     <script src="{{ asset('js/script.js') }}"></script>
     <script type="text/javascript">
         function sortSelect() {
-            $('.container-fluid').find('select').each(function() {
+            $('.container-fluid').find('select').each(function () {
                 let sel = $(this);
                 let selected = sel.val();
                 let opts_list = sel.find('option');
-                opts_list.sort(function(a, b) { return $(a).text() > $(b).text() ? 1 : -1; });
+                opts_list.sort(function (a, b) {
+                    return $(a).text() > $(b).text() ? 1 : -1;
+                });
                 sel.html('').append(opts_list);
                 sel.val(selected);
             });
         }
+
         sortSelect();
     </script>
 {% endblock %}

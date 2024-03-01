@@ -91,9 +91,9 @@ class AccueilController extends AbstractController
                             'nom' => $p->getNom(),
                             'prenom' => $p->getPrenom(),
                             'rendezVousId' => $r->getId(),
-                            'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
+                            'send' =>  $r->getSend() === 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
-                            'type' => $r->getType() == null ? "" : $r->getType(),
+                            'type' => $r->getType() === null ? "" : $r->getType(),
                             'venu' => $r->getEtat() ? $r->getEtat() : "",
                             'theraflow' => $p->getDivers(),
                             'progetp' => $p->getProgetp()
@@ -103,10 +103,10 @@ class AccueilController extends AbstractController
                 $jsonContent[] = array(
                     "id" => $s->getId(),
                     "horaire" => $s->getHeureDebut()->format('H:i') . ' - ' . $s->getHeureFin()->format('H:i'),
-                    "thematique" => $s->getThematique() == null ? "" : $s->getThematique(),
-                    "type" => $s->getType() == null ? "" : $s->getType(),
-                    "soignant" => $s->getSoignant() == null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
-                    "location" => $s->getLocation() == null ? "" : $s->getLocation(),
+                    "thematique" => $s->getThematique() === null ? "" : $s->getThematique(),
+                    "type" => $s->getType() === null ? "" : $s->getType(),
+                    "soignant" => $s->getSoignant() === null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
+                    "location" => $s->getLocation() === null ? "" : $s->getLocation(),
                     "place" => $s->getPlace(),
                     "patients" => empty($rendezVous) ? "" : $patientsArray,
                 );
@@ -157,9 +157,9 @@ class AccueilController extends AbstractController
                             'nom' => $p->getNom(),
                             'prenom' => $p->getPrenom(),
                             'rendezVousId' => $r->getId(),
-                            'send' =>  $r->getSend() == 'Oui' ? 'Oui' : 'Non',
+                            'send' =>  $r->getSend() === 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
-                            'type' => $r->getType() == null ? "" : $r->getType(),
+                            'type' => $r->getType() === null ? "" : $r->getType(),
                             'venu' => $r->getEtat() ? $r->getEtat() : "",
                             'theraflow' => $p->getDivers(),
                             'progetp' => $p->getProgetp()
@@ -172,9 +172,9 @@ class AccueilController extends AbstractController
                     "date" => $s->getDate()->format('d/m/Y'),
                     "horaire" => $s->getHeureDebut()->format('H:i') . ' - ' . $s->getHeureFin()->format('H:i'),
                     "thematique" => $s->getThematique(),
-                    "type" => $s->getType() == null ? "" : $s->getType(),
-                    "location" => $s->getLocation() == null ? "" : $s->getLocation(),
-                    "soignant" => $s->getSoignant() == null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
+                    "type" => $s->getType() === null ? "" : $s->getType(),
+                    "location" => $s->getLocation() === null ? "" : $s->getLocation(),
+                    "soignant" => $s->getSoignant() === null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
                     "place" => $s->getPlace(),
                     "patients" => empty($rendezVous) ? "" : $patientsArray,
                 );
@@ -242,7 +242,7 @@ class AccueilController extends AbstractController
                     'nom' => $patient->getNom(),
                     'prenom' => $patient->getPrenom(),
                     'rendezVousId' => $rendezVous->getId(),
-                    'send' =>  $rendezVous->getSend() == 'Oui' ? 'Oui' : 'Non'
+                    'send' =>  $rendezVous->getSend() === 'Oui' ? 'Oui' : 'Non'
                 )
             );
         }
@@ -265,7 +265,7 @@ class AccueilController extends AbstractController
             // $this->em->remove($rendezVous);
             
             if ($slot) {
-                if (count($slot->getRendezVous()) == 0) {
+                if (count($slot->getRendezVous()) === 0) {
                     $slot->setThematique('');
                 }
             }

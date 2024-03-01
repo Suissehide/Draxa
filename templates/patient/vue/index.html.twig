@@ -168,10 +168,10 @@
                 <span id="fin" class="separator-text">Données à la sortie</span>
             </div>
             <div class="row">
-		        <div class="col-md-3">
+                <div class="col-md-3">
                     {{ form_row(form.dentree, {'required': false}) }}
                 </div>
-	        </div>
+            </div>
             <div class="row">
                 <div class="col-md-4">
                     {{ form_row(form.motif, {'required': false}) }}
@@ -193,13 +193,14 @@
                         <div class="cd-h-timeline__line">
                             <ol id="events-consultations">
                                 {% for consultation in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                                {% if consultation.categorie == 'Consultation' %}
-                                    <li>
-                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}">
-                                            {{ consultation.date|format_datetime(pattern="d MMM", locale='fr') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
+                                    {% if consultation.categorie == 'Consultation' %}
+                                        <li>
+                                            <a class="cd-h-timeline__date" href="#0"
+                                               data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}">
+                                                {{ consultation.date|format_datetime(pattern="d MMM", locale='fr') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ol>
                             <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
@@ -208,7 +209,8 @@
 
                     <ul>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                            <a href="#0"
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
                             <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
@@ -223,112 +225,167 @@
                 <div class="cd-h-timeline__events">
                     <ol id="events-content-consultations">
                         {% for consultation in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                        {% set counter = (counter | default(0)) + 1 %}
-                        {% if consultation.categorie == 'Consultation' %}
-                            <li class="cd-h-timeline__event" data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}" data-id="{{ consultation.id }}">
-                                <h2 class="cd-h-timeline__event-title">Consultation</h2>
-                                <em class="cd-h-timeline__event-date">
-                                    {{ consultation.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
-                                </em>
-                                <div>
-                                    <div class="error-msg"></div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_consultations_{{ consultation.id }}_date">Date prévue</label>
-                                                <input disabled type="text" id="patient_creation_form_consultations_{{ consultation.id }}_date" name="patient_creation_form[consultation][{{ consultation.id }}][date]" required="required" class="datepicker form-control" value="{{ consultation.date|date("d/m/Y") }}">
+                            {% set counter = (counter | default(0)) + 1 %}
+                            {% if consultation.categorie == 'Consultation' %}
+                                <li class="cd-h-timeline__event"
+                                    data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}"
+                                    data-id="{{ consultation.id }}">
+                                    <h2 class="cd-h-timeline__event-title">Consultation</h2>
+                                    <em class="cd-h-timeline__event-date">
+                                        {{ consultation.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
+                                    </em>
+                                    <div>
+                                        <div class="error-msg"></div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_date">Date
+                                                        prévue</label>
+                                                    <input disabled type="text"
+                                                           id="patient_creation_form_consultations_{{ consultation.id }}_date"
+                                                           name="patient_creation_form[consultation][{{ consultation.id }}][date]"
+                                                           required="required" class="datepicker form-control"
+                                                           value="{{ consultation.date|date("d/m/Y") }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_heure">Heure</label>
+                                                    <select disabled type="text"
+                                                            id="patient_creation_form_consultations_{{ consultation.id }}_heure"
+                                                            name="patient_creation_form[consultation][{{ consultation.id }}][heure]"
+                                                            required="required" class="form-control heure">
+                                                        <option value="{{ consultation.slot }}"
+                                                                selected>{{ consultation.heure|date("H:i") }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_consultations_{{ consultation.id }}_heure">Heure</label>
-                                                <select disabled type="text" id="patient_creation_form_consultations_{{ consultation.id }}_heure" name="patient_creation_form[consultation][{{ consultation.id }}][heure]" required="required" class="form-control heure">
-                                                    <option value="{{ consultation.slot }}" selected>{{ consultation.heure|date("H:i") }}</option>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_thematique">
+                                                        Thématique
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_consultations_{{ consultation.id }}_thematique"
+                                                            class="form-control thematique">
+                                                        <option value="" {% if consultation.thematique == '' %} selected="selected" {% endif %}></option>
+                                                        {% for thematique in thematiques[0] %}
+                                                            <option value="{{ thematique }}" {% if consultation.thematique == thematique %} selected="selected" {% endif %}>{{ thematique }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_type">
+                                                        Type
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_consultations_{{ consultation.id }}_type"
+                                                            name="patient_creation_form[consultation][{{ consultation.id }}][type]"
+                                                            class="form-control type">
+                                                        <option value="" {% if consultation.type == "" %} selected="selected" {% endif %}></option>
+                                                        <option value="Ambu" {% if consultation.type == "Ambu" %} selected="selected" {% endif %}>
+                                                            Ambu
+                                                        </option>
+                                                        <option value="Tel" {% if consultation.type == "Tel" %} selected="selected" {% endif %}>
+                                                            Tel
+                                                        </option>
+                                                        <option value="Hospit" {% if consultation.type == "Hospit" %} selected="selected" {% endif %}>
+                                                            Hospit
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_accompagnant">Accompagnant</label>
+                                                    <select id="patient_creation_form_consultations_{{ consultation.id }}_accompagnant"
+                                                            name="patient_creation_form[consultation][{{ consultation.id }}][accompagnant]"
+                                                            class="form-control">
+                                                        <option value="" {% if consultation.accompagnant == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non" {% if consultation.accompagnant == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui" {% if consultation.accompagnant == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_etat">A-t-il
+                                                        eu lieu ?</label>
+                                                    <select id="patient_creation_form_consultations_{{ consultation.id }}_etat"
+                                                            name="patient_creation_form[consultation][{{ consultation.id }}][etat]"
+                                                            class="form-control" style="background: gold;">
+                                                        <option value=""
+                                                                class="white" {% if consultation.etat == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non"
+                                                                class="gold" {% if consultation.etat == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui"
+                                                                class="hotpink" {% if consultation.etat == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_motifRefus">Motif
+                                                        de refus</label>
+                                                    <input type="text"
+                                                           id="patient_creation_form_consultations_{{ consultation.id }}_motifRefus"
+                                                           name="patient_creation_form[consultation][{{ consultation.id }}][motifRefus]"
+                                                           class="form-control" value="{{ consultation.motifRefus }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_consultations_{{ consultation.id }}_notes">Notes
+                                                        de transmission</label>
+                                                    <textarea type="text"
+                                                              id="patient_creation_form_consultations_{{ consultation.id }}_notes"
+                                                              name="patient_creation_form[consultation][{{ consultation.id }}][notes]"
+                                                              class="form-control">{{ consultation.notes }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-primary pull-right">Modifier
+                                                </button>
+                                                <button type="button" class="btn btn-danger pull-left">Supprimer
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_thematique">
-                                                    Thématique
-                                                </label>
-                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_thematique" class="form-control thematique">
-                                                    <option value="" {% if consultation.thematique == '' %} selected="selected" {% endif %}></option>
-                                                    {% for thematique in thematiques[0] %}
-                                                        <option value="{{thematique}}" {% if consultation.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_type">
-                                                    Type
-                                                </label>
-                                                <select type="text" id="patient_creation_form_consultations_{{ consultation.id }}_type" name="patient_creation_form[consultation][{{ consultation.id }}][type]" class="form-control type">
-                                                    <option value="" {% if consultation.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if consultation.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if consultation.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if consultation.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
-                                                <select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_accompagnant">Accompagnant</label>
-                                                <select id="patient_creation_form_consultations_{{ consultation.id }}_accompagnant" name="patient_creation_form[consultation][{{ consultation.id }}][accompagnant]" class="form-control">
-                                                    <option value="" {% if consultation.accompagnant == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" {% if consultation.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" {% if consultation.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_etat">A-t-il eu lieu ?</label>
-                                                <select id="patient_creation_form_consultations_{{ consultation.id }}_etat" name="patient_creation_form[consultation][{{ consultation.id }}][etat]" class="form-control" style="background: gold;">
-                                                    <option value="" class="white" {% if consultation.etat == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" class="gold" {% if consultation.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" class="hotpink" {% if consultation.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_motifRefus">Motif de refus</label>
-                                                <input type="text" id="patient_creation_form_consultations_{{ consultation.id }}_motifRefus" name="patient_creation_form[consultation][{{ consultation.id }}][motifRefus]" class="form-control" value="{{ consultation.motifRefus }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_consultations_{{ consultation.id }}_notes">Notes de transmission</label>
-                                                <textarea type="text" id="patient_creation_form_consultations_{{ consultation.id }}_notes" name="patient_creation_form[consultation][{{ consultation.id }}][notes]" class="form-control">{{ consultation.notes }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endif %}
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ol>
 
                 </div>
             </section>
-
 
 
             <div class="separator">
@@ -342,22 +399,24 @@
                         <div class="cd-h-timeline__line">
                             <ol id="events-entretiens">
                                 {% for entretien in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                                {% if entretien.categorie == 'Entretien' %}
-                                    <li>
-                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}">
-                                            {{ entretien.date|format_datetime(pattern="d MMM", locale='fr') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
+                                    {% if entretien.categorie == 'Entretien' %}
+                                        <li>
+                                            <a class="cd-h-timeline__date" href="#0"
+                                               data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}">
+                                                {{ entretien.date|format_datetime(pattern="d MMM", locale='fr') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
-                           </ol>
+                            </ol>
                             <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
                         </div>
                     </div>
 
                     <ul>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                            <a href="#0"
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
                             <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
@@ -372,111 +431,166 @@
                 <div class="cd-h-timeline__events">
                     <ol id="events-content-entretiens">
                         {% for entretien in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                        {% if entretien.categorie == 'Entretien' %}
-                            <li class="cd-h-timeline__event" data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}" data-id="{{ entretien.id }}">
-                                <h2 class="cd-h-timeline__event-title">Entretien</h2>
-                                <em class="cd-h-timeline__event-date">
-                                    {{ entretien.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
-                                </em>
-                                <div>
-                                    <div class="error-msg"></div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_entretiens_{{ entretien.id }}_date">Date prévue</label>
-                                                <input disabled type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_date" name="patient_creation_form[entretien][{{ entretien.id }}][date]" required="required" class="datepicker form-control" value="{{ entretien.date|date("d/m/Y") }}">
+                            {% if entretien.categorie == 'Entretien' %}
+                                <li class="cd-h-timeline__event"
+                                    data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}"
+                                    data-id="{{ entretien.id }}">
+                                    <h2 class="cd-h-timeline__event-title">Entretien</h2>
+                                    <em class="cd-h-timeline__event-date">
+                                        {{ entretien.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
+                                    </em>
+                                    <div>
+                                        <div class="error-msg"></div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_date">Date
+                                                        prévue</label>
+                                                    <input disabled type="text"
+                                                           id="patient_creation_form_entretiens_{{ entretien.id }}_date"
+                                                           name="patient_creation_form[entretien][{{ entretien.id }}][date]"
+                                                           required="required" class="datepicker form-control"
+                                                           value="{{ entretien.date|date("d/m/Y") }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_heure">Heure</label>
+                                                    <select disabled type="text"
+                                                            id="patient_creation_form_entretiens_{{ entretien.id }}_heure"
+                                                            name="patient_creation_form[entretien][{{ entretien.id }}][heure]"
+                                                            required="required" class="form-control heure">
+                                                        <option value="{{ entretien.slot }}"
+                                                                selected>{{ entretien.heure|date("H:i") }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_entretiens_{{ entretien.id }}_heure">Heure</label>
-                                                <select disabled type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_heure" name="patient_creation_form[entretien][{{ entretien.id }}][heure]" required="required" class="form-control heure">
-                                                    <option value="{{ entretien.slot }}" selected>{{ entretien.heure|date("H:i") }}</option>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_thematique">
+                                                        Thématique
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_entretiens_{{ entretien.id }}_thematique"
+                                                            class="form-control thematique">
+                                                        <option value="" {% if entretien.thematique == '' %} selected="selected" {% endif %}></option>
+                                                        {% for thematique in thematiques[1] %}
+                                                        <option value="{{ thematique }}" {% if entretien.thematique == thematique %} selected="selected" {% endif %}>{{ thematique }}</option>
+                                                        {% endfor %}²
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_type">
+                                                        Type
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_entretiens_{{ entretien.id }}_type"
+                                                            name="patient_creation_form[entretien][{{ entretien.id }}][type]"
+                                                            class="form-control type">
+                                                        <option value="" {% if entretien.type == "" %} selected="selected" {% endif %}></option>
+                                                        <option value="Ambu" {% if entretien.type == "Ambu" %} selected="selected" {% endif %}>
+                                                            Ambu
+                                                        </option>
+                                                        <option value="Tel" {% if entretien.type == "Tel" %} selected="selected" {% endif %}>
+                                                            Tel
+                                                        </option>
+                                                        <option value="Hospit" {% if entretien.type == "Hospit" %} selected="selected" {% endif %}>
+                                                            Hospit
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_accompagnant">Accompagnant</label>
+                                                    <select id="patient_creation_form_entretiens_{{ entretien.id }}_accompagnant"
+                                                            name="patient_creation_form[entretien][{{ entretien.id }}][accompagnant]"
+                                                            class="form-control">
+                                                        <option value="" {% if entretien.accompagnant == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non" {% if entretien.accompagnant == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui" {% if entretien.accompagnant == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_etat">A-t-il
+                                                        eu lieu ?</label>
+                                                    <select id="patient_creation_form_entretiens_{{ entretien.id }}_etat"
+                                                            name="patient_creation_form[entretien][{{ entretien.id }}][etat]"
+                                                            class="form-control" style="background: gold;">
+                                                        <option value=""
+                                                                class="white" {% if entretien.etat == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non"
+                                                                class="gold" {% if entretien.etat == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui"
+                                                                class="hotpink" {% if entretien.etat == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_motifRefus">Motif
+                                                        de refus</label>
+                                                    <input type="text"
+                                                           id="patient_creation_form_entretiens_{{ entretien.id }}_motifRefus"
+                                                           name="patient_creation_form[entretien][{{ entretien.id }}][motifRefus]"
+                                                           class="form-control" value="{{ entretien.motifRefus }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_entretiens_{{ entretien.id }}_notes">Notes
+                                                        de transmission</label>
+                                                    <textarea type="text"
+                                                              id="patient_creation_form_entretiens_{{ entretien.id }}_notes"
+                                                              name="patient_creation_form[entretien][{{ entretien.id }}][notes]"
+                                                              class="form-control">{{ entretien.notes }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-primary pull-right">Modifier
+                                                </button>
+                                                <button type="button" class="btn btn-danger pull-left">Supprimer
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_thematique">
-                                                    Thématique
-                                                </label>
-                                                <select type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_thematique" class="form-control thematique">
-                                                    <option value="" {% if entretien.thematique == '' %} selected="selected" {% endif %}></option>
-                                                    {% for thematique in thematiques[1] %}
-                                                        <option value="{{thematique}}" {% if entretien.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
-                                                    {% endfor %}²
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_type">
-                                                    Type
-                                                </label>
-                                               <select type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_type" name="patient_creation_form[entretien][{{ entretien.id }}][type]" class="form-control type">
-                                                    <option value="" {% if entretien.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if entretien.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if entretien.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if entretien.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
-                                                <select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_accompagnant">Accompagnant</label>
-                                                <select id="patient_creation_form_entretiens_{{ entretien.id }}_accompagnant" name="patient_creation_form[entretien][{{ entretien.id }}][accompagnant]" class="form-control">
-                                                    <option value="" {% if entretien.accompagnant == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" {% if entretien.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" {% if entretien.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_etat">A-t-il eu lieu ?</label>
-                                                <select id="patient_creation_form_entretiens_{{ entretien.id }}_etat" name="patient_creation_form[entretien][{{ entretien.id }}][etat]" class="form-control" style="background: gold;">
-                                                    <option value="" class="white" {% if entretien.etat == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" class="gold" {% if entretien.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" class="hotpink" {% if entretien.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_motifRefus">Motif de refus</label>
-                                                <input type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_motifRefus" name="patient_creation_form[entretien][{{ entretien.id }}][motifRefus]" class="form-control" value="{{ entretien.motifRefus }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_entretiens_{{ entretien.id }}_notes">Notes de transmission</label>
-                                                <textarea type="text" id="patient_creation_form_entretiens_{{ entretien.id }}_notes" name="patient_creation_form[entretien][{{ entretien.id }}][notes]" class="form-control">{{ entretien.notes }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endif %}
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ol>
 
                 </div>
             </section>
-
 
 
             <div class="separator">
@@ -490,13 +604,14 @@
                         <div class="cd-h-timeline__line">
                             <ol id="events-coachings">
                                 {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                                {% if coaching.categorie == 'Coaching' %}
-                                    <li>
-                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}">
-                                            {{ coaching.date|format_datetime(pattern="d MMM", locale='fr') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
+                                    {% if coaching.categorie == 'Coaching' %}
+                                        <li>
+                                            <a class="cd-h-timeline__date" href="#0"
+                                               data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}">
+                                                {{ coaching.date|format_datetime(pattern="d MMM", locale='fr') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ol>
                             <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
@@ -505,7 +620,8 @@
 
                     <ul>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                            <a href="#0"
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
                             <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
@@ -520,111 +636,166 @@
                 <div class="cd-h-timeline__events">
                     <ol id="events-content-coachings">
                         {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                        {% if coaching.categorie == 'Coaching' %}
-                            <li class="cd-h-timeline__event" data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}" data-id="{{ coaching.id }}">
-                                <h2 class="cd-h-timeline__event-title">Coaching PRM</h2>
-                                <em class="cd-h-timeline__event-date">
-                                    {{ coaching.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
-                                </em>
-                                <div>
-                                    <div class="error-msg"></div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_coachings_{{ coaching.id }}_date">Date prévue</label>
-                                                <input disabled type="text" id="patient_creation_form_coachings_{{ coaching.id }}_date" name="patient_creation_form[coaching][{{ coaching.id }}][date]" required="required" class="datepicker form-control" value="{{ coaching.date|date("d/m/Y") }}">
+                            {% if coaching.categorie == 'Coaching' %}
+                                <li class="cd-h-timeline__event"
+                                    data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}"
+                                    data-id="{{ coaching.id }}">
+                                    <h2 class="cd-h-timeline__event-title">Coaching PRM</h2>
+                                    <em class="cd-h-timeline__event-date">
+                                        {{ coaching.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
+                                    </em>
+                                    <div>
+                                        <div class="error-msg"></div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_date">Date
+                                                        prévue</label>
+                                                    <input disabled type="text"
+                                                           id="patient_creation_form_coachings_{{ coaching.id }}_date"
+                                                           name="patient_creation_form[coaching][{{ coaching.id }}][date]"
+                                                           required="required" class="datepicker form-control"
+                                                           value="{{ coaching.date|date("d/m/Y") }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_heure">Heure</label>
+                                                    <select disabled type="text"
+                                                            id="patient_creation_form_coachings_{{ coaching.id }}_heure"
+                                                            name="patient_creation_form[coaching][{{ coaching.id }}][heure]"
+                                                            required="required" class="form-control heure">
+                                                        <option value="{{ coaching.slot }}"
+                                                                selected>{{ coaching.heure|date("H:i") }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_coachings_{{ coaching.id }}_heure">Heure</label>
-                                                <select disabled type="text" id="patient_creation_form_coachings_{{ coaching.id }}_heure" name="patient_creation_form[coaching][{{ coaching.id }}][heure]" required="required" class="form-control heure">
-                                                    <option value="{{ coaching.slot }}" selected>{{ coaching.heure|date("H:i") }}</option>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_thematique">
+                                                        Thématique
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_coachings_{{ coaching.id }}_thematique"
+                                                            class="form-control thematique">
+                                                        <option value="" {% if coaching.thematique == '' %} selected="selected" {% endif %}></option>
+                                                        {% for thematique in thematiques[3] %}
+                                                            <option value="{{ thematique }}" {% if coaching.thematique == thematique %} selected="selected" {% endif %}>{{ thematique }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_type">
+                                                        Type
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_coachings_{{ coaching.id }}_type"
+                                                            name="patient_creation_form[coaching][{{ coaching.id }}][type]"
+                                                            class="form-control type">
+                                                        <option value="" {% if coaching.type == "" %} selected="selected" {% endif %}></option>
+                                                        <option value="Ambu" {% if coaching.type == "Ambu" %} selected="selected" {% endif %}>
+                                                            Ambu
+                                                        </option>
+                                                        <option value="Tel" {% if coaching.type == "Tel" %} selected="selected" {% endif %}>
+                                                            Tel
+                                                        </option>
+                                                        <option value="Hospit" {% if coaching.type == "Hospit" %} selected="selected" {% endif %}>
+                                                            Hospit
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_accompagnant">Accompagnant</label>
+                                                    <select id="patient_creation_form_coachings_{{ coaching.id }}_accompagnant"
+                                                            name="patient_creation_form[coaching][{{ coaching.id }}][accompagnant]"
+                                                            class="form-control">
+                                                        <option value="" {% if coaching.accompagnant == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non" {% if coaching.accompagnant == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui" {% if coaching.accompagnant == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_etat">A-t-il
+                                                        eu lieu ?</label>
+                                                    <select id="patient_creation_form_coachings_{{ coaching.id }}_etat"
+                                                            name="patient_creation_form[coaching][{{ coaching.id }}][etat]"
+                                                            class="form-control" style="background: gold;">
+                                                        <option value=""
+                                                                class="white" {% if coaching.etat == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non"
+                                                                class="gold" {% if coaching.etat == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui"
+                                                                class="hotpink" {% if coaching.etat == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_motifRefus">Motif
+                                                        de refus</label>
+                                                    <input type="text"
+                                                           id="patient_creation_form_coachings_{{ coaching.id }}_motifRefus"
+                                                           name="patient_creation_form[coaching][{{ coaching.id }}][motifRefus]"
+                                                           class="form-control" value="{{ coaching.motifRefus }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_coachings_{{ coaching.id }}_notes">Notes
+                                                        de transmission</label>
+                                                    <textarea type="text"
+                                                              id="patient_creation_form_coachings_{{ coaching.id }}_notes"
+                                                              name="patient_creation_form[coaching][{{ coaching.id }}][notes]"
+                                                              class="form-control">{{ coaching.notes }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-primary pull-right">Modifier
+                                                </button>
+                                                <button type="button" class="btn btn-danger pull-left">Supprimer
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_thematique">
-                                                    Thématique
-                                                </label>
-                                                <select type="text" id="patient_creation_form_coachings_{{ coaching.id }}_thematique" class="form-control thematique">
-                                                    <option value="" {% if coaching.thematique == '' %} selected="selected" {% endif %}></option>
-                                                    {% for thematique in thematiques[3] %}
-                                                        <option value="{{thematique}}" {% if coaching.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_type">
-                                                    Type
-                                                </label>
-                                                <select type="text" id="patient_creation_form_coachings_{{ coaching.id }}_type" name="patient_creation_form[coaching][{{ coaching.id }}][type]" class="form-control type">
-                                                    <option value="" {% if coaching.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if coaching.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if coaching.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if coaching.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
-                                                <select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_accompagnant">Accompagnant</label>
-                                                <select id="patient_creation_form_coachings_{{ coaching.id }}_accompagnant" name="patient_creation_form[coaching][{{ coaching.id }}][accompagnant]" class="form-control">
-                                                    <option value="" {% if coaching.accompagnant == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" {% if coaching.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" {% if coaching.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_etat">A-t-il eu lieu ?</label>
-                                                <select id="patient_creation_form_coachings_{{ coaching.id }}_etat" name="patient_creation_form[coaching][{{ coaching.id }}][etat]" class="form-control" style="background: gold;">
-                                                    <option value="" class="white" {% if coaching.etat == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" class="gold" {% if coaching.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" class="hotpink" {% if coaching.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_motifRefus">Motif de refus</label>
-                                                <input type="text" id="patient_creation_form_coachings_{{ coaching.id }}_motifRefus" name="patient_creation_form[coaching][{{ coaching.id }}][motifRefus]" class="form-control" value="{{ coaching.motifRefus }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_coachings_{{ coaching.id }}_notes">Notes de transmission</label>
-                                                <textarea type="text" id="patient_creation_form_coachings_{{ coaching.id }}_notes" name="patient_creation_form[coaching][{{ coaching.id }}][notes]" class="form-control">{{ coaching.notes }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endif %}
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ol>
 
                 </div>
             </section>
-
 
 
             <div class="separator">
@@ -638,13 +809,14 @@
                         <div class="cd-h-timeline__line">
                             <ol id="events-ateliers">
                                 {% for atelier in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                                {% if atelier.categorie == 'Atelier' %}
-                                    <li>
-                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}">
-                                            {{ atelier.date|format_datetime(pattern="d MMM", locale='fr') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
+                                    {% if atelier.categorie == 'Atelier' %}
+                                        <li>
+                                            <a class="cd-h-timeline__date" href="#0"
+                                               data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}">
+                                                {{ atelier.date|format_datetime(pattern="d MMM", locale='fr') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ol>
                             <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
@@ -653,7 +825,8 @@
 
                     <ul>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                            <a href="#0"
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
                             <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
@@ -668,111 +841,166 @@
                 <div class="cd-h-timeline__events">
                     <ol id="events-content-ateliers">
                         {% for atelier in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                        {% if atelier.categorie == 'Atelier' %}
-                            <li class="cd-h-timeline__event" data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}" data-id="{{ atelier.id }}">
-                                <h2 class="cd-h-timeline__event-title">Atelier</h2>
-                                <em class="cd-h-timeline__event-date">
-                                    {{ atelier.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
-                                </em>
-                                <div>
-                                    <div class="error-msg"></div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_ateliers_{{ atelier.id }}_date">Date prévue</label>
-                                                <input disabled type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_date" name="patient_creation_form[atelier][{{ atelier.id }}][date]" required="required" class="datepicker form-control" value="{{ atelier.date|date("d/m/Y") }}">
+                            {% if atelier.categorie == 'Atelier' %}
+                                <li class="cd-h-timeline__event"
+                                    data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}"
+                                    data-id="{{ atelier.id }}">
+                                    <h2 class="cd-h-timeline__event-title">Atelier</h2>
+                                    <em class="cd-h-timeline__event-date">
+                                        {{ atelier.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
+                                    </em>
+                                    <div>
+                                        <div class="error-msg"></div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_date">Date
+                                                        prévue</label>
+                                                    <input disabled type="text"
+                                                           id="patient_creation_form_ateliers_{{ atelier.id }}_date"
+                                                           name="patient_creation_form[atelier][{{ atelier.id }}][date]"
+                                                           required="required" class="datepicker form-control"
+                                                           value="{{ atelier.date|date("d/m/Y") }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_heure">Heure</label>
+                                                    <select disabled type="text"
+                                                            id="patient_creation_form_ateliers_{{ atelier.id }}_heure"
+                                                            name="patient_creation_form[atelier][{{ atelier.id }}][heure]"
+                                                            required="required" class="form-control heure">
+                                                        <option value="{{ atelier.slot }}"
+                                                                selected>{{ atelier.heure|date("H:i") }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_ateliers_{{ atelier.id }}_heure">Heure</label>
-                                                <select disabled type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_heure" name="patient_creation_form[atelier][{{ atelier.id }}][heure]" required="required" class="form-control heure">
-                                                    <option value="{{ atelier.slot }}" selected>{{ atelier.heure|date("H:i") }}</option>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_thematique">
+                                                        Thématique
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_ateliers_{{ atelier.id }}_thematique"
+                                                            class="form-control thematique">
+                                                        <option value="" {% if atelier.thematique == '' %} selected="selected" {% endif %}></option>
+                                                        {% for thematique in thematiques[2] %}
+                                                            <option value="{{ thematique }}" {% if atelier.thematique == thematique %} selected="selected" {% endif %}>{{ thematique }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_type">
+                                                        Type
+                                                    </label>
+                                                    <select type="text"
+                                                            id="patient_creation_form_ateliers_{{ atelier.id }}_type"
+                                                            name="patient_creation_form[atelier][{{ atelier.id }}][type]"
+                                                            class="form-control type">
+                                                        <option value="" {% if atelier.type == "" %} selected="selected" {% endif %}></option>
+                                                        <option value="Ambu" {% if atelier.type == "Ambu" %} selected="selected" {% endif %}>
+                                                            Ambu
+                                                        </option>
+                                                        <option value="Tel" {% if atelier.type == "Tel" %} selected="selected" {% endif %}>
+                                                            Tel
+                                                        </option>
+                                                        <option value="Hospit" {% if atelier.type == "Hospit" %} selected="selected" {% endif %}>
+                                                            Hospit
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_accompagnant">Accompagnant</label>
+                                                    <select id="patient_creation_form_ateliers_{{ atelier.id }}_accompagnant"
+                                                            name="patient_creation_form[atelier][{{ atelier.id }}][accompagnant]"
+                                                            class="form-control">
+                                                        <option value="" {% if atelier.accompagnant == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non" {% if atelier.accompagnant == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui" {% if atelier.accompagnant == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_etat">A-t-il
+                                                        eu lieu ?</label>
+                                                    <select id="patient_creation_form_ateliers_{{ atelier.id }}_etat"
+                                                            name="patient_creation_form[atelier][{{ atelier.id }}][etat]"
+                                                            class="form-control" style="background: gold;">
+                                                        <option value=""
+                                                                class="white" {% if atelier.etat == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non"
+                                                                class="gold" {% if atelier.etat == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui"
+                                                                class="hotpink" {% if atelier.etat == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_motifRefus">Motif
+                                                        de refus</label>
+                                                    <input type="text"
+                                                           id="patient_creation_form_ateliers_{{ atelier.id }}_motifRefus"
+                                                           name="patient_creation_form[atelier][{{ atelier.id }}][motifRefus]"
+                                                           class="form-control" value="{{ atelier.motifRefus }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_ateliers_{{ atelier.id }}_notes">Notes
+                                                        de transmission</label>
+                                                    <textarea type="text"
+                                                              id="patient_creation_form_ateliers_{{ atelier.id }}_notes"
+                                                              name="patient_creation_form[atelier][{{ atelier.id }}][notes]"
+                                                              class="form-control">{{ atelier.notes }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-primary pull-right">Modifier
+                                                </button>
+                                                <button type="button" class="btn btn-danger pull-left">Supprimer
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_thematique">
-                                                    Thématique
-                                                </label>
-                                                <select type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_thematique" class="form-control thematique">
-                                                    <option value="" {% if atelier.thematique == '' %} selected="selected" {% endif %}></option>
-                                                    {% for thematique in thematiques[2] %}
-                                                        <option value="{{thematique}}" {% if atelier.thematique == thematique %} selected="selected" {% endif %}>{{thematique}}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_type">
-                                                    Type
-                                                </label>
-                                                <select type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_type" name="patient_creation_form[atelier][{{ atelier.id }}][type]" class="form-control type">
-                                                    <option value="" {% if atelier.type == "" %} selected="selected" {% endif %}></option>
-                                                    <option value="Ambu" {% if atelier.type == "Ambu" %} selected="selected" {% endif %}>Ambu</option>
-                                                    <option value="Tel" {% if atelier.type == "Tel" %} selected="selected" {% endif %}>Tel</option>
-                                                    <option value="Hospit" {% if atelier.type == "Hospit" %} selected="selected" {% endif %}>Hospit</option>
-                                                <select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_accompagnant">Accompagnant</label>
-                                                <select id="patient_creation_form_ateliers_{{ atelier.id }}_accompagnant" name="patient_creation_form[atelier][{{ atelier.id }}][accompagnant]" class="form-control">
-                                                    <option value="" {% if atelier.accompagnant == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" {% if atelier.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" {% if atelier.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_etat">A-t-il eu lieu ?</label>
-                                                <select id="patient_creation_form_ateliers_{{ atelier.id }}_etat" name="patient_creation_form[atelier][{{ atelier.id }}][etat]" class="form-control" style="background: gold;">
-                                                    <option value="" class="white" {% if atelier.etat == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" class="gold" {% if atelier.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" class="hotpink" {% if atelier.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_motifRefus">Motif de refus</label>
-                                                <input type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_motifRefus" name="patient_creation_form[atelier][{{ atelier.id }}][motifRefus]" class="form-control" value="{{ atelier.motifRefus }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_ateliers_{{ atelier.id }}_notes">Notes de transmission</label>
-                                                <textarea type="text" id="patient_creation_form_ateliers_{{ atelier.id }}_notes" name="patient_creation_form[atelier][{{ atelier.id }}][notes]" class="form-control">{{ atelier.notes }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endif %}
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ol>
 
                 </div>
             </section>
-
 
 
             <div class="separator">
@@ -786,13 +1014,14 @@
                         <div class="cd-h-timeline__line">
                             <ol id="events-educatives">
                                 {% for educative in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                                {% if educative.categorie == 'Educative' %}
-                                    <li>
-                                        <a class="cd-h-timeline__date" href="#0" data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}">
-                                            {{ educative.date|format_datetime(pattern="d MMM", locale='fr') }}
-                                        </a>
-                                    </li>
-                                {% endif %}
+                                    {% if educative.categorie == 'Educative' %}
+                                        <li>
+                                            <a class="cd-h-timeline__date" href="#0"
+                                               data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}">
+                                                {{ educative.date|format_datetime(pattern="d MMM", locale='fr') }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                 {% endfor %}
                             </ol>
                             <span class="cd-h-timeline__filling-line" aria-hidden="true"></span>
@@ -801,7 +1030,8 @@
 
                     <ul>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                            <a href="#0"
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
                         </li>
                         <li>
                             <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
@@ -816,77 +1046,120 @@
                 <div class="cd-h-timeline__events">
                     <ol id="events-content-educatives">
                         {% for educative in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
-                        {% if educative.categorie == 'Educative' %}
-                            <li class="cd-h-timeline__event" data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}" data-id="{{ educative.id }}">
-                                <h2 class="cd-h-timeline__event-title">Semaine éducative</h2>
-                                <em class="cd-h-timeline__event-date">
-                                    {{ educative.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
-                                </em>
-                                <div>
-                                    <div class="error-msg"></div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_educatives_{{ educative.id }}_date">Date prévue</label>
-                                                <input disabled type="text" id="patient_creation_form_educatives_{{ educative.id }}_date" name="patient_creation_form[educative][{{ educative.id }}][date]" required="required" class="datepicker form-control" value="{{ educative.date|date("d/m/Y") }}">
+                            {% if educative.categorie == 'Educative' %}
+                                <li class="cd-h-timeline__event"
+                                    data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}"
+                                    data-id="{{ educative.id }}">
+                                    <h2 class="cd-h-timeline__event-title">Semaine éducative</h2>
+                                    <em class="cd-h-timeline__event-date">
+                                        {{ educative.date|format_datetime(pattern="d MMMM YYYY", locale='fr') }}
+                                    </em>
+                                    <div>
+                                        <div class="error-msg"></div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_educatives_{{ educative.id }}_date">Date
+                                                        prévue</label>
+                                                    <input disabled type="text"
+                                                           id="patient_creation_form_educatives_{{ educative.id }}_date"
+                                                           name="patient_creation_form[educative][{{ educative.id }}][date]"
+                                                           required="required" class="datepicker form-control"
+                                                           value="{{ educative.date|date("d/m/Y") }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label required"
+                                                           for="patient_creation_form_educatives_{{ educative.id }}_heure">Heure</label>
+                                                    <select disabled type="text"
+                                                            id="patient_creation_form_educatives_{{ educative.id }}_heure"
+                                                            name="patient_creation_form[educative][{{ educative.id }}][heure]"
+                                                            required="required" class="form-control heure">
+                                                        <option value="{{ educative.slot }}"
+                                                                selected>{{ educative.heure|date("H:i") }}</option>
+                                                    </select>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label required" for="patient_creation_form_educatives_{{ educative.id }}_heure">Heure</label>
-                                                <select disabled type="text" id="patient_creation_form_educatives_{{ educative.id }}_heure" name="patient_creation_form[educative][{{ educative.id }}][heure]" required="required" class="form-control heure">
-                                                    <option value="{{ educative.slot }}" selected>{{ educative.heure|date("H:i") }}</option>
-                                                </select>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_educatives_{{ educative.id }}_accompagnant">Accompagnant</label>
+                                                    <select id="patient_creation_form_educatives_{{ educative.id }}_accompagnant"
+                                                            name="patient_creation_form[educative][{{ educative.id }}][accompagnant]"
+                                                            class="form-control">
+                                                        <option value="" {% if educative.accompagnant == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non" {% if educative.accompagnant == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui" {% if educative.accompagnant == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_educatives_{{ educative.id }}_etat">A-t-il
+                                                        eu lieu ?</label>
+                                                    <select id="patient_creation_form_educatives_{{ educative.id }}_etat"
+                                                            name="patient_creation_form[educative][{{ educative.id }}][etat]"
+                                                            class="form-control" style="background: gold;">
+                                                        <option value=""
+                                                                class="white" {% if educative.etat == '' %} selected="selected" {% endif %}></option>
+                                                        <option value="Non"
+                                                                class="gold" {% if educative.etat == 'Non' %} selected="selected" {% endif %}>
+                                                            Non
+                                                        </option>
+                                                        <option value="Oui"
+                                                                class="hotpink" {% if educative.etat == 'Oui' %} selected="selected" {% endif %}>
+                                                            Oui
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_educatives_{{ educative.id }}_motifRefus">Motif
+                                                        de refus</label>
+                                                    <input type="text"
+                                                           id="patient_creation_form_educatives_{{ educative.id }}_motifRefus"
+                                                           name="patient_creation_form[educative][{{ educative.id }}][motifRefus]"
+                                                           class="form-control" value="{{ educative.motifRefus }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="control-label"
+                                                           for="patient_creation_form_educatives_{{ educative.id }}_notes">Notes
+                                                        de transmission</label>
+                                                    <textarea type="text"
+                                                              id="patient_creation_form_educatives_{{ educative.id }}_notes"
+                                                              name="patient_creation_form[educative][{{ educative.id }}][notes]"
+                                                              class="form-control">{{ educative.notes }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <button type="button" class="btn btn-primary pull-right">Modifier
+                                                </button>
+                                                <button type="button" class="btn btn-danger pull-left">Supprimer
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_educatives_{{ educative.id }}_accompagnant">Accompagnant</label>
-                                                <select id="patient_creation_form_educatives_{{ educative.id }}_accompagnant" name="patient_creation_form[educative][{{ educative.id }}][accompagnant]" class="form-control">
-                                                    <option value="" {% if educative.accompagnant == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" {% if educative.accompagnant == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" {% if educative.accompagnant == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_educatives_{{ educative.id }}_etat">A-t-il eu lieu ?</label>
-                                                <select id="patient_creation_form_educatives_{{ educative.id }}_etat" name="patient_creation_form[educative][{{ educative.id }}][etat]" class="form-control" style="background: gold;">
-                                                    <option value="" class="white" {% if educative.etat == '' %} selected="selected" {% endif %}></option>
-                                                    <option value="Non" class="gold" {% if educative.etat == 'Non' %} selected="selected" {% endif %}>Non</option>
-                                                    <option value="Oui" class="hotpink" {% if educative.etat == 'Oui' %} selected="selected" {% endif %}>Oui</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_educatives_{{ educative.id }}_motifRefus">Motif de refus</label>
-                                                <input type="text" id="patient_creation_form_educatives_{{ educative.id }}_motifRefus" name="patient_creation_form[educative][{{ educative.id }}][motifRefus]" class="form-control" value="{{ educative.motifRefus }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label class="control-label" for="patient_creation_form_educatives_{{ educative.id }}_notes">Notes de transmission</label>
-                                                <textarea type="text" id="patient_creation_form_educatives_{{ educative.id }}_notes" name="patient_creation_form[educative][{{ educative.id }}][notes]" class="form-control">{{ educative.notes }}</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <button type="button" class="btn btn-primary pull-right">Modifier</button>
-                                            <button type="button" class="btn btn-danger pull-left">Supprimer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li>
-                        {% endif %}
+                                </li>
+                            {% endif %}
                         {% endfor %}
                     </ol>
 
@@ -906,10 +1179,11 @@
                 <span id="diagnosticEducatif" class="separator-text">Diagnostic éducatif</span>
             </div>
             <div class="form-inline">
-                <a href="{{ path('patient_edit_diagnostic', {'id': patient.id }) }}" class="btn btn-primary">Modifier</a>
+                <a href="{{ path('patient_edit_diagnostic', {'id': patient.id }) }}"
+                   class="btn btn-primary">Modifier</a>
                 <a href="{{ path('patient_vue_diagnostic', {'id': patient.id }) }}" class="btn btn-primary">Voir</a>
             </div>
-            
+
 
             <div class="separator"></div>
             <div class="form-inline">
@@ -983,27 +1257,29 @@
                                 {{ form_row(formRendezVous.date, {'attr': {'autocomplete': 'off'} }) }}
                             </div>
                             <div class="col-md-6">
-                            {{ form_row(formRendezVous.heure) }}
+                                {{ form_row(formRendezVous.heure) }}
                             </div>
                         </div>
                         <div class="row js-hide">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label" for="rendez_vous_thematique">Thématique</label>
-                                    <select type="text" id="rendez_vous_thematique" name="rendez_vous[thematique]" class="form-control thematique">
+                                    <select type="text" id="rendez_vous_thematique" name="rendez_vous[thematique]"
+                                            class="form-control thematique">
                                         <option value=""></option>
-                                    <select>
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label" for="rendez_vous_type">Type</label>
-                                    <select type="text" id="rendez_vous_type" name="rendez_vous[type]" class="form-control type">
+                                    <select type="text" id="rendez_vous_type" name="rendez_vous[type]"
+                                            class="form-control type">
                                         <option value=""></option>
                                         <option value="Ambu">Ambu</option>
                                         <option value="Tel">Tel</option>
                                         <option value="Hospit">Hospit</option>
-                                    <select>
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -1019,7 +1295,8 @@
                         {{ form_row(formRendezVous.notes, {'required': false}) }}
                         {{ form_row(formRendezVous._token) }}
                         {{ form_end(formRendezVous, {'render_rest' : false}) }}
-                        <button id="rendezVous_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                        <button id="rendezVous_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter
+                        </button>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -1087,12 +1364,12 @@
 
         var thematiques = {{ thematiques|json_encode|raw }};
 
-        $('.js-cd-back').on('click', function(e){
+        $('.js-cd-back').on('click', function (e) {
             e.preventDefault();
             window.history.back();
         });
 
-        $('.js-cd-save').on('click', function() {
+        $('.js-cd-save').on('click', function () {
             $('#patient_creation_form_validation').trigger('click');
         });
 
@@ -1112,7 +1389,7 @@
         }
 
         function orderTimeline() {
-            $('.cd-h-timeline').each(function() {
+            $('.cd-h-timeline').each(function () {
                 let timeline = $(this).find('.cd-h-timeline__container ol');
                 let events = $(this).find('.cd-h-timeline__events ol');
                 timeline.find('li').sort(sortDate).appendTo(timeline);
@@ -1121,12 +1398,12 @@
         }
 
         function setNumberEvent() {
-            $('.cd-h-timeline__events ol li.cd-h-timeline__event').each(function() {
+            $('.cd-h-timeline__events ol li.cd-h-timeline__event').each(function () {
                 let index = $(this).index() + 1;
                 let title = $(this).find('.cd-h-timeline__event-title').text();
                 let arr = title.split(' ');
-                if ($.isNumeric(arr[arr.length-1]))
-                    title = title.replace(' ' + arr[arr.length-1], '');
+                if ($.isNumeric(arr[arr.length - 1]))
+                    title = title.replace(' ' + arr[arr.length - 1], '');
                 $(this).find('.cd-h-timeline__event-title').text(title + ' ' + index);
             });
         }
@@ -1144,19 +1421,22 @@
             sortSelect();
             setNumberEvent();
         }
+
         updateForm();
 
         var timelineConsultations, timelineEntretiens, timelineAteliers, timelineEducative, timelineCoaching;
         $('.cd-h-timeline__cd-h-timeline__line li:last-child').addClass('cd-h-timeline__date');
         $('.cd-h-timeline__line li:not(:last-child) a').addClass('cd-h-timeline__event--older-event');
         $('.cd-h-timeline__line li:last-child a').addClass('cd-h-timeline__date--selected');
+
         function resetTimeline() {
             if ($('#events-consultations li').length) timelineConsultations = new HorizontalTimeline(document.getElementById('timeline-consultations'));
             if ($('#events-entretiens li').length) timelineEntretiens = new HorizontalTimeline(document.getElementById('timeline-entretiens'));
             if ($('#events-ateliers li').length) timelineAteliers = new HorizontalTimeline(document.getElementById('timeline-ateliers'));
             if ($('#events-educatives li').length) timelineEducative = new HorizontalTimeline(document.getElementById('timeline-educatives'));
             if ($('#events-coachings li').length) timelineCoaching = new HorizontalTimeline(document.getElementById('timeline-coachings'));
-        };
+        }
+
         resetTimeline();
 
 
@@ -1168,7 +1448,7 @@
             obj.css({background: color});
             let index = obj.parents('li').index();
             let dot = obj.parents('.cd-h-timeline__events').prev().find('ol li:eq(' + index + ') a');
-    
+
             if (dot.hasClass('cd-h-timeline__date--selected'))
                 dot.removeClass().addClass('cd-h-timeline__date--selected');
             else if (dot.hasClass('cd-h-timeline__date--older-event'))
@@ -1178,7 +1458,7 @@
             dot.addClass('cd-h-timeline__date ' + color + '-after');
         }
 
-        function changeSelectColor(obj)  {
+        function changeSelectColor(obj) {
             if (obj)
                 setSelectColor(obj)
             else {
@@ -1188,19 +1468,19 @@
             }
         }
 
-        $('ol, .modal').on('change', 'select', function() {
+        $('ol, .modal').on('change', 'select', function () {
             changeSelectColor($(this));
         });
 
         {# Update datetime #}
-        function sort_li(a, b){
-            return ($(b).find("a").attr('data-date')) < ($(a).find("a").attr('data-date')) ? 1 : -1;    
+        function sort_li(a, b) {
+            return ($(b).find("a").attr('data-date')) < ($(a).find("a").attr('data-date')) ? 1 : -1;
         }
 
         var month = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
-        $("ol").on("change", ".datepicker", function() {
+        $("ol").on("change", ".datepicker", function () {
             let datetime = $(this).val()
-            if (datetime == '')
+            if (datetime === '')
                 return false;
             datetime = datetime.split("/");
             // $(this).parents("li").attr("data-date", $(this).val());
@@ -1256,12 +1536,12 @@
                 dates = datesEducatives;
             else if (btn.closest('ol').is('#events-content-coachings'))
                 dates = datesCoachings;
-            
+
             let hasValue = hasValueDeep(dates, date);
             if (!hasValue)
-                dates.push({'date':  date, 'rendezVous' : "0", 'place':  1});
+                dates.push({'date': date, 'rendezVous': "0", 'place': 1});
             else {
-                dates.forEach(function(e, v) {
+                dates.forEach(function (e, v) {
                     if (e.date === date)
                         e.place = e.place + 1;
                 });
@@ -1278,7 +1558,11 @@
 
             let url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
             url = url.replace("rendezVous_id", id);
-            $.ajax({url: url, type: "DELETE", success: function (resp) {deleteAlert()}});
+            $.ajax({
+                url: url, type: "DELETE", success: function () {
+                    deleteAlert()
+                }
+            });
 
         });
 
@@ -1316,12 +1600,12 @@
         }
 
         function setThematiqueType(el) {
-            if (el.val() == '')
+            if (el.val() === '')
                 return false;
             let row = el.closest('.row').next();
             row.find('.thematique').val('');
             row.find('.type').val('');
-            $.when(getThematiqueType(el.val()).done(function(res) {
+            $.when(getThematiqueType(el.val()).done(function (res) {
                 if (res.length > 0) {
                     row.find('.thematique').val(res[0]['thematique']);
                     row.find('.type').val(res[0]['type']);
@@ -1329,39 +1613,39 @@
             }));
         }
 
-        $('.heure').change(function() {
+        $('.heure').change(function () {
             setThematiqueType($(this));
         });
 
         {# Add RendezVous #}
-        $('#rendezVousModal').on('show.bs.modal', function() {
+        $('#rendezVousModal').on('show.bs.modal', function () {
             $('#rendezVousModal .error-msg').hide();
             $(this).find('form[name="rendez_vous"]')[0].reset();
             let index = 0
             $('#rendezVousModal .modal-header h4').text('Ajouter une consultation');
-            if (categorie == 'Entretien') {
+            if (categorie === 'Entretien') {
                 index = 1;
                 $('#rendezVousModal .modal-header h4').text('Ajouter un entretien');
-            } else if (categorie == 'Atelier') {
+            } else if (categorie === 'Atelier') {
                 index = 2;
                 $('#rendezVousModal .modal-header h4').text('Ajouter un atelier');
-            } else if (categorie == 'Coaching') {
+            } else if (categorie === 'Coaching') {
                 index = 3;
                 $('#rendezVousModal .modal-header h4').text('Ajouter un coaching PRM');
-            } else if (categorie == 'Educative') {
+            } else if (categorie === 'Educative') {
                 index = 4;
                 $('#rendezVousModal .modal-header h4').text('Ajouter une semaine éducative');
             }
             $('#rendez_vous_date').datepicker('update', '');
             $('#rendez_vous_heure option').remove();
             $('#rendez_vous_thematique option:not(:first)').remove();
-            $.each(thematiques[index], function(key, value) {
+            $.each(thematiques[index], function (key, value) {
                 $('#rendez_vous_thematique')
                     .append($("<option></option>")
-                    .attr("value", value)
-                    .text(value));
+                        .attr("value", value)
+                        .text(value));
             });
-            if (categorie == 'Educative') {
+            if (categorie === 'Educative') {
                 $('.js-hide').hide();
             } else {
                 $('.js-hide').show();
@@ -1381,11 +1665,11 @@
             let motifRefus = $('#rendez_vous_motifRefus').val();
             let notes = $('#rendez_vous_notes').val();
 
-            if (date == '') {
+            if (date === '') {
                 $('#rendezVousModal .error-msg').text('Erreur : aucun jour sélectionné')
                 $('#rendezVousModal .error-msg').show();
                 return false;
-            } else if (time == '') {
+            } else if (time === '') {
                 $('#rendezVousModal .error-msg').text('Erreur : aucune horaire renseignée')
                 $('#rendezVousModal .error-msg').show();
                 return false;
@@ -1413,25 +1697,32 @@
                 },
                 success: function (res) {
                     if (res) {
-                        if (categorie == 'Consultation')
+                        if (categorie === 'Consultation')
                             dates = datesConsultations;
-                        else if (categorie == 'Entretien')
+                        else if (categorie === 'Entretien')
                             dates = datesEntretiens;
-                        else if (categorie == 'Atelier')
+                        else if (categorie === 'Atelier')
                             dates = datesAteliers;
-                        else if (categorie == 'Educative')
+                        else if (categorie === 'Educative')
                             dates = datesEducatives;
-                        else if (categorie == 'Coaching')
+                        else if (categorie === 'Coaching')
                             dates = datesCoachings;
 
-                        dates.forEach(function(e, v) {
-                            if (e['date'] == date)
+                        dates.forEach(function (e, v) {
+                            if (e['date'] === date)
                                 e.place = e.place - 1;
                         });
 
                         let new_date = new Date(formatDate(date));
-                        let date_h1 = new Intl.DateTimeFormat("fr-FR", { month: 'short', day: 'numeric' }).format(new_date);
-                        let date_em = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_date);
+                        let date_h1 = new Intl.DateTimeFormat("fr-FR", {
+                            month: 'short',
+                            day: 'numeric'
+                        }).format(new_date);
+                        let date_em = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_date);
                         let nb = $("#events-content-" + c + "s").find('li').length;
 
                         let events = $('#events-' + c + 's');
@@ -1451,7 +1742,7 @@
                         else if (categorie === 'Coaching')
                             index = 3;
                         let options;
-                        $.each(thematiques[index], function(key, value) {
+                        $.each(thematiques[index], function (key, value) {
                             options += '<option value="' + value + '">' + value + '</option>'
                         });
 
@@ -1566,7 +1857,7 @@
                         $('#patient_creation_form_' + c + 's_' + res + '_etat').val(etat);
                         $('#events-content-' + c + 's li:last-child').addClass('cd-h-timeline__event--selected');
 
-                        $('form[name="rendez_vous"')[0].reset();
+                        $('form[name="rendez_vous"]')[0].reset();
                         $('form[name="rendez_vous"] #rendez_vous_etat').css({'background': 'white'});
 
                         if (categorie === 'Educative')
@@ -1593,24 +1884,24 @@
                 c = 'coachings';
             let li = $(this).closest("li");
             let id = li.find('input').attr('id').match(/\d+/)[0];
-            let slotId = li.find('#patient_creation_form_'+ c +'_'+ id +'_heure').val();
-            let date = li.find('#patient_creation_form_' + c + '_' + id +'_date').val();
-            let time = li.find('#patient_creation_form_'+ c +'_'+ id +'_heure option:selected').text()
-            let thematique = li.find('#patient_creation_form_'+ c +'_'+ id +'_thematique').val();
-            let type = li.find('#patient_creation_form_'+ c +'_'+ id +'_type').val();
-            let accompagnant = li.find('#patient_creation_form_'+ c +'_'+ id +'_accompagnant').val();
-            let etat = li.find('#patient_creation_form_'+ c +'_'+ id +'_etat').val();
-            let motifRefus = li.find('#patient_creation_form_'+ c +'_'+ id +'_motifRefus').val();
-            let notes = li.find('#patient_creation_form_'+ c +'_'+ id +'_notes').val();
+            let slotId = li.find('#patient_creation_form_' + c + '_' + id + '_heure').val();
+            let date = li.find('#patient_creation_form_' + c + '_' + id + '_date').val();
+            let time = li.find('#patient_creation_form_' + c + '_' + id + '_heure option:selected').text()
+            let thematique = li.find('#patient_creation_form_' + c + '_' + id + '_thematique').val();
+            let type = li.find('#patient_creation_form_' + c + '_' + id + '_type').val();
+            let accompagnant = li.find('#patient_creation_form_' + c + '_' + id + '_accompagnant').val();
+            let etat = li.find('#patient_creation_form_' + c + '_' + id + '_etat').val();
+            let motifRefus = li.find('#patient_creation_form_' + c + '_' + id + '_motifRefus').val();
+            let notes = li.find('#patient_creation_form_' + c + '_' + id + '_notes').val();
 
             let url = "{{ path('rendezVous_patch', { 'id': 'rendezVous_id' }) }}";
             url = url.replace("rendezVous_id", id);
 
-            if (date == '') {
+            if (date === '') {
                 li.find('.error-msg').text('Erreur : aucun jour sélectionné')
                 li.find('.error-msg').show();
                 return false;
-            } else if (time == '') {
+            } else if (time === '') {
                 li.find('.error-msg').text('Erreur : aucune horaire renseignée')
                 li.find('.error-msg').show();
                 return false;
@@ -1634,10 +1925,10 @@
                     "notes": notes,
                     "patientId": patientId,
                 },
-                success: function(res) {
+                success: function () {
                     editAlert();
                 },
-                error: function(res) {
+                error: function () {
                     errorAlert();
                 }
             });
@@ -1646,15 +1937,15 @@
 
         {# rendezVous datepicker #}
         function updateRendezVousDatepicker() {
-            if (categorie == 'Consultation')
+            if (categorie === 'Consultation')
                 dates = datesConsultations;
-            else if (categorie == 'Entretien')
+            else if (categorie === 'Entretien')
                 dates = datesEntretiens;
-            else if (categorie == 'Atelier')
+            else if (categorie === 'Atelier')
                 dates = datesAteliers;
-            else if (categorie == 'Educative')
+            else if (categorie === 'Educative')
                 dates = datesEducatives;
-            else if (categorie == 'Coaching')
+            else if (categorie === 'Coaching')
                 dates = datesCoachings;
             $('#rendez_vous_date').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true, updateViewDate: false,
@@ -1662,8 +1953,8 @@
                     let day = moment(currentDate).unix();
                     if (dates && dates.length > 0) {
                         for (let i = 0; i < dates.length; i++) {
-                            if (day == moment(dates[i]['date'], 'DD/MM/YYYY').unix()
-                            && dates[i]['place'] - dates[i]['rendezVous'] > 0) {
+                            if (day === moment(dates[i]['date'], 'DD/MM/YYYY').unix()
+                                && dates[i]['place'] - dates[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1672,18 +1963,18 @@
                 }
             });
             $('#rendez_vous_date').datepicker('update');
-        };
+        }
 
 
-        $('#rendez_vous_date').on('changeDate', function(e) {
+        $('#rendez_vous_date').on('changeDate', function (e) {
             let hourInput = $(this).closest('.row').find('.heure');
             hourInput.prop("disabled", false);
             hourInput.find('option').remove().end();
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
-            $.when(getHours($(this).val(), categorie)).done(function(res) {
+            $.when(getHours($(this).val(), categorie)).done(function (res) {
                 // hourInput.append(new Option('', ''));
-                res.forEach(function(el) {
+                res.forEach(function (el) {
                     hourInput.append(new Option(el['hour'], el['id']));
                 });
                 setThematiqueType(hourInput);
@@ -1700,8 +1991,8 @@
                     let day = moment(currentDate).unix();
                     if (datesConsultations.length > 0) {
                         for (let i = 0; i < datesConsultations.length; i++) {
-                            if (day == moment(datesConsultations[i]['date'], 'DD/MM/YYYY').unix()
-                            && datesConsultations[i]['place'] - datesConsultations[i]['rendezVous'] > 0) {
+                            if (day === moment(datesConsultations[i]['date'], 'DD/MM/YYYY').unix()
+                                && datesConsultations[i]['place'] - datesConsultations[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1712,14 +2003,14 @@
             $('#timeline-consultations .datepicker').datepicker('update');
         };
 
-        $('#timeline-consultations').on('focusin', '.datepicker', function(e) {
+        $('#timeline-consultations').on('focusin', '.datepicker', function (e) {
             $(this).attr('data-old', $(this).val());
         });
 
-        $('#timeline-consultations').on('changeDate', '.datepicker', function(e) {
+        $('#timeline-consultations').on('changeDate', '.datepicker', function (e) {
             let hasValue = hasValueDeep(datesConsultations, $(this).attr('data-old'));
             if (!hasValue)
-                datesConsultations.push({'date':  $(this).attr('data-old')});
+                datesConsultations.push({'date': $(this).attr('data-old')});
             updateConsultationDatepicker();
 
             let hourInput = $(this).closest('.row').find('.heure');
@@ -1727,9 +2018,9 @@
             hourInput.find('option').remove().end();
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
-            $.when(getHours($(this).val(), 'Consultation')).done(function(res) {
+            $.when(getHours($(this).val(), 'Consultation')).done(function (res) {
                 // hourInput.append(new Option('', ''));
-                res.forEach(function(el) {
+                res.forEach(function (el) {
                     hourInput.append(new Option(el['hour'], el['id']));
                 });
                 setThematiqueType(hourInput);
@@ -1737,12 +2028,11 @@
         });
 
         {# Add #}
-        $('#js-consultation').click(function() {
+        $('#js-consultation').click(function () {
             categorie = 'Consultation';
             $('#rendezVousModal').attr('data-categorie', 'consultation');
             updateRendezVousDatepicker();
         })
-
 
 
         /* Entretiens
@@ -1755,8 +2045,8 @@
                     let day = moment(currentDate).unix();
                     if (datesEntretiens.length > 0) {
                         for (let i = 0; i < datesEntretiens.length; i++) {
-                            if (day == moment(datesEntretiens[i]['date'], 'DD/MM/YYYY').unix()
-                            && datesEntretiens[i]['place'] - datesEntretiens[i]['rendezVous'] > 0) {
+                            if (day === moment(datesEntretiens[i]['date'], 'DD/MM/YYYY').unix()
+                                && datesEntretiens[i]['place'] - datesEntretiens[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1767,14 +2057,14 @@
             $('#timeline-entretiens .datepicker').datepicker('update');
         };
 
-        $('#timeline-entretiens').on('focusin', '.datepicker', function(e) {
+        $('#timeline-entretiens').on('focusin', '.datepicker', function (e) {
             $(this).attr('data-old', $(this).val());
         });
 
-        $('#timeline-entretiens').on('changeDate', '.datepicker', function(e) {
+        $('#timeline-entretiens').on('changeDate', '.datepicker', function (e) {
             let hasValue = hasValueDeep(datesEntretiens, $(this).attr('data-old'));
             if (!hasValue)
-                datesEntretiens.push({'date':  $(this).attr('data-old')});
+                datesEntretiens.push({'date': $(this).attr('data-old')});
             updateEntretienDatepicker();
 
             let hourInput = $(this).closest('.row').find('.heure');
@@ -1782,9 +2072,9 @@
             hourInput.find('option').remove().end();
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
-            $.when(getHours($(this).val(), 'Entretien')).done(function(res) {
+            $.when(getHours($(this).val(), 'Entretien')).done(function (res) {
                 // hourInput.append(new Option('', ''));
-                res.forEach(function(el) {
+                res.forEach(function (el) {
                     hourInput.append(new Option(el['hour'], el['id']));
                 });
                 setThematiqueType(hourInput);
@@ -1792,12 +2082,11 @@
         });
 
         {# Add #}
-        $('#js-entretien').click(function() {
+        $('#js-entretien').click(function () {
             categorie = 'Entretien';
             $('#rendezVousModal').attr('data-categorie', 'entretien');
             updateRendezVousDatepicker();
         })
-
 
 
         /* Ateliers
@@ -1810,8 +2099,8 @@
                     let day = moment(currentDate).unix();
                     if (datesAteliers.length > 0) {
                         for (let i = 0; i < datesAteliers.length; i++) {
-                            if (day == moment(datesAteliers[i]['date'], 'DD/MM/YYYY').unix()
-                            && datesAteliers[i]['place'] - datesAteliers[i]['rendezVous'] > 0) {
+                            if (day === moment(datesAteliers[i]['date'], 'DD/MM/YYYY').unix()
+                                && datesAteliers[i]['place'] - datesAteliers[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1822,14 +2111,14 @@
             $('#timeline-ateliers .datepicker').datepicker('update');
         };
 
-        $('#timeline-ateliers').on('focusin', '.datepicker', function(e) {
+        $('#timeline-ateliers').on('focusin', '.datepicker', function (e) {
             $(this).attr('data-old', $(this).val());
         });
 
-        $('#timeline-ateliers').on('changeDate', '.datepicker', function(e) {
+        $('#timeline-ateliers').on('changeDate', '.datepicker', function (e) {
             let hasValue = hasValueDeep(datesAteliers, $(this).attr('data-old'));
             if (!hasValue)
-                datesAteliers.push({'date':  $(this).attr('data-old')});
+                datesAteliers.push({'date': $(this).attr('data-old')});
             updateAtelierDatepicker();
 
             let hourInput = $(this).closest('.row').find('.heure');
@@ -1837,9 +2126,9 @@
             hourInput.find('option').remove().end();
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
-            $.when(getHours($(this).val(), 'Atelier')).done(function(res) {
+            $.when(getHours($(this).val(), 'Atelier')).done(function (res) {
                 // hourInput.append(new Option('', ''));
-                res.forEach(function(el) {
+                res.forEach(function (el) {
                     hourInput.append(new Option(el['hour'], el['id']));
                 });
                 setThematiqueType(hourInput);
@@ -1847,7 +2136,7 @@
         });
 
         {# Add #}
-        $('#js-atelier').click(function() {
+        $('#js-atelier').click(function () {
             categorie = 'Atelier';
             $('#rendezVousModal').attr('data-categorie', 'atelier');
             updateRendezVousDatepicker();
@@ -1864,8 +2153,8 @@
                     let day = moment(currentDate).unix();
                     if (datesEducatives.length > 0) {
                         for (let i = 0; i < datesEducatives.length; i++) {
-                            if (day == moment(datesEducatives[i]['date'], 'DD/MM/YYYY').unix()
-                            && datesEducatives[i]['place'] - datesEducatives[i]['rendezVous'] > 0) {
+                            if (day === moment(datesEducatives[i]['date'], 'DD/MM/YYYY').unix()
+                                && datesEducatives[i]['place'] - datesEducatives[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1876,14 +2165,14 @@
             $('#timeline-educatives .datepicker').datepicker('update');
         };
 
-        $('#timeline-educatives').on('focusin', '.datepicker', function(e) {
+        $('#timeline-educatives').on('focusin', '.datepicker', function (e) {
             $(this).attr('data-old', $(this).val());
         });
 
-        $('#timeline-educatives').on('changeDate', '.datepicker', function(e) {
+        $('#timeline-educatives').on('changeDate', '.datepicker', function (e) {
             let hasValue = hasValueDeep(datesEducatives, $(this).attr('data-old'));
             if (!hasValue)
-                datesEducatives.push({'date':  $(this).attr('data-old')});
+                datesEducatives.push({'date': $(this).attr('data-old')});
             updateEducativeDatepicker();
 
             let hourInput = $(this).closest('.row').find('.heure');
@@ -1891,9 +2180,9 @@
             hourInput.find('option').remove().end();
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
-            $.when(getHours($(this).val(), 'Educative')).done(function(res) {
+            $.when(getHours($(this).val(), 'Educative')).done(function (res) {
                 // hourInput.append(new Option('', ''));
-                res.forEach(function(el) {
+                res.forEach(function (el) {
                     hourInput.append(new Option(el['hour'], el['id']));
                 });
                 setThematiqueType(hourInput);
@@ -1901,7 +2190,7 @@
         });
 
         {# Add #}
-        $('#js-educative').click(function() {
+        $('#js-educative').click(function () {
             categorie = 'Educative';
             $('#rendezVousModal').attr('data-categorie', 'educative');
             updateRendezVousDatepicker();
@@ -1918,8 +2207,8 @@
                     let day = moment(currentDate).unix();
                     if (datesCoachings.length > 0) {
                         for (let i = 0; i < datesCoachings.length; i++) {
-                            if (day == moment(datesCoachings[i]['date'], 'DD/MM/YYYY').unix()
-                            && datesCoachings[i]['place'] - datesCoachings[i]['rendezVous'] > 0) {
+                            if (day === moment(datesCoachings[i]['date'], 'DD/MM/YYYY').unix()
+                                && datesCoachings[i]['place'] - datesCoachings[i]['rendezVous'] > 0) {
                                 return {classes: 'highlight'};
                             }
                         }
@@ -1930,14 +2219,14 @@
             $('#timeline-coachings .datepicker').datepicker('update');
         };
 
-        $('#timeline-coachings').on('focusin', '.datepicker', function(e) {
+        $('#timeline-coachings').on('focusin', '.datepicker', function (e) {
             $(this).attr('data-old', $(this).val());
         });
 
-        $('#timeline-coachings').on('changeDate', '.datepicker', function(e) {
+        $('#timeline-coachings').on('changeDate', '.datepicker', function (e) {
             let hasValue = hasValueDeep(datesCoachings, $(this).attr('data-old'));
             if (!hasValue)
-                datesCoachings.push({'date':  $(this).attr('data-old')});
+                datesCoachings.push({'date': $(this).attr('data-old')});
             updateCoachingDatepicker();
 
             let hourInput = $(this).closest('.row').find('.heure');
@@ -1945,9 +2234,9 @@
             hourInput.find('option').remove().end();
             $(this).closest('.row').next().find('.thematique').val('');
             $(this).closest('.row').next().find('.type').val('');
-            $.when(getHours($(this).val(), 'Coaching')).done(function(res) {
+            $.when(getHours($(this).val(), 'Coaching')).done(function (res) {
                 // hourInput.append(new Option('', ''));
-                res.forEach(function(el) {
+                res.forEach(function (el) {
                     hourInput.append(new Option(el['hour'], el['id']));
                 });
                 setThematiqueType(hourInput);
@@ -1955,7 +2244,7 @@
         });
 
         {# Add #}
-        $('#js-coaching').click(function() {
+        $('#js-coaching').click(function () {
             categorie = 'Coaching';
             $('#rendezVousModal').attr('data-categorie', 'coaching');
             updateRendezVousDatepicker();
@@ -1967,7 +2256,7 @@
 
         function formatDate(input) {
             let datePart = input.match(/\d+/g),
-                year = datePart[2] //.substring(2),  get only two digits
+                year = datePart[2], //.substring(2),  get only two digits
                 month = datePart[1],
                 day = datePart[0];
             return year + '-' + month + '-' + day;
@@ -1979,20 +2268,22 @@
         }
 
         function sortSelect() {
-            $('.container-fluid').find('select').each(function() {
+            $('.container-fluid').find('select').each(function () {
                 let sel = $(this);
                 let selected = sel.val();
                 let opts_list = sel.find('option');
-                opts_list.sort(function(a, b) { return $(a).text() > $(b).text() ? 1 : -1; });
+                opts_list.sort(function (a, b) {
+                    return $(a).text() > $(b).text() ? 1 : -1;
+                });
                 sel.html('').append(opts_list);
                 sel.val(selected);
             });
         }
-        
+
         function hasValueDeep(json, findValue) {
             const values = Object.values(json);
             let hasValue = values.includes(findValue);
-            values.forEach(function(value) {
+            values.forEach(function (value) {
                 if (typeof value === "object") {
                     hasValue = hasValue || hasValueDeep(value, findValue);
                 }

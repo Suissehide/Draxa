@@ -52,7 +52,7 @@
                             <h2>SEMAINE {{ counter }}</h2>
                             <div class="semaine__date-range">
                                 <div>{{ semaine.dateDebut ? semaine.dateDebut|format_datetime(pattern="d MMMM YYYY", locale='fr') : '' }}</div>
-                                <div class="arrow-separator"> → </div>
+                                <div class="arrow-separator"> →</div>
                                 <div>{{ semaine.dateFin ? semaine.dateFin|format_datetime(pattern="d MMMM YYYY", locale='fr') : '' }}</div>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                                 {% endfor %}
                             </ul>
                             <ul class="jour" data-date={{ semaine.dateDebut|date_modify("+2 day")|date("d/m/Y") }}>
-                               <h3>Mercredi</h3>
+                                <h3>Mercredi</h3>
                                 {% for slot in semaine.slots|sort((a, b) => a.heureDebut|date("H:i") <=> b.heureDebut|date("H:i")) %}
                                     {% if slot.date|date("d/m/Y") == semaine.dateDebut|date_modify('+2days')|date("d/m/Y") %}
                                         {{ macros.slot(slot) }}
@@ -160,20 +160,24 @@
                         <label class="control-label" for="semaine_date">Dates</label>
                         <div class="flex input-group input-daterange">
                             {{ form_widget(semaineForm.dateDebut) }}
-                            <div class="arrow-separator"> → </div>
+                            <div class="arrow-separator"> →</div>
                             {{ form_widget(semaineForm.dateFin) }}
                         </div>
                     </div>
 
                     {{ form_row(semaineForm._token) }}
                     {{ form_end(semaineForm, {'render_rest' : false}) }}
-                    <button id="semaine_add" disabled class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
-                    <button id="semaine_duplicate" disabled class="btn btn-primary btn-block" data-dismiss="modal">Dupliquer</button>
+                    <button id="semaine_add" disabled class="btn btn-primary btn-block" data-dismiss="modal">Ajouter
+                    </button>
+                    <button id="semaine_duplicate" disabled class="btn btn-primary btn-block" data-dismiss="modal">
+                        Dupliquer
+                    </button>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
-                        Annuler</button>
+                        Annuler
+                    </button>
                 </div>
             </div>
         </div>
@@ -208,7 +212,7 @@
                         <label class="control-label required" for="slot_heure">Horaire</label>
                         <div class="flex">
                             {{ form_widget(slotForm.heureDebut) }}
-                            <div class="separator-hour"> - </div>
+                            <div class="separator-hour"> -</div>
                             {{ form_widget(slotForm.heureFin) }}
                         </div>
                     </div>
@@ -239,7 +243,8 @@
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
-                        Annuler</button>
+                        Annuler
+                    </button>
                 </div>
             </div>
         </div>
@@ -253,9 +258,9 @@
 
     <script type="text/javascript">
 
-        var datesSemaines = {{ dates_semaines|json_encode|raw }};
+        let datesSemaines = {{ dates_semaines|json_encode|raw }};
 
-        var thematiques = {{ thematiques|json_encode|raw }};
+        let thematiques = {{ thematiques|json_encode|raw }};
 
         function updateDatepicker() {
             $('.datepicker, .input-daterange').datepicker({
@@ -269,7 +274,7 @@
                     if (datesSemaines.length > 0) {
                         for (let i = 0; i < datesSemaines.length; i++) {
                             for (let j = 0; j < 7; j++) {
-                                if (day == moment(datesSemaines[i]['date'], 'DD/MM/YYYY').add(j, 'days').unix()) {
+                                if (day === moment(datesSemaines[i]['date'], 'DD/MM/YYYY').add(j, 'days').unix()) {
                                     return false;
                                 }
                             }
@@ -282,8 +287,9 @@
             $('#semaine_dateFin').datepicker('update', '');
             $('.datepicker, .input-daterange').datepicker('update');
         }
+
         updateDatepicker();
-        
+
         /* Scrolling horizontally with mouse
         ============================================================================== */
 
@@ -292,23 +298,23 @@
         let startX;
         let scrollLeft;
 
-        sliderContainer.on('mousedown', '.semaine__full', function(e) {
+        sliderContainer.on('mousedown', '.semaine__full', function (e) {
             isDown = true;
             $(this).addClass('active');
             let offset = $(this).offset();
             startX = e.pageX - offset.left;
             scrollLeft = $(this).scrollLeft();
         });
-        sliderContainer.on('mouseleave', '.semaine__full', function() {
+        sliderContainer.on('mouseleave', '.semaine__full', function () {
             isDown = false;
             $(this).removeClass('active');
         });
-        sliderContainer.on('mouseup', '.semaine__full', function() {
+        sliderContainer.on('mouseup', '.semaine__full', function () {
             isDown = false;
             $(this).removeClass('active');
         });
-        sliderContainer.on('mousemove', '.semaine__full', function(e) {
-            if(!isDown) return;
+        sliderContainer.on('mousemove', '.semaine__full', function (e) {
+            if (!isDown) return;
             e.preventDefault();
             let offset = $(this).offset();
             const x = e.pageX - offset.left;
@@ -319,9 +325,9 @@
 
         /* Close modal on "Escape" pressed
         ============================================================================== */
-        document.onkeydown = function(evt) {
+        document.onkeydown = function (evt) {
             evt = evt || window.event;
-            if (evt.keyCode == 27) {
+            if (evt.keyCode === 27) {
                 $('.modal').modal('hide');
             }
         };
@@ -337,15 +343,15 @@
             obj.css({color: 'white'});
         }
 
-        $('ol, .modal').on('change', 'select', function() {
+        $('ol, .modal').on('change', 'select', function () {
             setSelectColor($(this));
         });
 
 
         function formatDate(input) {
-            var datePart = input.match(/\d+/g),
+            let datePart = input.match(/\d+/g),
                 year = datePart[2] //.substring(2),  get only two digits
-                month = datePart[1],
+            month = datePart[1],
                 day = datePart[0];
             return year + '-' + month + '-' + day;
         }
@@ -354,13 +360,13 @@
         ============================================================================== */
 
         {# Change week number #}
-        Date.prototype.getWeek = function() {
-            var onejan = new Date(this.getFullYear(), 0, 1);
+        Date.prototype.getWeek = function () {
+            let onejan = new Date(this.getFullYear(), 0, 1);
             return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
         }
 
         function setWeekNumber() {
-            $('.semaine-wrapper .semaine').each(function() {
+            $('.semaine-wrapper .semaine').each(function () {
                 let date = new Date(formatDate($(this).attr('data-date')));
                 $(this).find('.semaine__date-info h2').text('SEMAINE ' + date.getWeek());
             })
@@ -371,18 +377,19 @@
         function sort_date(a, b) {
             let date1 = $(a).attr('data-date').split("/");
             let date2 = $(b).attr('data-date').split("/");
-            return (new Date(date2[2], date2[1], date2[0]).getTime()) < (new Date(date1[2], date1[1], date1[0]).getTime()) ? 1 : -1;    
+            return (new Date(date2[2], date2[1], date2[0]).getTime()) < (new Date(date1[2], date1[1], date1[0]).getTime()) ? 1 : -1;
         }
 
         function orderWeek() {
             $('.semaine-wrapper > .semaine').sort(sort_date).appendTo('.semaine-wrapper');
         }
+
         orderWeek();
 
         function setYearDividers() {
             $('.divider').remove();
             let oldYear = '';
-            $('.semaine-wrapper .semaine').each(function() {
+            $('.semaine-wrapper .semaine').each(function () {
                 let year = $(this).attr('data-date').split('/')[2];
                 if (year != oldYear) {
                     oldYear = year;
@@ -396,15 +403,16 @@
                 }
             });
         }
+
         setYearDividers();
 
 
         {#  /  #}
-        $('#semaine_dateDebut').datepicker().on("changeDate", function(e) {
+        $('#semaine_dateDebut').datepicker().on("changeDate", function (e) {
             setWeekDates(e.date);
         });
 
-        $('#semaine_dateDebut').keyup(function(e) {
+        $('#semaine_dateDebut').keyup(function (e) {
             jsDate = $(this).datepicker('getDate');
             setWeekDates(jsDate);
         })
@@ -432,7 +440,7 @@
                 data: {
                     "dateDebut": dateDebut
                 },
-                success: function(resp) {
+                success: function (resp) {
                     if (resp) {
                         semaineRemoveError();
                     } else {
@@ -459,13 +467,14 @@
             $('#semaine_add, #semaine_duplicate').prop("disabled", true);
         }
 
-        Date.prototype.addDays = function(days) {
-            var date = new Date(this.valueOf());
+        Date.prototype.addDays = function (days) {
+            let date = new Date(this.valueOf());
             date.setDate(date.getDate() + days);
             return date;
         }
+
         function createDate(date) {
-            return new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'numeric', day: 'numeric' }).format(date)
+            return new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'numeric', day: 'numeric'}).format(date)
         }
 
         {# Add #}
@@ -486,12 +495,20 @@
                     "dateDebut": dateDebut,
                     "dateFin": dateFin,
                 },
-                success: function(resp) {
+                success: function (resp) {
                     if (resp) {
                         let new_dateDebut = new Date(formatDate(dateDebut));
-                        let date_debut = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_dateDebut);
+                        let date_debut = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_dateDebut);
                         let new_dateFin = new Date(formatDate(dateFin));
-                        let date_fin = new Intl.DateTimeFormat("fr-FR", { year: 'numeric', month: 'long', day: 'numeric' }).format(new_dateFin);
+                        let date_fin = new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new_dateFin);
                         $('.semaine-wrapper')
                             .append(`<li class="semaine" data-date="` + dateDebut + `" data-id="` + resp + `">
                                         <div class="semaine__header">
@@ -539,33 +556,33 @@
                                                     <li class="hour-indicator">19:00</li>
                                                     <li class="hour-indicator">19:30</li>
                                                 </ol>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(0)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(0)) + `">
                                                     <h3>Lundi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(1)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(1)) + `">
                                                     <h3>Mardi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(2)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(2)) + `">
                                                 <h3>Mercredi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(3)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(3)) + `">
                                                     <h3>Jeudi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(4)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(4)) + `">
                                                     <h3>Vendredi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(5)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(5)) + `">
                                                     <h3>Samedi</h3>
                                                 </ul>
-                                                <ul class="jour" data-date="`+ createDate(new_dateDebut.addDays(6)) +`">
+                                                <ul class="jour" data-date="` + createDate(new_dateDebut.addDays(6)) + `">
                                                     <h3>Dimanche</h3>
                                                 </ul>
                                             </div>
                                         </div>
                                     </li>`);
                         $('#semaineModal form')[0].reset();
-                        
-                        datesSemaines.push({'date':  dateDebut});
+
+                        datesSemaines.push({'date': dateDebut});
 
                         updateDatepicker();
 
@@ -581,14 +598,14 @@
         });
 
         {# Open #}
-        $('.semaine-wrapper').on('click', '.semaine__header', function() {
+        $('.semaine-wrapper').on('click', '.semaine__header', function () {
             let semaine = $(this).parent();
             semaine.toggleClass("open");
             $('.semaine__header').not(this).parent().removeClass("open");
             $('.jour').hide();
             $(this).find('.semaine__open-icon .glyphicon').toggleClass('glyphicon-chevron-down glyphicon-chevron-up');
-            setTimeout(function() { 
-                semaine.find('.jour').show() 
+            setTimeout(function () {
+                semaine.find('.jour').show()
             }, 200);
         })
 
@@ -604,11 +621,11 @@
                 type: "DELETE",
                 dataType: "json",
                 data: {},
-                success: function(res) {
+                success: function (res) {
                     if (res) {
                         let date = $('.semaine[data-id="' + id + '"]').attr('data-date');
-                        datesSemaines.forEach(function(e, v) {
-                            if (e['date'] == date) datesSemaines.splice(v, 1);
+                        datesSemaines.forEach(function (e, v) {
+                            if (e['date'] === date) datesSemaines.splice(v, 1);
                         });
 
                         updateDatepicker();
@@ -648,23 +665,35 @@
                     "dateDebut": dateDebut,
                     "dateFin": dateFin,
                 },
-                success: function(res) {
+                success: function (res) {
                     if (res) {
                         let newSemaine = $('.semaine[data-id="' + id + '"]').clone()
                         newSemaine.attr('data-id', res.id);
                         newSemaine.attr('data-date', res.debut);
-                        newSemaine.find('.semaine__date-range > div:first-child').text(new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(new Date(formatDate(res.debut))))
-                        newSemaine.find('.semaine__date-range > div:last-child').text(new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(new Date(formatDate(res.fin))))
+                        newSemaine.find('.semaine__date-range > div:first-child').text(new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new Date(formatDate(res.debut))))
+                        newSemaine.find('.semaine__date-range > div:last-child').text(new Intl.DateTimeFormat("fr-FR", {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new Date(formatDate(res.fin))))
                         let date = new Date(formatDate(res.debut));
                         for (let i = 0; i < 7; i++) {
-                            newSemaine.find('.jour:eq(' + i + ')').attr('data-date', new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'numeric', day: 'numeric'}).format(date));
+                            newSemaine.find('.jour:eq(' + i + ')').attr('data-date', new Intl.DateTimeFormat("fr-FR", {
+                                year: 'numeric',
+                                month: 'numeric',
+                                day: 'numeric'
+                            }).format(date));
                             date.setDate(date.getDate() + 1);
                         }
                         newSemaine.find('.slot').remove();
-                        $.each(res.slots, function(e, v) {
+                        $.each(res.slots, function (e, v) {
                             let slot = createSlot(v);
                             newSemaine.find('.jour[data-date="' + v.date + '"]').append(slot);
-                            $('#semaineModal form')[0].reset();    
+                            $('#semaineModal form')[0].reset();
                         })
                         $('.semaine-wrapper').append(newSemaine);
                         orderWeek();
@@ -675,7 +704,7 @@
                     } else {
                         errorAlert('impossible de dupliquer ce slot');
                     }
-                }, error: function(err) {
+                }, error: function (err) {
                     errorAlert('impossible de dupliquer ce slot');
                 }
             });
@@ -708,12 +737,12 @@
 
 
         {#      #}
-        $("#slot_categorie").change(function() {
+        $("#slot_categorie").change(function () {
             $("#slot_thematique option[value='']").prop('selected', true);
             changeThematique();
         });
 
-        $("#slot_place").change(function() {
+        $("#slot_place").change(function () {
             updatePatientList();
         });
 
@@ -722,10 +751,10 @@
             let thematique = $("#slot_categorie option:selected").attr('data-thematique');
             if (thematique === 'atelier' || thematique === 'educative' || thematique === 'coaching') {
                 let length = parseInt($('#slot_place').val());
-                $(".js-patient").select2({ multiple: true, matcher: matchCustom, maximumSelectionLength: length });
+                $(".js-patient").select2({multiple: true, matcher: matchCustom, maximumSelectionLength: length});
                 $(".js-patient").val(null).trigger('change');
             } else {
-                $(".js-patient").select2({ multiple: false, matcher: matchCustom });
+                $(".js-patient").select2({multiple: false, matcher: matchCustom});
                 $(".js-patient").val(null).trigger('change');
                 $("#slot_place").val(1);
             }
@@ -733,7 +762,7 @@
 
         function changeThematique() {
             let thematique = $("#slot_categorie option:selected").attr('data-thematique');
-            $('#slot_thematique option').each(function() {
+            $('#slot_thematique option').each(function () {
                 if ($(this).attr('data-thematique') === thematique || $(this).attr('data-thematique') === 'default') {
                     $(this).show();
                 } else {
@@ -761,30 +790,30 @@
                     index = 3;
                 else if (thematique === 'educative')
                     index = 4;
-                $.each(thematiques[index], function(key, value) {
+                $.each(thematiques[index], function (key, value) {
                     $('#slot_thematique')
                         .append($("<option></option>")
-                        .attr("value", value)
-                        .text(value));
+                            .attr("value", value)
+                            .text(value));
                 });
             }
         };
         changeThematique();
 
         {# Display #}
-        var column_index = 0;
+        let column_index = 0;
 
         function displaySlot() {
-            $('.semaine-wrapper .semaine .jour').each( function() {
+            $('.semaine-wrapper .semaine .jour').each(function () {
 
                 let block_width = $(this).width();
                 let columns = [];
                 let lastEventEnding = null;
 
                 // Create an array of all events
-                var events = $('.slot', this).map(function(index, o) {
+                let events = $('.slot', this).map(function (index, o) {
                     o = $(o);
-                    
+
                     let heureDebut = '7:00';
                     let horaire = o.find('.horaire').text();
                     horaire = horaire.split(' - ');
@@ -804,7 +833,7 @@
                 }).get();
 
                 // Sort it by starting time, and then by ending time.
-                events = events.sort(function(e1,e2) {
+                events = events.sort(function (e1, e2) {
                     if (e1.top < e2.top) return -1;
                     if (e1.top > e2.top) return 1;
                     if (e1.bottom < e2.bottom) return -1;
@@ -813,23 +842,23 @@
                 });
 
                 // Iterate over the sorted array
-                $(events).each(function(index, e) {
+                $(events).each(function (index, e) {
 
                     // Check if a new event group needs to be started
                     if (lastEventEnding !== null && e.top >= lastEventEnding) {
                         // The latest event is later than any of the event in the 
                         // current group. There is no overlap. Output the current 
                         // event group and start a new event group.
-                        PackEvents( columns, block_width );
+                        PackEvents(columns, block_width);
                         columns = [];  // This starts new event group.
                         lastEventEnding = null;
                     }
 
                     // Try to place the event inside the existing columns
                     let placed = false;
-                    for (let i = 0; i < columns.length; i++) {                   
-                        let col = columns[ i ];
-                        if (!collidesWith( col[col.length-1], e ) ) {
+                    for (let i = 0; i < columns.length; i++) {
+                        let col = columns[i];
+                        if (!collidesWith(col[col.length - 1], e)) {
                             col.push(e);
                             placed = true;
                             break;
@@ -850,37 +879,37 @@
                 });
 
                 if (columns.length > 0) {
-                    PackEvents( columns, block_width );
+                    PackEvents(columns, block_width);
                 }
             });
         }
+
         displaySlot();
 
 
         // Function does the layout for a group of events.
-        function PackEvents( columns, block_width ) {
+        function PackEvents(columns, block_width) {
             let n = columns.length;
             for (let i = 0; i < n; i++) {
-                let col = columns[ i ];
+                let col = columns[i];
                 for (let j = 0; j < col.length; j++) {
                     let slot = col[j];
                     let colSpan = ExpandEvent(slot, i, columns);
-                    slot.obj.css( 'left', (i / n)*100 + '%' );
-                    slot.obj.css( 'width', block_width * colSpan / n - 1 );
+                    slot.obj.css('left', (i / n) * 100 + '%');
+                    slot.obj.css('width', block_width * colSpan / n - 1);
                 }
             }
         }
 
         // Check if two events collide.
-        function collidesWith( a, b ) {
+        function collidesWith(a, b) {
             return a.bottom > b.top && a.top < b.bottom;
         }
 
         // Expand events at the far right to use up any remaining space. 
         // Checks how many columns the event can expand into, without 
         // colliding with other events.
-        function ExpandEvent(ev, iColumn, columns)
-        {
+        function ExpandEvent(ev, iColumn, columns) {
             let colSpan = 1;
             for (let i = iColumn + 1; i < columns.length; i++) {
                 let col = columns[i];
@@ -900,7 +929,7 @@
         {# Add #}
         function getIdFromSelect2($select2) {
             let list = [];
-            $select2.forEach(function(e) {
+            $select2.forEach(function (e) {
                 list.push(e.id);
             })
             return list;
@@ -908,15 +937,15 @@
 
         function createSlot(data) {
             let color;
-            if (data.categorie.toLowerCase() == 'atelier')
+            if (data.categorie.toLowerCase() === 'atelier')
                 color = 'chocolate';
-            else if (data.categorie.toLowerCase() == 'entretien')
+            else if (data.categorie.toLowerCase() === 'entretien')
                 color = 'rebeccapurple';
-            else if (data.categorie.toLowerCase() == 'consultation')
+            else if (data.categorie.toLowerCase() === 'consultation')
                 color = 'seagreen';
-            else if (data.categorie.toLowerCase() == 'educative')
+            else if (data.categorie.toLowerCase() === 'educative')
                 color = 'royalblue';
-            else if (data.categorie.toLowerCase() == 'coaching')
+            else if (data.categorie.toLowerCase() === 'coaching')
                 color = 'goldenrod';
             let slot = (`
                 <li class="slot" data-id="` + data.id + `" data-color="` + color + `">
@@ -945,7 +974,11 @@
             let date = $(this).attr('data-date');
             let id = $(this).parents('.semaine').attr('data-id');
             let newDate = new Date(formatDate(date));
-            let dateFormated = new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(newDate);
+            let dateFormated = new Intl.DateTimeFormat("fr-FR", {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }).format(newDate);
             let modal = $('#slotModal');
             modal.find('.modal-body h3').text(dateFormated);
             modal.find('.modal-body h3').attr('data-date', date);
@@ -986,7 +1019,7 @@
                     "soignant": soignant,
                     "patient": patient
                 },
-                success: function(res) {
+                success: function (res) {
                     if (res) {
                         let slot = createSlot(res);
                         $('.semaine-wrapper .jour[data-date="' + date + '"]').append(slot);
@@ -1005,7 +1038,11 @@
             let id = $(this).attr('data-id');
             let date = $(this).closest('.jour').attr('data-date');
             let newDate = new Date(formatDate(date));
-            let dateFormated = new Intl.DateTimeFormat("fr-FR", {year: 'numeric', month: 'long', day: 'numeric'}).format(newDate);
+            let dateFormated = new Intl.DateTimeFormat("fr-FR", {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            }).format(newDate);
             let modal = $('#slotModal');
             modal.find('.modal-body h3').text(dateFormated);
             modal.attr('data-date', date);
@@ -1015,34 +1052,35 @@
             url = url.replace("slot_id", id);
             $.ajax({
                 url: url, type: "GET", dataType: "json", data: {},
-                success: function(res) {
+                success: function (res) {
                     if (res) {
                         $('#slot_heureDebut').val(moment(res.heureDebut, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
                         $('#slot_heureFin').val(moment(res.heureFin, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
-                        $('#slot_categorie option[value="'+ res.categorie +'"]').prop('selected', true);
+                        $('#slot_categorie option[value="' + res.categorie + '"]').prop('selected', true);
                         setSelectColor($('#slot_categorie'));
                         changeThematique();
-                        $('#slot_thematique option[value="'+ res.thematique +'"]').prop('selected', true);
-                        $('#slot_type option[value="'+ res.type +'"]').prop('selected', true);
+                        $('#slot_thematique option[value="' + res.thematique + '"]').prop('selected', true);
+                        $('#slot_type option[value="' + res.type + '"]').prop('selected', true);
                         $('#slot_location').val(res.location);
                         $('#slot_place').val(res.place);
 
                         if (res.soignant) {
                             if ($("#slot_soignant option[value='" + res.soignant.id + "']").length > 0)
-                                $('#slot_soignant option[value="'+ res.soignant.id +'"]').prop('selected', true);
+                                $('#slot_soignant option[value="' + res.soignant.id + '"]').prop('selected', true);
                             else
                                 $('#slot_soignant option[value=""]').prop('selected', true);
-                        }
-                        else $('#slot_soignant option[value=""]').prop('selected', true);
+                        } else $('#slot_soignant option[value=""]').prop('selected', true);
 
                         let list = [];
-                        $.each(res.rendezVous, function(i, v) { list.push(v['patient']['id']) });
+                        $.each(res.rendezVous, function (i, v) {
+                            list.push(v['patient']['id'])
+                        });
                         $('#slot_rendezVous').val(list);
                         $('#slot_rendezVous').trigger('change');
-                    
+
                         $("#slot_add, .modal__add").hide();
                         $("#slot_edit, .modal__edit").show();
-                        
+
                         modal.modal('show');
                     }
                 }
@@ -1078,7 +1116,7 @@
                     "soignant": soignant,
                     "patient": patient
                 },
-                success: function(res) {
+                success: function (res) {
                     if (res) {
                         $('.slot[data-id="' + slotId + '"]').remove();
                         let slot = createSlot(res);
@@ -1101,14 +1139,14 @@
                 type: "DELETE",
                 dataType: "json",
                 data: {},
-                success: function(resp) {
+                success: function (resp) {
                     if (resp) {
                         $('.slot[data-id="' + id + '"]').remove();
                         displaySlot();
                     } else {
                         errorAlert('impossible de supprimer ce slot');
                     }
-                }, error: function(err) {
+                }, error: function (err) {
                     errorAlert('impossible de supprimer ce slot');
                 }
             });
@@ -1125,7 +1163,7 @@
                 type: "POST",
                 dataType: "json",
                 data: {},
-                success: function(res) {
+                success: function (res) {
                     if (res) {
                         let newSlot = $('.slot[data-id="' + id + '"]').clone().attr('data-id', res.id);
                         newSlot.find('.horaire').text(res.debut + ' - ' + res.fin);
@@ -1134,7 +1172,7 @@
                     } else {
                         errorAlert('impossible de dupliquer ce slot');
                     }
-                }, error: function(err) {
+                }, error: function (err) {
                     errorAlert('impossible de dupliquer ce slot');
                 }
             });
@@ -1149,16 +1187,17 @@
             d.setDate(d.getDate() + (1 + 7 - d.getDay()) % 7);
             let data = new Intl.DateTimeFormat('fr-FR').format(d);
 
-            $('html, body').animate({ 
+            $('html, body').animate({
                 scrollTop: $('.semaine[data-date="' + data + '"]').offset().top - anchorOffset
-            }, 500);        
+            }, 500);
         }
+
         scrollToDate();
 
         /* Alert
         ============================================================================== */
 
-        var alert_pos = {{ top }};
+        let alert_pos = {{ top }};
 
         function errorAlert(message) {
             $('body').prepend(

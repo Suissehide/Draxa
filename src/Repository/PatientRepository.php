@@ -19,7 +19,7 @@ class PatientRepository extends ServiceEntityRepository
         parent::__construct($registry, Patient::class);
 	}
 
-    public function compte()
+    public function countPatient()
     {
         return $this->createQueryBuilder('p')
             ->select('COUNT(p)')
@@ -49,10 +49,10 @@ class PatientRepository extends ServiceEntityRepository
             ")
             ->setParameter('search', '%' . $searchPhrase . '%');
         }
-        if ($etat == "in") {
+        if ($etat === "in") {
             $qb->andWhere('p.dentree IS NULL');
         }
-        else if ($etat == "out") {
+        else if ($etat === "out") {
             $qb->andWhere('p.dentree LIKE :val')
             ->setParameter('val', '%');
         }
