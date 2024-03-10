@@ -119,7 +119,7 @@ $('body').on('click', '.closebtn', function () {
     if (alert_pos > 60) {
         alert_pos -= 72;
     }
-    var div = $(this).parents('div');
+    const div = $(this).parents('div');
     div.css('opacity', '0');
     setTimeout(function () {
         div.css('display', 'none');

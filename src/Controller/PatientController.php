@@ -66,9 +66,10 @@ class PatientController extends AbstractController
             if ($rowCount != -1) {
                 $min = ($current - 1) * $rowCount;
                 $max = $rowCount;
-                $patients->setMaxResults($max)->setFirstResult($min);
+                $patients->setFirstResult($min)->setMaxResults($max);
             }
             $patients = $patients->getQuery()->getResult();
+
             $rows = array();
             foreach ($patients as $patient) {
                 $rdv = $this->getNextRdv($patient);
