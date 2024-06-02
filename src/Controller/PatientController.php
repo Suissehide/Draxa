@@ -57,18 +57,17 @@ class PatientController extends AbstractController
             $searchPhrase = $request->get('searchPhrase');
             $sort = $request->get('sort');
 
-            $patients = $patientRepository->findByFilter($sort, $searchPhrase, $etat);
-            if ($searchPhrase != "" || $sort != "all") {
-                $count = count($patients->getQuery()->getResult());
-            } else {
-                $count = $patientRepository->countPatient();
-            }
+            $result = $patientRepository->findAndCountByFilter($sort, $searchPhrase, $etat, $rowCount, $current);
+            $count = $result['count'];
+            $patients = $result['patients'];
+
             if ($rowCount != -1) {
                 $min = ($current - 1) * $rowCount;
                 $max = $rowCount;
                 $patients->setFirstResult($min)->setMaxResults($max);
             }
-            $patients = $patients->getQuery()->getResult();
+
+            $patients = $patients->getResult();
 
             $rows = array();
             foreach ($patients as $patient) {

@@ -28,51 +28,66 @@ class PatientRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findByFilter($sort, $searchPhrase, $etat)
+    public function findAndCountByFilter($sort, $searchPhrase, $etat, $rowCount, $current)
     {
-        $qb = $this
-            ->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.rendezVous', 'r')
-            ->leftJoin('r.slot', 's');
+            ->leftJoin('r.slot', 's')
+            ->select('DISTINCT p'); // Ensure unique patients
 
-        if ($searchPhrase != "") {
-            $qb
-            ->andWhere("
-                p.nom LIKE :search
-                OR p.prenom LIKE :search
-                OR p.tel1 LIKE :search
-                OR p.etp LIKE :search
-                OR p.objectif LIKE :search
-                OR r.categorie LIKE :search
-                OR DATE_FORMAT(r.date, '%d/%m/%Y') LIKE :search
-                OR s.thematique LIKE :search
-            ")
-            ->setParameter('search', '%' . $searchPhrase . '%');
+        if (!empty($searchPhrase)) {
+            $qb->andWhere("
+            p.nom LIKE :search
+            OR p.prenom LIKE :search
+            OR p.tel1 LIKE :search
+            OR p.etp LIKE :search
+            OR p.objectif LIKE :search
+            OR r.categorie LIKE :search
+            OR DATE_FORMAT(r.date, '%d/%m/%Y') LIKE :search
+            OR s.thematique LIKE :search
+        ")
+                ->setParameter('search', '%' . $searchPhrase . '%');
         }
+
         if ($etat === "in") {
             $qb->andWhere('p.dentree IS NULL');
-        }
-        else if ($etat === "out") {
-            $qb->andWhere('p.dentree LIKE :val')
-            ->setParameter('val', '%');
-        }
-        else if ($etat == "all") {}
-        else {
+        } elseif ($etat === "out") {
+            $qb->andWhere('p.dentree IS NOT NULL');
+        } elseif ($etat !== "all") {
             $qb->andWhere('p.offre LIKE :etat')
-            ->setParameter('etat', $etat);
+                ->setParameter('etat', $etat);
         }
+
         if ($sort) {
             foreach ($sort as $key => $value) {
-                if ($key != "date" && $key != "categorie" && $key != "thematique")
-                    $qb->orderBy('p.' . $key, $value);
-                else if ($key != "thematique")
+                if ($key == "date" || $key == "categorie") {
                     $qb->orderBy('r.' . $key, $value);
-                else
+                } elseif ($key == "thematique") {
                     $qb->orderBy('s.' . $key, $value);
+                } else {
+                    $qb->orderBy('p.' . $key, $value);
+                }
             }
         } else {
             $qb->orderBy('p.nom', 'ASC');
         }
-        return $qb;
-    }  
+
+        // Clone the query builder to create the count query
+        $countQb = clone $qb;
+        $countQb->select('COUNT(DISTINCT p.id)'); // Count unique patients
+
+        // Get the count result
+        $count = $countQb->getQuery()->getSingleScalarResult();
+
+        // Apply pagination
+        if ($rowCount != -1) {
+            $min = ($current - 1) * $rowCount;
+            $qb->setFirstResult($min)->setMaxResults($rowCount);
+        }
+
+        // Get the results
+        $patients = $qb->getQuery();
+
+        return ['count' => $count, 'patients' => $patients];
+    }
 }
