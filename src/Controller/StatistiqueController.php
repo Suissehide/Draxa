@@ -247,6 +247,7 @@ class StatistiqueController extends AbstractController
      */
     private function statistique21(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
     {
+        $hasRendezVous = false;
         $newDateStart = $dateStart;
         $hasDiagnosticEducatif = false;
         $onlyHospit = true;
@@ -259,6 +260,7 @@ class StatistiqueController extends AbstractController
             $newDateStart = $patient->getDedate();
         }
         foreach ($rendezVous as $r) {
+            $hasRendezVous = true;
             if (
                 $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
@@ -278,9 +280,25 @@ class StatistiqueController extends AbstractController
                 && $hasDiagnosticEducatif
             ) {
                 $onlyHospit = false;
+                break;
+            }
+
+            if (
+                $r->getEtat() === "Oui"
+                && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
+                && $r->getCategorie() === "Entretien"
+                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
+                && $hasDiagnosticEducatif
+            ) {
+                $onlyHospit = false;
+                break;
             }
         }
-        return $hasDiagnosticEducatif && $onlyHospit ? 1 : 0;
+        if ($hasDiagnosticEducatif && $onlyHospit) {
+            dump("ERROR", $patient->getNom());
+        }
+
+        return $hasDiagnosticEducatif && $onlyHospit && $hasRendezVous;
     }
 
     private function statistique22(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
@@ -336,9 +354,11 @@ class StatistiqueController extends AbstractController
                 || $patient->getMode() === "Hospit")) {
             $hasIntern = true;
             $newDateStart = $patient->getDedate();
+            $hasDiagnosticEducatif = true;
         } else if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate()) && $patient->getMode() === "Ambu") {
             $hasExtern = true;
             $newDateStart = $patient->getDedate();
+            $hasDiagnosticEducatif = true;
         }
 
         foreach ($rendezVous as $r) {
@@ -347,9 +367,11 @@ class StatistiqueController extends AbstractController
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $r->getCategorie() === "Entretien"
                 && $r->getThematique() === "Diagnostic éducatif"
+                && $r->getType() !== "Hospit"
                 && !$hasDiagnosticEducatif
             ) {
                 $hasDiagnosticEducatif = true;
+                $hasIntern = true;
                 $newDateStart = $r->getDate();
             }
 
@@ -373,7 +395,32 @@ class StatistiqueController extends AbstractController
 
     private function statistique25(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
     {
-        return 0;
+        $hasDiagnosticEducatif = false;
+        $showAtRendezVous = false;
+
+
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
+            $hasDiagnosticEducatif = true;
+        }
+
+        foreach ($rendezVous as $r) {
+            if (
+                $r->getEtat() === "Oui"
+                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
+                && !$hasDiagnosticEducatif
+            ) {
+                $hasDiagnosticEducatif = true;
+                $dateStart = $r->getDate();
+            }
+            if ($r->getEtat() === "Oui"
+                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
+                && $hasDiagnosticEducatif) {
+                $showAtRendezVous = true;
+            }
+        }
+        return $hasDiagnosticEducatif && !$showAtRendezVous;
     }
 
     /* */
@@ -459,6 +506,7 @@ class StatistiqueController extends AbstractController
 
         if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
             $hasDiagnosticEducatif = true;
+            $newDateStart = $patient->getDedate();
         }
         foreach ($rendezVous as $r) {
             if (
@@ -620,6 +668,7 @@ class StatistiqueController extends AbstractController
 
         if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
             $hasDiagnosticEducatif = true;
+            $newDateStart = $patient->getDedate();
         }
         foreach ($rendezVous as $r) {
             if (
@@ -645,13 +694,14 @@ class StatistiqueController extends AbstractController
                 $r->getEtat() === "Oui"
                 && $this->isInDateRange($newDateStart, $dateEnd, $r->getDate())
                 && $r->getCategorie() === "Entretien"
-                && $r->getThematique() === "Réactu1"
+                && $r->getThematique() === "Réactu 1"
                 && $hasDiagnosticEducatif
             ) {
                 $evaluation += 1;
             }
+
         }
-        return $hasDiagnosticEducatif && $seance >= 2 && $evaluation >= 1 ? 1 : 0;
+        return $hasDiagnosticEducatif && ($seance >= 2) && ($evaluation >= 1);
     }
 
     private function statistique43(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
@@ -660,6 +710,11 @@ class StatistiqueController extends AbstractController
         $hasDiagnosticEducatif = false;
         $seance = 0;
         $evaluation = 0;
+
+        if ($this->isInDateRange($dateStart, $dateEnd, $patient->getDedate())) {
+            $hasDiagnosticEducatif = true;
+            $newDateStart = $patient->getDedate();
+        }
         foreach ($rendezVous as $r) {
             if (
                 $r->getEtat() === "Oui"
@@ -690,7 +745,7 @@ class StatistiqueController extends AbstractController
                 $evaluation += 1;
             }
         }
-        return ($hasDiagnosticEducatif && $seance >= 2 && $evaluation >= 1) ? 1 : 0;
+        return ($hasDiagnosticEducatif && $seance >= 2 && $evaluation >= 1);
     }
 
     private function statistique44(Patient $patient, $rendezVous, $dateStart, $dateEnd): int

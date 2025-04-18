@@ -26,9 +26,9 @@
             <div class="separator"></div>
             <form class="radio-block">
                 <div class="radio-group">
-                    <input type="radio" id="option-tous" name="selector" checked>
+                    <input type="radio" id="option-tous" name="selector">
                     <label for="option-tous">Tous</label>
-                    <input type="radio" id="option-actuels" name="selector">
+                    <input type="radio" id="option-actuels" name="selector" checked>
                     <label for="option-actuels">Actuels</label>
                     <input type="radio" id="option-sortis" name="selector">
                     <label for="option-sortis">Sortis</label>
@@ -61,7 +61,7 @@
 {% block javascripts %}
     <script src="{{ asset('js/script.js') }}"></script>
     <script>
-        let etat = "all";
+        let etat = "in";
 
         const grid = $("#patient-grid").bootgrid({
             rowCount: [

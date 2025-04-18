@@ -16,12 +16,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class SettingController extends AbstractController
+class SettingsController extends AbstractController
 {
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -50,31 +50,15 @@ class SettingController extends AbstractController
         $educatives = [];
         $thematiques = array( $consultations, $entretiens, $ateliers, $coachings, $educatives );
 
-        return $this->render('setting/index.html.twig', [
+        return $this->render('settings/index.html.twig', [
             'title' => 'Settings',
-            'controller_name' => 'SettingController',
+            'controller_name' => 'SettingsController',
             'semaines' => $this->em->getRepository(Semaine::class)->findBy([], ['dateDebut' => 'ASC']),
             'semaineForm' => $semaineForm->createView(),
             'slotForm' => $slotForm->createView(),
             'dates_semaines' => $this->em->getRepository(Semaine::class)->findAllDates(),
             
             'thematiques' => $thematiques
-        ]);
-    }
-
-    /**
-     * @Route("/soignant", name="soignant")
-     */
-    public function soignant(): Response
-    {
-        $soignant = new Soignant();
-        $soignantForm = $this->createForm(SoignantType::class, $soignant);
-
-        return $this->render('setting/soignant.html.twig', [
-            'title' => 'Soignants',
-            'controller_name' => 'SoignantController',
-            'soignants' => $this->em->getRepository(Soignant::class)->findAll(),
-            'soignantForm' => $soignantForm->createView(),
         ]);
     }
 }

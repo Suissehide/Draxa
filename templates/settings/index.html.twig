@@ -15,7 +15,7 @@
         {% elseif slot.categorie|lower == 'coaching' %}goldenrod
         {% endif %}
     ">
-        <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
+        <div class="btn-delete"><span class="glyphicon glyphicon-remove"></span></div>
         <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
         <div class="horaire">{{ slot.heureDebut|date("H:i") }} - {{ slot.heureFin|date("H:i") }}</div>
         <div class="thematique">
@@ -217,14 +217,6 @@
                         </div>
                     </div>
                     {{ form_row(slotForm.categorie) }}
-                    <div class="row js-hide">
-                        <div class="col-md-6">
-                            {{ form_row(slotForm.thematique) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_row(slotForm.type) }}
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             {{ form_row(slotForm.location) }}
@@ -234,7 +226,6 @@
                         </div>
                     </div>
                     {{ form_row(slotForm.soignant) }}
-                    {{ form_row(slotForm.rendezVous) }}
                     {{ form_row(slotForm._token) }}
                     {{ form_end(slotForm, {'render_rest' : false}) }}
                     <button id="slot_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
@@ -250,6 +241,66 @@
         </div>
     </div>
 
+    <!-- Modal deleteSemaine-->
+    <div id="deleteSemaineModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-warning"></span>
+                        Suppression</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cette semaine ?</p>
+                    <div class="modal-btn">
+                        <button class="btn btn-primary btn-delete">Oui</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Non</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal deleteSlot-->
+    <div id="deleteSlotModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">
+                        <span class="glyphicon glyphicon-warning"></span>
+                        Suppression</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer ce slot ?</p>
+                    <div class="modal-btn">
+                        <button class="btn btn-primary btn-delete">Oui</button>
+                        <button class="btn btn-danger" data-dismiss="modal">Non</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -259,8 +310,6 @@
     <script type="text/javascript">
 
         let datesSemaines = {{ dates_semaines|json_encode|raw }};
-
-        let thematiques = {{ thematiques|json_encode|raw }};
 
         function updateDatepicker() {
             $('.datepicker, .input-daterange').datepicker({
@@ -370,7 +419,8 @@
                 let date = new Date(formatDate($(this).attr('data-date')));
                 $(this).find('.semaine__date-info h2').text('SEMAINE ' + date.getWeek());
             })
-        };
+        }
+
         setWeekNumber();
 
         {# Sort week #}
@@ -391,7 +441,7 @@
             let oldYear = '';
             $('.semaine-wrapper .semaine').each(function () {
                 let year = $(this).attr('data-date').split('/')[2];
-                if (year != oldYear) {
+                if (year !== oldYear) {
                     oldYear = year;
                     let divider = `
                         <div class="divider">
@@ -611,9 +661,17 @@
 
 
         {# Delete #}
-        $(".semaine-wrapper").on("click", ".semaine .btn-remove", function (e) {
+        $(".semaine-wrapper").on('click', '.semaine .btn-remove', function (e) {
             e.stopPropagation();
             let id = $(this).parents('.semaine').attr('data-id');
+            $("#deleteSemaineModal").find('.btn-delete').attr('data-id', id);
+            $("#deleteSemaineModal").modal('show');
+        });
+
+        $("#deleteSemaineModal").on('click', '.btn-delete', function (e) {
+            e.stopPropagation();
+            $("#deleteSemaineModal").modal('hide');
+            let id = $(this).attr('data-id');
             let url = "{{ path('semaine_delete', { 'id': 'semaine_id' }) }}";
             url = url.replace("semaine_id", id);
             $.ajax({
@@ -638,7 +696,7 @@
         });
 
         {# Duplicate #}
-        $(".semaine-wrapper").on("click", ".semaine .semaine__duplicate", function (e) {
+        $(".semaine-wrapper").on('click', ".semaine .semaine__duplicate", function (e) {
             e.stopPropagation();
 
             let modal = $('#semaineModal');
@@ -714,7 +772,6 @@
         /* Slot
         ============================================================================== */
 
-        {#      #}
         function matchCustom(params, data) {
             if ($.trim(params.term) === '') {
                 return data;
@@ -729,76 +786,6 @@
             }
             return null;
         }
-
-        $(".js-patient").select2({
-            multiple: false,
-            matcher: matchCustom,
-        });
-
-
-        {#      #}
-        $("#slot_categorie").change(function () {
-            $("#slot_thematique option[value='']").prop('selected', true);
-            changeThematique();
-        });
-
-        $("#slot_place").change(function () {
-            updatePatientList();
-        });
-
-        // SET PLACE && MULTI PATIENT ADD
-        function updatePatientList() {
-            let thematique = $("#slot_categorie option:selected").attr('data-thematique');
-            if (thematique === 'atelier' || thematique === 'educative' || thematique === 'coaching') {
-                let length = parseInt($('#slot_place').val());
-                $(".js-patient").select2({multiple: true, matcher: matchCustom, maximumSelectionLength: length});
-                $(".js-patient").val(null).trigger('change');
-            } else {
-                $(".js-patient").select2({multiple: false, matcher: matchCustom});
-                $(".js-patient").val(null).trigger('change');
-                $("#slot_place").val(1);
-            }
-        }
-
-        function changeThematique() {
-            let thematique = $("#slot_categorie option:selected").attr('data-thematique');
-            $('#slot_thematique option').each(function () {
-                if ($(this).attr('data-thematique') === thematique || $(this).attr('data-thematique') === 'default') {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
-
-            updatePatientList();
-
-            if (thematique === 'educative') {
-                $('.js-hide').hide();
-            } else {
-                $('.js-hide').show();
-            }
-
-            $('#slot_thematique option').remove();
-            $('#slot_thematique').append(new Option('', ''));
-            if (thematique !== '') {
-                let index = 0;
-                if (thematique === 'entretien')
-                    index = 1;
-                else if (thematique === 'atelier')
-                    index = 2;
-                else if (thematique === 'coaching')
-                    index = 3;
-                else if (thematique === 'educative')
-                    index = 4;
-                $.each(thematiques[index], function (key, value) {
-                    $('#slot_thematique')
-                        .append($("<option></option>")
-                            .attr("value", value)
-                            .text(value));
-                });
-            }
-        };
-        changeThematique();
 
         {# Display #}
         let column_index = 0;
@@ -925,16 +912,7 @@
         }
 
 
-
         {# Add #}
-        function getIdFromSelect2($select2) {
-            let list = [];
-            $select2.forEach(function (e) {
-                list.push(e.id);
-            })
-            return list;
-        }
-
         function createSlot(data) {
             let color;
             if (data.categorie.toLowerCase() === 'atelier')
@@ -949,25 +927,21 @@
                 color = 'goldenrod';
             let slot = (`
                 <li class="slot" data-id="` + data.id + `" data-color="` + color + `">
-                    <div class="delete-btn"><span class="glyphicon glyphicon-remove"></span></div>
+                    <div class="btn-delete"><span class="glyphicon glyphicon-remove"></span></div>
                     <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
                     <div class="horaire">` + data.debut + ` - ` + data.fin + `</div>
-                    <div class="thematique">
             `);
-            if (data.thematique) slot += data.thematique;
-            if (data.type) slot += ' | ' + data.type;
-            slot += '</div> <div class="details">';
+            slot += '<div class="details">';
             if (data.soignant) slot += 'avec&nbsp;<span>' + data.soignant + '</span>';
             if (data.location) slot += '&nbsp;en&nbsp;<span>' + data.location + '</span>';
             slot += '</div></li>';
             return slot;
         }
 
-        $(".semaine-wrapper").on("click", ".jour", function (e) {
+        $(".semaine-wrapper").on('click', '.jour', function (e) {
             e.preventDefault();
             //reset
             $('#slotModal form')[0].reset();
-            changeThematique();
             $('#slot_categorie').css({background: 'white', color: 'black'});
 
             //
@@ -995,12 +969,9 @@
             let heureDebut = $('#slot_heureDebut').val();
             let heureFin = $('#slot_heureFin').val();
             let categorie = $('#slot_categorie').val();
-            let thematique = $('#slot_thematique').val();
-            let type = $('#slot_type').val();
             let location = $('#slot_location').val();
             let place = $('#slot_place').val();
             let soignant = $('#slot_soignant option:selected').val();
-            let patient = getIdFromSelect2($('.js-patient').select2('data'));
 
             $.ajax({
                 url: "{{ path('slot_add') }}",
@@ -1012,12 +983,9 @@
                     "heureDebut": heureDebut,
                     "heureFin": heureFin,
                     "categorie": categorie,
-                    "thematique": thematique,
-                    "type": type,
                     "location": location,
                     "place": place,
                     "soignant": soignant,
-                    "patient": patient
                 },
                 success: function (res) {
                     if (res) {
@@ -1032,8 +1000,9 @@
             });
         });
 
+        
         {# Edit #}
-        $(".semaine-wrapper").on("click", ".slot", function (e) {
+        $(".semaine-wrapper").on('click', '.slot', function (e) {
             e.stopPropagation();
             let id = $(this).attr('data-id');
             let date = $(this).closest('.jour').attr('data-date');
@@ -1058,9 +1027,6 @@
                         $('#slot_heureFin').val(moment(res.heureFin, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
                         $('#slot_categorie option[value="' + res.categorie + '"]').prop('selected', true);
                         setSelectColor($('#slot_categorie'));
-                        changeThematique();
-                        $('#slot_thematique option[value="' + res.thematique + '"]').prop('selected', true);
-                        $('#slot_type option[value="' + res.type + '"]').prop('selected', true);
                         $('#slot_location').val(res.location);
                         $('#slot_place').val(res.place);
 
@@ -1096,12 +1062,9 @@
             let heureDebut = $('#slot_heureDebut').val();
             let heureFin = $('#slot_heureFin').val();
             let categorie = $('#slot_categorie').val();
-            let thematique = $('#slot_thematique').val();
-            let type = $('#slot_type').val();
             let location = $('#slot_location').val();
             let place = $('#slot_place').val();
             let soignant = $('#slot_soignant option:selected').val();
-            let patient = getIdFromSelect2($('.js-patient').select2('data'));
 
             $.ajax({
                 url: url, type: "PATCH", dataType: "json",
@@ -1109,12 +1072,9 @@
                     "heureDebut": heureDebut,
                     "heureFin": heureFin,
                     "categorie": categorie,
-                    "thematique": thematique,
-                    "type": type,
                     "location": location,
                     "place": place,
                     "soignant": soignant,
-                    "patient": patient
                 },
                 success: function (res) {
                     if (res) {
@@ -1129,9 +1089,17 @@
 
 
         {# Delete #}
-        $(".semaine-wrapper").on("click", ".slot .delete-btn", function (e) {
+        $(".semaine-wrapper").on('click', '.slot .btn-delete', function (e) {
             e.stopPropagation();
             let id = $(this).parents('.slot').attr('data-id');
+            $("#deleteSlotModal").find('.btn-delete').attr('data-id', id);
+            $("#deleteSlotModal").modal('show');
+        });
+        
+        $("#deleteSlotModal").on('click', '.btn-delete', function (e) {
+            e.stopPropagation();
+            $("#deleteSlotModal").modal('hide');
+            let id = $(this).attr('data-id');
             let url = "{{ path('slot_delete', { 'id': 'slot_id' }) }}";
             url = url.replace("slot_id", id);
             $.ajax({
@@ -1146,14 +1114,15 @@
                     } else {
                         errorAlert('impossible de supprimer ce slot');
                     }
-                }, error: function (err) {
+                },
+                error: function (err) {
                     errorAlert('impossible de supprimer ce slot');
                 }
             });
         });
 
         {# Duplicate #}
-        $(".semaine-wrapper").on("click", ".slot .duplicate-btn", function (e) {
+        $(".semaine-wrapper").on('click', ".slot .duplicate-btn", function (e) {
             e.stopPropagation();
             let id = $(this).parents('.slot').attr('data-id');
             let url = "{{ path('slot_duplicate', { 'id': 'slot_id' }) }}";

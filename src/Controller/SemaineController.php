@@ -3,14 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Semaine;
-
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/semaine")
@@ -20,7 +19,7 @@ class SemaineController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -30,7 +29,7 @@ class SemaineController extends AbstractController
     /**
      * @Route("/add", name="semaine_add", methods="POST")
      */
-    public function add(Request $request) : Response
+    public function add(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
             if ($this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut')) != [])
@@ -50,24 +49,26 @@ class SemaineController extends AbstractController
 
             return new JsonResponse($semaine->getId());
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
      * @Route("/date", name="semaine_date", methods="POST")
      */
-    public function semaine_date(Request $request) : Response
+    public function semaine_date(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
             $isSemaine = $this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut'));
 
-            return new JsonResponse($isSemaine ? false : true);
+            return new JsonResponse(!$isSemaine);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
      * @Route("/{id}", name="semaine_delete", methods="DELETE")
      */
-    public function delete(Request $request, ManagerRegistry $doctrine, int $id) : Response
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
         if ($request->isXmlHttpRequest()) {
             $semaine = $doctrine->getRepository(Semaine::class)->find($id);
@@ -78,6 +79,7 @@ class SemaineController extends AbstractController
             }
             return new JsonResponse(false);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -134,5 +136,6 @@ class SemaineController extends AbstractController
             }
             return new JsonResponse(false);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 }

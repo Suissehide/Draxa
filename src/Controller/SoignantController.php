@@ -21,7 +21,7 @@ class SoignantController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -62,6 +62,7 @@ class SoignantController extends AbstractController
 
             return new JsonResponse($soignant->getId());
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -72,12 +73,16 @@ class SoignantController extends AbstractController
         $soignant = $doctrine->getRepository(Soignant::class)->find($id);
         if ($request->isXmlHttpRequest()) {
             if ($soignant) {
+                foreach ($soignant->getSlots() as $slot) {
+                    $slot->setSoignant(null);
+                }
                 $this->em->remove($soignant);
                 $this->em->flush();
                 return new JsonResponse(true);
             }
             return new JsonResponse(false);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -89,8 +94,6 @@ class SoignantController extends AbstractController
             $soignantsId = $request->get('soignants');
             $status = $request->get('status');
             $priorityMax = $this->em->getRepository(Soignant::class)->getPriorityMax();
-
-            dump($priorityMax);
 
             foreach ($soignantsId as $soignantId) {
                 $soignant = $this->em->getRepository(Soignant::class)->findOneBy(array('id' => $soignantId));
@@ -105,6 +108,7 @@ class SoignantController extends AbstractController
             $this->em->flush();
             return new JsonResponse(true);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -124,6 +128,7 @@ class SoignantController extends AbstractController
             $this->em->flush();
             return new JsonResponse(true);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     
@@ -145,6 +150,7 @@ class SoignantController extends AbstractController
             $this->em->flush();
             return new JsonResponse(true);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -162,5 +168,6 @@ class SoignantController extends AbstractController
             $this->em->flush();
             return new JsonResponse(true);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 }

@@ -34,29 +34,18 @@ class ThematiqueConstants
     ];
 
     const ATELIER = [
-        'AP' => 'AP',
-        'atherosclerose' => 'Athérosclérose',
-        'cuisine_F&L' => 'Cuisine F&L',
-        'cuisine_MG' => 'Cuisine MG',
-        'cuisine_poisson' => 'Cuisine Poisson',
-        'equilibre_alimentaire' => 'Equilibre alimentaire',
-        'FDR' => 'FDR',
+        'alimentation_insuffisance_cardiaque' => 'Alimentation et Insuffisance cardiaque',
+        'cuisine_drive' => 'Cuisine Drive',
+        'cuisine_mise_en_pratique' => 'Cuisine Mise en pratique',
+        'gerer_diabete' => 'Gérer mon diabète',
+        'gerer_hta' => 'Gérer mon HTA',
         'prevention_stress' => 'Prévention stress',
         'PRM1' => 'PRM1',
         'PRM2' => 'PRM2',
-        'manger_pleine_cse' => 'Manger Pleine Cse',
-        'navigation' => 'Navigation',
-        'orga_alim' => 'Orga Alim',
-        'parcours_de_vie' => 'Parcours de vie',
-        'sensation_faim' => 'Sensation Faim',
-        'sensation_satiete' => 'Sensation Satiété',
-        'signes_d_alerte' => 'Signes d\'alerte',
-        'stress_&_MCV' => 'Stress & MCV',
+        'qu_est_ce_insuffisance_cardiaque' => 'Qu’est-ce que l’insuffisance cardiaque ?',
         'stress_aigu' => 'Stress aigu',
         'sucres' => 'Sucres',
         'tabac' => 'Tabac',
-        'traitement' => 'Traitement',
-        'vecu/cse_de_soi' => 'Vécu/Cse de Soi'
     ];
 
     const COACHING = [
