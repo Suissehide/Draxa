@@ -34,7 +34,16 @@
     <div class="settings">
 
         <div class="nav-bar">
-            <div class="btn-group btn-nav">
+            <div class="divider">
+                <button id="subYear" class="btn btn-primary btn-round">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </button>
+                <h2 class="year">{{ year }}</h2>
+                <button id="addYear" class="btn btn-primary btn-round">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </button>
+            </div>
+            <div class="btn-nav">
                 <a id="semaineAddModal" class="btn btn-primary" data-toggle="modal" data-target="#semaineModal">
                     <span class="glyphicon glyphicon-plus"></span>
                     Ajouter une semaine
@@ -316,10 +325,19 @@
     <script src="{{ asset('js/select2.min.js') }}"></script>
 
     <script type="text/javascript">
+        const currentYear = {{ year }}
+        const datesSemaines = {{ dates_semaines|json_encode|raw }};
+        const thematiques = {{ thematiques|json_encode|raw }};
 
-        let datesSemaines = {{ dates_semaines|json_encode|raw }};
+        $('#addYear').on('click', function () {
+            let nextYear = currentYear + 1;
+            window.location.href = '{{ path('settings', {'year': 'YEAR_PLACEHOLDER'}) }}'.replace('YEAR_PLACEHOLDER', nextYear);
+        })
 
-        let thematiques = {{ thematiques|json_encode|raw }};
+        $('#subYear').on('click', function () {
+            let prevYear  = currentYear - 1;
+            window.location.href = '{{ path('settings', {'year': 'YEAR_PLACEHOLDER'}) }}'.replace('YEAR_PLACEHOLDER', prevYear);
+        })
 
         function updateDatepicker() {
             $('.datepicker, .input-daterange').datepicker({
@@ -446,27 +464,6 @@
 
         orderWeek();
 
-        function setYearDividers() {
-            $('.divider').remove();
-            let oldYear = '';
-            $('.semaine-wrapper .semaine').each(function () {
-                let year = $(this).attr('data-date').split('/')[2];
-                if (year !== oldYear) {
-                    oldYear = year;
-                    let divider = `
-                        <div class="divider">
-                            <div class="line"></div>
-                            <h2 class="year">` + oldYear + `</h2>
-                        </div>
-                    `;
-                    $(this).before(divider);
-                }
-            });
-        }
-
-        setYearDividers();
-
-
         {#  /  #}
         $('#semaine_dateDebut').datepicker().on("changeDate", function (e) {
             setWeekDates(e.date);
@@ -494,7 +491,7 @@
             let dateDebut = $('#semaine_dateDebut').val();
 
             $.ajax({
-                url: "{{ path('semaine_date') }}",
+                url: "{{ path('semaine_sameDate') }}",
                 type: "POST",
                 dataType: "json",
                 data: {
@@ -649,7 +646,6 @@
                         semaineResetError();
                         orderWeek();
                         setWeekNumber();
-                        setYearDividers();
                     } else {
                         errorAlert('impossible d\'ajouter une semaine');
                     }
@@ -766,7 +762,6 @@
                         $('.semaine-wrapper').append(newSemaine);
                         orderWeek();
                         setWeekNumber();
-                        setYearDividers();
 
                         displaySlot();
                     } else {
@@ -864,6 +859,7 @@
                 });
             }
         }
+
         changeThematique();
 
         {# Display #}
@@ -1095,7 +1091,7 @@
             });
         });
 
-        
+
         {# Edit #}
         $(".semaine-wrapper").on('click', '.slot', function (e) {
             e.stopPropagation();
@@ -1197,7 +1193,7 @@
             $("#deleteSlotModal").find('.btn-delete').attr('data-id', id);
             $("#deleteSlotModal").modal('show');
         });
-        
+
         $("#deleteSlotModal").on('click', '.btn-delete', function (e) {
             e.stopPropagation();
             $("#deleteSlotModal").modal('hide');

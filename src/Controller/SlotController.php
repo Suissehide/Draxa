@@ -24,7 +24,7 @@ class SlotController extends AbstractController
     /**
      * @var EntityManagerInterface
      */
-    private $em;
+    private EntityManagerInterface $em;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -70,7 +70,6 @@ class SlotController extends AbstractController
             $location = $request->get('location');
             $place = $request->get('place');
             $soignant = $request->get('soignant');
-            $patient = $request->get('patient');
 
             $semaine = $this->em->getRepository(Semaine::class)->findOneBy(array('id' => $semaineId));
 
@@ -84,20 +83,6 @@ class SlotController extends AbstractController
             $slot->setLocation($location);
             $slot->setPlace($place === '' ? null : $place);
             $slot->setSoignant($this->em->getRepository(Soignant::class)->findOneById($soignant));
-            
-            if ($patient) {
-                foreach ($patient as $id) {
-                    if ($id) {
-                        $patient = $this->em->getRepository(Patient::class)->findOneById($id);
-                        $rendezVous = new RendezVous();
-                        $rendezVous->setDate($new_date);
-                        $rendezVous->setHeure(date_create_from_format('H:i', $heureDebut));
-                        $rendezVous->setCategorie($categorie);
-                        $rendezVous->setPatient($patient);
-                        $slot->addRendezVous($rendezVous);
-                    }
-                }
-            }
             $slot->setSemaine($semaine);
             $this->em->persist($slot);
             $this->em->flush();
@@ -113,6 +98,7 @@ class SlotController extends AbstractController
                 'soignant' => $slot->getSoignant() ? $slot->getSoignant()->getPrenom() . ' ' . $slot->getSoignant()->getNom() : '',
             ]);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -130,7 +116,6 @@ class SlotController extends AbstractController
             $location = $request->get('location');
             $place = $request->get('place');
             $soignant = $request->get('soignant');
-            $patient = $request->get('patient');
 
             $slot->setHeureDebut(date_create_from_format('H:i', $heureDebut));
             $slot->setHeureFin(date_create_from_format('H:i', $heureFin));
@@ -143,23 +128,11 @@ class SlotController extends AbstractController
 
             $rdv = $slot->getRendezVous();
             foreach($rdv as $r) {
-                $this->em->remove($r);
-            }
-
-            if ($patient) {
-                foreach ($patient as $id) {
-                    if ($id) {
-                        $patient = $this->em->getRepository(Patient::class)->findOneById($id);
-                        $rendezVous = new RendezVous();
-                        $rendezVous->setDate($slot->getDate());
-                        $rendezVous->setHeure(date_create_from_format('H:i', $heureDebut));
-                        $rendezVous->setCategorie($categorie);
-                        $rendezVous->setThematique($thematique);
-                        $rendezVous->setType($type);
-                        $rendezVous->setPatient($patient);
-                        $slot->addRendezVous($rendezVous);
-                    }
-                }
+                $r->setDate($slot->getDate());
+                $r->setHeure(date_create_from_format('H:i', $heureDebut));
+                $r->setCategorie($categorie);
+                $r->setThematique($thematique);
+                $r->setType($type);
             }
             $this->em->flush();
 
@@ -174,7 +147,7 @@ class SlotController extends AbstractController
                 'soignant' => $slot->getSoignant() ? $slot->getSoignant()->getPrenom() . ' ' . $slot->getSoignant()->getNom() : '',
             ]);
         }
-        return new JsonResponse(false);
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -187,10 +160,11 @@ class SlotController extends AbstractController
             if ($slot) {
                 $this->em->remove($slot);
                 $this->em->flush();
-                return new JsonResponse(true);
+                return new JsonResponse(null, Response::HTTP_OK);
             }
-            return new JsonResponse(false);
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -216,8 +190,9 @@ class SlotController extends AbstractController
                     'fin' => date_format($new->getHeureFin(), 'H:i'),
                 ]);
             }
-            return new JsonResponse(false);
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -232,7 +207,7 @@ class SlotController extends AbstractController
 
             return new JsonResponse($hours);
         }
-        return new JsonResponse(false);
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 
     /**
@@ -248,6 +223,6 @@ class SlotController extends AbstractController
 
             return new JsonResponse($res);
         }
-        return new JsonResponse(false);
+        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
     }
 }

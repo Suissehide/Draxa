@@ -3,7 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\Semaine;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -20,10 +22,10 @@ class SemaineRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Semaine[] Returns true if same dateDebut
-    */
-
-    public function findSemaineAtSameDate($date)
+     * @return Semaine[] Returns true if same dateDebut
+     * @throws NonUniqueResultException
+     */
+    public function findAtSameDate($date): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere("DATE_FORMAT(s.dateDebut, '%d/%m/%Y') = :date")
@@ -34,7 +36,10 @@ class SemaineRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findAllDates()
+    /**
+     * @return Semaine[]
+     */
+    public function findAllDates(): array
     {
         return $this->createQueryBuilder('s')
             ->select("DATE_FORMAT(s.dateDebut, '%d/%m/%Y') as date")
@@ -42,6 +47,23 @@ class SemaineRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @return Semaine[]
+     */
+    public function findByYear(int $year): array
+    {
+        $from = new DateTimeImmutable("$year-01-01");
+        $to = new DateTimeImmutable("$year-12-31 23:59:59");
+
+        return $this->createQueryBuilder('s')
+            ->where('s.dateDebut BETWEEN :from AND :to')
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
+            ->orderBy('s.dateDebut', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

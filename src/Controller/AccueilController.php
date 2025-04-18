@@ -93,7 +93,7 @@ class AccueilController extends AbstractController
                             'rendezVousId' => $r->getId(),
                             'send' =>  $r->getSend() === 'Oui' ? 'Oui' : 'Non',
                             'notes' => $r->getNotes(),
-                            'type' => $r->getType() === null ? "" : $r->getType(),
+                            'type' => $r->getType() === null ? ($s->getType() === null ? "" : $s->getType()) : $r->getType(),
                             'venu' => $r->getEtat() ? $r->getEtat() : "",
                             'theraflow' => $p->getDivers(),
                             'progetp' => $p->getProgetp()
@@ -260,15 +260,17 @@ class AccueilController extends AbstractController
 
             $rendezVous = $this->em->getRepository(RendezVous::class)->findOneById($rendezVousId);
             $slot = $this->em->getRepository(Slot::class)->findOneById($slotId);
-            
             $slot->removeRendezVous($rendezVous);
+
             // $this->em->remove($rendezVous);
-            
+
+            /*
             if ($slot) {
                 if (count($slot->getRendezVous()) === 0) {
                     $slot->setThematique('');
                 }
             }
+            */
 
             $this->em->flush();
             return new JsonResponse(true);

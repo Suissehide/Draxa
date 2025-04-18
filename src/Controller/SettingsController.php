@@ -29,9 +29,9 @@ class SettingsController extends AbstractController
     }
     
     /**
-     * @Route("/settings", name="settings")
+     * @Route("/settings/{year}", name="settings")
      */
-    public function index(): Response
+    public function settings(int $year): Response
     {
         $semaine = new Semaine();
         $semaineForm = $this->createForm(SemaineType::class, $semaine);
@@ -53,11 +53,11 @@ class SettingsController extends AbstractController
         return $this->render('settings/index.html.twig', [
             'title' => 'Settings',
             'controller_name' => 'SettingsController',
-            'semaines' => $this->em->getRepository(Semaine::class)->findBy([], ['dateDebut' => 'ASC']),
+            'semaines' => $this->em->getRepository(Semaine::class)->findByYear($year),
             'semaineForm' => $semaineForm->createView(),
             'slotForm' => $slotForm->createView(),
             'dates_semaines' => $this->em->getRepository(Semaine::class)->findAllDates(),
-            
+            'year' => $year,
             'thematiques' => $thematiques
         ]);
     }

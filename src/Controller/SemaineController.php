@@ -32,7 +32,7 @@ class SemaineController extends AbstractController
     public function add(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            if ($this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut')) != [])
+            if ($this->em->getRepository(Semaine::class)->findAtSameDate($request->get('dateDebut')) != [])
                 return new JsonResponse(false);
 
             $dateDebut = explode('/', $request->get('dateDebut'));
@@ -53,12 +53,13 @@ class SemaineController extends AbstractController
     }
 
     /**
-     * @Route("/date", name="semaine_date", methods="POST")
+     * @Route("/same_date", name="semaine_sameDate", methods="POST")
      */
-    public function semaine_date(Request $request): Response
+    public function semaine_isSameDate(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $isSemaine = $this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut'));
+            $date = $request->get('dateDebut');
+            $isSemaine = $this->em->getRepository(Semaine::class)->findAtSameDate($date);
 
             return new JsonResponse(!$isSemaine);
         }
@@ -90,7 +91,7 @@ class SemaineController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $semaine = $doctrine->getRepository(Semaine::class)->find($id);
             if ($semaine) {
-                if ($this->em->getRepository(Semaine::class)->findSemaineAtSameDate($request->get('dateDebut')) != [])
+                if ($this->em->getRepository(Semaine::class)->findAtSameDate($request->get('dateDebut')) != [])
                     return new JsonResponse(false);
 
                 $newSemaine = clone $semaine;
