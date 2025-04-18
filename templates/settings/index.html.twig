@@ -217,6 +217,14 @@
                         </div>
                     </div>
                     {{ form_row(slotForm.categorie) }}
+                    <div class="row js-hide">
+                        <div class="col-md-6">
+                            {{ form_row(slotForm.thematique) }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form_row(slotForm.type) }}
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6">
                             {{ form_row(slotForm.location) }}
@@ -310,6 +318,8 @@
     <script type="text/javascript">
 
         let datesSemaines = {{ dates_semaines|json_encode|raw }};
+
+        let thematiques = {{ thematiques|json_encode|raw }};
 
         function updateDatepicker() {
             $('.datepicker, .input-daterange').datepicker({
@@ -787,6 +797,75 @@
             return null;
         }
 
+        $(".js-patient").select2({
+            multiple: false,
+            matcher: matchCustom,
+        });
+
+        {#      #}
+        $("#slot_categorie").change(function () {
+            $("#slot_thematique option[value='']").prop('selected', true);
+            changeThematique();
+        });
+
+        $("#slot_place").change(function () {
+            updatePatientList();
+        });
+
+        // SET PLACE && MULTI PATIENT ADD
+        function updatePatientList() {
+            let thematique = $("#slot_categorie option:selected").attr('data-thematique');
+            if (thematique === 'atelier' || thematique === 'educative' || thematique === 'coaching') {
+                let length = parseInt($('#slot_place').val());
+                $(".js-patient").select2({multiple: true, matcher: matchCustom, maximumSelectionLength: length});
+                $(".js-patient").val(null).trigger('change');
+            } else {
+                $(".js-patient").select2({multiple: false, matcher: matchCustom});
+                $(".js-patient").val(null).trigger('change');
+                $("#slot_place").val(1);
+            }
+        }
+
+        function changeThematique() {
+            let thematique = $("#slot_categorie option:selected").attr('data-thematique');
+            $('#slot_thematique option').each(function () {
+                if ($(this).attr('data-thematique') === thematique || $(this).attr('data-thematique') === 'default') {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            updatePatientList();
+
+            if (thematique === 'educative') {
+                $('.js-hide').hide();
+            } else {
+                $('.js-hide').show();
+            }
+
+            $('#slot_thematique option').remove();
+            $('#slot_thematique').append(new Option('', ''));
+            if (thematique !== '') {
+                let index = 0;
+                if (thematique === 'entretien')
+                    index = 1;
+                else if (thematique === 'atelier')
+                    index = 2;
+                else if (thematique === 'coaching')
+                    index = 3;
+                else if (thematique === 'educative')
+                    index = 4;
+                $.each(thematiques[index], function (key, value) {
+                    $('#slot_thematique')
+                        .append($("<option></option>")
+                            .attr("value", value)
+                            .text(value));
+                });
+            }
+        }
+        changeThematique();
+
         {# Display #}
         let column_index = 0;
 
@@ -911,6 +990,14 @@
             return colSpan;
         }
 
+        {# Add #}
+        function getIdFromSelect2($select2) {
+            let list = [];
+            $select2.forEach(function (e) {
+                list.push(e.id);
+            })
+            return list;
+        }
 
         {# Add #}
         function createSlot(data) {
@@ -930,8 +1017,11 @@
                     <div class="btn-delete"><span class="glyphicon glyphicon-remove"></span></div>
                     <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
                     <div class="horaire">` + data.debut + ` - ` + data.fin + `</div>
+                    <div class="thematique">
             `);
-            slot += '<div class="details">';
+            if (data.thematique) slot += data.thematique;
+            if (data.type) slot += ' | ' + data.type;
+            slot += '</div> <div class="details">';
             if (data.soignant) slot += 'avec&nbsp;<span>' + data.soignant + '</span>';
             if (data.location) slot += '&nbsp;en&nbsp;<span>' + data.location + '</span>';
             slot += '</div></li>';
@@ -942,6 +1032,7 @@
             e.preventDefault();
             //reset
             $('#slotModal form')[0].reset();
+            changeThematique();
             $('#slot_categorie').css({background: 'white', color: 'black'});
 
             //
@@ -969,6 +1060,8 @@
             let heureDebut = $('#slot_heureDebut').val();
             let heureFin = $('#slot_heureFin').val();
             let categorie = $('#slot_categorie').val();
+            let thematique = $('#slot_thematique').val();
+            let type = $('#slot_type').val();
             let location = $('#slot_location').val();
             let place = $('#slot_place').val();
             let soignant = $('#slot_soignant option:selected').val();
@@ -983,6 +1076,8 @@
                     "heureDebut": heureDebut,
                     "heureFin": heureFin,
                     "categorie": categorie,
+                    "thematique": thematique,
+                    "type": type,
                     "location": location,
                     "place": place,
                     "soignant": soignant,
@@ -1027,6 +1122,9 @@
                         $('#slot_heureFin').val(moment(res.heureFin, 'DD-MM-YYYY HH:mm:ss').format("HH:mm"));
                         $('#slot_categorie option[value="' + res.categorie + '"]').prop('selected', true);
                         setSelectColor($('#slot_categorie'));
+                        changeThematique();
+                        $('#slot_thematique option[value="' + res.thematique + '"]').prop('selected', true);
+                        $('#slot_type option[value="' + res.type + '"]').prop('selected', true);
                         $('#slot_location').val(res.location);
                         $('#slot_place').val(res.place);
 
@@ -1062,6 +1160,8 @@
             let heureDebut = $('#slot_heureDebut').val();
             let heureFin = $('#slot_heureFin').val();
             let categorie = $('#slot_categorie').val();
+            let thematique = $('#slot_thematique').val();
+            let type = $('#slot_type').val();
             let location = $('#slot_location').val();
             let place = $('#slot_place').val();
             let soignant = $('#slot_soignant option:selected').val();
@@ -1072,6 +1172,8 @@
                     "heureDebut": heureDebut,
                     "heureFin": heureFin,
                     "categorie": categorie,
+                    "thematique": thematique,
+                    "type": type,
                     "location": location,
                     "place": place,
                     "soignant": soignant,
