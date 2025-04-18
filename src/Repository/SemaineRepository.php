@@ -22,10 +22,10 @@ class SemaineRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Semaine[] Returns true if same dateDebut
+     * @return Semaine|null Returns the semaine if same dateDebut, null otherwise
      * @throws NonUniqueResultException
      */
-    public function findAtSameDate($date): array
+    public function findAtSameDate($date): array|null
     {
         return $this->createQueryBuilder('s')
             ->andWhere("DATE_FORMAT(s.dateDebut, '%d/%m/%Y') = :date")

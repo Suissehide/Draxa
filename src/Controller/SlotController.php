@@ -125,15 +125,6 @@ class SlotController extends AbstractController
             $slot->setLocation($location);
             $slot->setPlace($place === '' ? null : $place);
             $slot->setSoignant($this->em->getRepository(Soignant::class)->findOneById($soignant));
-
-            $rdv = $slot->getRendezVous();
-            foreach($rdv as $r) {
-                $r->setDate($slot->getDate());
-                $r->setHeure(date_create_from_format('H:i', $heureDebut));
-                $r->setCategorie($categorie);
-                $r->setThematique($thematique);
-                $r->setType($type);
-            }
             $this->em->flush();
 
             return new JsonResponse([

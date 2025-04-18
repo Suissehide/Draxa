@@ -311,15 +311,6 @@ button:visited {
     overflow: initial;
 }
 
-.sortable {
-    cursor: pointer;
-    transition: 0.2s ease;
-}
-
-.sortable:hover {
-    background-color: #d0d0d0;
-}
-
 /* Pagination
 =================================================== */
 
@@ -900,6 +891,15 @@ nav {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-between;
+}
+
+.accueil-wrapper .sortable {
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.accueil-wrapper .sortable:hover {
+    background-color: #d0d0d0;
 }
 
 .box {
