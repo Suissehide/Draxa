@@ -26,8 +26,9 @@ class AppUserFormType extends AbstractType
             ->add('roles', ChoiceType::class, array(
                 'label' => "Rôles",
                 'choices' => array(
+                    'IDE' => 'ROLE_IDE',
+                    'AS' => 'ROLE_AS',
                     'Admin' => 'ROLE_ADMIN',
-                    'User' => 'ROLE_USER',
                 ),
                 'multiple' => true,
                 'attr' => array(

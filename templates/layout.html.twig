@@ -27,38 +27,44 @@
                         Liste des patients
                     </a>
                 </li>
-                <li class="menu-item {{ title=='Statistiques' ? 'active' : '' }}">
-                    <a class="user-link" href="{{ path('statistiques') }}">
-                        <span class="glyphicon glyphicon-stats"></span>
-                        Statistiques
-                    </a>
-                </li>
-                <li class="menu-item {{ title=='Settings' ? 'active' : '' }}">
-                    <button class="user-link">
-                        <span class="glyphicon glyphicon-cog"></span>
-                        Réglages
-                    </button>
-                    <ul class="menu-content">
-                        <li class="menu-item">
-                            <a class="user-link" href="{{ path('settings', {'year': "now"|date("Y")}) }}">
-                                <span class="glyphicon glyphicon-book"></span>
-                                Gérer les semaines
-                            </a>
-                        </i>
-                        <li class="menu-item">
-                            <a class="user-link" href="{{ path('year') }}">
-                                <span class="glyphicon glyphicon-book"></span>
-                                Aperçu des années
-                            </a>
-                        </i>
-                        <li class="menu-item">
-                            <a class="user-link" href="{{ path('soignant') }}">
-                                <span class="glyphicon glyphicon-book"></span>
-                                Gérer les soignants
-                            </a>
-                        </i>
-                    </ul>
-                </li>
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="menu-item {{ title=='Statistiques' ? 'active' : '' }}">
+                        <a class="user-link" href="{{ path('statistiques') }}">
+                            <span class="glyphicon glyphicon-stats"></span>
+                            Statistiques
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if is_granted('ROLE_ADMIN') %}
+                    <li class="menu-item {{ title=='Settings' ? 'active' : '' }}">
+                        <button class="user-link">
+                            <span class="glyphicon glyphicon-cog"></span>
+                            Réglages
+                        </button>
+                        <ul class="menu-content">
+                            <li class="menu-item">
+                                <a class="user-link" href="{{ path('settings', {'year': "now"|date("Y")}) }}">
+                                    <span class="glyphicon glyphicon-book"></span>
+                                    Gérer les semaines
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="user-link" href="{{ path('year') }}">
+                                    <span class="glyphicon glyphicon-book"></span>
+                                    Aperçu des années
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a class="user-link" href="{{ path('soignant') }}">
+                                    <span class="glyphicon glyphicon-book"></span>
+                                    Gérer les soignants
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
                 <li class="menu-item">
                     <a class="user-link" href="{{ path('logout') }}">
                         <span class="glyphicon glyphicon-log-out"></span>
