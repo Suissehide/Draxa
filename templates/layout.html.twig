@@ -68,8 +68,6 @@
                 <li class="menu-item">
                     <a class="user-link" href="{{ path('logout') }}">
                         <span class="glyphicon glyphicon-log-out"></span>
-                        Se déconnecter
-                        {# {{ app.user.username }} #}
                     </a>
                 </li>
             </ul>
@@ -85,6 +83,13 @@
     <div class="toolbar">
         <a class="cd cd-top js-cd-top" href="#0"><span class="glyphicon glyphicon-chevron-up"></span></a>
         {% block toolbar_component %}{% endblock %}
+    </div>
+
+    <!-- Permanent banner -->
+    <div class="banner">
+        Pour toute assistance, en cas d’erreur ou de dysfonctionnement de l’agenda partagé,
+        contactez <span>Sabrina Bernadet</span> au <span>49357</span>
+        ou <span>Gaëlle Dufau</span> au <span>23384</span>
     </div>
 
     <!-- Footer -->

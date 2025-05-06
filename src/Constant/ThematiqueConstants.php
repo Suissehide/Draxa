@@ -17,6 +17,7 @@ class ThematiqueConstants
         'coaching_PRM' => 'Coaching PRM',
         'diabete' => 'Diabète',
         'diagnostic_educatif' => 'Diagnostic éducatif',
+        'ETP_individuel' => 'ETP Individuel',
         'HTA' => 'HTA',
         'motivation_AP' => 'Motivation AP',
         'motivation_FDR' => 'Motivation FDR',
