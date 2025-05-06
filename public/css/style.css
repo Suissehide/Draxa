@@ -1153,7 +1153,7 @@ nav {
     color: #fff;
 }
 
-.actions-list button.js-redirect .glyphicon {
+.actions-list button.js-redirect .glyphicon, .actions-list button.js-comment .glyphicon {
     margin-top: 1px;
 }
 
@@ -2505,8 +2505,8 @@ ul.todo__list li:hover .todo__delete {
 }
 
 .table#rdv-grid > tbody > tr > td {
-    vertical-align: top;
     padding-top: 8px;
+    vertical-align: middle;
 }
 
 .table#rdv-grid .pastille {
@@ -2605,7 +2605,6 @@ input[type="checkbox"].checkbox-round + span {
 
 .tooltip2[data-tooltip] {
     position: relative;
-    margin-left: 8px;
 }
 
 .tooltip2[data-tooltip]:after,
