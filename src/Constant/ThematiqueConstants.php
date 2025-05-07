@@ -30,7 +30,7 @@ class ThematiqueConstants
         'reactu_4' => 'Réactu 4',
         'reactu_5' => 'Réactu 5',
         'reactu_6' => 'Réactu 6',
-        'signes_alerte_et_CAT' => 'Signes alerte et CAT',
+        'signes_alerte_et_CAT' => 'Signes d\'alerte et CAT',
         'tabac' => 'Tabac'
     ];
 
@@ -40,10 +40,12 @@ class ThematiqueConstants
         'cuisine_mise_en_pratique' => 'Cuisine Mise en pratique',
         'gerer_diabete' => 'Gérer mon diabète',
         'gerer_hta' => 'Gérer mon HTA',
+        'maladie_cardiovasculaire' => 'Maladie cardiovasculaire',
         'prevention_stress' => 'Prévention stress',
         'PRM1' => 'PRM1',
         'PRM2' => 'PRM2',
         'qu_est_ce_insuffisance_cardiaque' => 'Qu’est-ce que l’insuffisance cardiaque ?',
+        'signes_alerte' => 'Signes d\'alerte',
         'stress_aigu' => 'Stress aigu',
         'sucres' => 'Sucres',
         'tabac' => 'Tabac',
