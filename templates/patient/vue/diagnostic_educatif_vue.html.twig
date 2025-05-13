@@ -240,7 +240,6 @@
 {% endblock page_content %}
 
 {% block javascripts %}
-    <script src="{{ asset('js/script.js') }}"></script>
     <script type="text/javascript">
         let active = '{{ patient.diagnosticEducatif.rapatrier }}' ? JSON.parse('{{ patient.diagnosticEducatif.rapatrier }}') : [];
         $.each(active, function (key, value) {

@@ -86,7 +86,8 @@
     </div>
 
     <!-- Permanent banner -->
-    <div class="banner">
+    <div id="banner" class="banner">
+        <button>❌</button>
         Pour toute assistance, en cas d’erreur ou de dysfonctionnement de l’agenda partagé,
         contactez <span>Sabrina Bernadet</span> au <span>49357</span>
         ou <span>Gaëlle Dufau</span> au <span>23384</span>
@@ -110,6 +111,9 @@
 
 {% block default_javascripts %}
 
-{% block todo_javascripts %}{{ parent() }}{% endblock %}
+{% block todo_javascripts %}
+    <script src="{{ asset('js/script.js') }}"></script>
+    {{ parent() }}
+{% endblock %}
 
 {% endblock %}

@@ -740,21 +740,33 @@ nav {
 /* permanent banner
 ==================================================== */
 .banner {
+    display: none;
     z-index: 20;
     position: fixed;
-    width: 300px;
+    width: 500px;
     padding: 10px 16px;
     border: 1px solid #8c8c8c;
     border-radius: 4px;
-    bottom: 16px;
-    left: 16px;
+    bottom: 24px;
+    left: calc(50% - 250px);
     font-size: 11px;
+    text-align: center;
     background: #ffffff20;
     backdrop-filter: blur(8px);
 }
 
 .banner span {
     font-weight: bold;
+}
+
+.banner button {
+    position: absolute;
+    right: 6px;
+    top: 6px;
+    background-color: transparent;
+    padding: 2px;
+    border: none;
+    border-radius: 50%;
 }
 
 /* footer minimal
