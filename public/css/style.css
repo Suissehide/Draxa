@@ -2258,7 +2258,7 @@ ul.todo__list li:hover .todo__delete {
     right: 5px;
     width: 16px;
     height: 16px;
-    font-size: 11px;
+    font-size: 10px;
     background-color: red;
     border-radius: 50%;
     color: white;

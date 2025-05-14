@@ -69,20 +69,3 @@ function nextTab(elem) {
 function prevTab(elem) {
     $(elem).prev().find('a[data-toggle="tab"]').click();
 }
-
-/**
-  * Permet de cliquer sur une ligne du tableau
-  * Redirige vers la Vue correspondante
-  */
-
-$('tbody').on("click", "tr", function () {
-    const npatient = $(this).attr('data-row-id');
-if (npatient === undefined)
-    return;
-    const pathArray = window.location.pathname.split("/");
-    let url = window.location.protocol + "//" + window.location.host;
-    for (let i = 0; i < pathArray.length - 1; i++) {
-        url += pathArray[i] + "/";
-    }
-    window.location.assign(url + "vue/" + npatient);
-});

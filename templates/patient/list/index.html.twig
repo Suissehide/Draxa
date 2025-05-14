@@ -97,7 +97,18 @@
                 }
             }
         }).on("loaded.rs.jquery.bootgrid", function () {
-
+            $("#patient-grid").find("tbody").on("click", "tr", function () {
+                const npatient = $(this).data('row-id');
+                if (npatient === undefined) {
+                    return;
+                }
+                const pathArray = window.location.pathname.split("/");
+                let url = window.location.protocol + "//" + window.location.host;
+                for (let i = 0; i < pathArray.length - 1; i++) {
+                    url += pathArray[i] + "/";
+                }
+                window.location.assign(url + "vue/" + npatient);
+            });
         });
 
         $(".radio-block input[type=radio]").on("change", function () {
