@@ -109,6 +109,7 @@ class PatientController extends AbstractController
                 "rows" => $rows,
                 "total" => intval($count)
             );
+            $data = $this->cleanForJson($data);
             return new JsonResponse($data);
         }
 
@@ -117,6 +118,22 @@ class PatientController extends AbstractController
             'controller_name' => 'PatientController',
             'patients' => $patientRepository->findAll()
         ]);
+    }
+
+    private function cleanForJson($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->cleanForJson($value);
+            }
+            return $data;
+        }
+
+        if (is_string($data)) {
+            return mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+        }
+
+        return $data;
     }
 
     private function build_sorter_heure($date, $hour, $dir='ASC'): Closure
