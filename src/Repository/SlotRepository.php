@@ -60,10 +60,9 @@ class SlotRepository extends ServiceEntityRepository
         $qb->andWhere('s.categorie = :categorie')
             ->setParameter('categorie', $categorie)
             ->select("DATE_FORMAT(s.date, '%d/%m/%Y') as date, SIZE(s.rendezVous) as rendezVous, s.place as place")
-            ->orderBy('s.date', 'ASC')
             ->groupBy('s.id')
             ->having('rendezVous < place')
-            ->distinct()
+            ->orderBy('s.date', 'ASC')
         ;
 
         return $qb->getQuery()->getResult();
