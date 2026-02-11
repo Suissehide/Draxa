@@ -1,7 +1,9 @@
 {% extends 'layout.html.twig' %}
 
 {% block stylesheets %}
-    
+    <style>
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 {% endblock %}
 
 {% block title %}Statistiques{% endblock %}
@@ -20,6 +22,11 @@
         <button type="submit" class="btn btn-default" id="update">
             Mettre à jour
         </button>
+        <span id="loading" style="display: none;">
+            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="animation: spin 1s linear infinite;">
+                <circle cx="10" cy="10" r="8" stroke="#999" stroke-width="2.5" fill="none" stroke-dasharray="40 20" stroke-linecap="round"/>
+            </svg>
+        </span>
     </div>
 
     <div class="aspect-wrapper">
@@ -37,25 +44,31 @@
                 <div class="stats-wrapper" id="entree">
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant bénéficié d'un diagnostic éducatif</div>
+                            <div class="stats-text">1.1 - Nombre de patients ayant bénéficié d'un diagnostic éducatif</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients orientés par un professionnel de santé en dehors d'un hôpital (dont médecin traitant)</div>
+                            <div class="stats-text">1.1bis - Dont nombre de patients ayant bénéficié d'un diagnostic éducatif en distanciel</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients orientés par un professionnel de santé au cours d'une hospitalisation</div>
+                            <div class="stats-text">1.2 - Nombre de patients orientés par un professionnel de santé en dehors d'un hôpital (dont médecin traitant)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients orientés par un professionnel de santé à l'hôpital en consultation externe</div>
+                            <div class="stats-text">1.3 - Nombre de patients orientés par un professionnel de santé au cours d'une hospitalisation</div>
+                            <div class="stats-number"></div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">1.4 - Nombre de patients orientés par un professionnel de santé à l'hôpital en consultation externe</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
@@ -78,67 +91,79 @@
                 <div class="stats-wrapper" id="seance">
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients pris en charge au cours d'une hospitalisation (de jour, de semaine, complète) en établissement de santé uniquement</div>
+                            <div class="stats-text">2.1 - Nombre de patients pris en charge au cours d'une hospitalisation (de jour, de semaine, complète) en établissement de santé uniquement</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients pris en charge en soins externes d'un établissement de santé uniquement (le patient vient à l'hôpital pour une séance d'ETP)</div>
+                            <div class="stats-text">2.2 - Nombre de patients pris en charge en soins externes d'un établissement de santé uniquement (le patient vient à l'hôpital pour une séance d'ETP)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients pris en charge en soins de ville uniquement (MSP, association, ex-réseau de PS libéraux…)</div>
+                            <div class="stats-text">2.3 - Nombre de patients pris en charge en soins de ville uniquement (MSP, association, ex-réseau de PS libéraux…)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients pris en charge en programme mixte (hospitalisation + soins externes) si la majorité des séances a eu lieu en soins externes</div>
+                            <div class="stats-text">2.4 - Nombre de patients pris en charge en programme mixte (hospitalisation + soins externes) si la majorité des séances a eu lieu en soins externes</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Autre type de prise en charge à chiffrer et à expliquer</div>
+                            <div class="stats-text">2.5 - Autre type de prise en charge à chiffrer et à expliquer</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre total de séances individuelles d'ETP réalisées</div>
+                            <div class="stats-text">2.6 - Nombre total de séances individuelles d'ETP réalisées</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre total de séances collectives d'ETP réalisées</div>
+                            <div class="stats-text">2.6bis - Dont nombre de séances individuelles d'ETP réalisées en distanciel</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre moyen de patients par séance collective</div>
+                            <div class="stats-text">2.7 - Nombre total de séances collectives d'ETP réalisées</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de proches et/ou aidants du patient ayant participé au programme</div>
+                            <div class="stats-text">2.7bis - Dont nombre de séances collectives d'ETP réalisées en distanciel</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre total de séances d'ETP avec une participation de proches et/ou aidants du patient</div>
+                            <div class="stats-text">2.8 - Nombre moyen de patients par séance collective</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre total de séances destinées exclusivement aux proches et/ou aidants du patient</div>
+                            <div class="stats-text">2.9 - Nombre de proches et/ou aidants du patient ayant participé au programme</div>
+                            <div class="stats-number"></div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">2.10 - Nombre total de séances d'ETP avec une participation de proches et/ou aidants du patient</div>
+                            <div class="stats-number"></div>
+                        </div>
+                    </div>
+                    <div class="stats">
+                        <div>
+                            <div class="stats-text">2.11 - Nombre total de séances destinées exclusivement aux proches et/ou aidants du patient</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
@@ -161,37 +186,37 @@
                 <div class="stats-wrapper" id="sortie">
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Quel que soit le mode de prise en charge)</div>
+                            <div class="stats-text">3.1 - Nombre de patients ayant suivi un programme personnalisé complet (Quel que soit le mode de prise en charge)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une hospitalisation complète ou de jour)</div>
+                            <div class="stats-text">3.2 - Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une hospitalisation complète ou de jour)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une venue en soins externes)</div>
+                            <div class="stats-text">3.3 - Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une venue en soins externes)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une venue d'une venue mixte : hospitalisation suivi de séances d'ETP pratiquée en soins externes)</div>
+                            <div class="stats-text">3.4 - Nombre de patients ayant suivi un programme personnalisé complet (Au cours d'une venue mixte : hospitalisation suivi de séances d'ETP pratiquée en soins externes)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant suivi un programme personnalisé complet (Au cours de séances d'ETP pratiquées en soins de ville)</div>
+                            <div class="stats-text">3.5 - Nombre de patients ayant suivi un programme personnalisé complet (Au cours de séances d'ETP pratiquées en soins de ville)</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant bénéficié d'une évaluation individuelle des compétences acquises de l'ETP</div>
+                            <div class="stats-text">3.6 - Nombre de patients ayant bénéficié d'une évaluation individuelle des compétences acquises de l'ETP</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
@@ -212,25 +237,25 @@
                 <div class="stats-wrapper" id="modalite">
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre initiale d'ETP contenant les étapes suivantes : diagnostic éducatif + au moins 2 séance collective/individuelle + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
+                            <div class="stats-text">4.1 - Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre initiale d'ETP contenant les étapes suivantes : diagnostic éducatif + au moins 3 séances collectives/individuelles + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Une offre de suivi ou de renforcement  dans un nouveau programme est-elle proposée au sein de la structure ?</div>
+                            <div class="stats-text">4.2 - Une offre de suivi ou de renforcement  dans un nouveau programme est-elle proposée au sein de la structure ?</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre de suivi ou de renforcement  d'ETP contenant les étapes suivantes : actualisation du diagnostic éducatif + au moins 2 séance collective/individuelle + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
+                            <div class="stats-text">4.3 - Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre de suivi ou de renforcement  d'ETP contenant les étapes suivantes : actualisation du diagnostic éducatif + au moins 3 séances collectives/individuelles + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
                     <div class="stats">
                         <div>
-                            <div class="stats-text">Nombre de patients ayant bénéficié d'un programme personnalisé d'ETP pour lesquels la synthèse de l'évaluation des compétences acquises accompagnée d'une proposition de modalité de suivi éducatif a été transmise au moins à leur médecin traitant</div>
+                            <div class="stats-text">4.4 - Nombre de patients ayant bénéficié d'un programme personnalisé d'ETP pour lesquels la synthèse de l'évaluation des compétences acquises accompagnée d'une proposition de modalité de suivi éducatif a été transmise au moins à leur médecin traitant</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
@@ -346,15 +371,25 @@
         autoclose: false
     });
 
-    $('#dateDebut').datepicker('setDate', new Date());
-    let endDate = moment().endOf('year').format('DD/MM/YYYY');
-    $('#dateFin').datepicker('setDate', endDate);
+    var savedDebut = localStorage.getItem('stat_dateDebut');
+    var savedFin = localStorage.getItem('stat_dateFin');
+    if (savedDebut && savedFin) {
+        $('#dateDebut').datepicker('setDate', savedDebut);
+        $('#dateFin').datepicker('setDate', savedFin);
+    } else {
+        $('#dateDebut').datepicker('setDate', new Date());
+        let endDate = moment().endOf('year').format('DD/MM/YYYY');
+        $('#dateFin').datepicker('setDate', endDate);
+    }
     $('.input-daterange input').datepicker('update');
 
     const thematiques = {{ thematiques|json_encode|raw }};
     const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
 
     function ajaxAction() {
+        localStorage.setItem('stat_dateDebut', $('#dateDebut').val());
+        localStorage.setItem('stat_dateFin', $('#dateFin').val());
+        $('#loading').show();
         $.ajax({
             url: "{{ path('statistiques') }}",
             type: "POST",
@@ -362,6 +397,9 @@
             data: {
                 dateStart: $('#dateDebut').val(),
                 dateEnd: $('#dateFin').val()
+            },
+            complete: function () {
+                $('#loading').hide();
             },
             success: function (res) {
                 $(".box tbody tr").remove();
@@ -385,7 +423,7 @@
                             line.append('<td class="' + color + '">' + val + '</td>')
                         });
                         line.appendTo('#' + thematique);
-                    };
+                    }
                 }
                 updateWidth();
             }

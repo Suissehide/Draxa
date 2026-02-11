@@ -60,14 +60,17 @@ class StatistiqueController extends AbstractController
             $dateStart = DateTime::createFromFormat("d/m/Y", date($request->get('dateStart')));
             $dateEnd = DateTime::createFromFormat("d/m/Y", date($request->get('dateEnd')));
             $slots = $this->em->getRepository(Slot::class)->findByDate($dateStart, $dateEnd);
-            $patients = $this->em->getRepository(Patient::class)->findAll();
+            $patients = $this->em->createQuery(
+                'SELECT p, r FROM App\Entity\Patient p LEFT JOIN p.rendezVous r ORDER BY r.date ASC'
+            )->getResult();
 
             $statistiques = [
                 'entree' => [
                     1 => 0,
                     2 => 0,
                     3 => 0,
-                    4 => 0
+                    4 => 0,
+                    5 => 0
                 ],
                 'seance' => [
                     1 => 0,
@@ -80,7 +83,9 @@ class StatistiqueController extends AbstractController
                     8 => 0,
                     9 => 0,
                     10 => 0,
-                    11 => 0
+                    11 => 0,
+                    12 => 0,
+                    13 => 0
                 ],
                 'sortie' => [
                     1 => 0,
@@ -98,16 +103,19 @@ class StatistiqueController extends AbstractController
                 ]
             ];
 
-            $statistiques['seance']['7'] += $this->statistique27($dateStart, $dateEnd);
-            $statistiques['seance']['8'] += $this->statistique28($dateStart, $dateEnd);
+            $stat27 = $this->statistique27($slots, $dateStart, $dateEnd);
+            $statistiques['seance']['8'] += $stat27;
+            $statistiques['seance']['9'] += $this->statistique27bis($slots, $dateStart, $dateEnd);
+            $statistiques['seance']['10'] += $this->statistique28($stat27, $slots, $dateStart, $dateEnd);
 
             foreach ($patients as $patient) {
                 $rdv = $patient->getRendezVous();
 
                 $statistiques['entree']['1'] += $this->statistique11($patient, $rdv, $dateStart, $dateEnd);
-                $statistiques['entree']['2'] += $this->statistique12($patient, $rdv, $dateStart, $dateEnd);
-                $statistiques['entree']['3'] += $this->statistique13($patient, $rdv, $dateStart, $dateEnd);
-                $statistiques['entree']['4'] += $this->statistique14($patient, $rdv, $dateStart, $dateEnd);
+                $statistiques['entree']['2'] += $this->statistique11bis($rdv, $dateStart, $dateEnd);
+                $statistiques['entree']['3'] += $this->statistique12($patient, $rdv, $dateStart, $dateEnd);
+                $statistiques['entree']['4'] += $this->statistique13($patient, $rdv, $dateStart, $dateEnd);
+                $statistiques['entree']['5'] += $this->statistique14($patient, $rdv, $dateStart, $dateEnd);
 
                 $statistiques['seance']['1'] += $this->statistique21($patient, $rdv, $dateStart, $dateEnd);
                 $statistiques['seance']['2'] += $this->statistique22($patient, $rdv, $dateStart, $dateEnd);
@@ -116,10 +124,11 @@ class StatistiqueController extends AbstractController
                 $statistiques['seance']['5'] += $this->statistique25($patient, $rdv, $dateStart, $dateEnd);
 
                 $statistiques['seance']['6'] += $this->statistique26($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['7'] += $this->statistique26bis($rdv, $dateStart, $dateEnd);
 
-                $statistiques['seance']['9'] += $this->statistique29($rdv, $dateStart, $dateEnd);
-                $statistiques['seance']['10'] += $this->statistique210($rdv, $dateStart, $dateEnd);
-                $statistiques['seance']['11'] += $this->statistique211($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['11'] += $this->statistique29($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['12'] += $this->statistique210($rdv, $dateStart, $dateEnd);
+                $statistiques['seance']['13'] += $this->statistique211($rdv, $dateStart, $dateEnd);
 
                 $statistiques['sortie']['1'] += $this->statistique31($patient, $rdv, $dateStart, $dateEnd);
                 $statistiques['sortie']['2'] += $this->statistique32($patient, $rdv, $dateStart, $dateEnd);
@@ -199,6 +208,22 @@ class StatistiqueController extends AbstractController
                 && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
                 && $r->getCategorie() === "Entretien"
                 && $r->getThematique() === "Diagnostic éducatif"
+            ) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+    private function statistique11bis($rendezVous, $dateStart, $dateEnd): int
+    {
+        foreach ($rendezVous as $r) {
+            if (
+                $r->getEtat() === "Oui"
+                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
+                && $r->getCategorie() === "Entretien"
+                && $r->getThematique() === "Diagnostic éducatif"
+                && $r->getType() === "Tel"
             ) {
                 return 1;
             }
@@ -294,10 +319,6 @@ class StatistiqueController extends AbstractController
                 break;
             }
         }
-        if ($hasDiagnosticEducatif && $onlyHospit) {
-            dump("ERROR", $patient->getNom());
-        }
-
         return $hasDiagnosticEducatif && $onlyHospit && $hasRendezVous;
     }
 
@@ -440,9 +461,24 @@ class StatistiqueController extends AbstractController
         return $ret;
     }
 
-    private function statistique27($dateStart, $dateEnd): int
+    private function statistique26bis($rendezVous, $dateStart, $dateEnd): int
     {
-        $slots = $this->em->getRepository(Slot::class)->findAll();
+        $ret = 0;
+        foreach ($rendezVous as $r) {
+            if (
+                $r->getEtat() === "Oui"
+                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
+                && ($r->getCategorie() === "Entretien" || $r->getCategorie() === "Consultation" || $r->getCategorie() === "Coaching")
+                && $r->getType() === "Tel"
+            ) {
+                $ret += 1;
+            }
+        }
+        return $ret;
+    }
+
+    private function statistique27(array $slots, $dateStart, $dateEnd): int
+    {
         $educative = 0;
         $atelier = 0;
         foreach ($slots as $s) {
@@ -468,11 +504,47 @@ class StatistiqueController extends AbstractController
         return $atelier + (($educative / 3) * 10);
     }
 
-    private function statistique28($dateStart, $dateEnd): float
+    private function statistique27bis(array $slots, $dateStart, $dateEnd): int
     {
-        $totalSeance = $this->statistique27($dateStart, $dateEnd);
-        $totalSlotEducative = $this->em->getRepository(Slot::class)->findSlotEducative($dateStart, $dateEnd);
-        $totalSlotAtelier = $this->em->getRepository(Slot::class)->findSlotAtelier($dateStart, $dateEnd);
+        $educative = 0;
+        $atelier = 0;
+        foreach ($slots as $s) {
+            $rendezVous = $s->getRendezVous();
+            foreach ($rendezVous as $r) {
+                if (
+                    $r->getEtat() === "Oui"
+                    && $this->isInDateRange($dateStart, $dateEnd, $s->getDate())
+                    && $r->getCategorie() === "Educative"
+                    && $r->getType() === "Tel"
+                ) {
+                    $educative += 1;
+                }
+
+                if (
+                    $r->getEtat() === "Oui"
+                    && $this->isInDateRange($dateStart, $dateEnd, $s->getDate())
+                    && $r->getCategorie() === "Atelier"
+                    && $r->getType() === "Tel"
+                ) {
+                    $atelier += 1;
+                }
+            }
+        }
+        return $atelier + (($educative / 3) * 10);
+    }
+
+    private function statistique28(int $totalSeance, array $slots, $dateStart, $dateEnd): float
+    {
+        $totalSlotEducative = 0;
+        $totalSlotAtelier = 0;
+        foreach ($slots as $s) {
+            if ($s->getCategorie() === 'Educative') {
+                $totalSlotEducative++;
+            }
+            if ($s->getCategorie() === 'Atelier') {
+                $totalSlotAtelier++;
+            }
+        }
 
         $total = (($totalSlotEducative / 3) * 10) + $totalSlotAtelier;
 
@@ -481,12 +553,34 @@ class StatistiqueController extends AbstractController
 
     private function statistique29($rendezVous, $dateStart, $dateEnd): int
     {
-        return 0;
+        $accompagnants = [];
+        foreach ($rendezVous as $r) {
+            if (
+                $r->getEtat() === "Oui"
+                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
+                && $r->getAccompagnant() !== null
+                && $r->getAccompagnant() !== ""
+            ) {
+                $accompagnants[$r->getAccompagnant()] = true;
+            }
+        }
+        return count($accompagnants);
     }
 
     private function statistique210($rendezVous, $dateStart, $dateEnd): int
     {
-        return 0;
+        $ret = 0;
+        foreach ($rendezVous as $r) {
+            if (
+                $r->getEtat() === "Oui"
+                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
+                && $r->getAccompagnant() !== null
+                && $r->getAccompagnant() !== ""
+            ) {
+                $ret += 1;
+            }
+        }
+        return $ret;
     }
 
     private function statistique211($rendezVous, $dateStart, $dateEnd): int
@@ -701,7 +795,7 @@ class StatistiqueController extends AbstractController
             }
 
         }
-        return $hasDiagnosticEducatif && ($seance >= 2) && ($evaluation >= 1);
+        return $hasDiagnosticEducatif && ($seance >= 3) && ($evaluation >= 1);
     }
 
     private function statistique43(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
@@ -745,7 +839,7 @@ class StatistiqueController extends AbstractController
                 $evaluation += 1;
             }
         }
-        return ($hasDiagnosticEducatif && $seance >= 2 && $evaluation >= 1);
+        return ($hasDiagnosticEducatif && $seance >= 3 && $evaluation >= 1);
     }
 
     private function statistique44(Patient $patient, $rendezVous, $dateStart, $dateEnd): int
