@@ -2894,6 +2894,16 @@ input[type="checkbox"].checkbox-round + span {
     color: #363636;
 }
 
+.table .stat-cell {
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+.table .stat-cell-label {
+    border: 1px solid #ccc;
+    white-space: nowrap;
+}
+
 @media screen and (max-width: 800px) {
     .aspect-label {
         max-height: 102px;

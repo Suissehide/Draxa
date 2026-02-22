@@ -235,29 +235,110 @@
             </div>
             <div class="aspect-tab-content">
                 <div class="stats-wrapper" id="modalite">
-                    <div class="stats">
+                    <div class="stats" data-key="1">
                         <div>
                             <div class="stats-text">4.1 - Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre initiale d'ETP contenant les étapes suivantes : diagnostic éducatif + au moins 3 séances collectives/individuelles + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
-                    <div class="stats">
+                    <div class="stats" data-key="1bis">
+                        <div>
+                            <div class="stats-text">4.1bis - Dont nombre de patients ayant terminé par une Réactualisation (Réactu 1 à 5)</div>
+                            <div class="stats-number"></div>
+                        </div>
+                    </div>
+                    <div class="stats" data-key="2">
                         <div>
                             <div class="stats-text">4.2 - Une offre de suivi ou de renforcement  dans un nouveau programme est-elle proposée au sein de la structure ?</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
-                    <div class="stats">
+                    <div class="stats" data-key="3">
                         <div>
-                            <div class="stats-text">4.3 - Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre de suivi ou de renforcement  d'ETP contenant les étapes suivantes : actualisation du diagnostic éducatif + au moins 3 séances collectives/individuelles + évaluation lors d'une séance individuelle des compétences acquises + proposition d'une modalité de suivi éducatif</div>
+                            <div class="stats-text">4.3 - Nombre de patients ayant bénéficié d'un programme personnalisé lors d'une offre de suivi ou de renforcement d'ETP commençant par une Réactualisation (Réactu 1 à 5) + au moins 3 séances collectives/individuelles + évaluation des compétences acquises + proposition d'une modalité de suivi éducatif</div>
                             <div class="stats-number"></div>
                         </div>
                     </div>
-                    <div class="stats">
+                    <div class="stats" data-key="3bis">
+                        <div>
+                            <div class="stats-text">4.3bis - Dont nombre de patients ayant également terminé par une Réactualisation (Réactu 1 à 5)</div>
+                            <div class="stats-number"></div>
+                        </div>
+                    </div>
+                    <div class="stats" data-key="4">
                         <div>
                             <div class="stats-text">4.4 - Nombre de patients ayant bénéficié d'un programme personnalisé d'ETP pour lesquels la synthèse de l'évaluation des compétences acquises accompagnée d'une proposition de modalité de suivi éducatif a été transmise au moins à leur médecin traitant</div>
                             <div class="stats-number"></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aspect-tab">
+            <input id="item-5" type="checkbox" class="aspect-input" name="aspect">
+            <label for="item-5" class="aspect-label"></label>
+            <div class="aspect-content">
+                <div class="aspect-info">
+                    <span class="aspect-name">Activite par soignant</span>
+                </div>
+                <div class="aspect-stat"></div>
+            </div>
+            <div class="aspect-tab-content">
+                <div class="stats-wrapper" style="font-size:14px; overflow-x:auto">
+                    <div class="box" style="width:100%">
+                        <table id="soignants" class="table table-condensed table-striped" style="border-collapse:collapse; min-width:800px; table-layout:auto">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="stat-cell-label" style="min-width:150px">Soignant</th>
+                                    <th colspan="2" class="stat-cell">Consultation</th>
+                                    <th colspan="2" class="stat-cell">Entretien</th>
+                                    <th colspan="2" class="stat-cell">Atelier</th>
+                                    <th colspan="2" class="stat-cell">Coaching</th>
+                                    <th colspan="2" class="stat-cell">Educative</th>
+                                    <th rowspan="2" class="stat-cell">Total</th>
+                                </tr>
+                                <tr>
+                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
+                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
+                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
+                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
+                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="aspect-tab">
+            <input id="item-6" type="checkbox" class="aspect-input" name="aspect">
+            <label for="item-6" class="aspect-label"></label>
+            <div class="aspect-content">
+                <div class="aspect-info">
+                    <span class="aspect-name">Moyenne patients par atelier</span>
+                </div>
+                <div class="aspect-stat"></div>
+            </div>
+            <div class="aspect-tab-content">
+                <div class="stats-wrapper" style="font-size:14px; overflow-x:auto">
+                    <div class="box" style="width:100%">
+                        <table id="moyAteliers" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
+                            <thead>
+                                <tr>
+                                    <th class="stat-cell-label">Thematique</th>
+                                    <th class="stat-cell">Nb ateliers</th>
+                                    <th class="stat-cell">Oui</th>
+                                    <th class="stat-cell">Non</th>
+                                    <th class="stat-cell">Moy. Oui</th>
+                                    <th class="stat-cell">Moy. Non</th>
+                                    <th class="stat-cell">Moy. Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -268,13 +349,13 @@
                 <div>Consultations</div>
                 <span></span>
             </div>
-            <table id="consultations" class="table table-condensed table-striped">
+            <table id="consultations" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
                 <thead>
                     <tr>
-                        <th data-column-id="">A-t-il eu lieu ?</th>
-                        <th data-column-id="">Oui</th>
-                        <th data-column-id="">Non</th>
-                        <th data-column-id=""></th>
+                        <th class="stat-cell-label" data-column-id="">A-t-il eu lieu ?</th>
+                        <th class="stat-cell" data-column-id="">Oui</th>
+                        <th class="stat-cell" data-column-id="">Non</th>
+                        <th class="stat-cell" data-column-id="">Non renseigné</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -286,13 +367,13 @@
                 <div>Entretiens individuels</div>
                 <span></span>
             </div>
-            <table id="entretiens" class="table table-condensed table-striped">
+            <table id="entretiens" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
                 <thead>
                     <tr>
-                        <th data-column-id=""></th>
-                        <th data-column-id="">Oui</th>
-                        <th data-column-id="">Non</th>
-                        <th data-column-id=""></th>
+                        <th class="stat-cell-label" data-column-id="">Thématique</th>
+                        <th class="stat-cell" data-column-id="">Oui</th>
+                        <th class="stat-cell" data-column-id="">Non</th>
+                        <th class="stat-cell" data-column-id="">Non renseigné</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -304,13 +385,13 @@
                 <div>Coachings PRM</div>
                 <span></span>
             </div>
-            <table id="coachings" class="table table-condensed table-striped">
+            <table id="coachings" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
                 <thead>
                     <tr>
-                        <th data-column-id=""></th>
-                        <th data-column-id="">Oui</th>
-                        <th data-column-id="">Non</th>
-                        <th data-column-id=""></th>
+                        <th class="stat-cell-label" data-column-id="">Thématique</th>
+                        <th class="stat-cell" data-column-id="">Oui</th>
+                        <th class="stat-cell" data-column-id="">Non</th>
+                        <th class="stat-cell" data-column-id="">Non renseigné</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -322,13 +403,13 @@
                 <div>Ateliers</div>
                 <span></span>
             </div>
-            <table id="ateliers" class="table table-condensed table-striped">
+            <table id="ateliers" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
                 <thead>
                     <tr>
-                        <th data-column-id=""></th>
-                        <th data-column-id="">Oui</th>
-                        <th data-column-id="">Non</th>
-                        <th data-column-id=""></th>
+                        <th class="stat-cell-label" data-column-id="">Thématique</th>
+                        <th class="stat-cell" data-column-id="">Oui</th>
+                        <th class="stat-cell" data-column-id="">Non</th>
+                        <th class="stat-cell" data-column-id="">Non renseigné</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -340,13 +421,64 @@
                 <div>Semaines éducatives</div>
                 <span></span>
             </div>
-            <table id="educatives" class="table table-condensed table-striped">
+            <table id="educatives" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
                 <thead>
                     <tr>
-                        <th data-column-id=""></th>
-                        <th data-column-id="">Oui</th>
-                        <th data-column-id="">Non</th>
-                        <th data-column-id=""></th>
+                        <th class="stat-cell-label" data-column-id="">Thématique</th>
+                        <th class="stat-cell" data-column-id="">Oui</th>
+                        <th class="stat-cell" data-column-id="">Non</th>
+                        <th class="stat-cell" data-column-id="">Non renseigné</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Patients sans orientation (<span id="count-orientation">0</span>)</div>
+                <span></span>
+            </div>
+            <table id="table-missing-orientation" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                <thead>
+                    <tr>
+                        <th class="stat-cell">Nom</th>
+                        <th class="stat-cell">Prénom</th>
+                        <th class="stat-cell">Date de naissance</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Patients sans date d'entrée (<span id="count-dedate">0</span>)</div>
+                <span></span>
+            </div>
+            <table id="table-missing-dedate" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                <thead>
+                    <tr>
+                        <th class="stat-cell">Nom</th>
+                        <th class="stat-cell">Prénom</th>
+                        <th class="stat-cell">Date de naissance</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <div>Patients sans mode de PEC (<span id="count-mode">0</span>)</div>
+                <span></span>
+            </div>
+            <table id="table-missing-mode" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                <thead>
+                    <tr>
+                        <th class="stat-cell">Nom</th>
+                        <th class="stat-cell">Prénom</th>
+                        <th class="stat-cell">Date de naissance</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -406,25 +538,101 @@
 
                 for (let statistique in res['statistiques']) {
                     for (let data in res['statistiques'][statistique]) {
-                        $('#' + statistique).find('.stats').eq(data - 1).find('.stats-number').text(res['statistiques'][statistique][data]);
+                        var $el = $('#' + statistique).find('.stats[data-key="' + data + '"]');
+                        if (!$el.length) $el = $('#' + statistique).find('.stats').eq(data - 1);
+                        $el.find('.stats-number').text(res['statistiques'][statistique][data]);
                     }
                 }
 
                 for (let thematique in res['slots']) {
                     for (let etat in res['slots'][thematique]) {
                         let line = $('<tr data-row-id=' + 0 + ' class="text-left">');
-                        line.append('<td class="">' + thematiques[thematique][etat] + '</td>')
+                        line.append('<td class="stat-cell-label">' + thematiques[thematique][etat] + '</td>')
                         $.each(res['slots'][thematique][etat], function (index, val) {
-                            let color = "";
+                            let color = "stat-cell";
                             if (index === 0)
-                                color = "hotpink";
+                                color += " hotpink";
                             else if (index === 1)
-                                color = "gold";
+                                color += " gold";
                             line.append('<td class="' + color + '">' + val + '</td>')
                         });
                         line.appendTo('#' + thematique);
                     }
                 }
+                // Activite par soignant
+                $('#soignants tbody').empty();
+                if (res.soignants) {
+                    var categories = ['Consultation', 'Entretien', 'Atelier', 'Coaching', 'Educative'];
+                    $.each(res.soignants, function(nom, cats) {
+                        var $tr = $('<tr>').append('<td class="stat-cell-label">' + nom + '</td>');
+                        var total = 0;
+                        for (var i = 0; i < categories.length; i++) {
+                            var c = cats[categories[i]];
+                            $tr.append('<td class="stat-cell">' + c.oui + '</td>');
+                            $tr.append('<td class="stat-cell">' + c.non + '</td>');
+                            total += c.oui + c.non;
+                        }
+                        $tr.append('<td class="stat-cell">' + total + '</td>');
+                        $tr.appendTo('#soignants tbody');
+                    });
+                }
+
+                // Moyenne patients par atelier
+                $('#moyAteliers tbody').empty();
+                if (res.moyAteliers) {
+                    var totalSlots = 0, totalOui = 0, totalNon = 0, nbThem = 0;
+                    var sumOui = 0, sumNon = 0;
+                    $.each(res.moyAteliers, function(them, d) {
+                        var moyTotal = +(d.moyOui + d.moyNon).toFixed(1);
+                        $('<tr>')
+                            .append('<td class="stat-cell-label">' + them + '</td>')
+                            .append('<td class="stat-cell">' + d.slots + '</td>')
+                            .append('<td class="stat-cell">' + d.oui + '</td>')
+                            .append('<td class="stat-cell">' + d.non + '</td>')
+                            .append('<td class="stat-cell">' + d.moyOui + '</td>')
+                            .append('<td class="stat-cell">' + d.moyNon + '</td>')
+                            .append('<td class="stat-cell">' + moyTotal + '</td>')
+                            .appendTo('#moyAteliers tbody');
+                        totalSlots += d.slots;
+                        sumOui += d.oui;
+                        sumNon += d.non;
+                        totalOui += d.moyOui;
+                        totalNon += d.moyNon;
+                        nbThem++;
+                    });
+                    if (nbThem > 0) {
+                        var avgOui = +(totalOui / nbThem).toFixed(1);
+                        var avgNon = +(totalNon / nbThem).toFixed(1);
+                        $('<tr style="font-weight:bold">')
+                            .append('<td class="stat-cell-label">Total</td>')
+                            .append('<td class="stat-cell">' + totalSlots + '</td>')
+                            .append('<td class="stat-cell">' + sumOui + '</td>')
+                            .append('<td class="stat-cell">' + sumNon + '</td>')
+                            .append('<td class="stat-cell">' + avgOui + '</td>')
+                            .append('<td class="stat-cell">' + avgNon + '</td>')
+                            .append('<td class="stat-cell">' + +(avgOui + avgNon).toFixed(1) + '</td>')
+                            .appendTo('#moyAteliers tbody');
+                    }
+                }
+
+                // Patients avec donnees manquantes
+                if (res.patientsManquants) {
+                    var manquants = res.patientsManquants;
+                    $.each(['orientation', 'dedate', 'mode'], function(i, key) {
+                        var list = manquants[key] || [];
+                        $('#count-' + key).text(list.length);
+                        var $tbody = $('#table-missing-' + key + ' tbody');
+                        for (var j = 0; j < list.length; j++) {
+                            var p = list[j];
+                            $('<tr style="cursor:pointer" data-patient-id="' + p['id'] + '">')
+                                .append('<td class="stat-cell">' + p['nom'] + '</td>')
+                                .append('<td class="stat-cell">' + p['prenom'] + '</td>')
+                                .append('<td class="stat-cell">' + p['ddn'] + '</td>')
+                                .appendTo($tbody);
+                        }
+                    });
+                }
+
                 updateWidth();
             }
         });
@@ -435,8 +643,8 @@
         ajaxAction();
     })
 
-    var $table = $('table'),
-        $headCells = $('table:first thead tr').children(),
+    var $table = $('.box table'),
+        $headCells = $('.box table:first thead tr').children(),
         headWidth;
 
     // Get the tbody columns width array
@@ -451,5 +659,13 @@
             });
         });
     }
+
+    // Clic sur un patient -> ouvrir sa fiche
+    $(document).on('click', '[id^="table-missing-"] tbody tr', function() {
+        var id = $(this).data('patient-id');
+        if (id) {
+            window.open("{{ path('patient_vue', {id: 0}) }}".replace('0', id), '_blank');
+        }
+    });
 </script>
 {% endblock %}
