@@ -628,6 +628,13 @@
                     });
                 }
 
+                // Ligne "Aucune donnée" pour les tableaux vides
+                $('.box table tbody').each(function() {
+                    if ($(this).children().length === 0) {
+                        $(this).append('<tr><td colspan="99" class="text-center" style="color:#999; font-style:italic; padding:8px">Aucune donnée</td></tr>');
+                    }
+                });
+
                 updateWidth();
             }
         });
