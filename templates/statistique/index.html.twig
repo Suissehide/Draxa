@@ -36,7 +36,7 @@
             <label for="item-1" class="aspect-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">Entrée dans le programme</span>
+                    <span class="aspect-name">1. Entrée dans le programme</span>
                 </div>
                 <div class="aspect-stat"></div>
             </div>
@@ -81,7 +81,7 @@
             <label for="item-2" class="aspect-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">Séances d'ETP et mode de prise en charge</span>
+                    <span class="aspect-name">2. Séances d'ETP et mode de prise en charge</span>
                 </div>
                 <div class="aspect-stat">
 
@@ -176,7 +176,7 @@
             <label for="item-3" class="aspect-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">Sortie du programme</span>
+                    <span class="aspect-name">3. Sortie du programme</span>
                 </div>
                 <div class="aspect-stat">
                     
@@ -229,7 +229,7 @@
             <label for="item-4" class="aspect-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">Modalités de suivi - Coordination du parcours de soins</span>
+                    <span class="aspect-name">4. Modalités de suivi - Coordination du parcours de soins</span>
                 </div>
                 <div class="aspect-stat"></div>
             </div>
@@ -293,14 +293,10 @@
                                     <th rowspan="2" class="stat-cell-label" style="min-width:150px">Soignant</th>
                                     <th colspan="2" class="stat-cell">Consultation</th>
                                     <th colspan="2" class="stat-cell">Entretien</th>
-                                    <th colspan="2" class="stat-cell">Atelier</th>
                                     <th colspan="2" class="stat-cell">Coaching</th>
-                                    <th colspan="2" class="stat-cell">Educative</th>
                                     <th rowspan="2" class="stat-cell">Total</th>
                                 </tr>
                                 <tr>
-                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
-                                    <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
                                     <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
                                     <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
                                     <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
@@ -333,8 +329,6 @@
                                     <th class="stat-cell">Oui</th>
                                     <th class="stat-cell">Non</th>
                                     <th class="stat-cell">Moy. Oui</th>
-                                    <th class="stat-cell">Moy. Non</th>
-                                    <th class="stat-cell">Moy. Total</th>
                                 </tr>
                             </thead>
                             <tbody></tbody>
@@ -345,144 +339,139 @@
         </div>
 
         <div class="box">
-            <div class="box-header">
-                <div>Consultations</div>
-                <span></span>
+            <ul class="nav nav-tabs" id="tablesTabs" style="margin-bottom:15px">
+                <li class="active"><a href="#tab-consultations" data-toggle="tab">Consultations</a></li>
+                <li><a href="#tab-entretiens" data-toggle="tab">Entretiens individuels</a></li>
+                <li><a href="#tab-coachings" data-toggle="tab">Coachings PRM</a></li>
+                <li><a href="#tab-ateliers" data-toggle="tab">Ateliers</a></li>
+                <li><a href="#tab-educatives" data-toggle="tab">Semaines éducatives</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab-consultations">
+                    <table id="consultations" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell-label" data-column-id="">Thématique</th>
+                                <th class="stat-cell" data-column-id="">Oui</th>
+                                <th class="stat-cell" data-column-id="">Non</th>
+                                <th class="stat-cell" data-column-id="">Non renseigné</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-entretiens">
+                    <table id="entretiens" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell-label" data-column-id="">Thématique</th>
+                                <th class="stat-cell" data-column-id="">Oui</th>
+                                <th class="stat-cell" data-column-id="">Non</th>
+                                <th class="stat-cell" data-column-id="">Non renseigné</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-coachings">
+                    <table id="coachings" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell-label" data-column-id="">Thématique</th>
+                                <th class="stat-cell" data-column-id="">Oui</th>
+                                <th class="stat-cell" data-column-id="">Non</th>
+                                <th class="stat-cell" data-column-id="">Non renseigné</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-ateliers">
+                    <table id="ateliers" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell-label" data-column-id="">Thématique</th>
+                                <th class="stat-cell" data-column-id="">Oui</th>
+                                <th class="stat-cell" data-column-id="">Non</th>
+                                <th class="stat-cell" data-column-id="">Non renseigné</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-educatives">
+                    <table id="educatives" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell-label" data-column-id="">Thématique</th>
+                                <th class="stat-cell" data-column-id="">Oui</th>
+                                <th class="stat-cell" data-column-id="">Non</th>
+                                <th class="stat-cell" data-column-id="">Non renseigné</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
-            <table id="consultations" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell-label" data-column-id="">A-t-il eu lieu ?</th>
-                        <th class="stat-cell" data-column-id="">Oui</th>
-                        <th class="stat-cell" data-column-id="">Non</th>
-                        <th class="stat-cell" data-column-id="">Non renseigné</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
 
         <div class="box">
-            <div class="box-header">
-                <div>Entretiens individuels</div>
-                <span></span>
+            <ul class="nav nav-tabs" id="patientsTabs" style="margin-bottom:15px">
+                <li class="active"><a href="#tab-missing-orientation" data-toggle="tab">Sans orientation (<span id="count-orientation">0</span>)</a></li>
+                <li><a href="#tab-missing-dedate" data-toggle="tab">Sans date d'entrée (<span id="count-dedate">0</span>)</a></li>
+                <li><a href="#tab-missing-mode" data-toggle="tab">Sans mode de PEC (<span id="count-mode">0</span>)</a></li>
+                <li><a href="#tab-missing-spontane" data-toggle="tab">Orientation : venue spontanée / NS (<span id="count-spontane">0</span>)</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab-missing-orientation">
+                    <table id="table-missing-orientation" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell">Nom</th>
+                                <th class="stat-cell">Prénom</th>
+                                <th class="stat-cell">Date de naissance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-missing-dedate">
+                    <table id="table-missing-dedate" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell">Nom</th>
+                                <th class="stat-cell">Prénom</th>
+                                <th class="stat-cell">Date de naissance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-missing-mode">
+                    <table id="table-missing-mode" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell">Nom</th>
+                                <th class="stat-cell">Prénom</th>
+                                <th class="stat-cell">Date de naissance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-missing-spontane">
+                    <table id="table-missing-spontane" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell">Nom</th>
+                                <th class="stat-cell">Prénom</th>
+                                <th class="stat-cell">Date de naissance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
-            <table id="entretiens" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell-label" data-column-id="">Thématique</th>
-                        <th class="stat-cell" data-column-id="">Oui</th>
-                        <th class="stat-cell" data-column-id="">Non</th>
-                        <th class="stat-cell" data-column-id="">Non renseigné</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <div class="box-header">
-                <div>Coachings PRM</div>
-                <span></span>
-            </div>
-            <table id="coachings" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell-label" data-column-id="">Thématique</th>
-                        <th class="stat-cell" data-column-id="">Oui</th>
-                        <th class="stat-cell" data-column-id="">Non</th>
-                        <th class="stat-cell" data-column-id="">Non renseigné</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <div class="box-header">
-                <div>Ateliers</div>
-                <span></span>
-            </div>
-            <table id="ateliers" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell-label" data-column-id="">Thématique</th>
-                        <th class="stat-cell" data-column-id="">Oui</th>
-                        <th class="stat-cell" data-column-id="">Non</th>
-                        <th class="stat-cell" data-column-id="">Non renseigné</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <div class="box-header">
-                <div>Semaines éducatives</div>
-                <span></span>
-            </div>
-            <table id="educatives" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell-label" data-column-id="">Thématique</th>
-                        <th class="stat-cell" data-column-id="">Oui</th>
-                        <th class="stat-cell" data-column-id="">Non</th>
-                        <th class="stat-cell" data-column-id="">Non renseigné</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <div class="box-header">
-                <div>Patients sans orientation (<span id="count-orientation">0</span>)</div>
-                <span></span>
-            </div>
-            <table id="table-missing-orientation" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell">Nom</th>
-                        <th class="stat-cell">Prénom</th>
-                        <th class="stat-cell">Date de naissance</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <div class="box-header">
-                <div>Patients sans date d'entrée (<span id="count-dedate">0</span>)</div>
-                <span></span>
-            </div>
-            <table id="table-missing-dedate" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell">Nom</th>
-                        <th class="stat-cell">Prénom</th>
-                        <th class="stat-cell">Date de naissance</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="box">
-            <div class="box-header">
-                <div>Patients sans mode de PEC (<span id="count-mode">0</span>)</div>
-                <span></span>
-            </div>
-            <table id="table-missing-mode" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
-                <thead>
-                    <tr>
-                        <th class="stat-cell">Nom</th>
-                        <th class="stat-cell">Prénom</th>
-                        <th class="stat-cell">Date de naissance</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
         </div>
 
     </div>
@@ -562,7 +551,9 @@
                 // Activite par soignant
                 $('#soignants tbody').empty();
                 if (res.soignants) {
-                    var categories = ['Consultation', 'Entretien', 'Atelier', 'Coaching', 'Educative'];
+                    var categories = ['Consultation', 'Entretien', 'Coaching'];
+                    var totalsOui = {}, totalsNon = {}, totalOuiAll = 0, totalNonAll = 0;
+                    categories.forEach(function(c) { totalsOui[c] = 0; totalsNon[c] = 0; });
                     $.each(res.soignants, function(nom, cats) {
                         var $tr = $('<tr>').append('<td class="stat-cell-label">' + nom + '</td>');
                         var total = 0;
@@ -570,47 +561,51 @@
                             var c = cats[categories[i]];
                             $tr.append('<td class="stat-cell">' + c.oui + '</td>');
                             $tr.append('<td class="stat-cell">' + c.non + '</td>');
+                            totalsOui[categories[i]] += c.oui;
+                            totalsNon[categories[i]] += c.non;
+                            totalOuiAll += c.oui;
+                            totalNonAll += c.non;
                             total += c.oui + c.non;
                         }
                         $tr.append('<td class="stat-cell">' + total + '</td>');
                         $tr.appendTo('#soignants tbody');
                     });
+                    var $totalsRow = $('<tr>').append('<td class="stat-cell-label" style="font-weight:bold">Total</td>');
+                    for (var i = 0; i < categories.length; i++) {
+                        $totalsRow.append('<td class="stat-cell" style="font-weight:bold">' + totalsOui[categories[i]] + '</td>');
+                        $totalsRow.append('<td class="stat-cell">' + totalsNon[categories[i]] + '</td>');
+                    }
+                    $totalsRow.append('<td class="stat-cell" style="font-weight:bold">' + (totalOuiAll + totalNonAll) + '</td>');
+                    $totalsRow.appendTo('#soignants tbody');
                 }
 
                 // Moyenne patients par atelier
                 $('#moyAteliers tbody').empty();
                 if (res.moyAteliers) {
-                    var totalSlots = 0, totalOui = 0, totalNon = 0, nbThem = 0;
+                    var totalSlots = 0, totalOui = 0, nbThem = 0;
                     var sumOui = 0, sumNon = 0;
                     $.each(res.moyAteliers, function(them, d) {
-                        var moyTotal = +(d.moyOui + d.moyNon).toFixed(1);
                         $('<tr>')
                             .append('<td class="stat-cell-label">' + them + '</td>')
                             .append('<td class="stat-cell">' + d.slots + '</td>')
                             .append('<td class="stat-cell">' + d.oui + '</td>')
                             .append('<td class="stat-cell">' + d.non + '</td>')
-                            .append('<td class="stat-cell">' + d.moyOui + '</td>')
-                            .append('<td class="stat-cell">' + d.moyNon + '</td>')
-                            .append('<td class="stat-cell">' + moyTotal + '</td>')
+                            .append('<td class="stat-cell" style="font-weight:bold">' + d.moyOui + '</td>')
                             .appendTo('#moyAteliers tbody');
                         totalSlots += d.slots;
                         sumOui += d.oui;
                         sumNon += d.non;
                         totalOui += d.moyOui;
-                        totalNon += d.moyNon;
                         nbThem++;
                     });
                     if (nbThem > 0) {
                         var avgOui = +(totalOui / nbThem).toFixed(1);
-                        var avgNon = +(totalNon / nbThem).toFixed(1);
                         $('<tr style="font-weight:bold">')
                             .append('<td class="stat-cell-label">Total</td>')
                             .append('<td class="stat-cell">' + totalSlots + '</td>')
                             .append('<td class="stat-cell">' + sumOui + '</td>')
                             .append('<td class="stat-cell">' + sumNon + '</td>')
                             .append('<td class="stat-cell">' + avgOui + '</td>')
-                            .append('<td class="stat-cell">' + avgNon + '</td>')
-                            .append('<td class="stat-cell">' + +(avgOui + avgNon).toFixed(1) + '</td>')
                             .appendTo('#moyAteliers tbody');
                     }
                 }
@@ -618,7 +613,7 @@
                 // Patients avec donnees manquantes
                 if (res.patientsManquants) {
                     var manquants = res.patientsManquants;
-                    $.each(['orientation', 'dedate', 'mode'], function(i, key) {
+                    $.each(['orientation', 'dedate', 'mode', 'spontane'], function(i, key) {
                         var list = manquants[key] || [];
                         $('#count-' + key).text(list.length);
                         var $tbody = $('#table-missing-' + key + ' tbody');

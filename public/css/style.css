@@ -45,6 +45,7 @@ h3 {
 
 a {
     font-size: 14px;
+    color: #09aaaa;
 }
 
 a,
@@ -2902,6 +2903,10 @@ input[type="checkbox"].checkbox-round + span {
 .table .stat-cell-label {
     border: 1px solid #ccc;
     white-space: nowrap;
+}
+
+.nav-tabs li a {
+    font-weight: bold;
 }
 
 @media screen and (max-width: 800px) {

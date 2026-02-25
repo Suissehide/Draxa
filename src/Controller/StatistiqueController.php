@@ -110,7 +110,7 @@ class StatistiqueController extends AbstractController
             $statistiques['seance']['9'] += $this->statistique27bis($slots, $dateStart, $dateEnd);
             $statistiques['seance']['10'] += $this->statistique28($stat27, $slots, $dateStart, $dateEnd);
 
-            $patientsManquants = ['orientation' => [], 'dedate' => [], 'mode' => []];
+            $patientsManquants = ['orientation' => [], 'dedate' => [], 'mode' => [], 'spontane' => []];
 
             foreach ($patients as $patient) {
                 $rdv = $patient->getRendezVous();
@@ -137,6 +137,9 @@ class StatistiqueController extends AbstractController
                     }
                     if (!$patient->getMode()) {
                         $patientsManquants['mode'][] = $info;
+                    }
+                    if (in_array($patient->getOrientation(), ['NS', 'Venue spontanée'])) {
+                        $patientsManquants['spontane'][] = $info;
                     }
                 }
 
@@ -213,7 +216,7 @@ class StatistiqueController extends AbstractController
             foreach ($slots as $s) {
                 if ($s->getCategorie() !== 'Atelier') continue;
                 $them = $s->getThematique();
-                if (!$them || $them === 'PRM1' || $them === 'PRM2') continue;
+                if (!$them) continue;
                 if (!isset($ateliersStats[$them])) {
                     $ateliersStats[$them] = ['slots' => 0, 'oui' => 0, 'non' => 0];
                 }
@@ -234,7 +237,6 @@ class StatistiqueController extends AbstractController
                     'oui' => $data['oui'],
                     'non' => $data['non'],
                     'moyOui' => $nb > 0 ? round($data['oui'] / $nb, 1) : 0,
-                    'moyNon' => $nb > 0 ? round($data['non'] / $nb, 1) : 0,
                 ];
             }
             $response['moyAteliers'] = $moyAteliers;
