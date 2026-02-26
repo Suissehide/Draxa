@@ -30,9 +30,6 @@ class StatistiqueController extends AbstractController
      */
     public function index(Request $request): Response
     {
-        foreach (ThematiqueConstants::CONSULTATION as $k => $v) {
-            $consultations[$k] = $v;
-        }
         foreach (ThematiqueConstants::ENTRETIEN as $k => $v) {
             $entretiens[$k] = $v;
         }
@@ -43,13 +40,11 @@ class StatistiqueController extends AbstractController
             $coachings[$k] = $v;
         }
 
-        $consultations[""] = "Autre";
         $entretiens[""] = "Autre";
         $ateliers[""] = "Autre";
         $coachings[""] = "Autre";
 
         $thematiques = [
-            "consultations" => $consultations,
             "entretiens" => $entretiens,
             "ateliers" => $ateliers,
             "coachings" => $coachings,
@@ -178,7 +173,6 @@ class StatistiqueController extends AbstractController
             }
 
             $s = [];
-            $s['consultations'] = $this->createSlotCategorie($slots, $thematiques["consultations"], 'Consultation');
             $s['entretiens'] = $this->createSlotCategorie($slots, $thematiques["entretiens"], 'Entretien');
             $s['ateliers'] = $this->createSlotCategorie($slots, $thematiques["ateliers"], 'Atelier');
             $s['coachings'] = $this->createSlotCategorie($slots, $thematiques["coachings"], 'Coaching');
@@ -188,7 +182,7 @@ class StatistiqueController extends AbstractController
             $response['statistiques'] = $statistiques;
             $response['patientsManquants'] = $patientsManquants;
 
-            $categories = ['Consultation', 'Entretien', 'Atelier', 'Coaching', 'Educative'];
+            $categories = ['Consultation', 'Entretien', 'Coaching'];
             $soignants = [];
             foreach ($slots as $s) {
                 $soignant = $s->getSoignant();

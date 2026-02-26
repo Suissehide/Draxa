@@ -171,7 +171,7 @@
             </div>
         </div>
 
-        <div class="aspect-tab">
+        <div class="aspect-tab" style="display: none;">
             <input id="item-3" type="checkbox" class="aspect-input" name="aspect">
             <label for="item-3" class="aspect-label"></label>
             <div class="aspect-content">
@@ -280,7 +280,7 @@
             <label for="item-5" class="aspect-label"></label>
             <div class="aspect-content">
                 <div class="aspect-info">
-                    <span class="aspect-name">Activite par soignant</span>
+                    <span class="aspect-name">Activité par soignant</span>
                 </div>
                 <div class="aspect-stat"></div>
             </div>
@@ -294,7 +294,6 @@
                                     <th colspan="2" class="stat-cell">Consultation</th>
                                     <th colspan="2" class="stat-cell">Entretien</th>
                                     <th colspan="2" class="stat-cell">Coaching</th>
-                                    <th rowspan="2" class="stat-cell">Total</th>
                                 </tr>
                                 <tr>
                                     <th class="stat-cell">Oui</th><th class="stat-cell">Non</th>
@@ -340,27 +339,13 @@
 
         <div class="box">
             <ul class="nav nav-tabs" id="tablesTabs" style="margin-bottom:15px">
-                <li class="active"><a href="#tab-consultations" data-toggle="tab">Consultations</a></li>
-                <li><a href="#tab-entretiens" data-toggle="tab">Entretiens individuels</a></li>
+                <li class="active"><a href="#tab-entretiens" data-toggle="tab">Entretiens individuels</a></li>
                 <li><a href="#tab-coachings" data-toggle="tab">Coachings PRM</a></li>
                 <li><a href="#tab-ateliers" data-toggle="tab">Ateliers</a></li>
                 <li><a href="#tab-educatives" data-toggle="tab">Semaines éducatives</a></li>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="tab-consultations">
-                    <table id="consultations" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
-                        <thead>
-                            <tr>
-                                <th class="stat-cell-label" data-column-id="">Thématique</th>
-                                <th class="stat-cell" data-column-id="">Oui</th>
-                                <th class="stat-cell" data-column-id="">Non</th>
-                                <th class="stat-cell" data-column-id="">Non renseigné</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-                <div class="tab-pane" id="tab-entretiens">
+                <div class="tab-pane active" id="tab-entretiens">
                     <table id="entretiens" class="table table-condensed table-striped" style="border-collapse:collapse; table-layout:auto">
                         <thead>
                             <tr>
@@ -552,22 +537,17 @@
                 $('#soignants tbody').empty();
                 if (res.soignants) {
                     var categories = ['Consultation', 'Entretien', 'Coaching'];
-                    var totalsOui = {}, totalsNon = {}, totalOuiAll = 0, totalNonAll = 0;
+                    var totalsOui = {}, totalsNon = {};
                     categories.forEach(function(c) { totalsOui[c] = 0; totalsNon[c] = 0; });
                     $.each(res.soignants, function(nom, cats) {
                         var $tr = $('<tr>').append('<td class="stat-cell-label">' + nom + '</td>');
-                        var total = 0;
                         for (var i = 0; i < categories.length; i++) {
                             var c = cats[categories[i]];
                             $tr.append('<td class="stat-cell">' + c.oui + '</td>');
                             $tr.append('<td class="stat-cell">' + c.non + '</td>');
                             totalsOui[categories[i]] += c.oui;
                             totalsNon[categories[i]] += c.non;
-                            totalOuiAll += c.oui;
-                            totalNonAll += c.non;
-                            total += c.oui + c.non;
                         }
-                        $tr.append('<td class="stat-cell">' + total + '</td>');
                         $tr.appendTo('#soignants tbody');
                     });
                     var $totalsRow = $('<tr>').append('<td class="stat-cell-label" style="font-weight:bold">Total</td>');
@@ -575,7 +555,6 @@
                         $totalsRow.append('<td class="stat-cell" style="font-weight:bold">' + totalsOui[categories[i]] + '</td>');
                         $totalsRow.append('<td class="stat-cell">' + totalsNon[categories[i]] + '</td>');
                     }
-                    $totalsRow.append('<td class="stat-cell" style="font-weight:bold">' + (totalOuiAll + totalNonAll) + '</td>');
                     $totalsRow.appendTo('#soignants tbody');
                 }
 
