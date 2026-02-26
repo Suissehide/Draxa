@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Constant\ThematiqueConstants;
 use App\Entity\Patient;
-use App\Entity\Slot;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -54,7 +53,9 @@ class StatistiqueController extends AbstractController
         if ($request->isXmlHttpRequest()) {
             $dateStart = DateTime::createFromFormat("d/m/Y", date($request->get('dateStart')));
             $dateEnd = DateTime::createFromFormat("d/m/Y", date($request->get('dateEnd')));
-            $slots = $this->em->getRepository(Slot::class)->findByDate($dateStart, $dateEnd);
+            $rendezVous = $this->em->createQuery(
+                'SELECT r FROM App\Entity\RendezVous r WHERE r.date >= :start AND r.date <= :end ORDER BY r.date ASC'
+            )->setParameter('start', $dateStart)->setParameter('end', $dateEnd)->getResult();
             $patients = $this->em->createQuery(
                 'SELECT p, r FROM App\Entity\Patient p LEFT JOIN p.rendezVous r ORDER BY r.date ASC'
             )->getResult();
@@ -100,10 +101,12 @@ class StatistiqueController extends AbstractController
                 ]
             ];
 
-            $stat27 = $this->statistique27($slots, $dateStart, $dateEnd);
+            $statistiques['seance']['6'] += $this->statistique26($rendezVous);
+            $statistiques['seance']['7'] += $this->statistique26bis($rendezVous);
+            $stat27 = $this->statistique27($rendezVous);
             $statistiques['seance']['8'] += $stat27;
-            $statistiques['seance']['9'] += $this->statistique27bis($slots, $dateStart, $dateEnd);
-            $statistiques['seance']['10'] += $this->statistique28($stat27, $slots, $dateStart, $dateEnd);
+            $statistiques['seance']['9'] += $this->statistique27bis();
+            $statistiques['seance']['10'] += $this->statistique28($stat27, $rendezVous);
 
             $patientsManquants = ['orientation' => [], 'dedate' => [], 'mode' => [], 'spontane' => []];
 
@@ -150,8 +153,6 @@ class StatistiqueController extends AbstractController
                 $statistiques['seance']['4'] += $this->statistique24($patient, $rdv, $dateStart, $dateEnd);
                 $statistiques['seance']['5'] += $this->statistique25($patient, $rdv, $dateStart, $dateEnd);
 
-                $statistiques['seance']['6'] += $this->statistique26($rdv, $dateStart, $dateEnd);
-                $statistiques['seance']['7'] += $this->statistique26bis($rdv, $dateStart, $dateEnd);
 
                 $statistiques['seance']['11'] += $this->statistique29($rdv, $dateStart, $dateEnd);
                 $statistiques['seance']['12'] += $this->statistique210($rdv, $dateStart, $dateEnd);
@@ -173,10 +174,10 @@ class StatistiqueController extends AbstractController
             }
 
             $s = [];
-            $s['entretiens'] = $this->createSlotCategorie($slots, $thematiques["entretiens"], 'Entretien');
-            $s['ateliers'] = $this->createSlotCategorie($slots, $thematiques["ateliers"], 'Atelier');
-            $s['coachings'] = $this->createSlotCategorie($slots, $thematiques["coachings"], 'Coaching');
-            $s['educatives'] = $this->createSlotCategorie($slots, $thematiques["educatives"], 'Educative');
+            $s['entretiens'] = $this->createSlotCategorie($rendezVous, $thematiques["entretiens"], 'Entretien');
+            $s['ateliers'] = $this->createSlotCategorie($rendezVous, $thematiques["ateliers"], 'Atelier');
+            $s['coachings'] = $this->createSlotCategorie($rendezVous, $thematiques["coachings"], 'Coaching');
+            $s['educatives'] = $this->createSlotCategorie($rendezVous, $thematiques["educatives"], 'Educative');
 
             $response['slots'] = $s;
             $response['statistiques'] = $statistiques;
@@ -184,43 +185,46 @@ class StatistiqueController extends AbstractController
 
             $categories = ['Consultation', 'Entretien', 'Coaching'];
             $soignants = [];
-            foreach ($slots as $s) {
-                $soignant = $s->getSoignant();
-                if (!$soignant) continue;
-                $nom = (string) $soignant;
+            foreach ($rendezVous as $r) {
+                $cat = $r->getCategorie();
+                if (!in_array($cat, $categories)) continue;
+                $slot = $r->getSlot();
+                $soignant = $slot ? $slot->getSoignant() : null;
+                $nom = $soignant ? (string) $soignant : 'Non assigné';
                 if (!isset($soignants[$nom])) {
                     $soignants[$nom] = [];
-                    foreach ($categories as $cat) {
-                        $soignants[$nom][$cat] = ['oui' => 0, 'non' => 0];
+                    foreach ($categories as $c) {
+                        $soignants[$nom][$c] = ['oui' => 0, 'non' => 0];
                     }
                 }
-                $cat = $s->getCategorie();
-                if (!in_array($cat, $categories)) continue;
-                foreach ($s->getRendezVous() as $r) {
-                    if ($r->getEtat() === "Oui") {
-                        $soignants[$nom][$cat]['oui']++;
-                    } else if ($r->getEtat() === "Non") {
-                        $soignants[$nom][$cat]['non']++;
-                    }
+                if ($r->getEtat() === "Oui") {
+                    $soignants[$nom][$cat]['oui']++;
+                } elseif ($r->getEtat() === "Non") {
+                    $soignants[$nom][$cat]['non']++;
                 }
             }
             $response['soignants'] = $soignants;
 
             $ateliersStats = [];
-            foreach ($slots as $s) {
-                if ($s->getCategorie() !== 'Atelier') continue;
-                $them = $s->getThematique();
-                if (!$them) continue;
+            $slotsCounted = [];
+            foreach ($rendezVous as $r) {
+                if ($r->getCategorie() !== 'Atelier') continue;
+                $slot = $r->getSlot();
+                $them = $slot ? ($slot->getThematique() ?: 'Autre') : 'Autre';
                 if (!isset($ateliersStats[$them])) {
                     $ateliersStats[$them] = ['slots' => 0, 'oui' => 0, 'non' => 0];
                 }
-                $ateliersStats[$them]['slots']++;
-                foreach ($s->getRendezVous() as $r) {
-                    if ($r->getEtat() === "Oui") {
-                        $ateliersStats[$them]['oui']++;
-                    } else if ($r->getEtat() === "Non") {
-                        $ateliersStats[$them]['non']++;
+                if ($slot) {
+                    $slotKey = $slot->getId() . '_' . $them;
+                    if (!isset($slotsCounted[$slotKey])) {
+                        $ateliersStats[$them]['slots']++;
+                        $slotsCounted[$slotKey] = true;
                     }
+                }
+                if ($r->getEtat() === "Oui") {
+                    $ateliersStats[$them]['oui']++;
+                } elseif ($r->getEtat() === "Non") {
+                    $ateliersStats[$them]['non']++;
                 }
             }
             $moyAteliers = [];
@@ -245,33 +249,21 @@ class StatistiqueController extends AbstractController
         ]);
     }
 
-    private function createSlotCategorie(array $slots, $thematiques, string $category)
+    private function createSlotCategorie(array $rendezVous, $thematiques, string $category)
     {
         $jsonContent = array_reduce(array_keys($thematiques), function ($carry, $key) {
-            $carry[$key] = [
-                'oui' => 0,
-                'non' => 0,
-                'null' => 0
-            ];
+            $carry[$key] = ['oui' => 0, 'non' => 0, 'null' => 0];
             return $carry;
         }, []);
 
-        foreach ($slots as $s) {
-            $rendezVous = $s->getRendezVous();
-            foreach ($rendezVous as $r) {
-                if ($s->getCategorie() === $category) {
-                    $thematique = array_search($r->getThematique(), $thematiques);
-                    if (!$thematique)
-                        $thematique = "";
-                    $etat = strtolower($r->getEtat());
-                    if ($etat === "oui")
-                        $jsonContent[$thematique]["oui"] += 1;
-                    else if ($etat === "non")
-                        $jsonContent[$thematique]["non"] += 1;
-                    else
-                        $jsonContent[$thematique]["null"] += 1;
-                }
-            }
+        foreach ($rendezVous as $r) {
+            if ($r->getCategorie() !== $category) continue;
+            $thematique = array_search($r->getThematique(), $thematiques);
+            if (!$thematique) $thematique = "";
+            $etat = strtolower($r->getEtat());
+            if ($etat === "oui") $jsonContent[$thematique]["oui"] += 1;
+            elseif ($etat === "non") $jsonContent[$thematique]["non"] += 1;
+            else $jsonContent[$thematique]["null"] += 1;
         }
         return $jsonContent;
     }
@@ -454,75 +446,63 @@ class StatistiqueController extends AbstractController
 
     /* */
 
-    private function statistique26($rendezVous, $dateStart, $dateEnd): int
+    private function statistique26(array $rendezVous): int
     {
         $ret = 0;
         foreach ($rendezVous as $r) {
             if (
                 $r->getEtat() === "Oui"
-                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
                 && ($r->getCategorie() === "Entretien" || $r->getCategorie() === "Consultation" || $r->getCategorie() === "Coaching")
             ) {
-                $ret += 1;
+                $ret++;
             }
         }
         return $ret;
     }
 
-    private function statistique26bis($rendezVous, $dateStart, $dateEnd): int
+    private function statistique26bis(array $rendezVous): int
     {
         $ret = 0;
         foreach ($rendezVous as $r) {
             if (
                 $r->getEtat() === "Oui"
-                && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
                 && ($r->getCategorie() === "Entretien" || $r->getCategorie() === "Consultation" || $r->getCategorie() === "Coaching")
                 && $r->getType() === "Tel"
             ) {
-                $ret += 1;
+                $ret++;
             }
         }
         return $ret;
     }
 
-    private function statistique27(array $slots, $dateStart, $dateEnd): int
+    private function statistique27(array $rendezVous): int
     {
-        $atelier = 0;
-        foreach ($slots as $s) {
-            $rendezVous = $s->getRendezVous();
-            foreach ($rendezVous as $r) {
-                if (
-                    $r->getEtat() === "Oui"
-                    && $this->isInDateRange($dateStart, $dateEnd, $s->getDate())
-                    && $r->getCategorie() === "Atelier"
-                ) {
-                    $atelier += 1;
-                }
+        $slots = [];
+        foreach ($rendezVous as $r) {
+            if ($r->getCategorie() === "Atelier" && $r->getSlot()) {
+                $slots[$r->getSlot()->getId()] = true;
             }
         }
-        return $atelier;
+        return count($slots);
     }
 
-    private function statistique27bis(array $slots, $dateStart, $dateEnd): int
+    private function statistique27bis(): int
     {
         return 0;
     }
 
-    private function statistique28(int $totalSeance, array $slots, $dateStart, $dateEnd): float
+    private function statistique28(int $totalSeance, array $rendezVous): float
     {
-        $totalSlotEducative = 0;
-        $totalSlotAtelier = 0;
-        foreach ($slots as $s) {
-            if ($s->getCategorie() === 'Educative') {
-                $totalSlotEducative++;
-            }
-            if ($s->getCategorie() === 'Atelier') {
-                $totalSlotAtelier++;
-            }
+        $educativeSlots = [];
+        $atelierSlots = [];
+        foreach ($rendezVous as $r) {
+            $slot = $r->getSlot();
+            if (!$slot) continue;
+            $slotId = $slot->getId();
+            if ($r->getCategorie() === 'Educative') $educativeSlots[$slotId] = true;
+            if ($r->getCategorie() === 'Atelier') $atelierSlots[$slotId] = true;
         }
-
-        $total = (($totalSlotEducative / 3) * 10) + $totalSlotAtelier;
-
+        $total = ((count($educativeSlots) / 3) * 10) + count($atelierSlots);
         return $total > 0 ? round($totalSeance / $total, 2) : 0;
     }
 
