@@ -108,7 +108,7 @@ class StatistiqueController extends AbstractController
             $statistiques['seance']['9'] += $this->statistique27bis();
             $statistiques['seance']['10'] += $this->statistique28($stat27, $rendezVous);
 
-            $patientsManquants = ['orientation' => [], 'dedate' => [], 'mode' => [], 'spontane' => []];
+            $patientsManquants = ['orientation' => [], 'dedate' => [], 'mode' => [], 'spontane' => [], 'nonAssigne' => []];
 
             foreach ($patients as $patient) {
                 $rdv = $patient->getRendezVous();
@@ -140,6 +140,27 @@ class StatistiqueController extends AbstractController
                         $patientsManquants['spontane'][] = $info;
                     }
                 }
+            }
+
+            foreach ($rendezVous as $r) {
+                $slot = $r->getSlot();
+                $soignant = $slot ? $slot->getSoignant() : null;
+                if (!$soignant) {
+                    $patient = $r->getPatient();
+                    $patientsManquants['nonAssigne'][] = [
+                        'id' => $patient->getId(),
+                        'nom' => $patient->getNom() ?? '',
+                        'prenom' => $patient->getPrenom() ?? '',
+                        'date' => $r->getDate() ? $r->getDate()->format('d/m/Y') : '',
+                        'categorie' => $r->getCategorie() ?? '',
+                        'thematique' => $r->getThematique() ?? '',
+                    ];
+                }
+            }
+            usort($patientsManquants['nonAssigne'], fn($a, $b) => strcmp($a['categorie'], $b['categorie']));
+
+            foreach ($patients as $patient) {
+                $rdv = $patient->getRendezVous();
 
                 $statistiques['entree']['1'] += $this->statistique11($patient, $rdv, $dateStart, $dateEnd);
                 $statistiques['entree']['2'] += $this->statistique11bis($rdv, $dateStart, $dateEnd);

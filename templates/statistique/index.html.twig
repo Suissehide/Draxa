@@ -406,6 +406,7 @@
                 <li><a href="#tab-missing-dedate" data-toggle="tab">Sans date d'entrée (<span id="count-dedate">0</span>)</a></li>
                 <li><a href="#tab-missing-mode" data-toggle="tab">Sans mode de PEC (<span id="count-mode">0</span>)</a></li>
                 <li><a href="#tab-missing-spontane" data-toggle="tab">Orientation : venue spontanée / NS (<span id="count-spontane">0</span>)</a></li>
+                <li><a href="#tab-missing-nonassigne" data-toggle="tab">RDV sans soignant (<span id="count-nonassigne">0</span>)</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab-missing-orientation">
@@ -451,6 +452,20 @@
                                 <th class="stat-cell">Nom</th>
                                 <th class="stat-cell">Prénom</th>
                                 <th class="stat-cell">Date de naissance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="tab-pane" id="tab-missing-nonassigne">
+                    <table id="table-missing-nonassigne" class="table table-condensed table-striped table-hover" style="border-collapse:collapse; table-layout:auto">
+                        <thead>
+                            <tr>
+                                <th class="stat-cell">Nom</th>
+                                <th class="stat-cell">Prénom</th>
+                                <th class="stat-cell">Date du RDV</th>
+                                <th class="stat-cell">Catégorie</th>
+                                <th class="stat-cell">Thématique</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
@@ -605,6 +620,19 @@
                                 .appendTo($tbody);
                         }
                     });
+                    var nonAssigne = manquants['nonAssigne'] || [];
+                    $('#count-nonassigne').text(nonAssigne.length);
+                    var $tbodyNa = $('#table-missing-nonassigne tbody');
+                    for (var j = 0; j < nonAssigne.length; j++) {
+                        var r = nonAssigne[j];
+                        $('<tr style="cursor:pointer" data-patient-id="' + r['id'] + '">')
+                            .append('<td class="stat-cell">' + r['nom'] + '</td>')
+                            .append('<td class="stat-cell">' + r['prenom'] + '</td>')
+                            .append('<td class="stat-cell">' + r['date'] + '</td>')
+                            .append('<td class="stat-cell">' + r['categorie'] + '</td>')
+                            .append('<td class="stat-cell">' + r['thematique'] + '</td>')
+                            .appendTo($tbodyNa);
+                    }
                 }
 
                 // Ligne "Aucune donnée" pour les tableaux vides
