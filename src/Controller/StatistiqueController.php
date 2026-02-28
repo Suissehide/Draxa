@@ -106,7 +106,7 @@ class StatistiqueController extends AbstractController
             $stat27 = $this->statistique27($rendezVous);
             $statistiques['seance']['8'] += $stat27;
             $statistiques['seance']['9'] += $this->statistique27bis();
-            $statistiques['seance']['10'] += $this->statistique28($stat27, $rendezVous);
+            $statistiques['seance']['10'] += $this->statistique28($rendezVous);
 
             $patientsManquants = ['orientation' => [], 'dedate' => [], 'mode' => [], 'spontane' => [], 'nonAssigne' => []];
 
@@ -512,19 +512,18 @@ class StatistiqueController extends AbstractController
         return 0;
     }
 
-    private function statistique28(int $totalSeance, array $rendezVous): float
+    private function statistique28(array $rendezVous): float
     {
-        $educativeSlots = [];
         $atelierSlots = [];
+        $totalOui = 0;
         foreach ($rendezVous as $r) {
             $slot = $r->getSlot();
-            if (!$slot) continue;
-            $slotId = $slot->getId();
-            if ($r->getCategorie() === 'Educative') $educativeSlots[$slotId] = true;
-            if ($r->getCategorie() === 'Atelier') $atelierSlots[$slotId] = true;
+            if (!$slot || $r->getCategorie() !== 'Atelier') continue;
+            $atelierSlots[$slot->getId()] = true;
+            if ($r->getEtat() === 'Oui') $totalOui++;
         }
-        $total = ((count($educativeSlots) / 3) * 10) + count($atelierSlots);
-        return $total > 0 ? round($totalSeance / $total, 2) : 0;
+        $total = count($atelierSlots);
+        return $total > 0 ? round($totalOui / $total, 1) : 0;
     }
 
     private function statistique29($rendezVous, $dateStart, $dateEnd): int

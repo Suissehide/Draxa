@@ -593,7 +593,7 @@
                         nbThem++;
                     });
                     if (nbThem > 0) {
-                        var avgOui = +(totalOui / nbThem).toFixed(1);
+                        var avgOui = totalSlots > 0 ? +(sumOui / totalSlots).toFixed(1) : 0;
                         $('<tr style="font-weight:bold">')
                             .append('<td class="stat-cell-label">Total</td>')
                             .append('<td class="stat-cell">' + totalSlots + '</td>')
