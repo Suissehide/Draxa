@@ -11,4 +11,6 @@ public/build
 .env.*.local
 phpunit.xml
 tests/
-deploy/
+deploy/Dockerfile
+deploy/dokploy/
+deploy/.env
