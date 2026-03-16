@@ -51,6 +51,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
       - mysql:/var/lib/mysql
+      - ./mysql/init-auth.sh:/docker-entrypoint-initdb.d/init-auth.sh:ro
 
 volumes:
   mysql:
