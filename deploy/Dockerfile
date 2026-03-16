@@ -32,7 +32,7 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Set permissions
-RUN chown -R www-data:www-data var/ public/
+RUN mkdir -p var && chown -R www-data:www-data var/ public/
 
 COPY deploy/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
