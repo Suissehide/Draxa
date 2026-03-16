@@ -10,17 +10,7 @@ RUN composer install \
     --no-interaction \
     --ignore-platform-reqs
 
-# Stage 2: Node assets
-FROM node:18-alpine AS assets
-
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY webpack.config.js ./
-COPY assets/ assets/
-RUN npm run build
-
-# Stage 3: Production
+# Stage 2: Production
 FROM php:8.1-apache AS app
 
 # Install PHP extensions
@@ -52,9 +42,6 @@ COPY --from=vendor /app/vendor vendor/
 
 # Copy application
 COPY . .
-
-# Copy built assets
-COPY --from=assets /app/public/build public/build/
 
 # Warmup cache
 RUN APP_ENV=prod php bin/console cache:warmup --no-debug
