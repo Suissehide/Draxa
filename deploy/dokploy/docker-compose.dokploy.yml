@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   mysql:
-    image: mysql:8-debian
+    image: mysql:8.4
     command: --mysql-native-password=ON
     restart: always
     environment:
