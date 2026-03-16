@@ -31,7 +31,8 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
+    && composer dump-env prod
 
 # Set permissions
 RUN mkdir -p var && chown -R www-data:www-data var/ public/
