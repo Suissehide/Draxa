@@ -1,16 +1,3 @@
-# Stage 1: PHP dependencies
-FROM composer:2 AS vendor
-
-WORKDIR /app
-COPY composer.json composer.lock symfony.lock ./
-RUN composer install \
-    --no-dev \
-    --optimize-autoloader \
-    --no-scripts \
-    --no-interaction \
-    --ignore-platform-reqs
-
-# Stage 2: Production
 FROM php:8.1-apache AS app
 
 # Install PHP extensions
@@ -21,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo_pgsql intl zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Enable Apache rewrite module
 RUN a2enmod rewrite
@@ -37,14 +27,15 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 WORKDIR /var/www/html
 
-# Copy vendor
-COPY --from=vendor /app/vendor vendor/
-
-# Copy application
 COPY . .
 
-# Warmup cache
-RUN APP_ENV=prod php bin/console cache:warmup --no-debug
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
 # Set permissions
 RUN chown -R www-data:www-data var/ public/
+
+COPY deploy/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["apache2-foreground"]
