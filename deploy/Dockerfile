@@ -2,11 +2,10 @@ FROM php:8.1-apache AS app
 
 # Install PHP extensions
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
     libicu-dev \
     libzip-dev \
     unzip \
-    && docker-php-ext-install pdo_pgsql intl zip opcache \
+    && docker-php-ext-install pdo_mysql intl zip opcache \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
