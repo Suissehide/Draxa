@@ -25,6 +25,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 # Configure PHP for production
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
+ENV APP_ENV=prod
+
 WORKDIR /var/www/html
 
 COPY . .
