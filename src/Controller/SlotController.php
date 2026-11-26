@@ -128,7 +128,7 @@ class SlotController extends AbstractController
     }
 
     /**
-     * @Route("/get_hours", name="slot_get_hours", methods="GET|POST")
+     * @Route("/get_hours", name="slot_get_hours", methods="POST")
      */
     public function slot_get_hours(Request $request): JsonResponse
     {
@@ -142,7 +142,7 @@ class SlotController extends AbstractController
     }
 
     /**
-     * @Route("/get_thematique_type", name="slot_get_thematique_type", methods="GET|POST")
+     * @Route("/get_thematique_type", name="slot_get_thematique_type", methods="POST")
      */
     public function slot_get_thematique_type(Request $request): JsonResponse
     {

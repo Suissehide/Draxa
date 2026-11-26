@@ -21,6 +21,7 @@ security:
                 secret: "%kernel.secret%"
                 lifetime: 86400
                 always_remember_me: true
+                samesite: lax
 
             pattern: ^/
             form_login:

@@ -102,7 +102,7 @@ class AccueilController extends AbstractController
     }
 
     /**
-     * @Route("/slot", name="slot_list", methods="GET|POST")
+     * @Route("/slot", name="slot_list", methods="POST")
      */
     public function slot_list(Request $request): Response
     {
@@ -141,7 +141,7 @@ class AccueilController extends AbstractController
     }
 
     /**
-     * @Route("/redirect_vue_patient", name="redirect_vue_patient", methods="GET|POST")
+     * @Route("/redirect_vue_patient", name="redirect_vue_patient", methods="POST")
      */
     public function redirect_vue_patient(Request $request): JsonResponse
     {
@@ -155,7 +155,7 @@ class AccueilController extends AbstractController
     }
 
     /**
-     * @Route("/add_patient_slot", name="add_patient_slot", methods="GET|POST")
+     * @Route("/add_patient_slot", name="add_patient_slot", methods="POST")
      */
     public function add_patient_slot(Request $request): JsonResponse
     {
@@ -206,7 +206,7 @@ class AccueilController extends AbstractController
     /**
      * Détache le rendez-vous du créneau (le rendez-vous est conservé sur la fiche patient).
      *
-     * @Route("/remove_patient_slot", name="remove_patient_slot", methods="GET|POST")
+     * @Route("/remove_patient_slot", name="remove_patient_slot", methods="POST")
      */
     public function remove_patient_slot(Request $request): JsonResponse
     {

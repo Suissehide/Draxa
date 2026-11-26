@@ -26,6 +26,7 @@ class SmokeTest extends WebTestCase
 {
     private KernelBrowser $client;
     private EntityManagerInterface $em;
+    private string $csrf = '';
 
     public function testSortRowsPutsEmptyValuesLast(): void
     {
@@ -51,6 +52,15 @@ class SmokeTest extends WebTestCase
 
         [$patient, $slot, $semaine] = $this->seed();
         $this->login();
+
+        // CSRF : jeton lu dans la page comme le fait le navigateur ; sans jeton → 403, GET sur une action → 405.
+        $this->csrf = $this->client->request('GET', '/accueil/')->filter('meta[name="csrf-token"]')->attr('content');
+        $this->client->xmlHttpRequest('POST', '/todo/add', ['description' => 'x']);
+        $this->assertResponseStatusCodeSame(403);
+        $this->client->xmlHttpRequest('POST', '/todo/add', ['description' => 'x'], [], ['HTTP_X_CSRF_TOKEN' => 'faux']);
+        $this->assertResponseStatusCodeSame(403);
+        $this->client->xmlHttpRequest('GET', '/accueil/add_patient_slot');
+        $this->assertResponseStatusCodeSame(405);
 
         // Liste patients : tri base, tri calculé, recherche dans les rendez-vous, tri invalide ignoré.
         foreach ([['nom' => 'asc'], ['date' => 'desc'], ['status' => 'asc'], ['p.id) OR 1=1 --' => 'asc']] as $sort) {
@@ -154,7 +164,7 @@ class SmokeTest extends WebTestCase
 
     private function ajax(string $method, string $uri, array $params = []): mixed
     {
-        $this->client->xmlHttpRequest($method, $uri, $params);
+        $this->client->xmlHttpRequest($method, $uri, $params, [], ['HTTP_X_CSRF_TOKEN' => $this->csrf]);
         $this->assertResponseIsSuccessful($uri . ' : ' . substr((string) $this->client->getResponse()->getContent(), 0, 500));
 
         return json_decode($this->client->getResponse()->getContent(), true);

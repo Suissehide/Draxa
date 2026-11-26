@@ -129,3 +129,5 @@ $('body').on('click', '.closebtn', function () {
 function escapeHtml(s) { return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 // bootgrid renders unformatted string cells as raw HTML: escape them globally
 if (window.jQuery && jQuery.fn.bootgrid) jQuery.fn.bootgrid.Constructor.defaults.converters.string.to = escapeHtml;
+// Jeton CSRF envoyé avec chaque appel AJAX jQuery (vérifié par App\EventSubscriber\AjaxCsrfSubscriber)
+$.ajaxSetup({ headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') } });
