@@ -3,197 +3,133 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\PatientRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\PatientRepository::class)]
 class Patient
 {
-    /**
-     * @Groups({"slot"})
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[Groups(['slot'])]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $observ;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $divers;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'text', nullable: true)]
     private $notes;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $sexe;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255)]
     private $nom;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255)]
     private $prenom;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'date', nullable: true)]
     private $date;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $tel1;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $tel2;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $distance;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $etude;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $profession;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $activite;
 
-/**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+#[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $diagnostic;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'date', nullable: true)]
     private $dedate;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $orientation;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $etpdecision;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $progetp;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $precisions;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $precisionsperso;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $objectif;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'date', nullable: true)]
     private $dentree;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $motif;
 
-    /**
-     * @Groups({"patient"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['patient'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $etp;
 
-    /**
-     * @Groups({"patient", "rendezVous"})
-     * @ORM\OneToMany(targetEntity="App\Entity\RendezVous", mappedBy="patient", cascade={"persist", "remove"}, orphanRemoval=true, indexBy="id")
-     * @ORM\OrderBy({"date" = "ASC"})
-     */
+    #[Groups(['patient', 'rendezVous'])]
+    #[ORM\OneToMany(targetEntity: \App\Entity\RendezVous::class, mappedBy: 'patient', cascade: ['persist', 'remove'], orphanRemoval: true, indexBy: 'id')]
+    #[ORM\OrderBy(['date' => 'ASC'])]
     private $rendezVous;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $soignantReferent;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $mode;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $offre;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $email;
 
-    /**
-     * @ORM\OneToOne(targetEntity=DiagnosticEducatif::class, cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: DiagnosticEducatif::class, cascade: ['persist', 'remove'])]
     private $diagnosticEducatif;
 
     public function __construct()

@@ -10,21 +10,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-/**
- * @Route("/slot")
- */
+#[Route(path: '/slot')]
 class SlotController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
     }
 
-    /**
-     * @Route("/get/{id}", name="slot_get", methods="GET")
-     */
+    #[Route(path: '/get/{id}', name: 'slot_get', methods: 'GET')]
     public function getSlot(SerializerInterface $serializer, int $id): Response
     {
         $slot = $this->em->getRepository(Slot::class)->find($id)
@@ -33,9 +29,7 @@ class SlotController extends AbstractController
         return new JsonResponse($serializer->serialize($slot, 'json', ['groups' => ['slot']]), Response::HTTP_OK, [], true);
     }
 
-    /**
-     * @Route("/add", name="slot_add", methods="POST")
-     */
+    #[Route(path: '/add', name: 'slot_add', methods: 'POST')]
     public function add(Request $request): Response
     {
         $date = \DateTime::createFromFormat('!d/m/Y', (string) $request->get('date'));
@@ -54,9 +48,7 @@ class SlotController extends AbstractController
         return new JsonResponse($this->slotToArray($slot));
     }
 
-    /**
-     * @Route("/edit/{id}", name="slot_edit", methods="PATCH")
-     */
+    #[Route(path: '/edit/{id}', name: 'slot_edit', methods: 'PATCH')]
     public function edit(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -74,9 +66,7 @@ class SlotController extends AbstractController
         return new JsonResponse($this->slotToArray($slot));
     }
 
-    /**
-     * @Route("/delete/{id}", name="slot_delete", methods="DELETE")
-     */
+    #[Route(path: '/delete/{id}', name: 'slot_delete', methods: 'DELETE')]
     public function delete(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -96,9 +86,8 @@ class SlotController extends AbstractController
 
     /**
      * Crée un créneau de même durée, juste après celui-ci.
-     *
-     * @Route("/duplicate/{id}", name="slot_duplicate", methods="POST")
      */
+    #[Route(path: '/duplicate/{id}', name: 'slot_duplicate', methods: 'POST')]
     public function duplicate(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -127,9 +116,7 @@ class SlotController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/get_hours", name="slot_get_hours", methods="POST")
-     */
+    #[Route(path: '/get_hours', name: 'slot_get_hours', methods: 'POST')]
     public function slot_get_hours(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
@@ -141,9 +128,7 @@ class SlotController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/get_thematique_type", name="slot_get_thematique_type", methods="POST")
-     */
+    #[Route(path: '/get_thematique_type', name: 'slot_get_thematique_type', methods: 'POST')]
     public function slot_get_thematique_type(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {

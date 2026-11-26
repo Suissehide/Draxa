@@ -33,7 +33,7 @@ class AjaxCsrfSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         if (
-            !$event->isMasterRequest()
+            !$event->isMainRequest()
             || $request->isMethodSafe()
             || in_array($request->attributes->get('_route'), self::FORM_ROUTES, true)
         ) {

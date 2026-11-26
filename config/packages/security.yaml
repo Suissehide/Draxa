@@ -1,55 +1,60 @@
 security:
-    encoders:
-        App\Entity\AppUser: bcrypt
-    role_hierarchy:
-        ROLE_AS: [ROLE_IDE, ROLE_AS]
-        ROLE_ADMIN: [ROLE_AS, ROLE_ADMIN]
+    password_hashers:
+        # bcrypt explicite : la colonne password fait 64 caractères (argon2 dépasserait).
+        App\Entity\AppUser: 'bcrypt'
 
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
+    role_hierarchy:
+        ROLE_AS: [ROLE_IDE]
+        ROLE_ADMIN: [ROLE_AS]
+
     providers:
-        users:
-            name: user_provider
+        user_provider:
             entity:
                 class: App\Entity\AppUser
                 property: username
+
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            remember_me:
-                secret: "%kernel.secret%"
-                lifetime: 86400
-                always_remember_me: true
-                samesite: lax
-
-            pattern: ^/
+            lazy: true
+            provider: user_provider
             form_login:
                 login_path: login
                 check_path: login
-                provider: user_provider
                 default_target_path: accueil
                 always_use_default_target_path: true
-                csrf_token_generator: security.csrf.token_manager
+                enable_csrf: true
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 86400
+                always_remember_me: true
+                samesite: lax
             logout:
                 path: logout
                 target: login
-            anonymous: true
 
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
+    # Seule la première règle correspondante s'applique.
     access_control:
-        - { path: ^/login, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: ROLE_ADMIN }
 
-        - { path: ^/accueil, role: ROLE_IDE }
-        - { path: ^/patient, role: ROLE_IDE }
-        - { path: ^/exports, role: ROLE_IDE }
-        - { path: ^/todo, role: ROLE_IDE }
-        - { path: ^/slot, role: ROLE_IDE }
-        - { path: ^/rendez_vous, role: ROLE_IDE }
+        - { path: ^/accueil, roles: ROLE_IDE }
+        - { path: ^/patient, roles: ROLE_IDE }
+        - { path: ^/exports, roles: ROLE_IDE }
+        - { path: ^/todo, roles: ROLE_IDE }
+        - { path: ^/slot, roles: ROLE_IDE }
+        - { path: ^/rendez_vous, roles: ROLE_IDE }
 
         - { path: ^/settings, roles: ROLE_ADMIN }
         - { path: ^/statistiques, roles: ROLE_ADMIN }
         - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/, role: ROLE_ADMIN }
+        - { path: ^/, roles: ROLE_ADMIN }
+
+when@test:
+    security:
+        password_hashers:
+            App\Entity\AppUser:
+                algorithm: bcrypt
+                cost: 4

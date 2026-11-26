@@ -7,31 +7,21 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=SemaineRepository::class)
- */
+#[ORM\Entity(repositoryClass: SemaineRepository::class)]
 class Semaine
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: 'date', nullable: true)]
     private $dateDebut;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: 'date', nullable: true)]
     private $dateFin;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Slot::class, mappedBy="semaine", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToMany(targetEntity: Slot::class, mappedBy: 'semaine', cascade: ['persist', 'remove'])]
     private $slots;
 
     public function __construct()

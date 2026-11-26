@@ -131,3 +131,66 @@ function escapeHtml(s) { return s == null ? '' : String(s).replace(/[&<>"']/g, c
 if (window.jQuery && jQuery.fn.bootgrid) jQuery.fn.bootgrid.Constructor.defaults.converters.string.to = escapeHtml;
 // Jeton CSRF envoyé avec chaque appel AJAX jQuery (vérifié par App\EventSubscriber\AjaxCsrfSubscriber)
 $.ajaxSetup({ headers: { 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content') } });
+
+/*
+ * Calendriers : jours à mettre en évidence ou à bloquer, précalculés au lieu d'être
+ * recalculés pour chaque case (le calendrier appelle beforeShowDay ~42 fois par mois affiché).
+ * ponytail: mémo de 500 ms (le temps d'un affichage) car les listes changent au fil des actions ;
+ * passer à une invalidation explicite si ça devient gênant.
+ */
+var calendarDayCache = [];
+
+function calendarDayKey(date) {
+    var d = date.getDate(), m = date.getMonth() + 1;
+    return (d < 10 ? '0' : '') + d + '/' + (m < 10 ? '0' : '') + m + '/' + date.getFullYear();
+}
+
+function calendarDays(list, kind, build) {
+    var now = Date.now();
+    for (var i = 0; i < calendarDayCache.length; i++) {
+        var c = calendarDayCache[i];
+        if (c.list === list && c.kind === kind) {
+            if (now - c.time < 500 && c.length === list.length) {
+                return c.days;
+            }
+            calendarDayCache.splice(i, 1);
+            break;
+        }
+    }
+    var days = build(list);
+    calendarDayCache.push({list: list, kind: kind, length: list.length, time: now, days: days});
+    return days;
+}
+
+// Jour avec au moins un créneau ayant encore des places ({date: 'jj/mm/aaaa', place, rendezVous}).
+function isFreeSlotDay(list, date) {
+    if (!list || !list.length) {
+        return false;
+    }
+    return calendarDays(list, 'free', function (l) {
+        var days = {};
+        for (var i = 0; i < l.length; i++) {
+            if (l[i].place - l[i].rendezVous > 0) {
+                days[l[i].date] = true;
+            }
+        }
+        return days;
+    })[calendarDayKey(date)] === true;
+}
+
+// Jour couvert par une semaine existante (7 jours à partir de sa date de début 'jj/mm/aaaa').
+function isInExistingWeek(list, date) {
+    if (!list || !list.length) {
+        return false;
+    }
+    return calendarDays(list, 'week', function (l) {
+        var days = {};
+        for (var i = 0; i < l.length; i++) {
+            var p = String(l[i].date).split('/');
+            for (var j = 0; j < 7; j++) {
+                days[calendarDayKey(new Date(+p[2], +p[1] - 1, +p[0] + j))] = true;
+            }
+        }
+        return days;
+    })[calendarDayKey(date)] === true;
+}

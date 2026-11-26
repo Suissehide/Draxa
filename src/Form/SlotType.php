@@ -22,7 +22,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class SlotType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('date', DateType::class, array(
@@ -104,6 +104,8 @@ class SlotType extends AbstractType
             ))
             ->add('rendezVous', EntityType::class, array(
                 'label' => 'Patient',
+                // Sélecteur lu par le JavaScript des paramètres ; ne correspond à aucun champ du créneau.
+                'mapped' => false,
                 'class' => Patient::class,
                 'query_builder' => function (EntityRepository $qb) {
                     return $qb->createQueryBuilder('p')
@@ -119,7 +121,7 @@ class SlotType extends AbstractType
     }
 
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Slot::class,

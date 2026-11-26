@@ -15,11 +15,13 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class AddPatientType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('rendezVous', EntityType::class, array(
                 'label' => 'Patient',
+                // Sélecteur lu par le JavaScript de l'accueil ; ne correspond à aucun champ du créneau.
+                'mapped' => false,
                 'class' => Patient::class,
                 'query_builder' => function (EntityRepository $qb) {
                     return $qb->createQueryBuilder('p')
@@ -50,7 +52,7 @@ class AddPatientType extends AbstractType
             ));
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Slot::class,

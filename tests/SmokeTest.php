@@ -13,14 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\SchemaTool;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\BrowserKit\Cookie;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Parcourt les écrans et endpoints AJAX principaux sur une vraie base MySQL.
  *
  * La base est RECRÉÉE : DATABASE_URL doit pointer vers une base dont le nom finit par « _test ».
- *   DATABASE_URL='mysql://root:root@127.0.0.1:3306/draxa_test?serverVersion=8.4' bin/phpunit
+ *   DATABASE_URL='mysql://root:root@127.0.0.1:3306/draxa_test?serverVersion=8.4' vendor/bin/phpunit
  */
 class SmokeTest extends WebTestCase
 {
@@ -44,7 +42,7 @@ class SmokeTest extends WebTestCase
         }
 
         $this->client = static::createClient();
-        $this->em = self::$container->get(EntityManagerInterface::class);
+        $this->em = static::getContainer()->get(EntityManagerInterface::class);
         $tool = new SchemaTool($this->em);
         $metadata = $this->em->getMetadataFactory()->getAllMetadata();
         $tool->dropSchema($metadata);
@@ -54,7 +52,9 @@ class SmokeTest extends WebTestCase
         $this->login();
 
         // CSRF : jeton lu dans la page comme le fait le navigateur ; sans jeton → 403, GET sur une action → 405.
-        $this->csrf = $this->client->request('GET', '/accueil/')->filter('meta[name="csrf-token"]')->attr('content');
+        $crawler = $this->client->request('GET', '/accueil/');
+        $this->assertResponseIsSuccessful(substr((string) $this->client->getResponse()->getContent(), 0, 3000));
+        $this->csrf = $crawler->filter('meta[name="csrf-token"]')->attr('content');
         $this->client->xmlHttpRequest('POST', '/todo/add', ['description' => 'x']);
         $this->assertResponseStatusCodeSame(403);
         $this->client->xmlHttpRequest('POST', '/todo/add', ['description' => 'x'], [], ['HTTP_X_CSRF_TOKEN' => 'faux']);
@@ -85,6 +85,13 @@ class SmokeTest extends WebTestCase
         $this->assertNotFalse($this->ajax('POST', '/accueil/add_patient_slot', ['slotId' => $slot->getId(), 'patientId' => $patient->getId() + 1]));
         $this->assertFalse($this->ajax('POST', '/accueil/add_patient_slot', ['slotId' => $slot->getId(), 'patientId' => $patient->getId() + 1]));
 
+        // Ajout depuis la fiche patient (fenêtre « ajouter un rendez-vous »).
+        $rdvId = $this->ajax('POST', '/rendez_vous/add', [
+            'id' => $patient->getId(), 'slotId' => $slot->getId(), 'categorie' => 'Atelier',
+            'date' => $slot->getDate()->format('d/m/Y'), 'time' => '09:00', 'thematique' => 'Tabac',
+        ]);
+        $this->assertIsInt($rdvId);
+
         // Semaines : création, doublon (crashait en 500), duplication avec créneaux.
         $this->assertIsInt($this->ajax('POST', '/semaine/add', ['dateDebut' => '05/01/2030', 'dateFin' => '11/01/2030']));
         $this->assertFalse($this->ajax('POST', '/semaine/add', ['dateDebut' => '05/01/2030', 'dateFin' => '11/01/2030']));
@@ -109,7 +116,10 @@ class SmokeTest extends WebTestCase
         $this->assertTrue($this->ajax('POST', '/todo/clear'));
         $this->client->request('GET', '/patient/csv');
         $this->assertResponseIsSuccessful();
-        $this->assertStringContainsString('Nom;Prénom', $this->client->getResponse()->getContent());
+        // Réponse en flux : le contenu est dans la réponse interne du client.
+        $csv = $this->client->getInternalResponse()->getContent();
+        $this->assertStringContainsString('Nom;Prénom', $csv);
+        $this->assertStringContainsString('RDV 1 date', $csv);
         $this->client->request('GET', '/patient/vue/999999');
         $this->assertResponseStatusCodeSame(404);
 
@@ -155,11 +165,7 @@ class SmokeTest extends WebTestCase
 
     private function login(): void
     {
-        $user = $this->em->getRepository(AppUser::class)->findOneBy(['username' => 'admin']);
-        $session = self::$container->get('session');
-        $session->set('_security_main', serialize(new UsernamePasswordToken($user, null, 'main', $user->getRoles())));
-        $session->save();
-        $this->client->getCookieJar()->set(new Cookie($session->getName(), $session->getId()));
+        $this->client->loginUser($this->em->getRepository(AppUser::class)->findOneBy(['username' => 'admin']));
     }
 
     private function ajax(string $method, string $uri, array $params = []): mixed

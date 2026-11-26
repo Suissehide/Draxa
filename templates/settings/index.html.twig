@@ -347,17 +347,7 @@
                 todayHighlight: false,
                 autoclose: false,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (datesSemaines.length > 0) {
-                        for (let i = 0; i < datesSemaines.length; i++) {
-                            for (let j = 0; j < 7; j++) {
-                                if (day === moment(datesSemaines[i]['date'], 'DD/MM/YYYY').add(j, 'days').unix()) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    return true;
+                    return !isInExistingWeek(datesSemaines, currentDate);
                 }
             });
             $('#semaine_dateDebut').datepicker('update', '');
@@ -1254,8 +1244,12 @@
             d.setDate(d.getDate() + (1 + 7 - d.getDay()) % 7);
             let data = new Intl.DateTimeFormat('fr-FR').format(d);
 
+            let semaine = $('.semaine[data-date="' + data + '"]');
+            if (!semaine.length) {
+                return; // semaine pas encore créée (autre année, fin d'année non planifiée)
+            }
             $('html, body').animate({
-                scrollTop: $('.semaine[data-date="' + data + '"]').offset().top - anchorOffset
+                scrollTop: semaine.offset().top - anchorOffset
             }, 500);
         }
 

@@ -5,85 +5,59 @@ namespace App\Entity;
 use App\Repository\SlotRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=SlotRepository::class)
- */
+#[ORM\Entity(repositoryClass: SlotRepository::class)]
 class Slot
 {
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"slot"})
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
+    #[Groups(['slot'])]
     private $id;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'date', nullable: true)]
     private $date;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'time', nullable: true)]
     private $heureDebut;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="time", nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'time', nullable: true)]
     private $heureFin;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $thematique;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $type;
     
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $location;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $categorie;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\ManyToOne(targetEntity=Soignant::class, inversedBy="slots")
-     */
+    #[Groups(['slot'])]
+    #[ORM\ManyToOne(targetEntity: Soignant::class, inversedBy: 'slots')]
     private $soignant;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Semaine::class, inversedBy="slots", cascade={"persist"})
-     */
+    #[ORM\ManyToOne(targetEntity: Semaine::class, inversedBy: 'slots', cascade: ['persist'])]
     private $semaine;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\OneToMany(targetEntity=RendezVous::class, mappedBy="slot", cascade={"persist", "remove"})
-     */
+    #[Groups(['slot'])]
+    #[ORM\OneToMany(targetEntity: RendezVous::class, mappedBy: 'slot', cascade: ['persist', 'remove'])]
     private $rendezVous;
 
-    /**
-     * @Groups({"slot"})
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[Groups(['slot'])]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private $place;
 
     public function __construct()

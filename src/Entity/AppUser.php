@@ -3,49 +3,36 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\AppUserRepository")
- * @UniqueEntity(fields="username", message="Ce nom d'utilisateur est déjà utilisé.")
- */
-class AppUser implements UserInterface
+#[ORM\Entity(repositoryClass: \App\Repository\AppUserRepository::class)]
+#[UniqueEntity(fields: 'username', message: "Ce nom d'utilisateur est déjà utilisé.")]
+class AppUser implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=25, unique=true)
-     * @Assert\NotBlank()
-     */
+    #[ORM\Column(type: 'string', length: 25, unique: true)]
+    #[Assert\NotBlank]
     private $username;
 
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
+    #[ORM\Column(type: 'string', length: 64)]
     private $password;
 
-    /**
-     * @ORM\Column(name="is_active", type="boolean")
-     */
+    #[ORM\Column(name: 'is_active', type: 'boolean')]
     private $isActive;
 
-    /**
-     * @Assert\NotBlank()
-     * @Assert\Length(min=8, max=4096)
-     * @Assert\Regex(pattern="/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/", message="Utilisez au minimum 1 lettre majuscule, 1 lettre minuscule et 1 chiffre.")
-     */
+    #[Assert\NotBlank]
+    #[Assert\Length(min: 8, max: 4096)]
+    #[Assert\Regex(pattern: '/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/', message: 'Utilisez au minimum 1 lettre majuscule, 1 lettre minuscule et 1 chiffre.')]
     private $plainPassword;
 
-    /**
-     * @ORM\Column(type="array")
-     */
+    #[ORM\Column(type: 'array')]
     private $roles;
 
     public function __construct()
@@ -95,9 +82,14 @@ class AppUser implements UserInterface
         return $this;
     }
 
-    public function getRoles()
+    public function getUserIdentifier(): string
     {
-        return $this->roles;
+        return (string) $this->username;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles ?? [];
     }
 
     public function setRoles(array $roles): self
@@ -107,37 +99,14 @@ class AppUser implements UserInterface
         return $this;
     }
 
-    public function resetRoles()
+    public function resetRoles(): void
     {
         $this->roles = [];
     }
 
-    public function getSalt()
+    public function eraseCredentials(): void
     {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
-    }
-
-    public function eraseCredentials()
-    {
-    }
-
-    public function isEqualTo(UserInterface $user)
-    {
-        if (!$user instanceof AppUser) {
-            return false;
-        }
-
-        if ($this->password !== $user->getPassword()) {
-            return false;
-        }
-
-        if ($this->username !== $user->getUsername()) {
-            return false;
-        }
-
-        return true;
+        $this->plainPassword = null;
     }
 
     public function getPlainPassword(): ?string

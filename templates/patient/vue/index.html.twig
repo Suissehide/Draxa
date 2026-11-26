@@ -1952,16 +1952,7 @@
             $('#rendez_vous_date').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true, updateViewDate: false,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (dates && dates.length > 0) {
-                        for (let i = 0; i < dates.length; i++) {
-                            if (day === moment(dates[i]['date'], 'DD/MM/YYYY').unix()
-                                && dates[i]['place'] - dates[i]['rendezVous'] > 0) {
-                                return {classes: 'highlight'};
-                            }
-                        }
-                    }
-                    return false;
+                    return isFreeSlotDay(dates, currentDate) ? {classes: 'highlight'} : false;
                 }
             });
             $('#rendez_vous_date').datepicker('update');
@@ -1990,16 +1981,7 @@
             $('#timeline-consultations .datepicker').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (datesConsultations.length > 0) {
-                        for (let i = 0; i < datesConsultations.length; i++) {
-                            if (day === moment(datesConsultations[i]['date'], 'DD/MM/YYYY').unix()
-                                && datesConsultations[i]['place'] - datesConsultations[i]['rendezVous'] > 0) {
-                                return {classes: 'highlight'};
-                            }
-                        }
-                    }
-                    return false;
+                    return isFreeSlotDay(datesConsultations, currentDate) ? {classes: 'highlight'} : false;
                 }
             });
             $('#timeline-consultations .datepicker').datepicker('update');
@@ -2044,16 +2026,7 @@
             $('#timeline-entretiens .datepicker').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (datesEntretiens.length > 0) {
-                        for (let i = 0; i < datesEntretiens.length; i++) {
-                            if (day === moment(datesEntretiens[i]['date'], 'DD/MM/YYYY').unix()
-                                && datesEntretiens[i]['place'] - datesEntretiens[i]['rendezVous'] > 0) {
-                                return {classes: 'highlight'};
-                            }
-                        }
-                    }
-                    return false;
+                    return isFreeSlotDay(datesEntretiens, currentDate) ? {classes: 'highlight'} : false;
                 }
             });
             $('#timeline-entretiens .datepicker').datepicker('update');
@@ -2098,16 +2071,7 @@
             $('#timeline-ateliers .datepicker').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (datesAteliers.length > 0) {
-                        for (let i = 0; i < datesAteliers.length; i++) {
-                            if (day === moment(datesAteliers[i]['date'], 'DD/MM/YYYY').unix()
-                                && datesAteliers[i]['place'] - datesAteliers[i]['rendezVous'] > 0) {
-                                return {classes: 'highlight'};
-                            }
-                        }
-                    }
-                    return false;
+                    return isFreeSlotDay(datesAteliers, currentDate) ? {classes: 'highlight'} : false;
                 },
             });
             $('#timeline-ateliers .datepicker').datepicker('update');
@@ -2152,16 +2116,7 @@
             $('#timeline-educatives .datepicker').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (datesEducatives.length > 0) {
-                        for (let i = 0; i < datesEducatives.length; i++) {
-                            if (day === moment(datesEducatives[i]['date'], 'DD/MM/YYYY').unix()
-                                && datesEducatives[i]['place'] - datesEducatives[i]['rendezVous'] > 0) {
-                                return {classes: 'highlight'};
-                            }
-                        }
-                    }
-                    return false;
+                    return isFreeSlotDay(datesEducatives, currentDate) ? {classes: 'highlight'} : false;
                 },
             });
             $('#timeline-educatives .datepicker').datepicker('update');
@@ -2206,16 +2161,7 @@
             $('#timeline-coachings .datepicker').datepicker({
                 language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, autoclose: true,
                 beforeShowDay: function (currentDate) {
-                    let day = moment(currentDate).unix();
-                    if (datesCoachings.length > 0) {
-                        for (let i = 0; i < datesCoachings.length; i++) {
-                            if (day === moment(datesCoachings[i]['date'], 'DD/MM/YYYY').unix()
-                                && datesCoachings[i]['place'] - datesCoachings[i]['rendezVous'] > 0) {
-                                return {classes: 'highlight'};
-                            }
-                        }
-                    }
-                    return false;
+                    return isFreeSlotDay(datesCoachings, currentDate) ? {classes: 'highlight'} : false;
                 },
             });
             $('#timeline-coachings .datepicker').datepicker('update');
@@ -2283,14 +2229,13 @@
         }
 
         function hasValueDeep(json, findValue) {
-            const values = Object.values(json);
-            let hasValue = values.includes(findValue);
-            values.forEach(function (value) {
-                if (typeof value === "object") {
-                    hasValue = hasValue || hasValueDeep(value, findValue);
-                }
-            })
-            return hasValue;
+            for (var key in json) {
+                if (!Object.prototype.hasOwnProperty.call(json, key)) continue;
+                var value = json[key];
+                if (value === findValue) return true;
+                if (value && typeof value === 'object' && hasValueDeep(value, findValue)) return true;
+            }
+            return false;
         }
 
     </script>

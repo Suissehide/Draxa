@@ -12,11 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/accueil")
- */
+#[Route(path: '/accueil')]
 class AccueilController extends AbstractController
 {
     private const CATEGORIES = ['Consultation', 'Entretien', 'Coaching', 'Atelier', 'Educative'];
@@ -25,9 +23,7 @@ class AccueilController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/", name="accueil", methods="GET|POST")
-     */
+    #[Route(path: '/', name: 'accueil', methods: 'GET|POST')]
     public function accueil(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
@@ -101,9 +97,7 @@ class AccueilController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/slot", name="slot_list", methods="POST")
-     */
+    #[Route(path: '/slot', name: 'slot_list', methods: 'POST')]
     public function slot_list(Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -140,9 +134,7 @@ class AccueilController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/redirect_vue_patient", name="redirect_vue_patient", methods="POST")
-     */
+    #[Route(path: '/redirect_vue_patient', name: 'redirect_vue_patient', methods: 'POST')]
     public function redirect_vue_patient(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
@@ -154,9 +146,7 @@ class AccueilController extends AbstractController
         return new JsonResponse($url . '#' . rawurlencode((string) $request->get('anchor')));
     }
 
-    /**
-     * @Route("/add_patient_slot", name="add_patient_slot", methods="POST")
-     */
+    #[Route(path: '/add_patient_slot', name: 'add_patient_slot', methods: 'POST')]
     public function add_patient_slot(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
@@ -205,9 +195,8 @@ class AccueilController extends AbstractController
 
     /**
      * Détache le rendez-vous du créneau (le rendez-vous est conservé sur la fiche patient).
-     *
-     * @Route("/remove_patient_slot", name="remove_patient_slot", methods="POST")
      */
+    #[Route(path: '/remove_patient_slot', name: 'remove_patient_slot', methods: 'POST')]
     public function remove_patient_slot(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {

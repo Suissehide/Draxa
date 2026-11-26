@@ -9,20 +9,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/soignant")
- */
+#[Route(path: '/soignant')]
 class SoignantController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
     }
 
-    /**
-     * @Route("/", name="soignant", methods="GET")
-     */
+    #[Route(path: '/', name: 'soignant', methods: 'GET')]
     public function index(): Response
     {
         return $this->render('soignant/index.html.twig', [
@@ -33,9 +29,7 @@ class SoignantController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/add", name="soignant_add", methods="POST")
-     */
+    #[Route(path: '/add', name: 'soignant_add', methods: 'POST')]
     public function add(Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -52,9 +46,7 @@ class SoignantController extends AbstractController
         return new JsonResponse($soignant->getId());
     }
 
-    /**
-     * @Route("/{id}", name="soignant_delete", methods="DELETE")
-     */
+    #[Route(path: '/{id}', name: 'soignant_delete', methods: 'DELETE')]
     public function delete(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -77,9 +69,8 @@ class SoignantController extends AbstractController
 
     /**
      * Active (en fin de liste de priorité) ou désactive des soignants.
-     *
-     * @Route("/update", name="status_update", methods="POST")
      */
+    #[Route(path: '/update', name: 'status_update', methods: 'POST')]
     public function update(Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -104,9 +95,7 @@ class SoignantController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/priority/swap", name="status_priority_swap", methods="POST")
-     */
+    #[Route(path: '/priority/swap', name: 'status_priority_swap', methods: 'POST')]
     public function swap(Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {

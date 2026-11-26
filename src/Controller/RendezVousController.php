@@ -10,20 +10,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/rendez_vous")
- */
+#[Route(path: '/rendez_vous')]
 class RendezVousController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
     }
 
-    /**
-     * @Route("/add", name="rendezVous_add", methods="POST")
-     */
+    #[Route(path: '/add', name: 'rendezVous_add', methods: 'POST')]
     public function rendezVous_add(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
@@ -49,9 +45,7 @@ class RendezVousController extends AbstractController
         return new JsonResponse($rendezVous->getId());
     }
 
-    /**
-     * @Route("/remove/{id}", name="rendezVous_remove", methods="DELETE")
-     */
+    #[Route(path: '/remove/{id}', name: 'rendezVous_remove', methods: 'DELETE')]
     public function rendezVous_remove(Request $request, int $id): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
@@ -76,9 +70,7 @@ class RendezVousController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/patch/{id}", name="rendezVous_patch", methods="POST")
-     */
+    #[Route(path: '/patch/{id}', name: 'rendezVous_patch', methods: 'POST')]
     public function rendezVous_patch(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -111,9 +103,7 @@ class RendezVousController extends AbstractController
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
-    /**
-     * @Route("/send", name="rendezVous_send", methods="POST")
-     */
+    #[Route(path: '/send', name: 'rendezVous_send', methods: 'POST')]
     public function rendezVous_send(Request $request): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {

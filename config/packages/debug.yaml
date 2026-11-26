@@ -1,0 +1,4 @@
+when@dev:
+    debug:
+        # Envoie les dump() vers "bin/console server:dump" s'il tourne.
+        dump_destination: "tcp://%env(default::VAR_DUMPER_SERVER)%"

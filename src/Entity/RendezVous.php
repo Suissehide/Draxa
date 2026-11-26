@@ -5,87 +5,59 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\RendezVousRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\RendezVousRepository::class)]
 class RendezVous
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'date', nullable: true)]
+    #[Groups(['patient'])]
     private $date;
 
-    /**
-     * @ORM\Column(type="time", nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'time', nullable: true)]
+    #[Groups(['patient'])]
     private $heure;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['patient'])]
     private $thematique;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['patient'])]
     private $type;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['patient'])]
     private $accompagnant;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['patient'])]
     private $etat;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"patient"})
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Groups(['patient'])]
     private $motifRefus;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $notes;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Patient", inversedBy="rendezVous")
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"rendezVous", "slot"})
-     */
+    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Patient::class, inversedBy: 'rendezVous')]
+    #[Groups(['rendezVous', 'slot'])]
     private $patient;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Slot::class, inversedBy="rendezVous")
-     */
+    #[ORM\ManyToOne(targetEntity: Slot::class, inversedBy: 'rendezVous')]
     private $slot;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $categorie;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $send;
 
     public function __construct()

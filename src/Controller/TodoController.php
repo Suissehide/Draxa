@@ -8,20 +8,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/todo")
- */
+#[Route(path: '/todo')]
 class TodoController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
     }
 
-    /**
-     * @Route("/getTodos", name="todo_get", methods="GET")
-     */
+    #[Route(path: '/getTodos', name: 'todo_get', methods: 'GET')]
     public function getTodos(): JsonResponse
     {
         $todos = [];
@@ -37,9 +33,7 @@ class TodoController extends AbstractController
         return new JsonResponse($todos);
     }
 
-    /**
-     * @Route("/add", name="todo_add", methods="POST")
-     */
+    #[Route(path: '/add', name: 'todo_add', methods: 'POST')]
     public function add(Request $request): JsonResponse
     {
         $todo = (new Todo())
@@ -53,9 +47,7 @@ class TodoController extends AbstractController
         return new JsonResponse($todo->getId());
     }
 
-    /**
-     * @Route("/remove", name="todo_remove", methods="POST")
-     */
+    #[Route(path: '/remove', name: 'todo_remove', methods: 'POST')]
     public function remove(Request $request): JsonResponse
     {
         $this->em->remove($this->findTodo($request));
@@ -64,9 +56,7 @@ class TodoController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/clear", name="todo_clear", methods="POST")
-     */
+    #[Route(path: '/clear', name: 'todo_clear', methods: 'POST')]
     public function clear(): JsonResponse
     {
         $this->em->createQuery('DELETE FROM App\Entity\Todo t')->execute();
@@ -74,9 +64,7 @@ class TodoController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/enable", name="todo_enable", methods="POST")
-     */
+    #[Route(path: '/enable', name: 'todo_enable', methods: 'POST')]
     public function enable(Request $request): JsonResponse
     {
         $this->findTodo($request)->setEnable($request->get('enable') === 'true');
@@ -85,9 +73,7 @@ class TodoController extends AbstractController
         return new JsonResponse(true);
     }
 
-    /**
-     * @Route("/edit", name="todo_edit", methods="POST")
-     */
+    #[Route(path: '/edit', name: 'todo_edit', methods: 'POST')]
     public function edit(Request $request): JsonResponse
     {
         $this->findTodo($request)->setDescription($request->get('description'));

@@ -8,20 +8,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/semaine")
- */
+#[Route(path: '/semaine')]
 class SemaineController extends AbstractController
 {
     public function __construct(private EntityManagerInterface $em)
     {
     }
 
-    /**
-     * @Route("/add", name="semaine_add", methods="POST")
-     */
+    #[Route(path: '/add', name: 'semaine_add', methods: 'POST')]
     public function add(Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -40,9 +36,7 @@ class SemaineController extends AbstractController
         return new JsonResponse($semaine->getId());
     }
 
-    /**
-     * @Route("/same_date", name="semaine_sameDate", methods="POST")
-     */
+    #[Route(path: '/same_date', name: 'semaine_sameDate', methods: 'POST')]
     public function semaine_isSameDate(Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -52,9 +46,7 @@ class SemaineController extends AbstractController
         return new JsonResponse(!$this->existsAt($request->get('dateDebut')));
     }
 
-    /**
-     * @Route("/{id}", name="semaine_delete", methods="DELETE")
-     */
+    #[Route(path: '/{id}', name: 'semaine_delete', methods: 'DELETE')]
     public function delete(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -74,9 +66,8 @@ class SemaineController extends AbstractController
 
     /**
      * Copie une semaine et tous ses créneaux (sans les rendez-vous) à une nouvelle date.
-     *
-     * @Route("/duplicate/{id}", name="semaine_duplicate", methods="POST")
      */
+    #[Route(path: '/duplicate/{id}', name: 'semaine_duplicate', methods: 'POST')]
     public function duplicate(Request $request, int $id): Response
     {
         if (!$request->isXmlHttpRequest()) {

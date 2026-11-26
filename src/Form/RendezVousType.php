@@ -17,7 +17,7 @@ use Symfony\Component\Form\CallbackTransformer;
 
 class RendezVousType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('date', DateType::class, array(

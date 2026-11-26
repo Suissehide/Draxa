@@ -10,7 +10,7 @@ use App\Form\SlotType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class SettingsController extends AbstractController
 {
@@ -18,9 +18,7 @@ class SettingsController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/settings/{year}", name="settings", methods="GET")
-     */
+    #[Route(path: '/settings/{year}', name: 'settings', methods: 'GET')]
     public function settings(int $year): Response
     {
         $semaineForm = $this->createForm(SemaineType::class, new Semaine());

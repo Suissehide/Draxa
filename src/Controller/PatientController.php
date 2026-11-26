@@ -11,23 +11,16 @@ use App\Form\DiagnosticEducatifType;
 use App\Form\PatientCreationFormType;
 use App\Form\RendezVousType;
 use App\Repository\PatientRepository;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
-use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Routing\Attribute\Route;
 
-/**
- * @Route("/patient")
- */
+#[Route(path: '/patient')]
 class PatientController extends AbstractController
 {
     /** En-têtes lisibles de l'export CSV (attribut => libellé). */
@@ -58,13 +51,21 @@ class PatientController extends AbstractController
         'etp' => 'Point final parcours ETP',
     ];
 
+    private const CSV_RDV_LABELS = [
+        'date' => 'date',
+        'heure' => 'heure',
+        'thematique' => 'thématique',
+        'type' => 'type',
+        'accompagnant' => 'accompagnant',
+        'etat' => 'a eu lieu',
+        'motifRefus' => 'motif de refus',
+    ];
+
     public function __construct(private EntityManagerInterface $em)
     {
     }
 
-    /**
-     * @Route("/", name="patient_list", methods="GET|POST")
-     */
+    #[Route(path: '/', name: 'patient_list', methods: 'GET|POST')]
     public function patient_list(PatientRepository $patientRepository, Request $request): Response
     {
         if (!$request->isXmlHttpRequest()) {
@@ -175,9 +176,7 @@ class PatientController extends AbstractController
         return is_string($data) ? mb_convert_encoding($data, 'UTF-8', 'UTF-8') : $data;
     }
 
-    /**
-     * @Route("/add", name="patient_add", methods="GET|POST")
-     */
+    #[Route(path: '/add', name: 'patient_add', methods: 'GET|POST')]
     public function add(Request $request): Response
     {
         $patient = new Patient();
@@ -202,9 +201,7 @@ class PatientController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/vue/{id}", name="patient_vue", methods="GET|POST")
-     */
+    #[Route(path: '/vue/{id}', name: 'patient_vue', methods: 'GET|POST')]
     public function patient_vue(int $id, Request $request): Response
     {
         $patient = $this->findPatient($id);
@@ -237,9 +234,7 @@ class PatientController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/edit/{id}/diagnostic", name="patient_edit_diagnostic", methods="GET|POST")
-     */
+    #[Route(path: '/edit/{id}/diagnostic', name: 'patient_edit_diagnostic', methods: 'GET|POST')]
     public function patient_edit_diagnostic(int $id, Request $request): Response
     {
         $patient = $this->findPatientWithDiagnostic($id);
@@ -262,9 +257,7 @@ class PatientController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET")
-     */
+    #[Route(path: '/vue/{id}/diagnostic', name: 'patient_vue_diagnostic', methods: 'GET')]
     public function patient_vue_diagnostic(int $id): Response
     {
         return $this->render('patient/vue/diagnostic_educatif_vue.html.twig', [
@@ -275,35 +268,56 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/csv", name="csv", methods="GET")
+     * Export Excel : une ligne par patient, puis ses rendez-vous numérotés (RDV 1, RDV 2…).
+     * Écrit en flux à partir de tableaux (pas d'entités) pour garder une mémoire basse.
      */
-    public function generateCsvAction(PatientRepository $patientRepository): Response
+    #[Route(path: '/csv', name: 'csv', methods: 'GET')]
+    public function generateCsvAction(): StreamedResponse
     {
-        $normalizer = new PropertyNormalizer(new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader())));
-        $date = fn ($d) => $d instanceof \DateTimeInterface ? $d->format('d/m/y') : '';
-        $normalizer->setCallbacks([
-            'date' => $date,
-            'dentree' => $date,
-            'dedate' => $date,
-            'date_repro' => $date,
-            'heure' => fn ($d) => $d instanceof \DateTimeInterface ? $d->format('H:i') : '',
-        ]);
-        $serializer = new Serializer([$normalizer], [new CsvEncoder()]);
+        $patientFields = array_keys(self::CSV_LABELS);
+        $rdvFields = array_keys(self::CSV_RDV_LABELS);
 
-        $csv = $serializer->serialize($patientRepository->findAll(), 'csv', [
-            'groups' => ['patient'],
-            CsvEncoder::DELIMITER_KEY => ';',
-        ]);
+        $patients = $this->em
+            ->createQuery('SELECT p.id, p.' . implode(', p.', $patientFields) . ' FROM App\Entity\Patient p ORDER BY p.id')
+            ->getArrayResult();
 
-        // Remplace la ligne d'en-tête technique par des libellés lisibles.
-        [$header, $body] = explode("\n", $csv, 2) + ['', ''];
-        $labels = array_map(
-            fn ($col) => self::CSV_LABELS[$col] ?? $col,
-            str_getcsv($header, ';')
-        );
-        $csv = implode(';', $labels) . "\n" . $body;
+        $rdvsByPatient = [];
+        $rdvs = $this->em
+            ->createQuery('SELECT IDENTITY(r.patient) AS patientId, r.' . implode(', r.', $rdvFields) . ' FROM App\Entity\RendezVous r ORDER BY r.date ASC, r.id ASC')
+            ->getArrayResult();
+        foreach ($rdvs as $rdv) {
+            $rdvsByPatient[$rdv['patientId']][] = $rdv;
+        }
+        $maxRdvs = $rdvsByPatient ? max(array_map('count', $rdvsByPatient)) : 0;
 
-        $response = new Response("\xEF\xBB\xBF" . $csv); // BOM : Excel détecte l'UTF-8
+        $header = array_values(self::CSV_LABELS);
+        for ($i = 1; $i <= $maxRdvs; ++$i) {
+            foreach (self::CSV_RDV_LABELS as $label) {
+                $header[] = "RDV $i $label";
+            }
+        }
+
+        $format = fn (string $field, mixed $value): string => match (true) {
+            $value instanceof \DateTimeInterface => $value->format($field === 'heure' ? 'H:i' : 'd/m/y'),
+            default => (string) $value,
+        };
+
+        $response = new StreamedResponse(function () use ($patients, $rdvsByPatient, $maxRdvs, $header, $patientFields, $rdvFields, $format) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF"); // BOM : Excel détecte l'UTF-8
+            fputcsv($out, $header, ';', '"', '');
+            foreach ($patients as $patient) {
+                $row = array_map(fn ($f) => $format($f, $patient[$f]), $patientFields);
+                $patientRdvs = $rdvsByPatient[$patient['id']] ?? [];
+                for ($i = 0; $i < $maxRdvs; ++$i) {
+                    foreach ($rdvFields as $f) {
+                        $row[] = isset($patientRdvs[$i]) ? $format($f, $patientRdvs[$i][$f]) : '';
+                    }
+                }
+                fputcsv($out, $row, ';', '"', '');
+            }
+            fclose($out);
+        });
         $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
             ResponseHeaderBag::DISPOSITION_ATTACHMENT,
@@ -313,9 +327,7 @@ class PatientController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/{id}", name="patient_delete", methods="DELETE")
-     */
+    #[Route(path: '/{id}', name: 'patient_delete', methods: 'DELETE')]
     public function delete(Request $request, int $id): Response
     {
         $patient = $this->findPatient($id);
