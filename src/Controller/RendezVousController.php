@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
+use App\Service\EtepeaNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,7 @@ class RendezVousController extends AbstractController
     }
 
     #[Route(path: '/add', name: 'rendezVous_add', methods: 'POST')]
-    public function rendezVous_add(Request $request): JsonResponse
+    public function rendezVous_add(Request $request, EtepeaNotifier $etepea): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
             return new JsonResponse(false, Response::HTTP_BAD_REQUEST);
@@ -41,6 +42,7 @@ class RendezVousController extends AbstractController
 
         $this->em->persist($rendezVous);
         $this->em->flush();
+        $etepea->rendezVousCree($rendezVous);
 
         return new JsonResponse($rendezVous->getId());
     }

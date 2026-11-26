@@ -7,6 +7,7 @@ use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
 use App\Form\AddPatientType;
+use App\Service\EtepeaNotifier;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -147,7 +148,7 @@ class AccueilController extends AbstractController
     }
 
     #[Route(path: '/add_patient_slot', name: 'add_patient_slot', methods: 'POST')]
-    public function add_patient_slot(Request $request): JsonResponse
+    public function add_patient_slot(Request $request, EtepeaNotifier $etepea): JsonResponse
     {
         if (!$request->isXmlHttpRequest()) {
             return new JsonResponse(false);
@@ -184,6 +185,7 @@ class AccueilController extends AbstractController
 
         $this->em->persist($rendezVous);
         $this->em->flush();
+        $etepea->rendezVousCree($rendezVous);
 
         return new JsonResponse([
             'nom' => $patient->getNom(),

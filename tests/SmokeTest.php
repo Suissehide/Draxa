@@ -41,6 +41,10 @@ class SmokeTest extends WebTestCase
             $this->markTestSkipped('DATABASE_URL vers une base *_test requise.');
         }
 
+        // Etepea configuré mais injoignable : la création des RDV doit réussir quand même.
+        $_SERVER['ETEPEA_LEGACY_URL'] = $_ENV['ETEPEA_LEGACY_URL'] = 'http://127.0.0.1:9/legacy-appointments';
+        $_SERVER['ETEPEA_LEGACY_TOKEN'] = $_ENV['ETEPEA_LEGACY_TOKEN'] = 'test';
+
         $this->client = static::createClient();
         $this->em = static::getContainer()->get(EntityManagerInterface::class);
         $tool = new SchemaTool($this->em);
