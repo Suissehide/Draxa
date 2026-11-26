@@ -1612,7 +1612,8 @@
             }));
         }
 
-        $('.heure').change(function () {
+        // Délégué : couvre aussi les rendez-vous ajoutés sans recharger la page.
+        $(document).on('change', '.heure', function () {
             setThematiqueType($(this));
         });
 
@@ -1740,7 +1741,9 @@
                             index = 2;
                         else if (categorie === 'Coaching')
                             index = 3;
-                        let options;
+                        else if (categorie === 'Educative')
+                            index = 4;
+                        let options = '';
                         $.each(thematiques[index], function (key, value) {
                             options += '<option value="' + escapeHtml(value) + '">' + escapeHtml(value) + '</option>'
                         });

@@ -74,6 +74,6 @@ Date d’entrée correspond à la date de DE (Date DE se trouve dans la partie M
     Type de programme il me semble que nous allons vers des PEC de plus en plus personnalisées donc difficile de mettre un menu déroulant avec des titres de programmes : DONE (possibilité d'avoir une liste + champ libre)
 Peut-on s’orienter vers un menu déroulant avec les Ateliers et EI choisis avec la possibilité cumuler les  différences séances. : HELP
 
-. Problème quand je choisi un entretien le menu déroulant correspond au menu déroulant des ateliers et quand je choisi entretien les choix multiples correspondent aux ateliers (inversement) : HELP
+. Problème quand je choisi un entretien le menu déroulant correspond au menu déroulant des ateliers et quand je choisi entretien les choix multiples correspondent aux ateliers (inversement) : DONE (11/2026 : menus entretien/atelier vérifiés ; corrigé les semaines éducatives qui affichaient les thématiques des consultations et le « undefined » en tête de liste)
 
 . Sera t-il facile de modifier les items en fonction des demandes de la HAS? : HELP
