@@ -1,4 +1,4 @@
-FROM php:8.1-apache AS app
+FROM php:8.3-apache AS app
 
 # Install PHP extensions
 RUN apt-get update && apt-get install -y \
