@@ -67,11 +67,11 @@
                             let date_task = new Intl.DateTimeFormat("fr-FR", { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(new_date);
                             let enable = obj.enable ? 'checked' : '';
                             let task = `
-                            <li data-id="` + obj.id + `">
+                            <li data-id="` + escapeHtml(obj.id) + `">
                                 <div class="form-check">
-                                    <input class="inp-cbx" id="task_` + obj.id + `" type="checkbox" ` + enable + `/>
-                                    <label class="cbx" for="task_` + obj.id + `"></label>
-                                    <span class="todo__action" contenteditable="true">` + obj.description + `</span>
+                                    <input class="inp-cbx" id="task_` + escapeHtml(obj.id) + `" type="checkbox" ` + enable + `/>
+                                    <label class="cbx" for="task_` + escapeHtml(obj.id) + `"></label>
+                                    <span class="todo__action" contenteditable="true">` + escapeHtml(obj.description) + `</span>
                                 </div>
                                 <div class="todo__button-bar">
                                     <div class="todo__time">` + date_task + `</div>
@@ -144,11 +144,11 @@
                 success: function (id) {
                     if (id) {
                         let task = `
-                        <li data-id="` + id + `">
+                        <li data-id="` + escapeHtml(id) + `">
                             <div class="form-check">
-                                <input class="inp-cbx" id="task_` + id + `" type="checkbox"/>
-                                <label class="cbx" for="task_` + id + `"></label>
-                                <span class="todo__action" contenteditable="true">` + text + `</span>
+                                <input class="inp-cbx" id="task_` + escapeHtml(id) + `" type="checkbox"/>
+                                <label class="cbx" for="task_` + escapeHtml(id) + `"></label>
+                                <span class="todo__action" contenteditable="true">` + escapeHtml(text) + `</span>
                             </div>
                             <div class="todo__button-bar">
                                 <div class="todo__time">` + time + `</div>

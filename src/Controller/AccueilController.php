@@ -3,278 +3,226 @@
 namespace App\Controller;
 
 use App\Constant\ThematiqueConstants;
-
 use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
-
 use App\Form\AddPatientType;
-
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/accueil")
  */
 class AccueilController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
+    private const CATEGORIES = ['Consultation', 'Entretien', 'Coaching', 'Atelier', 'Educative'];
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $entityManager;
     }
 
     /**
      * @Route("/", name="accueil", methods="GET|POST")
      */
-    public function accueil(Request $request)
+    public function accueil(Request $request): Response
     {
         if ($request->isXmlHttpRequest()) {
-            $date = $request->get('date');
-            $startdatetime = \DateTime::createFromFormat("d/m/Y H:i:s", date($date . " 00:00:00"));
-            $enddatetime = \DateTime::createFromFormat("d/m/Y H:i:s", date($date . " 23:59:59"));
+            $start = \DateTime::createFromFormat('!d/m/Y', (string) $request->get('date'));
+            if (!$start) {
+                return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+            }
+            $end = (clone $start)->setTime(23, 59, 59);
 
-            $slots = $this->em->getRepository(Slot::class)->findByDate($startdatetime, $enddatetime);
+            $slots = $this->em->getRepository(Slot::class)->findByDate($start, $end);
 
-            $response = array();
-            $response[] = $this->createSlotCategorie($slots, 'Consultation');
-            $response[] = $this->createSlotCategorie($slots, 'Entretien');
-            $response[] = $this->createSlotCategorie($slots, 'Coaching');
-            $response[] = $this->createSlotCategorie($slots, 'Atelier');
-            $response[] = $this->createSlotCategorie($slots, 'Educative');
+            $response = [];
+            foreach (self::CATEGORIES as $categorie) {
+                $rows = [];
+                foreach ($slots as $slot) {
+                    if ($slot->getCategorie() === $categorie) {
+                        $rows[] = $this->slotToArray($slot, true);
+                    }
+                }
+                $response[] = $rows;
+            }
 
-            return new JsonResponse($response, Response::HTTP_OK);
+            return new JsonResponse($response);
         }
 
-        $slot = new Slot();
-        $form = $this->createForm(AddPatientType::class, $slot);
-
-        $consultations = [];
-        foreach (ThematiqueConstants::CONSULTATION as $consultation) { $consultations[] = $consultation; }
-        $entretiens = [];
-        foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
-        $ateliers = [];
-        foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
-        $coachings = [];
-        foreach (ThematiqueConstants::COACHING as $coaching) { $coachings[] = $coaching; }
-        $educatives = [];
-        $thematiques = array( $consultations, $entretiens, $ateliers, $coachings, $educatives );
+        $form = $this->createForm(AddPatientType::class, new Slot());
 
         return $this->render('accueil/index.html.twig', [
             'title' => 'Accueil',
             'controller_name' => 'AccueilController',
             'form' => $form->createView(),
-            'thematiques' => $thematiques
+            'thematiques' => ThematiqueConstants::lists(),
         ]);
     }
 
-    private function createSlotCategorie(array $slots, String $categorie)
+    /**
+     * @param bool $typeFallback utilise le type du créneau si le rendez-vous n'en a pas
+     */
+    private function slotToArray(Slot $slot, bool $typeFallback): array
     {
-        $jsonContent = array();
-        foreach ($slots as $s) {
-            if ($s->getCategorie() === $categorie) {
-                $patientsArray = array();
-                $rendezVous = $s->getRendezVous();
-                if (is_array($rendezVous) || is_object($rendezVous)) {
-                    foreach ($rendezVous as $r) {
-                        $p = $r->getPatient();
-                        $patientsArray[] = array(
-                            'patientId' => $p->getId(),
-                            'nom' => $p->getNom(),
-                            'prenom' => $p->getPrenom(),
-                            'rendezVousId' => $r->getId(),
-                            'send' =>  $r->getSend() === 'Oui' ? 'Oui' : 'Non',
-                            'notes' => $r->getNotes(),
-                            'type' => $r->getType() === null ? ($s->getType() === null ? "" : $s->getType()) : $r->getType(),
-                            'venu' => $r->getEtat() ? $r->getEtat() : "",
-                            'theraflow' => $p->getDivers(),
-                            'progetp' => $p->getProgetp()
-                        );
-                    }
-                }
-                $jsonContent[] = array(
-                    "id" => $s->getId(),
-                    "horaire" => $s->getHeureDebut()->format('H:i') . ' - ' . $s->getHeureFin()->format('H:i'),
-                    "thematique" => $s->getThematique() === null ? "" : $s->getThematique(),
-                    "type" => $s->getType() === null ? "" : $s->getType(),
-                    "soignant" => $s->getSoignant() === null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
-                    "location" => $s->getLocation() === null ? "" : $s->getLocation(),
-                    "place" => $s->getPlace(),
-                    "patients" => empty($rendezVous) ? "" : $patientsArray,
-                );
-            }
+        $patients = [];
+        foreach ($slot->getRendezVous() as $r) {
+            $p = $r->getPatient();
+            $patients[] = [
+                'patientId' => $p->getId(),
+                'nom' => $p->getNom(),
+                'prenom' => $p->getPrenom(),
+                'rendezVousId' => $r->getId(),
+                'send' => $r->getSend() === 'Oui' ? 'Oui' : 'Non',
+                'notes' => $r->getNotes(),
+                'type' => $r->getType() ?? ($typeFallback ? $slot->getType() : null) ?? '',
+                'venu' => $r->getEtat() ?: '',
+                'theraflow' => $p->getDivers(),
+                'progetp' => $p->getProgetp(),
+            ];
         }
-        return $jsonContent;
+
+        $soignant = $slot->getSoignant();
+
+        return [
+            'id' => $slot->getId(),
+            'categorie' => $slot->getCategorie(),
+            'date' => $slot->getDate()?->format('d/m/Y'),
+            'horaire' => $slot->getHeureDebut()?->format('H:i') . ' - ' . $slot->getHeureFin()?->format('H:i'),
+            'thematique' => $slot->getThematique() ?? '',
+            'type' => $slot->getType() ?? '',
+            'soignant' => $soignant ? $soignant->getPrenom() . ' ' . $soignant->getNom() : '',
+            'location' => $slot->getLocation() ?? '',
+            'place' => $slot->getPlace(),
+            'patients' => $patients,
+        ];
     }
 
     /**
      * @Route("/slot", name="slot_list", methods="GET|POST")
      */
-
     public function slot_list(Request $request): Response
     {
-        if ($request->isXmlHttpRequest()) {
-            $categories = $request->get('categories');
-            $dateDebut = $request->get('dateDebut');
-            $dateFin = $request->get('dateFin');
-
-            $current = $request->get('current');
-            $rowCount = $request->get('rowCount');
-            $searchPhrase = $request->get('searchPhrase');
-            $sort = $request->get('sort');
-
-            $slotRepository = $this->em->getRepository(Slot::class);
-            $slots = $slotRepository->findByFilter($sort, $searchPhrase, $categories, $dateDebut, $dateFin);
-            if ($searchPhrase != "" || $sort != "all") {
-                $count = count($slots->getQuery()->getResult());
-            } else {
-                $count = $slotRepository->compte();
-            }
-            if ($rowCount != -1) {
-                $min = ($current - 1) * $rowCount;
-                $max = $rowCount;
-                $slots->setMaxResults($max)->setFirstResult($min);
-            }
-
-            $jsonContent = [];
-            $slots = $slots->getQuery()->getResult();
-            foreach ($slots as $s) {
-                $patientsArray = array();
-                $rendezVous = $s->getRendezVous();
-                if (is_array($rendezVous) || is_object($rendezVous)) {
-                    foreach ($rendezVous as $r) {
-                        $p = $r->getPatient();
-                        $patientsArray[] = array(
-                            'patientId' => $p->getId(),
-                            'nom' => $p->getNom(),
-                            'prenom' => $p->getPrenom(),
-                            'rendezVousId' => $r->getId(),
-                            'send' =>  $r->getSend() === 'Oui' ? 'Oui' : 'Non',
-                            'notes' => $r->getNotes(),
-                            'type' => $r->getType() === null ? "" : $r->getType(),
-                            'venu' => $r->getEtat() ? $r->getEtat() : "",
-                            'theraflow' => $p->getDivers(),
-                            'progetp' => $p->getProgetp()
-                        );
-                    }
-                }
-                $jsonContent[] = array(
-                    "id" => $s->getId(),
-                    "categorie" => $s->getCategorie(),
-                    "date" => $s->getDate()->format('d/m/Y'),
-                    "horaire" => $s->getHeureDebut()->format('H:i') . ' - ' . $s->getHeureFin()->format('H:i'),
-                    "thematique" => $s->getThematique(),
-                    "type" => $s->getType() === null ? "" : $s->getType(),
-                    "location" => $s->getLocation() === null ? "" : $s->getLocation(),
-                    "soignant" => $s->getSoignant() === null ? "" : $s->getSoignant()->getPrenom() . ' ' . $s->getSoignant()->getNom(),
-                    "place" => $s->getPlace(),
-                    "patients" => empty($rendezVous) ? "" : $patientsArray,
-                );
-            }
-
-            $data = array(
-                "current" => intval($current),
-                "rowCount" => intval($rowCount),
-                "rows" => $jsonContent,
-                "total" => intval($count)
-            );
-            return new JsonResponse($data);
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(false);
         }
-        return new JsonResponse(false);
+
+        $current = (int) $request->get('current', 1);
+        $rowCount = (int) $request->get('rowCount', -1);
+
+        $slotRepository = $this->em->getRepository(Slot::class);
+        $qb = $slotRepository->findByFilter(
+            (array) $request->get('sort'),
+            (string) $request->get('searchPhrase', ''),
+            (array) $request->get('categories'),
+            $request->get('dateDebut'),
+            $request->get('dateFin')
+        );
+        $count = $slotRepository->countFiltered($qb);
+
+        if ($rowCount > 0) {
+            $qb->setFirstResult(max(0, $current - 1) * $rowCount)->setMaxResults($rowCount);
+        }
+
+        $rows = [];
+        foreach ($qb->getQuery()->getResult() as $slot) {
+            $rows[] = $this->slotToArray($slot, false);
+        }
+
+        return new JsonResponse([
+            'current' => $current,
+            'rowCount' => $rowCount,
+            'rows' => $rows,
+            'total' => $count,
+        ]);
     }
 
     /**
      * @Route("/redirect_vue_patient", name="redirect_vue_patient", methods="GET|POST")
      */
-    public function redirect_vue_patient(Request $request)
+    public function redirect_vue_patient(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $id = $request->get('id');
-            $anchor = $request->get('anchor');
-
-            return new JsonResponse($this->generateUrl('patient_vue', array('id' => $id)) . '#' . $anchor);
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(false);
         }
-        return new JsonResponse(false);
+
+        $url = $this->generateUrl('patient_vue', ['id' => (int) $request->get('id')]);
+
+        return new JsonResponse($url . '#' . rawurlencode((string) $request->get('anchor')));
     }
 
     /**
      * @Route("/add_patient_slot", name="add_patient_slot", methods="GET|POST")
      */
-    public function add_patient_slot(Request $request)
+    public function add_patient_slot(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $slotId = $request->get('slotId');
-            $patientId = $request->get('patientId');
-            $thematique = $request->get('thematique');
-            $type = $request->get('type');
-
-            $slotRepository = $this->em->getRepository(Slot::class);
-            if ($slotRepository->isAlreadyInSlot($slotId, $patientId))
-                return new JsonResponse(false);
-
-            $slot = $slotRepository->findOneById($slotId);
-            $patient = $this->em->getRepository(Patient::class)->findOneById($patientId);
-
-            $rendezVous = new RendezVous();
-            $rendezVous->setDate($slot->getDate());
-            $rendezVous->setHeure($slot->getHeureDebut());
-            $rendezVous->setThematique($thematique ? $thematique : $slot->getThematique());
-            $rendezVous->setType($type ? $type : $slot->getType());
-            $rendezVous->setCategorie($slot->getCategorie());
-            $rendezVous->setPatient($patient);
-            $rendezVous->setSlot($slot);
-
-            $slot->setThematique($thematique ? $thematique : $slot->getThematique());
-
-            $this->em->persist($rendezVous);
-            $this->em->flush();
-
-            return new JsonResponse(
-                array(
-                    'nom' => $patient->getNom(),
-                    'prenom' => $patient->getPrenom(),
-                    'rendezVousId' => $rendezVous->getId(),
-                    'send' =>  $rendezVous->getSend() === 'Oui' ? 'Oui' : 'Non'
-                )
-            );
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(false);
         }
-        return new JsonResponse(false);
+
+        $slotId = $request->get('slotId');
+        $patientId = $request->get('patientId');
+        $thematique = $request->get('thematique');
+        $type = $request->get('type');
+
+        $slotRepository = $this->em->getRepository(Slot::class);
+        if ($slotRepository->isAlreadyInSlot($slotId, $patientId)) {
+            return new JsonResponse(false);
+        }
+
+        $slot = $slotRepository->find($slotId);
+        $patient = $this->em->getRepository(Patient::class)->find($patientId);
+        if (!$slot || !$patient) {
+            return new JsonResponse(false, Response::HTTP_NOT_FOUND);
+        }
+
+        $rendezVous = (new RendezVous())
+            ->setDate($slot->getDate())
+            ->setHeure($slot->getHeureDebut())
+            ->setThematique($thematique ?: $slot->getThematique())
+            ->setType($type ?: $slot->getType())
+            ->setCategorie($slot->getCategorie())
+            ->setPatient($patient)
+            ->setSlot($slot);
+
+        if ($thematique) {
+            $slot->setThematique($thematique);
+        }
+
+        $this->em->persist($rendezVous);
+        $this->em->flush();
+
+        return new JsonResponse([
+            'nom' => $patient->getNom(),
+            'prenom' => $patient->getPrenom(),
+            'rendezVousId' => $rendezVous->getId(),
+            'send' => $rendezVous->getSend() === 'Oui' ? 'Oui' : 'Non',
+        ]);
     }
 
     /**
+     * Détache le rendez-vous du créneau (le rendez-vous est conservé sur la fiche patient).
+     *
      * @Route("/remove_patient_slot", name="remove_patient_slot", methods="GET|POST")
      */
-    public function remove_patient_slot(Request $request)
+    public function remove_patient_slot(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $rendezVousId = $request->get('rendezVousId');
-            $slotId = $request->get('slotId');
-
-            $rendezVous = $this->em->getRepository(RendezVous::class)->findOneById($rendezVousId);
-            $slot = $this->em->getRepository(Slot::class)->findOneById($slotId);
-            $slot->removeRendezVous($rendezVous);
-
-            // $this->em->remove($rendezVous);
-
-            /*
-            if ($slot) {
-                if (count($slot->getRendezVous()) === 0) {
-                    $slot->setThematique('');
-                }
-            }
-            */
-
-            $this->em->flush();
-            return new JsonResponse(true);
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(false);
         }
-        return new JsonResponse(false);
+
+        $rendezVous = $this->em->getRepository(RendezVous::class)->find($request->get('rendezVousId'));
+        $slot = $this->em->getRepository(Slot::class)->find($request->get('slotId'));
+        if (!$rendezVous || !$slot) {
+            return new JsonResponse(false, Response::HTTP_NOT_FOUND);
+        }
+
+        $slot->removeRendezVous($rendezVous);
+        $this->em->flush();
+
+        return new JsonResponse(true);
     }
 }

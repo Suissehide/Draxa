@@ -386,12 +386,12 @@
                     for (let i = 0; i < res.length; i++) {
                         if (res[i].length > 0) {
                             $.each(res[i], function (index, val) {
-                                $('<tr data-row-id=' + val.id + ' class="text-left">')
+                                $('<tr data-row-id="' + escapeHtml(val.id) + '" class="text-left">')
                                     .append(`
-                                        <td class="horaire">` + val.horaire + `</td>
-                                        <td class="thematique">` + val.thematique + `</td>
-                                        <td>` + val.location + `</td>
-                                        <td>` + val.soignant + `</td>
+                                        <td class="horaire">` + escapeHtml(val.horaire) + `</td>
+                                        <td class="thematique">` + escapeHtml(val.thematique) + `</td>
+                                        <td>` + escapeHtml(val.location) + `</td>
+                                        <td>` + escapeHtml(val.soignant) + `</td>
                                         <td>` + displayPatient(val.patients, val.place) + `</td>
                                         <td>` + displayPatientType(val.patients) + `</td>
                                         <td>` + displayPatientActions(val.patients) + `</td>
@@ -437,15 +437,15 @@
 
         function displayPatient(data, place) {
             let label = '';
-            label += '<div class="user-list" data-place="' + place + '">';
+            label += '<div class="user-list" data-place="' + escapeHtml(place) + '">';
             if (data.length !== 0) {
                 data.forEach(function (e) {
                     let theraflow = e.theraflow ? ' theraflow' : '';
                     let progetp = e.progetp === 'ViVa module AOMI' ? ' progetp' : '';
                     label += `
-                        <div class="user-label" data-id="` + e.rendezVousId + `">
-                            <div class="user-name` + theraflow + progetp + `" title="` + e.nom + ` ` + e.prenom + `">
-                                ` + e.nom + ` ` + e.prenom + `
+                        <div class="user-label" data-id="` + escapeHtml(e.rendezVousId) + `">
+                            <div class="user-name` + theraflow + progetp + `" title="` + escapeHtml(e.nom) + ` ` + escapeHtml(e.prenom) + `">
+                                ` + escapeHtml(e.nom) + ` ` + escapeHtml(e.prenom) + `
                             </div>
                         </div>
                     `;
@@ -462,7 +462,7 @@
             if (data.length !== 0) {
                 data.forEach(function (e) {
                     label += `
-                        <li>` + e.type + `</div>
+                        <li>` + escapeHtml(e.type) + `</div>
                     `;
                 });
             }
@@ -476,7 +476,7 @@
                 data.forEach(function (e) {
                     let checked = (e.send === 'Oui' ? 'checked' : '');
                     let notes = (e.notes ?
-                        `<button class="js-comment tooltip2" data-tooltip="` + e.notes.replace(/"/g, "'") + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
+                        `<button class="js-comment tooltip2" data-tooltip="` + escapeHtml(e.notes.replace(/"/g, "'")) + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
 
                     let venu = "<div class=\"pastille white\"></div>";
                     if (e.venu === 'Oui')
@@ -485,11 +485,11 @@
                         venu = "<div class=\"pastille gold\"></div>";
 
                     label += `
-                        <div class="user-send" data-id="` + e.rendezVousId + `">
-                            <input class="inp-cbx" id="` + e.rendezVousId + `" type="checkbox" ` + checked + `/>
-                            <label class="cbx" for="` + e.rendezVousId + `"></label>
-                            <button class="js-removePatient" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-minus"></i></button>
-                            <button class="js-redirect" data-id="` + e.patientId + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                        <div class="user-send" data-id="` + escapeHtml(e.rendezVousId) + `">
+                            <input class="inp-cbx" id="` + escapeHtml(e.rendezVousId) + `" type="checkbox" ` + checked + `/>
+                            <label class="cbx" for="` + escapeHtml(e.rendezVousId) + `"></label>
+                            <button class="js-removePatient" data-id="` + escapeHtml(e.patientId) + `"><i class="glyphicon glyphicon-minus"></i></button>
+                            <button class="js-redirect" data-id="` + escapeHtml(e.patientId) + `"><i class="glyphicon glyphicon-pencil"></i></button>
                             ` + venu + `
                             ` + notes + `
                         </div>

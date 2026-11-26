@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Patient;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,80 +15,59 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class PatientRepository extends ServiceEntityRepository
 {
+    /** Colonnes de Patient triables en base. */
+    public const SORTABLE = ['id', 'nom', 'prenom', 'tel1', 'etp', 'objectif'];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Patient::class);
-	}
-
-    public function countPatient()
-    {
-        return $this->createQueryBuilder('p')
-            ->select('COUNT(p)')
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
     }
 
-    public function findAndCountByFilter($sort, $searchPhrase, $etat, $rowCount, $current)
+    /**
+     * Patients filtrés pour la grille de la liste des patients.
+     * Le tri n'est appliqué que pour les colonnes de SORTABLE ; les autres sont triées par l'appelant.
+     */
+    public function createFilterQueryBuilder(?string $searchPhrase, ?string $etat, ?string $sortKey, string $sortDir): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('p')
-            ->leftJoin('p.rendezVous', 'r')
-            ->leftJoin('r.slot', 's')
-            ->select('DISTINCT p'); // Ensure unique patients
+        $qb = $this->createQueryBuilder('p');
 
-        if (!empty($searchPhrase)) {
-            $qb->andWhere("
-            p.nom LIKE :search
-            OR p.prenom LIKE :search
-            OR p.tel1 LIKE :search
-            OR p.etp LIKE :search
-            OR p.objectif LIKE :search
-            OR r.categorie LIKE :search
-            OR DATE_FORMAT(r.date, '%d/%m/%Y') LIKE :search
-            OR s.thematique LIKE :search
-        ")
-                ->setParameter('search', '%' . $searchPhrase . '%');
+        if ($searchPhrase) {
+            // Sous-requête : évite le DISTINCT + jointure qui casse le tri et la pagination.
+            $rdvMatch = $this->getEntityManager()->createQueryBuilder()
+                ->select('1')
+                ->from('App\Entity\RendezVous', 'r')
+                ->leftJoin('r.slot', 's')
+                ->where('r.patient = p')
+                ->andWhere("r.categorie LIKE :search OR DATE_FORMAT(r.date, '%d/%m/%Y') LIKE :search OR s.thematique LIKE :search");
+
+            $qb->andWhere(
+                'p.nom LIKE :search OR p.prenom LIKE :search OR p.tel1 LIKE :search'
+                . ' OR p.etp LIKE :search OR p.objectif LIKE :search'
+                . ' OR EXISTS(' . $rdvMatch->getDQL() . ')'
+            )->setParameter('search', '%' . $searchPhrase . '%');
         }
 
-        if ($etat === "in") {
+        if ($etat === 'in') {
             $qb->andWhere('p.dentree IS NULL');
-        } elseif ($etat === "out") {
+        } elseif ($etat === 'out') {
             $qb->andWhere('p.dentree IS NOT NULL');
-        } elseif ($etat !== "all") {
-            $qb->andWhere('p.offre LIKE :etat')
-                ->setParameter('etat', $etat);
         }
 
-        if ($sort) {
-            foreach ($sort as $key => $value) {
-                if ($key == "date" || $key == "categorie") {
-                    $qb->orderBy('r.' . $key, $value);
-                } elseif ($key == "thematique") {
-                    $qb->orderBy('s.' . $key, $value);
-                } else {
-                    $qb->orderBy('p.' . $key, $value);
-                }
-            }
+        if (in_array($sortKey, self::SORTABLE, true)) {
+            $qb->orderBy('p.' . $sortKey, $sortDir === 'DESC' ? 'DESC' : 'ASC');
         } else {
             $qb->orderBy('p.nom', 'ASC');
         }
 
-        // Clone the query builder to create the count query
-        $countQb = clone $qb;
-        $countQb->select('COUNT(DISTINCT p.id)'); // Count unique patients
+        return $qb;
+    }
 
-        // Get the count result
-        $count = $countQb->getQuery()->getSingleScalarResult();
-
-        // Apply pagination
-        if ($rowCount != -1) {
-            $min = ($current - 1) * $rowCount;
-            $qb->setFirstResult($min)->setMaxResults($rowCount);
-        }
-
-        // Get the results
-        $patients = $qb->getQuery();
-
-        return ['count' => $count, 'patients' => $patients];
+    public function countFiltered(QueryBuilder $qb): int
+    {
+        return (int) (clone $qb)
+            ->select('COUNT(p.id)')
+            ->resetDQLPart('orderBy')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

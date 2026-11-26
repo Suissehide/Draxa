@@ -2,7 +2,6 @@ security:
     encoders:
         App\Entity\AppUser: bcrypt
     role_hierarchy:
-        ROLE_IDE: ROLE_IDE
         ROLE_AS: [ROLE_IDE, ROLE_AS]
         ROLE_ADMIN: [ROLE_AS, ROLE_ADMIN]
 
@@ -13,7 +12,6 @@ security:
             entity:
                 class: App\Entity\AppUser
                 property: username
-        in_memory: { memory: ~ }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -36,15 +34,6 @@ security:
                 path: logout
                 target: login
             anonymous: true
-
-            # activate different ways to authenticate
-            # https://symfony.com/doc/current/security.html#firewalls-authentication
-
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
 
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used

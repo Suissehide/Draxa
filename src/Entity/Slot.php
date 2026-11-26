@@ -76,7 +76,7 @@ class Slot
 
     /**
      * @Groups({"slot"})
-     * @ORM\OneToMany(targetEntity=RendezVous::class, mappedBy="slot", cascade={"persist", "remove"}, fetch="EAGER")
+     * @ORM\OneToMany(targetEntity=RendezVous::class, mappedBy="slot", cascade={"persist", "remove"})
      */
     private $rendezVous;
 
@@ -234,8 +234,21 @@ class Slot
         return $this;
     }
 
-    public function __toString() {
-        return strval($this->id);
+    public function __toString(): string
+    {
+        return (string) $this->id;
+    }
+
+    /**
+     * Duplication : nouveau créneau vide (sans rendez-vous), dates copiées.
+     */
+    public function __clone()
+    {
+        $this->id = null;
+        $this->rendezVous = new ArrayCollection();
+        $this->date = $this->date ? clone $this->date : null;
+        $this->heureDebut = $this->heureDebut ? clone $this->heureDebut : null;
+        $this->heureFin = $this->heureFin ? clone $this->heureFin : null;
     }
 
     public function getPlace(): ?int

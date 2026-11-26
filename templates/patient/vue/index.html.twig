@@ -1728,7 +1728,7 @@
                         $('#events-' + c + 's li a').removeClass("cd-h-timeline__date--selected");
                         $('#events-' + c + 's li a').addClass("cd-h-timeline__date--older-event");
                         $(document.createElement('li'))
-                            .append('<a class="cd-h-timeline__date" href=\"#0\" data-date=' + date + 'T' + time + '>' + date_h1 + '</a>')
+                            .append('<a class="cd-h-timeline__date" href=\"#0\" data-date="' + escapeHtml(date) + 'T' + escapeHtml(time) + '">' + date_h1 + '</a>')
                             .appendTo(events);
                         $('#events-' + c + 's li:last-child a').removeClass('cd-h-timeline__date--older-event');
                         $('#events-' + c + 's li:last-child a').addClass('cd-h-timeline__date--selected');
@@ -1742,7 +1742,7 @@
                             index = 3;
                         let options;
                         $.each(thematiques[index], function (key, value) {
-                            options += '<option value="' + value + '">' + value + '</option>'
+                            options += '<option value="' + escapeHtml(value) + '">' + escapeHtml(value) + '</option>'
                         });
 
                         let title = categorie;
@@ -1755,7 +1755,7 @@
                         $('#events-content-' + c + 's li').removeClass("cd-h-timeline__event--selected");
                         $(events_content)
                             .append(`
-                                <li class="cd-h-timeline__event" data-date="` + date + `T` + time + `" data-id="` + res + `">
+                                <li class="cd-h-timeline__event" data-date="` + escapeHtml(date) + `T` + escapeHtml(time) + `" data-id="` + escapeHtml(res) + `">
                                     <h2 class="cd-h-timeline__event-title">` + title + `</h2>
                                     <em class="cd-h-timeline__event-date">` + date_em + `</em>
                                     <div>
@@ -1764,14 +1764,14 @@
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="control-label required" for="patient_creation_form_` + c + `s_` + res + `_date">Date prévue</label>
-                                                    <input disabled type="text" id="patient_creation_form_` + c + `s_` + res + `_date" name="patient_creation_form[` + c + `][` + res + `][date]" required="required" class="datepicker form-control" value="` + date + `">
+                                                    <input disabled type="text" id="patient_creation_form_` + c + `s_` + res + `_date" name="patient_creation_form[` + c + `][` + res + `][date]" required="required" class="datepicker form-control" value="` + escapeHtml(date) + `">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="control-label required" for="patient_creation_form_` + c + `s_` + res + `_heure">Heure</label>
                                                     <select disabled type="text" id="patient_creation_form_` + c + `s_` + res + `_heure" name="patient_creation_form[` + c + `][` + res + `][heure]" required="required" class="form-control heure">
-                                                        <option value="` + slotId + `" selected="selected">` + time + `</option>
+                                                        <option value="` + escapeHtml(slotId) + `" selected="selected">` + escapeHtml(time) + `</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -1782,7 +1782,7 @@
                                                     <label class="control-label" for="patient_creation_form_` + c + `s_` + res + `_thematique">
                                                         Thématique
                                                     </label>
-                                                    <select type="text" id="patient_creation_form_` + c + `s_` + res + `_thematique" name="patient_creation_form[` + c + `][` + res + `][thematique]" class="form-control thematique" value="` + thematique + `">
+                                                    <select type="text" id="patient_creation_form_` + c + `s_` + res + `_thematique" name="patient_creation_form[` + c + `][` + res + `][thematique]" class="form-control thematique" value="` + escapeHtml(thematique) + `">
                                                         <option value=''></option>
                                                         ` + options + `
                                                     </select>
@@ -1828,7 +1828,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label" for="patient_creation_form_` + c + `s_` + res + `_motifRefus">Motif de refus</label>
-                                                    <input type="text" id="patient_creation_form_` + c + `s_` + res + `_motifRefus" name="patient_creation_form[` + c + `][` + res + `][motifRefus]" class="form-control" value="` + motifRefus + `">
+                                                    <input type="text" id="patient_creation_form_` + c + `s_` + res + `_motifRefus" name="patient_creation_form[` + c + `][` + res + `][motifRefus]" class="form-control" value="` + escapeHtml(motifRefus) + `">
                                                 </div>
                                             </div>
                                         </div>
@@ -1836,7 +1836,7 @@
                                             <div class="col-md-12">
                                                 <div class="form-group">
                                                     <label class="control-label" for="patient_creation_form_` + c + `s_` + res + `_notes">Notes de transmission</label>
-                                                    <textarea type="text" id="patient_creation_form_` + c + `s_` + res + `_notes" name="patient_creation_form[` + c + `][` + res + `][notes]" class="form-control">` + notes + `</textarea>
+                                                    <textarea type="text" id="patient_creation_form_` + c + `s_` + res + `_notes" name="patient_creation_form[` + c + `][` + res + `][notes]" class="form-control">` + escapeHtml(notes) + `</textarea>
                                                 </div>
                                             </div>
                                         </div>

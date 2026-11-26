@@ -39,6 +39,15 @@ class Semaine
         $this->slots = new ArrayCollection();
     }
 
+    /**
+     * Duplication : nouvelle semaine sans créneaux (ils sont clonés un par un par l'appelant).
+     */
+    public function __clone()
+    {
+        $this->id = null;
+        $this->slots = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

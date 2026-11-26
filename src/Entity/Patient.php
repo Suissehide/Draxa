@@ -166,7 +166,7 @@ class Patient
 
     /**
      * @Groups({"patient", "rendezVous"})
-     * @ORM\OneToMany(targetEntity="App\Entity\RendezVous", mappedBy="patient", cascade={"persist", "remove"}, orphanRemoval=true, indexBy="id", fetch="EAGER")
+     * @ORM\OneToMany(targetEntity="App\Entity\RendezVous", mappedBy="patient", cascade={"persist", "remove"}, orphanRemoval=true, indexBy="id")
      * @ORM\OrderBy({"date" = "ASC"})
      */
     private $rendezVous;

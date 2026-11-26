@@ -536,7 +536,7 @@
                 for (let thematique in res['slots']) {
                     for (let etat in res['slots'][thematique]) {
                         let line = $('<tr data-row-id=' + 0 + ' class="text-left">');
-                        line.append('<td class="stat-cell-label">' + thematiques[thematique][etat] + '</td>')
+                        line.append('<td class="stat-cell-label">' + escapeHtml(thematiques[thematique][etat]) + '</td>')
                         $.each(res['slots'][thematique][etat], function (index, val) {
                             let color = "stat-cell";
                             if (index === 0)
@@ -555,7 +555,7 @@
                     var totalsOui = {}, totalsNon = {};
                     categories.forEach(function(c) { totalsOui[c] = 0; totalsNon[c] = 0; });
                     $.each(res.soignants, function(nom, cats) {
-                        var $tr = $('<tr>').append('<td class="stat-cell-label">' + nom + '</td>');
+                        var $tr = $('<tr>').append('<td class="stat-cell-label">' + escapeHtml(nom) + '</td>');
                         for (var i = 0; i < categories.length; i++) {
                             var c = cats[categories[i]];
                             $tr.append('<td class="stat-cell">' + c.oui + '</td>');
@@ -580,7 +580,7 @@
                     var sumOui = 0, sumNon = 0;
                     $.each(res.moyAteliers, function(them, d) {
                         $('<tr>')
-                            .append('<td class="stat-cell-label">' + them + '</td>')
+                            .append('<td class="stat-cell-label">' + escapeHtml(them) + '</td>')
                             .append('<td class="stat-cell">' + d.slots + '</td>')
                             .append('<td class="stat-cell">' + d.oui + '</td>')
                             .append('<td class="stat-cell">' + d.non + '</td>')
@@ -613,10 +613,10 @@
                         var $tbody = $('#table-missing-' + key + ' tbody');
                         for (var j = 0; j < list.length; j++) {
                             var p = list[j];
-                            $('<tr style="cursor:pointer" data-patient-id="' + p['id'] + '">')
-                                .append('<td class="stat-cell">' + p['nom'] + '</td>')
-                                .append('<td class="stat-cell">' + p['prenom'] + '</td>')
-                                .append('<td class="stat-cell">' + p['ddn'] + '</td>')
+                            $('<tr style="cursor:pointer" data-patient-id="' + escapeHtml(p['id']) + '">')
+                                .append('<td class="stat-cell">' + escapeHtml(p['nom']) + '</td>')
+                                .append('<td class="stat-cell">' + escapeHtml(p['prenom']) + '</td>')
+                                .append('<td class="stat-cell">' + escapeHtml(p['ddn']) + '</td>')
                                 .appendTo($tbody);
                         }
                     });
@@ -625,12 +625,12 @@
                     var $tbodyNa = $('#table-missing-nonassigne tbody');
                     for (var j = 0; j < nonAssigne.length; j++) {
                         var r = nonAssigne[j];
-                        $('<tr style="cursor:pointer" data-patient-id="' + r['id'] + '">')
-                            .append('<td class="stat-cell">' + r['nom'] + '</td>')
-                            .append('<td class="stat-cell">' + r['prenom'] + '</td>')
-                            .append('<td class="stat-cell">' + r['date'] + '</td>')
-                            .append('<td class="stat-cell">' + r['categorie'] + '</td>')
-                            .append('<td class="stat-cell">' + r['thematique'] + '</td>')
+                        $('<tr style="cursor:pointer" data-patient-id="' + escapeHtml(r['id']) + '">')
+                            .append('<td class="stat-cell">' + escapeHtml(r['nom']) + '</td>')
+                            .append('<td class="stat-cell">' + escapeHtml(r['prenom']) + '</td>')
+                            .append('<td class="stat-cell">' + escapeHtml(r['date']) + '</td>')
+                            .append('<td class="stat-cell">' + escapeHtml(r['categorie']) + '</td>')
+                            .append('<td class="stat-cell">' + escapeHtml(r['thematique']) + '</td>')
                             .appendTo($tbodyNa);
                     }
                 }

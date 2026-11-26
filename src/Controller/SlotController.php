@@ -2,188 +2,129 @@
 
 namespace App\Controller;
 
-use App\Entity\Slot;
 use App\Entity\Semaine;
+use App\Entity\Slot;
 use App\Entity\Soignant;
-use App\Entity\Patient;
-use App\Entity\RendezVous;
-
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 /**
  * @Route("/slot")
  */
 class SlotController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $entityManager;
-    }
-    
-    /**
-     * @Route("/", name="slot_index")
-     */
-    public function index(): Response
-    {
-        return $this->render('slot/index.html.twig', [
-            'controller_name' => 'SlotController',
-        ]);
     }
 
     /**
-     * @Route("/get/{id}", name="slot_get", methods={"GET"})
+     * @Route("/get/{id}", name="slot_get", methods="GET")
      */
-    public function getSlot(ManagerRegistry $doctrine, int $id): Response
+    public function getSlot(SerializerInterface $serializer, int $id): Response
     {
-        $slot = $doctrine->getRepository(Slot::class)->find($id);
-        $serializer = $this->container->get('serializer');
-        $json = $serializer->serialize($slot, 'json', ['groups' => ['slot']]);
-        return new Response($json);
+        $slot = $this->em->getRepository(Slot::class)->find($id)
+            ?? throw $this->createNotFoundException();
+
+        return new JsonResponse($serializer->serialize($slot, 'json', ['groups' => ['slot']]), Response::HTTP_OK, [], true);
     }
 
     /**
-     * @Route("/add", name="slot_add", methods={"POST"})
+     * @Route("/add", name="slot_add", methods="POST")
      */
     public function add(Request $request): Response
     {
-        if ($request->isXmlHttpRequest()) {
-            $date = explode('/', $request->get('date'));
-            $new_date = date_create(date("y-m-d", mktime(0, 0, 0, $date[1], $date[0], $date[2])));
-
-            $semaineId = $request->get('semaineId');
-            $heureDebut = $request->get('heureDebut');
-            $heureFin = $request->get('heureFin');
-            $categorie = $request->get('categorie');
-            $thematique = $request->get('thematique');
-            $type = $request->get('type');
-            $location = $request->get('location');
-            $place = $request->get('place');
-            $soignant = $request->get('soignant');
-
-            $semaine = $this->em->getRepository(Semaine::class)->findOneBy(array('id' => $semaineId));
-
-            $slot = new Slot();
-            $slot->setDate($new_date);
-            $slot->setHeureDebut(date_create_from_format('H:i', $heureDebut));
-            $slot->setHeureFin(date_create_from_format('H:i', $heureFin));
-            $slot->setCategorie($categorie);
-            $slot->setThematique($thematique);
-            $slot->setType($type);
-            $slot->setLocation($location);
-            $slot->setPlace($place === '' ? null : $place);
-            $slot->setSoignant($this->em->getRepository(Soignant::class)->findOneById($soignant));
-            $slot->setSemaine($semaine);
-            $this->em->persist($slot);
-            $this->em->flush();
-
-            return new JsonResponse([
-                'id' => $slot->getId(),
-                'debut' => date_format($slot->getHeureDebut(), 'H:i'),
-                'fin' => date_format($slot->getHeureFin(), 'H:i'),
-                'categorie' => $slot->getCategorie(),
-                'thematique' => $slot->getThematique(),
-                'type' => $slot->getType(),
-                'location' => $slot->getLocation(),
-                'soignant' => $slot->getSoignant() ? $slot->getSoignant()->getPrenom() . ' ' . $slot->getSoignant()->getNom() : '',
-            ]);
+        $date = \DateTime::createFromFormat('!d/m/Y', (string) $request->get('date'));
+        if (!$request->isXmlHttpRequest() || !$date) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+
+        $slot = (new Slot())
+            ->setDate($date)
+            ->setSemaine($this->em->getRepository(Semaine::class)->find((int) $request->get('semaineId')));
+        $this->hydrate($slot, $request);
+
+        $this->em->persist($slot);
+        $this->em->flush();
+
+        return new JsonResponse($this->slotToArray($slot));
     }
 
     /**
-     * @Route("/edit/{id}", name="slot_edit", methods={"PATCH"})
+     * @Route("/edit/{id}", name="slot_edit", methods="PATCH")
      */
-    public function edit(Request $request, ManagerRegistry $doctrine, int $id): Response
+    public function edit(Request $request, int $id): Response
     {
-        if ($request->isXmlHttpRequest()) {
-            $slot = $doctrine->getRepository(Slot::class)->find($id);
-            $heureDebut = $request->get('heureDebut');
-            $heureFin = $request->get('heureFin');
-            $categorie = $request->get('categorie');
-            $thematique = $request->get('thematique');
-            $type = $request->get('type');
-            $location = $request->get('location');
-            $place = $request->get('place');
-            $soignant = $request->get('soignant');
-
-            $slot->setHeureDebut(date_create_from_format('H:i', $heureDebut));
-            $slot->setHeureFin(date_create_from_format('H:i', $heureFin));
-            $slot->setCategorie($categorie);
-            $slot->setThematique($thematique);
-            $slot->setType($type);
-            $slot->setLocation($location);
-            $slot->setPlace($place === '' ? null : $place);
-            $slot->setSoignant($this->em->getRepository(Soignant::class)->findOneById($soignant));
-            $this->em->flush();
-
-            return new JsonResponse([
-                'id' => $slot->getId(),
-                'debut' => date_format($slot->getHeureDebut(), 'H:i'),
-                'fin' => date_format($slot->getHeureFin(), 'H:i'),
-                'categorie' => $slot->getCategorie(),
-                'thematique' => $slot->getThematique(),
-                'type' => $slot->getType(),
-                'location' => $slot->getLocation(),
-                'soignant' => $slot->getSoignant() ? $slot->getSoignant()->getPrenom() . ' ' . $slot->getSoignant()->getNom() : '',
-            ]);
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
-    }
 
-    /**
-     * @Route("/delete/{id}", name="slot_delete", methods={"DELETE"})
-     */
-    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
-    {
-        if ($request->isXmlHttpRequest()) {
-            $slot = $doctrine->getRepository(Slot::class)->find($id);
-            if ($slot) {
-                $this->em->remove($slot);
-                $this->em->flush();
-                return new JsonResponse(null, Response::HTTP_OK);
-            }
+        $slot = $this->em->getRepository(Slot::class)->find($id);
+        if (!$slot) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+
+        $this->hydrate($slot, $request);
+        $this->em->flush();
+
+        return new JsonResponse($this->slotToArray($slot));
     }
 
     /**
-     * @Route("/duplicate/{id}", name="slot_duplicate", methods={"POST"})
+     * @Route("/delete/{id}", name="slot_delete", methods="DELETE")
      */
-    public function duplicate(Request $request, ManagerRegistry $doctrine, int $id): Response
+    public function delete(Request $request, int $id): Response
     {
-        if ($request->isXmlHttpRequest()) {
-            $slot = $doctrine->getRepository(Slot::class)->find($id);
-            if ($slot) {
-                $new = clone $slot;
-                $heureDebut = $slot->getHeureDebut();
-                $heureFin = $slot->getHeureFin();
-                $hourDiff = $heureDebut->diff($heureFin);
-                $new->setHeureDebut(clone $heureFin);
-                $new->setHeureFin($heureFin->add($hourDiff));
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        }
 
-                $this->em->persist($new);
-                $this->em->flush();
-                return new JsonResponse([
-                    'id' => $new->getId(),
-                    'debut' => date_format($new->getHeureDebut(), 'H:i'),
-                    'fin' => date_format($new->getHeureFin(), 'H:i'),
-                ]);
-            }
+        $slot = $this->em->getRepository(Slot::class)->find($id);
+        if (!$slot) {
             return new JsonResponse(null, Response::HTTP_NOT_FOUND);
         }
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+
+        $this->em->remove($slot);
+        $this->em->flush();
+
+        return new JsonResponse(null, Response::HTTP_OK);
+    }
+
+    /**
+     * Crée un créneau de même durée, juste après celui-ci.
+     *
+     * @Route("/duplicate/{id}", name="slot_duplicate", methods="POST")
+     */
+    public function duplicate(Request $request, int $id): Response
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        $slot = $this->em->getRepository(Slot::class)->find($id);
+        if (!$slot) {
+            return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        }
+
+        $heureFin = $slot->getHeureFin();
+        $duree = $slot->getHeureDebut()->diff($heureFin);
+
+        $new = clone $slot;
+        $new->setHeureDebut(clone $heureFin);
+        $new->setHeureFin((clone $heureFin)->add($duree));
+
+        $this->em->persist($new);
+        $this->em->flush();
+
+        return new JsonResponse([
+            'id' => $new->getId(),
+            'debut' => $new->getHeureDebut()->format('H:i'),
+            'fin' => $new->getHeureFin()->format('H:i'),
+        ]);
     }
 
     /**
@@ -191,14 +132,13 @@ class SlotController extends AbstractController
      */
     public function slot_get_hours(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $date = $request->get('date');
-            $type = $request->get('type');
-            $hours = $this->em->getRepository(Slot::class)->getHoursOfDate($type, $date);
-
-            return new JsonResponse($hours);
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+
+        return new JsonResponse(
+            $this->em->getRepository(Slot::class)->getHoursOfDate($request->get('type'), $request->get('date'))
+        );
     }
 
     /**
@@ -206,14 +146,44 @@ class SlotController extends AbstractController
      */
     public function slot_get_thematique_type(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $this->em = $this->getDoctrine()->getManager();
-            $id = $request->get('id');
-
-            $res = $this->em->getRepository(Slot::class)->getThematiqueTypeOfId($id);
-
-            return new JsonResponse($res);
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
-        return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+
+        return new JsonResponse(
+            $this->em->getRepository(Slot::class)->getThematiqueTypeOfId($request->get('id'))
+        );
+    }
+
+    private function hydrate(Slot $slot, Request $request): void
+    {
+        $place = $request->get('place');
+        $soignantId = $request->get('soignant');
+
+        $slot
+            ->setHeureDebut(\DateTime::createFromFormat('H:i', (string) $request->get('heureDebut')) ?: null)
+            ->setHeureFin(\DateTime::createFromFormat('H:i', (string) $request->get('heureFin')) ?: null)
+            ->setCategorie($request->get('categorie'))
+            ->setThematique($request->get('thematique'))
+            ->setType($request->get('type'))
+            ->setLocation($request->get('location'))
+            ->setPlace($place === '' || $place === null ? null : (int) $place)
+            ->setSoignant($soignantId ? $this->em->getRepository(Soignant::class)->find((int) $soignantId) : null);
+    }
+
+    private function slotToArray(Slot $slot): array
+    {
+        $soignant = $slot->getSoignant();
+
+        return [
+            'id' => $slot->getId(),
+            'debut' => $slot->getHeureDebut()?->format('H:i'),
+            'fin' => $slot->getHeureFin()?->format('H:i'),
+            'categorie' => $slot->getCategorie(),
+            'thematique' => $slot->getThematique(),
+            'type' => $slot->getType(),
+            'location' => $slot->getLocation(),
+            'soignant' => $soignant ? $soignant->getPrenom() . ' ' . $soignant->getNom() : '',
+        ];
     }
 }

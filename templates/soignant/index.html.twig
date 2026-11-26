@@ -220,7 +220,7 @@
                 success: function (resp) {
                     if (resp) {
                         $('#actif ul')
-                            .append(`<li class="soignant" data-id="` + resp + `">` + prenom + ' ' + nom + `<button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button><button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
+                            .append(`<li class="soignant" data-id="` + escapeHtml(resp) + `">` + escapeHtml(prenom) + ' ' + escapeHtml(nom) + `<button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button><button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
                     } else {
                         errorAlert();
                     }

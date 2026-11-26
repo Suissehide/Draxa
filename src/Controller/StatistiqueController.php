@@ -14,50 +14,35 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class StatistiqueController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $entityManager;
     }
 
     /**
-     * @Route("/statistiques", name="statistiques")
+     * @Route("/statistiques", name="statistiques", methods="GET|POST")
      */
     public function index(Request $request): Response
     {
-        foreach (ThematiqueConstants::ENTRETIEN as $k => $v) {
-            $entretiens[$k] = $v;
-        }
-        foreach (ThematiqueConstants::ATELIER as $k => $v) {
-            $ateliers[$k] = $v;
-        }
-        foreach (ThematiqueConstants::COACHING as $k => $v) {
-            $coachings[$k] = $v;
-        }
-
-        $entretiens[""] = "Autre";
-        $ateliers[""] = "Autre";
-        $coachings[""] = "Autre";
-
         $thematiques = [
-            "entretiens" => $entretiens,
-            "ateliers" => $ateliers,
-            "coachings" => $coachings,
-            "educatives" => ["" => "Total"]
+            'entretiens' => ThematiqueConstants::ENTRETIEN + ['' => 'Autre'],
+            'ateliers' => ThematiqueConstants::ATELIER + ['' => 'Autre'],
+            'coachings' => ThematiqueConstants::COACHING + ['' => 'Autre'],
+            'educatives' => ['' => 'Total'],
         ];
 
         if ($request->isXmlHttpRequest()) {
-            $dateStart = DateTime::createFromFormat("d/m/Y", date($request->get('dateStart')));
-            $dateEnd = DateTime::createFromFormat("d/m/Y", date($request->get('dateEnd')));
+            // « ! » : minuit, sinon l'heure courante exclut les rendez-vous du premier jour.
+            $dateStart = DateTime::createFromFormat('!d/m/Y', (string) $request->get('dateStart'));
+            $dateEnd = DateTime::createFromFormat('!d/m/Y', (string) $request->get('dateEnd'));
+            if (!$dateStart || !$dateEnd) {
+                return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+            }
             $rendezVous = $this->em->createQuery(
-                'SELECT r FROM App\Entity\RendezVous r WHERE r.date >= :start AND r.date <= :end ORDER BY r.date ASC'
+                'SELECT r, s, so, p FROM App\Entity\RendezVous r LEFT JOIN r.slot s LEFT JOIN s.soignant so JOIN r.patient p'
+                . ' WHERE r.date >= :start AND r.date <= :end ORDER BY r.date ASC'
             )->setParameter('start', $dateStart)->setParameter('end', $dateEnd)->getResult();
             $patients = $this->em->createQuery(
-                'SELECT p, r FROM App\Entity\Patient p LEFT JOIN p.rendezVous r ORDER BY r.date ASC'
+                'SELECT p, r, s FROM App\Entity\Patient p LEFT JOIN p.rendezVous r LEFT JOIN r.slot s ORDER BY r.date ASC'
             )->getResult();
 
             $statistiques = [
@@ -281,7 +266,7 @@ class StatistiqueController extends AbstractController
             if ($r->getCategorie() !== $category) continue;
             $thematique = array_search($r->getThematique(), $thematiques);
             if (!$thematique) $thematique = "";
-            $etat = strtolower($r->getEtat());
+            $etat = strtolower((string) $r->getEtat());
             if ($etat === "oui") $jsonContent[$thematique]["oui"] += 1;
             elseif ($etat === "non") $jsonContent[$thematique]["non"] += 1;
             else $jsonContent[$thematique]["null"] += 1;
@@ -582,7 +567,7 @@ class StatistiqueController extends AbstractController
             ) {
                 if (
                     $r->getCategorie() === "Entretien"
-                    && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
+                    && str_starts_with((string) $r->getThematique(), 'Réactu')
                 ) {
                     $reactu = true;
                 } else {
@@ -612,7 +597,7 @@ class StatistiqueController extends AbstractController
                 }
                 if (
                     $r->getCategorie() === "Entretien"
-                    && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
+                    && str_starts_with((string) $r->getThematique(), 'Réactu')
                 ) {
                     $reactu = true;
                 } else {
@@ -642,7 +627,7 @@ class StatistiqueController extends AbstractController
                 }
                 if (
                     $r->getCategorie() === "Entretien"
-                    && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
+                    && str_starts_with((string) $r->getThematique(), 'Réactu')
                 ) {
                     $reactu = true;
                 } else {
@@ -670,7 +655,7 @@ class StatistiqueController extends AbstractController
                 $r->getEtat() === "Oui"
                 && $this->isInDateRange($dateStart, $dateEnd, $r->getDate())
                 && $r->getCategorie() === "Entretien"
-                && substr_compare($r->getThematique(), "Réactu", 0, 5) === 0
+                && str_starts_with((string) $r->getThematique(), 'Réactu')
             ) {
                 return 1;
             }

@@ -7,42 +7,59 @@ use App\Entity\DiagnosticEducatif;
 use App\Entity\Patient;
 use App\Entity\RendezVous;
 use App\Entity\Slot;
-
+use App\Form\DiagnosticEducatifType;
 use App\Form\PatientCreationFormType;
 use App\Form\RendezVousType;
-use App\Form\DiagnosticEducatifType;
-
 use App\Repository\PatientRepository;
-
-use Closure;
-use DateTime;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Encoder\CsvEncoder;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
 use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @Route("/patient")
  */
 class PatientController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private EntityManagerInterface $em;
+    /** En-têtes lisibles de l'export CSV (attribut => libellé). */
+    private const CSV_LABELS = [
+        'observ' => 'Suivi à régulariser',
+        'divers' => 'Divers',
+        'notes' => 'Notes',
+        'sexe' => 'Sexe',
+        'nom' => 'Nom',
+        'prenom' => 'Prénom',
+        'date' => 'Date de naissance',
+        'tel1' => 'Téléphone 1',
+        'tel2' => 'Téléphone 2',
+        'distance' => "Distance d'habitation",
+        'etude' => "Niveau d'étude",
+        'profession' => 'Profession',
+        'activite' => 'Activité actuelle',
+        'diagnostic' => 'Diagnostic médical',
+        'dedate' => "Date d'entrée",
+        'orientation' => 'Orientation',
+        'etpdecision' => 'ETP Décision',
+        'progetp' => 'Type de programme',
+        'precisions' => 'Précision non inclusion',
+        'precisionsperso' => 'Précision contenu personnalisé',
+        'objectif' => 'Objectif',
+        'dentree' => 'Date de sortie',
+        'motif' => "Motif d'arrêt de programme",
+        'etp' => 'Point final parcours ETP',
+    ];
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $entityManager;
     }
 
     /**
@@ -50,140 +67,112 @@ class PatientController extends AbstractController
      */
     public function patient_list(PatientRepository $patientRepository, Request $request): Response
     {
-        if ($request->isXmlHttpRequest()) {
-            $etat = $request->get('etat');
-            $current = $request->get('current');
-            $rowCount = $request->get('rowCount');
-            $searchPhrase = $request->get('searchPhrase');
-            $sort = $request->get('sort');
-
-            $result = $patientRepository->findAndCountByFilter($sort, $searchPhrase, $etat, $rowCount, $current);
-            $count = $result['count'];
-            $patients = $result['patients'];
-
-            if ($rowCount != -1) {
-                $min = ($current - 1) * $rowCount;
-                $max = $rowCount;
-                $patients->setFirstResult($min)->setMaxResults($max);
-            }
-
-            $patients = $patients->getResult();
-
-            $rows = array();
-            foreach ($patients as $patient) {
-                $rdv = $this->getNextRdv($patient);
-
-                $observ = $patient->getObserv() ? 1 : 0;
-                $divers = $patient->getDivers() ? 1 : 0;
-                $sortie = 0;
-                if ($patient->getDentree())
-                    $sortie = 1;
-                else if ($patient->getProgetp() === "ViVa module AOMI")
-                    $sortie = 2;
-                $row = array(
-                    "id" => $patient->getId(),
-                    "nom" => $patient->getNom(),
-                    "prenom" => $patient->getPrenom(),
-                    "tel1" => wordwrap($patient->getTel1(), 2, ' ', true),
-                    "etp" => $patient->getEtp(),
-                    "objectif" => $patient->getObjectif(),
-                    "date" => $rdv[1],
-                    "categorie" => $rdv[0],
-                    "thematique" => $rdv[3],
-                    "venu" => $rdv[4],
-                    "status" => $sortie,
-                    "observ" => $observ,
-                    "divers" => $divers
-                );
-                $rows[] = $row;
-            }
-
-            if ($sort && key($sort) === 'heure')
-                usort($rows, $this->build_sorter_heure("date", key($sort), reset($sort)));
-            else if ($sort && key($sort) === 'date')
-                usort($rows, $this->build_sorter_date(key($sort), reset($sort)));
-
-            $data = array(
-                "current" => intval($current),
-                "rowCount" => intval($rowCount),
-                "rows" => $rows,
-                "total" => intval($count)
-            );
-            $data = $this->cleanForJson($data);
-            return new JsonResponse($data);
+        if (!$request->isXmlHttpRequest()) {
+            return $this->render('patient/list/index.html.twig', [
+                'title' => 'Liste des patients',
+                'controller_name' => 'PatientController',
+            ]);
         }
 
-        return $this->render('patient/list/index.html.twig', [
-            'title' => 'Liste des patients',
-            'controller_name' => 'PatientController',
-            'patients' => $patientRepository->findAll()
-        ]);
-    }
+        $current = max(1, (int) $request->get('current', 1));
+        $rowCount = (int) $request->get('rowCount', -1);
+        $sort = (array) $request->get('sort');
+        $sortKey = $sort ? (string) key($sort) : null;
+        $sortDir = strtoupper((string) reset($sort)) === 'DESC' ? 'DESC' : 'ASC';
 
-    private function cleanForJson($data)
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $data[$key] = $this->cleanForJson($value);
-            }
-            return $data;
+        $qb = $patientRepository->createFilterQueryBuilder(
+            (string) $request->get('searchPhrase', ''),
+            (string) $request->get('etat', 'in'),
+            $sortKey,
+            $sortDir
+        );
+        $count = $patientRepository->countFiltered($qb);
+
+        // Tri sur une colonne calculée (prochain rendez-vous, statut) : il faut tout charger puis paginer.
+        $sortInPhp = $sortKey !== null && !in_array($sortKey, PatientRepository::SORTABLE, true);
+        if ($rowCount > 0 && !$sortInPhp) {
+            $qb->setFirstResult(($current - 1) * $rowCount)->setMaxResults($rowCount);
         }
 
-        if (is_string($data)) {
-            return mb_convert_encoding($data, 'UTF-8', 'UTF-8');
-        }
+        $patients = $qb->getQuery()->getResult();
+        $nextRdvs = $this->em->getRepository(RendezVous::class)->findNextByPatients(
+            array_map(fn (Patient $p) => $p->getId(), $patients),
+            new \DateTime('today')
+        );
 
-        return $data;
-    }
-
-    private function build_sorter_heure($date, $hour, $dir='ASC'): Closure
-    {
-        return function ($a, $b) use ($date, $hour, $dir) {
-            $date1 = is_array($a) ? $a[$date] : $a->$date;
-            $date2 = is_array($b) ? $b[$date] : $b->$date;
-            $time1 = is_array($a) ? $a[$hour] : $a->$hour;
-            $time2 = is_array($b) ? $b[$hour] : $b->$hour;
-            $time1 = (($time1 === '' && strtoupper($dir) === 'ASC') ? '23:59' : $time1);
-            $time1 = (($time1 === '' && strtoupper($dir) === 'DESC') ? '00:00' : $time1);
-            $time2 = (($time2 === '' && strtoupper($dir) === 'ASC') ? '23:59' : $time2);
-            $time2 = (($time2 === '' && strtoupper($dir) === 'DESC') ? '00:00' : $time2);
-            $t1 = date_create_from_format("d/m/Y H:i", (($date1 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $date1) . ' ' . $time1);
-            $t2 = date_create_from_format("d/m/Y H:i", (($date2 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $date2) . ' ' . $time2);
-            if ($t1 === $t2) return 0;
-            return (strtoupper($dir) === 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
-        };
-    }
-
-    private function build_sorter_date($key, $dir='ASC'): Closure
-    {
-        return function ($a, $b) use ($key, $dir) {
-            $t1 = is_array($a) ? $a[$key] : $a->$key;
-            $t2 = is_array($b) ? $b[$key] : $b->$key;
-            $t1 = date_create_from_format("d/m/Y", ($t1 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $t1);
-            $t2 = date_create_from_format("d/m/Y", ($t2 === '' && strtoupper($dir) === 'ASC') ? '01/01/2999' : $t2);
-            if ($t1 === $t2) return 0;
-            return (strtoupper($dir) === 'ASC' ? ($t1 < $t2) : ($t1 > $t2)) ? -1 : 1;
-        };
-    }
-
-    private function getNextRdv(Patient $patient): array
-    {
-        $date = DateTime::createFromFormat("Y-m-d H:i:s", date(date('Y-m-d') . " 00:00:00"));
-
-        $rendezVous = $this->em->getRepository(RendezVous::class)->findClosestRdv($date, $patient->getId());
-
-        $rdv = ["", "", "", "", ""];
-        if ($rendezVous) {
-            $rdv = [
-                $rendezVous->getCategorie(),
-                $rendezVous->getDate()->format('d/m/Y'),
-                $rendezVous->getHeure() ? $rendezVous->getHeure()->format('H:i') : "",
-                $rendezVous->getSlot() ? $rendezVous->getSlot()->getThematique() : "",
-                $rendezVous->getEtat() ? $rendezVous->getEtat() : "",
+        $rows = [];
+        foreach ($patients as $patient) {
+            $rdv = $nextRdvs[$patient->getId()] ?? null;
+            $rows[] = [
+                'id' => $patient->getId(),
+                'nom' => $patient->getNom(),
+                'prenom' => $patient->getPrenom(),
+                'tel1' => wordwrap((string) $patient->getTel1(), 2, ' ', true),
+                'etp' => $patient->getEtp(),
+                'objectif' => $patient->getObjectif(),
+                'date' => $rdv?->getDate()?->format('d/m/Y') ?? '',
+                'categorie' => $rdv?->getCategorie() ?? '',
+                'thematique' => $rdv?->getSlot()?->getThematique() ?? '',
+                'venu' => $rdv?->getEtat() ?: '',
+                'status' => $patient->getDentree() ? 1 : ($patient->getProgetp() === 'ViVa module AOMI' ? 2 : 0),
+                'observ' => $patient->getObserv() ? 1 : 0,
+                'divers' => $patient->getDivers() ? 1 : 0,
             ];
         }
 
-        return $rdv;
+        if ($sortInPhp) {
+            $rows = self::sortRows($rows, $sortKey, $sortDir);
+            if ($rowCount > 0) {
+                $rows = array_slice($rows, ($current - 1) * $rowCount, $rowCount);
+            }
+        }
+
+        return new JsonResponse(self::utf8Clean([
+            'current' => $current,
+            'rowCount' => $rowCount,
+            'rows' => $rows,
+            'total' => $count,
+        ]));
+    }
+
+    /**
+     * Trie les lignes de la grille ; les valeurs vides sont toujours placées en dernier.
+     * Les dates « d/m/Y » sont comparées chronologiquement.
+     */
+    public static function sortRows(array $rows, string $key, string $dir): array
+    {
+        $value = function (array $row) use ($key) {
+            $v = $row[$key] ?? '';
+            if ($key === 'date' && $v !== '') {
+                $v = implode('', array_reverse(explode('/', $v)));
+            }
+
+            return $v;
+        };
+
+        usort($rows, function (array $a, array $b) use ($value, $dir) {
+            $va = $value($a);
+            $vb = $value($b);
+            if ($va === '' || $vb === '') {
+                return ($va === '') <=> ($vb === '');
+            }
+
+            return $dir === 'DESC' ? $vb <=> $va : $va <=> $vb;
+        });
+
+        return $rows;
+    }
+
+    /**
+     * Remplace les séquences UTF-8 invalides (anciennes données) pour que json_encode n'échoue pas.
+     */
+    private static function utf8Clean(mixed $data): mixed
+    {
+        if (is_array($data)) {
+            return array_map([self::class, 'utf8Clean'], $data);
+        }
+
+        return is_string($data) ? mb_convert_encoding($data, 'UTF-8', 'UTF-8') : $data;
     }
 
     /**
@@ -193,15 +182,15 @@ class PatientController extends AbstractController
     {
         $patient = new Patient();
         $form = $this->createForm(PatientCreationFormType::class, $patient);
-
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->get('validation')->isClicked()) {
-                $patient = $form->getData();
 
-                $this->em->persist($patient);
-                $this->em->flush();
+        if ($form->isSubmitted() && $form->isValid()) {
+            if (!$form->get('validation')->isClicked()) {
+                return $this->redirectToRoute('patient_list');
             }
+
+            $this->em->persist($patient);
+            $this->em->flush();
 
             return $this->redirectToRoute('patient_vue', ['id' => $patient->getId()]);
         }
@@ -216,70 +205,49 @@ class PatientController extends AbstractController
     /**
      * @Route("/vue/{id}", name="patient_vue", methods="GET|POST")
      */
-    public function patient_vue(ManagerRegistry $doctrine, int $id, Request $request): Response
+    public function patient_vue(int $id, Request $request): Response
     {
-        $patient = $doctrine->getRepository(Patient::class)->find($id);
+        $patient = $this->findPatient($id);
         $form = $this->createForm(PatientCreationFormType::class, $patient);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('validation')->isClicked()) {
-                $patient = $form->getData();
-
                 $this->em->flush();
             }
 
             return $this->redirectToRoute('patient_list');
         }
 
-        $rendezVous = new RendezVous();
-        $formRendezVous = $this->createForm(RendezVousType::class, $rendezVous);
-
-        $consultations = [];
-        foreach (ThematiqueConstants::CONSULTATION as $consultation) { $consultations[] = $consultation; }
-        $entretiens = [];
-        foreach (ThematiqueConstants::ENTRETIEN as $entretien) { $entretiens[] = $entretien; }
-        $ateliers = [];
-        foreach (ThematiqueConstants::ATELIER as $atelier) { $ateliers[] = $atelier; }
-        $coachings = [];
-        foreach (ThematiqueConstants::COACHING as $coaching) { $coachings[] = $coaching; }
-        $educatives = [];
-        $thematiques = array( $consultations, $entretiens, $ateliers, $coachings, $educatives );
+        $formRendezVous = $this->createForm(RendezVousType::class, new RendezVous());
+        $slotRepository = $this->em->getRepository(Slot::class);
 
         return $this->render('patient/vue/index.html.twig', [
             'title' => 'Vue',
             'controller_name' => 'PatientController',
             'patient' => $patient,
             'form' => $form->createView(),
-
             'formRendezVous' => $formRendezVous->createView(),
-
-            'dates_ateliers' => $this->em->getRepository(Slot::class)->findAllDates("Atelier"),
-            'dates_consultations' => $this->em->getRepository(Slot::class)->findAllDates("Consultation"),
-            'dates_entretiens' => $this->em->getRepository(Slot::class)->findAllDates("Entretien"),
-            'dates_educatives' => $this->em->getRepository(Slot::class)->findAllDates("Educative"),
-            'dates_coachings' => $this->em->getRepository(Slot::class)->findAllDates("Coaching"),
-
-            'thematiques' => $thematiques
+            'dates_ateliers' => $slotRepository->findAllDates('Atelier'),
+            'dates_consultations' => $slotRepository->findAllDates('Consultation'),
+            'dates_entretiens' => $slotRepository->findAllDates('Entretien'),
+            'dates_educatives' => $slotRepository->findAllDates('Educative'),
+            'dates_coachings' => $slotRepository->findAllDates('Coaching'),
+            'thematiques' => ThematiqueConstants::lists(),
         ]);
     }
 
     /**
      * @Route("/edit/{id}/diagnostic", name="patient_edit_diagnostic", methods="GET|POST")
      */
-    public function patient_edit_diagnostic(ManagerRegistry $doctrine, int $id, Request $request): Response
+    public function patient_edit_diagnostic(int $id, Request $request): Response
     {
-        $patient = $doctrine->getRepository(Patient::class)->find($id);
-        if (!$patient->getDiagnosticEducatif()) {
-            $patient->setDiagnosticEducatif(new DiagnosticEducatif());
-            $this->em->flush();
-        }
+        $patient = $this->findPatientWithDiagnostic($id);
         $form = $this->createForm(DiagnosticEducatifType::class, $patient->getDiagnosticEducatif());
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->get('validation')->isClicked()) {
-                $patient = $form->getData();
                 $this->em->flush();
             }
 
@@ -295,90 +263,84 @@ class PatientController extends AbstractController
     }
 
     /**
-     * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET|POST")
+     * @Route("/vue/{id}/diagnostic", name="patient_vue_diagnostic", methods="GET")
      */
-    public function patient_vue_diagnostic(ManagerRegistry $doctrine, int $id): Response
+    public function patient_vue_diagnostic(int $id): Response
     {
-        $patient = $doctrine->getRepository(Patient::class)->find($id);
-        if (!$patient->getDiagnosticEducatif()) {
-            $patient->setDiagnosticEducatif(new DiagnosticEducatif());
-            $this->em->flush();
-        }
-
-
         return $this->render('patient/vue/diagnostic_educatif_vue.html.twig', [
             'title' => 'Diagnostic éducatif',
             'controller_name' => 'PatientDiagnosticController',
-            'patient' => $patient
+            'patient' => $this->findPatientWithDiagnostic($id),
         ]);
     }
 
     /**
-     * @Route("/csv", name="csv", methods="GET|POST")
+     * @Route("/csv", name="csv", methods="GET")
      */
     public function generateCsvAction(PatientRepository $patientRepository): Response
     {
-        $classMetadataFactory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
-        $encoder = new CsvEncoder();
-        $normalizer = new PropertyNormalizer($classMetadataFactory);
-        $serializer = new Serializer(array($normalizer), array($encoder));
+        $normalizer = new PropertyNormalizer(new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader())));
+        $date = fn ($d) => $d instanceof \DateTimeInterface ? $d->format('d/m/y') : '';
+        $normalizer->setCallbacks([
+            'date' => $date,
+            'dentree' => $date,
+            'dedate' => $date,
+            'date_repro' => $date,
+            'heure' => fn ($d) => $d instanceof \DateTimeInterface ? $d->format('H:i') : '',
+        ]);
+        $serializer = new Serializer([$normalizer], [new CsvEncoder()]);
 
-        $callback = function ($dateTime) {
-            return $dateTime instanceof DateTime
-            ? $dateTime->format('d/m/y')
-            : '';
-        };
+        $csv = $serializer->serialize($patientRepository->findAll(), 'csv', [
+            'groups' => ['patient'],
+            CsvEncoder::DELIMITER_KEY => ';',
+        ]);
 
-        $callback2 = function ($dateTime) {
-            return $dateTime instanceof DateTime
-            ? $dateTime->format('H:i')
-            : '';
-        };
+        // Remplace la ligne d'en-tête technique par des libellés lisibles.
+        [$header, $body] = explode("\n", $csv, 2) + ['', ''];
+        $labels = array_map(
+            fn ($col) => self::CSV_LABELS[$col] ?? $col,
+            str_getcsv($header, ';')
+        );
+        $csv = implode(';', $labels) . "\n" . $body;
 
-        $normalizer->setCallbacks(array(
-            'date' => $callback,
-            'dentree' => $callback,
-            'dedate' => $callback,
-            'date_repro' => $callback,
-            'heure' => $callback2
+        $response = new Response("\xEF\xBB\xBF" . $csv); // BOM : Excel détecte l'UTF-8
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'export_patients_' . date('d_m_Y') . '.csv'
         ));
 
-        $org = $patientRepository->findAll();
-        $data = $serializer->serialize($org, 'csv', ['groups' => ['patient']]);
-
-        $data = str_replace(",", ";", $data);
-        $data = str_replace("Artisans;", "Artisans,", $data);
-        $data = str_replace("observ;divers;sexe;nom;prenom;date;tel1;tel2;distance;etude;profession;activite;diagnostic;dedate;orientation;etpdecision;progetp;precisions;precisionsperso;objectif;dentree;motif;etp;"
-        , "Suivi à régulariser;Divers;Sexe;Nom;Prénom;Date de naissance;Téléphone 1;Téléphone 2;Distance d'habitation;Niveau d'étude;Profession;Activité actuelle;Diagnostic médical;Date d'entrée;Orientation;ETP Décision;Type de programme;Précision non inclusion;Précision contenu personnalisé;Objectif;Date de sortie;Motif d'arrêt de programme;Point final parcours ETP;", $data);
-
-        $fileName = "export_patients_" . date("d_m_Y") . ".csv";
-        $response = new Response($data);
-        $response->setStatusCode(200);
-        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8; application/excel');
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $fileName);
-        echo "\xEF\xBB\xBF"; // UTF-8 with BOM
         return $response;
-    }
-
-    /**
-     * @Route("/", name="patient_index", methods="GET")
-     */
-    public function index(PatientRepository $patientRepository): Response
-    {
-        return $this->render('patient/list/index.html.twig', ['patients' => $patientRepository->findAll()]);
     }
 
     /**
      * @Route("/{id}", name="patient_delete", methods="DELETE")
      */
-    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
+    public function delete(Request $request, int $id): Response
     {
-        $patient = $doctrine->getRepository(Patient::class)->find($id);
-        if ($this->isCsrfTokenValid('delete' . $patient->getId(), $request->get('_token'))) {
+        $patient = $this->findPatient($id);
+        if ($this->isCsrfTokenValid('delete' . $patient->getId(), $request->request->get('_token'))) {
             $this->em->remove($patient);
             $this->em->flush();
         }
 
-        return $this->redirectToRoute('patient_index');
+        return $this->redirectToRoute('patient_list');
+    }
+
+    private function findPatient(int $id): Patient
+    {
+        return $this->em->getRepository(Patient::class)->find($id)
+            ?? throw $this->createNotFoundException('Patient introuvable');
+    }
+
+    private function findPatientWithDiagnostic(int $id): Patient
+    {
+        $patient = $this->findPatient($id);
+        if (!$patient->getDiagnosticEducatif()) {
+            $patient->setDiagnosticEducatif(new DiagnosticEducatif());
+            $this->em->flush();
+        }
+
+        return $patient;
     }
 }

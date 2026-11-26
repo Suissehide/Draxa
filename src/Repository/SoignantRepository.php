@@ -19,43 +19,14 @@ class SoignantRepository extends ServiceEntityRepository
         parent::__construct($registry, Soignant::class);
     }
 
-    public function getPriorityMax()
+    /**
+     * Plus grande priorité attribuée (0 s'il n'y a aucun soignant).
+     */
+    public function getPriorityMax(): int
     {
-        return $this->createQueryBuilder('s')
-            ->select('s.priority')
-            ->orderBy('s.priority', 'DESC')
-            ->setMaxResults(1)
+        return (int) $this->createQueryBuilder('s')
+            ->select('MAX(s.priority)')
             ->getQuery()
-            ->getSingleScalarResult()
-        ;
+            ->getSingleScalarResult();
     }
-
-    // /**
-    //  * @return Soignant[] Returns an array of Soignant objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Soignant
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

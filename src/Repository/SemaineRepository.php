@@ -3,9 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Semaine;
-use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,31 +20,25 @@ class SemaineRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Semaine|null Returns the semaine if same dateDebut, null otherwise
-     * @throws NonUniqueResultException
+     * Semaine commençant à la date donnée (format d/m/Y), ou null.
      */
-    public function findAtSameDate($date): array|null
+    public function findAtSameDate(?string $date): ?Semaine
     {
         return $this->createQueryBuilder('s')
             ->andWhere("DATE_FORMAT(s.dateDebut, '%d/%m/%Y') = :date")
             ->setParameter('date', $date)
             ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
 
-    /**
-     * @return Semaine[]
-     */
     public function findAllDates(): array
     {
         return $this->createQueryBuilder('s')
             ->select("DATE_FORMAT(s.dateDebut, '%d/%m/%Y') as date")
             ->orderBy('s.dateDebut', 'ASC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     /**
@@ -54,44 +46,12 @@ class SemaineRepository extends ServiceEntityRepository
      */
     public function findByYear(int $year): array
     {
-        $from = new DateTimeImmutable("$year-01-01");
-        $to = new DateTimeImmutable("$year-12-31 23:59:59");
-
         return $this->createQueryBuilder('s')
             ->where('s.dateDebut BETWEEN :from AND :to')
-            ->setParameter('from', $from)
-            ->setParameter('to', $to)
+            ->setParameter('from', new \DateTimeImmutable("$year-01-01"))
+            ->setParameter('to', new \DateTimeImmutable("$year-12-31 23:59:59"))
             ->orderBy('s.dateDebut', 'ASC')
             ->getQuery()
             ->getResult();
     }
-
-    // /**
-    //  * @return Semaine[] Returns an array of Semaine objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Semaine
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

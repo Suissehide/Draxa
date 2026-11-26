@@ -74,7 +74,7 @@ class RendezVous
     private $patient;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Slot::class, inversedBy="rendezVous", fetch="EAGER")
+     * @ORM\ManyToOne(targetEntity=Slot::class, inversedBy="rendezVous")
      */
     private $slot;
 

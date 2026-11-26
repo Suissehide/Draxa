@@ -3,138 +3,102 @@
 namespace App\Controller;
 
 use App\Entity\Todo;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/todo")
  */
 class TodoController extends AbstractController
 {
-    /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $em)
     {
-        $this->em = $entityManager;
     }
 
     /**
      * @Route("/getTodos", name="todo_get", methods="GET")
      */
-    public function getTodos(Request $request): Response
+    public function getTodos(): JsonResponse
     {
-        $todoObjects = $this->em->getRepository(Todo::class)->findAll();
-
-        if ($request->isXmlHttpRequest()) {
-            $todos = [];
-            foreach($todoObjects as $t) {
-                $todos[] = [
-                    'id' => $t->getId(),
-                    'enable' => $t->getEnable(),
-                    'description' => $t->getDescription(),
-                    'datetime' => $t->getDatetime()->format('d/m/Y H:i'),
-                ];
-            }
-
-            return new JsonResponse($todos);
+        $todos = [];
+        foreach ($this->em->getRepository(Todo::class)->findAll() as $todo) {
+            $todos[] = [
+                'id' => $todo->getId(),
+                'enable' => $todo->getEnable(),
+                'description' => $todo->getDescription(),
+                'datetime' => $todo->getDatetime()?->format('d/m/Y H:i'),
+            ];
         }
-    }
 
-    
-    /**
-     * @Route("/add", name="todo_add", methods="GET|POST")
-     */
-    public function add(Request $request): Response
-    {
-        if ($request->isXmlHttpRequest()) {
-            $todo = new Todo();
-
-            $description = $request->get('description');
-
-            $todo->setEnable(false);
-            $todo->setDatetime(new \DateTime());
-            $todo->setDescription($description);
-
-            $this->em->persist($todo);
-            $this->em->flush();
-
-            return new JsonResponse($todo->getId());
-        }
+        return new JsonResponse($todos);
     }
 
     /**
-     * @Route("/remove", name="todo_remove", methods="GET|POST")
+     * @Route("/add", name="todo_add", methods="POST")
      */
-    public function remove(Request $request): Response
+    public function add(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $taskId = $request->get('taskId');
+        $todo = (new Todo())
+            ->setEnable(false)
+            ->setDatetime(new \DateTime())
+            ->setDescription($request->get('description'));
 
-            $todo = $this->em->getRepository(Todo::class)->find($taskId);
+        $this->em->persist($todo);
+        $this->em->flush();
 
-            $this->em->remove($todo);
-            $this->em->flush();
-
-            return new JsonResponse(true);
-        }
+        return new JsonResponse($todo->getId());
     }
 
     /**
-     * @Route("/clear", name="todo_clear", methods="GET|POST")
+     * @Route("/remove", name="todo_remove", methods="POST")
      */
-    public function clear(Request $request): Response
+    public function remove(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $todos = $this->em->getRepository(Todo::class)->findAll();
-            foreach($todos as $todo) {
-                $this->em->remove($todo);
-            }
-            $this->em->flush();
+        $this->em->remove($this->findTodo($request));
+        $this->em->flush();
 
-            return new JsonResponse(true);
-        }
+        return new JsonResponse(true);
     }
 
     /**
-     * @Route("/enable", name="todo_enable", methods="GET|POST")
+     * @Route("/clear", name="todo_clear", methods="POST")
      */
-    public function enable(Request $request): Response
+    public function clear(): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $enable = $request->get('enable');
-            $taskId = $request->get('taskId');
+        $this->em->createQuery('DELETE FROM App\Entity\Todo t')->execute();
 
-            $todo = $this->em->getRepository(Todo::class)->find($taskId);
-
-            $todo->setEnable($enable === "true");
-            $this->em->flush();
-
-            return new JsonResponse(true);
-        }
+        return new JsonResponse(true);
     }
-    
+
     /**
-     * @Route("/edit", name="todo_edit", methods="GET|POST")
+     * @Route("/enable", name="todo_enable", methods="POST")
      */
-    public function edit(Request $request): Response
+    public function enable(Request $request): JsonResponse
     {
-        if ($request->isXmlHttpRequest()) {
-            $description = $request->get('description');
-            $taskId = $request->get('taskId');
+        $this->findTodo($request)->setEnable($request->get('enable') === 'true');
+        $this->em->flush();
 
-            $todo = $this->em->getRepository(Todo::class)->find($taskId);
-            $todo->setDescription($description);
-            $this->em->flush();
+        return new JsonResponse(true);
+    }
 
-            return new JsonResponse(true);
-        }
+    /**
+     * @Route("/edit", name="todo_edit", methods="POST")
+     */
+    public function edit(Request $request): JsonResponse
+    {
+        $this->findTodo($request)->setDescription($request->get('description'));
+        $this->em->flush();
+
+        return new JsonResponse(true);
+    }
+
+    private function findTodo(Request $request): Todo
+    {
+        return $this->em->getRepository(Todo::class)->find((int) $request->get('taskId'))
+            ?? throw $this->createNotFoundException();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -14,33 +15,25 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class SlotRepository extends ServiceEntityRepository
 {
+    /** Colonnes triables depuis la grille (clé reçue => champ DQL). */
+    private const SORTABLE = [
+        'date' => 's.date',
+        'categorie' => 's.categorie',
+        'thematique' => 's.thematique',
+        'type' => 's.type',
+        'location' => 's.location',
+        'place' => 's.place',
+    ];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Slot::class);
     }
-    
-    /**
-     * @return Slot[] Returns an array of Patient's name
-     */
-    public function findAllPatientWithSearch(?string $term)
-    {
-        $qb = $this->createQueryBuilder('s')
-                    ->leftJoin('s.rendezVous', 'r')
-                    ->leftJoin('r.patient', 'p');
-        if ($term) {
-            $qb->andWhere('p.nom LIKE :term OR p.prenom LIKE :term')
-                ->setParameter('term', '%' . $term . '%')
-            ;
-        }
-        return $qb
-            ->orderBy('p.nom', 'DESC')
-            ->select('p.name AND p.prenom AND p.id')
-            ->getQuery()
-            ->getResult()
-        ;
-    }
 
-    public function findByDate(\DateTime $date1, \DateTime $date2)
+    /**
+     * @return Slot[]
+     */
+    public function findByDate(\DateTimeInterface $date1, \DateTimeInterface $date2): array
     {
         return $this->createQueryBuilder('s')
             ->where('s.date >= :date1')
@@ -52,23 +45,20 @@ class SlotRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    
-    public function findAllDates($categorie)
+    public function findAllDates(string $categorie): array
     {
-        $qb = $this->createQueryBuilder('s');
-
-        $qb->andWhere('s.categorie = :categorie')
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.categorie = :categorie')
             ->setParameter('categorie', $categorie)
             ->select("DATE_FORMAT(s.date, '%d/%m/%Y') as date, SIZE(s.rendezVous) as rendezVous, s.place as place")
             ->groupBy('s.id')
             ->having('rendezVous < place')
             ->orderBy('s.date', 'ASC')
-        ;
-
-        return $qb->getQuery()->getResult();
+            ->getQuery()
+            ->getResult();
     }
 
-    public function getHoursOfDate($categorie, $date)
+    public function getHoursOfDate($categorie, $date): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.categorie = :categorie')
@@ -84,145 +74,83 @@ class SlotRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-    
-    public function getThematiqueTypeOfId($id)
+
+    public function getThematiqueTypeOfId($id): array
     {
         return $this->createQueryBuilder('s')
             ->andWhere('s.id = :id')
             ->setParameter('id', $id)
-            ->select("s.thematique, s.type")
+            ->select('s.thematique, s.type')
             ->getQuery()
             ->getResult();
-    } 
+    }
 
-    public function findByFilter($sort, $searchPhrase, $categories, $dateDebut, $dateFin)
+    public function findByFilter(?array $sort, string $searchPhrase, ?array $categories, ?string $dateDebut, ?string $dateFin): QueryBuilder
     {
         $qb = $this->createQueryBuilder('s');
 
-        if ($searchPhrase != "") {
+        if ($searchPhrase !== '') {
             $qb
-            ->leftJoin('s.soignant', 't')
-            ->andWhere("
-                DATE_FORMAT(s.date, '%d/%m/%Y') LIKE :search
-                OR s.heureDebut LIKE :search
-                OR s.heureFin LIKE :search
-                OR s.thematique LIKE :search
-                OR s.type LIKE :search
-                OR s.location LIKE :search
-                OR t.nom LIKE :search
-                OR t.prenom LIKE :search
-            ")
-            ->setParameter('search', '%' . $searchPhrase . '%');
+                ->leftJoin('s.soignant', 't')
+                ->andWhere("
+                    DATE_FORMAT(s.date, '%d/%m/%Y') LIKE :search
+                    OR s.heureDebut LIKE :search
+                    OR s.heureFin LIKE :search
+                    OR s.thematique LIKE :search
+                    OR s.type LIKE :search
+                    OR s.location LIKE :search
+                    OR t.nom LIKE :search
+                    OR t.prenom LIKE :search
+                ")
+                ->setParameter('search', '%' . $searchPhrase . '%');
         }
-        if ($dateDebut) {
-            $qb->andWhere("s.date >= :dateDebut")
-            ->setParameter('dateDebut', \DateTime::createFromFormat("d/m/Y H:i:s", date($dateDebut . " 00:00:00")));
+        if ($dateDebut && $from = \DateTime::createFromFormat('!d/m/Y', $dateDebut)) {
+            $qb->andWhere('s.date >= :dateDebut')->setParameter('dateDebut', $from);
         }
-        if ($dateFin) {
-            $qb->andWhere("s.date <= :dateFin")
-            ->setParameter('dateFin', \DateTime::createFromFormat("d/m/Y H:i:s", date($dateFin . " 23:59:59")));
+        if ($dateFin && $to = \DateTime::createFromFormat('!d/m/Y', $dateFin)) {
+            $qb->andWhere('s.date <= :dateFin')->setParameter('dateFin', $to);
         }
         if ($categories) {
-            $query = '';
-            foreach ($categories as $key => $value) {
-                if ($key === count($categories) - 1)
-                    $query .= 's.categorie = :' . $value;
-                else
-                    $query .= 's.categorie = :' . $value . ' OR ';
-                $qb->setParameter($value, $value);
-            }
-            $qb->andWhere($query);
+            $qb->andWhere('s.categorie IN (:categories)')->setParameter('categories', array_values($categories));
         }
-        if ($sort) {
-            foreach ($sort as $key => $value) {
-                if ($key !== 'horaire')
-                    $qb->addOrderBy('s.' . $key, $value);
-                else {
-                    $qb
-                        ->addOrderBy('s.date', 'ASC')
-                        ->addOrderBy('TIME(s.heureDebut)', $value)
-                    ;
-                }
+
+        $sorted = false;
+        foreach ($sort ?? [] as $key => $dir) {
+            $dir = strtoupper((string) $dir) === 'DESC' ? 'DESC' : 'ASC';
+            if ($key === 'horaire') {
+                $qb->addOrderBy('s.date', 'ASC')->addOrderBy('TIME(s.heureDebut)', $dir);
+                $sorted = true;
+            } elseif (isset(self::SORTABLE[$key])) {
+                $qb->addOrderBy(self::SORTABLE[$key], $dir);
+                $sorted = true;
             }
-        } else {
-            $qb
-            ->addOrderBy('s.date', 'ASC')
-            ->addOrderBy('TIME(s.heureDebut)', 'ASC')
-            ;
         }
+        if (!$sorted) {
+            $qb->addOrderBy('s.date', 'ASC')->addOrderBy('TIME(s.heureDebut)', 'ASC');
+        }
+
         return $qb;
     }
 
-    public function isAlreadyInSlot($slotId, $patientId)
+    public function countFiltered(QueryBuilder $qb): int
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere("s.id = :slotId")
+        return (int) (clone $qb)
+            ->select('COUNT(DISTINCT s.id)')
+            ->resetDQLPart('orderBy')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function isAlreadyInSlot($slotId, $patientId): bool
+    {
+        return (bool) $this->createQueryBuilder('s')
+            ->select('COUNT(r.id)')
+            ->innerJoin('s.rendezVous', 'r')
+            ->andWhere('s.id = :slotId')
+            ->andWhere('IDENTITY(r.patient) = :patientId')
             ->setParameter('slotId', $slotId)
-
-            ->leftJoin('s.rendezVous', 'r')
-            ->leftJoin('r.patient', 'p')
-            ->andWhere("p.id = :patientId")
             ->setParameter('patientId', $patientId)
-            ->setMaxResults(1)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getSingleScalarResult();
     }
-
-    public function findSlotEducative($dateStart, $dateEnd)
-    {
-        return $this->createQueryBuilder('s')
-            ->select('count(s.id)')
-            ->andWhere('s.date BETWEEN :dateStart AND :dateEnd')
-            ->setParameter('dateStart', $dateStart->format('Y-m-d'))
-            ->setParameter('dateEnd', $dateEnd->format('Y-m-d'))
-            ->andWhere('s.categorie = :categorie')
-            ->setParameter('categorie', "Educative")
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
-    }
-
-    public function findSlotAtelier($dateStart, $dateEnd)
-    {
-        return $this->createQueryBuilder('s')
-            ->select('count(s.id)')
-            ->andWhere('s.date BETWEEN :dateStart AND :dateEnd')
-            ->setParameter('dateStart', $dateStart->format('Y-m-d'))
-            ->setParameter('dateEnd', $dateEnd->format('Y-m-d'))
-            ->andWhere('s.categorie = :categorie')
-            ->setParameter('categorie', "Atelier")
-            ->getQuery()
-            ->getSingleScalarResult()
-        ;
-    }
-
-    // /**
-    //  * @return Slot[] Returns an array of Slot objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Slot
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

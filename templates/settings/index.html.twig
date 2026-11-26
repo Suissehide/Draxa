@@ -567,7 +567,7 @@
                             day: 'numeric'
                         }).format(new_dateFin);
                         $('.semaine-wrapper')
-                            .append(`<li class="semaine" data-date="` + dateDebut + `" data-id="` + resp + `">
+                            .append(`<li class="semaine" data-date="` + escapeHtml(dateDebut) + `" data-id="` + escapeHtml(resp) + `">
                                         <div class="semaine__header">
                                             <div class="semaine__date-info">
                                                 <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
@@ -1009,17 +1009,17 @@
             else if (data.categorie.toLowerCase() === 'coaching')
                 color = 'goldenrod';
             let slot = (`
-                <li class="slot" data-id="` + data.id + `" data-color="` + color + `">
+                <li class="slot" data-id="` + escapeHtml(data.id) + `" data-color="` + color + `">
                     <div class="btn-delete"><span class="glyphicon glyphicon-remove"></span></div>
                     <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
-                    <div class="horaire">` + data.debut + ` - ` + data.fin + `</div>
+                    <div class="horaire">` + escapeHtml(data.debut) + ` - ` + escapeHtml(data.fin) + `</div>
                     <div class="thematique">
             `);
-            if (data.thematique) slot += data.thematique;
-            if (data.type) slot += ' | ' + data.type;
+            if (data.thematique) slot += escapeHtml(data.thematique);
+            if (data.type) slot += ' | ' + escapeHtml(data.type);
             slot += '</div> <div class="details">';
-            if (data.soignant) slot += 'avec&nbsp;<span>' + data.soignant + '</span>';
-            if (data.location) slot += '&nbsp;en&nbsp;<span>' + data.location + '</span>';
+            if (data.soignant) slot += 'avec&nbsp;<span>' + escapeHtml(data.soignant) + '</span>';
+            if (data.location) slot += '&nbsp;en&nbsp;<span>' + escapeHtml(data.location) + '</span>';
             slot += '</div></li>';
             return slot;
         }
