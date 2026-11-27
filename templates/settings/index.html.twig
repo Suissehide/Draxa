@@ -60,7 +60,6 @@
                 <li class="semaine" data-date="{{ semaine.dateDebut|date("d/m/Y") }}" data-id="{{ semaine.id }}">
                     <div class="semaine__header" role="button" tabindex="0" aria-expanded="false">
                         <div class="semaine__date-info">
-                            <button type="button" class="btn btn-danger-outline btn-remove">Supprimer</button>
                             <h2>SEMAINE {{ counter }}</h2>
                             <div class="semaine__date-range">
                                 <div>{{ semaine.dateDebut ? semaine.dateDebut|format_datetime(pattern="d MMMM YYYY", locale='fr') : '' }}</div>
@@ -69,8 +68,8 @@
                             </div>
                         </div>
                         <div class="semaine__general-info">
-                            <button type="button" class="semaine__duplicate" aria-label="Dupliquer cette semaine" title="Dupliquer cette semaine"><span class="glyphicon glyphicon-duplicate"></span></button>
-                            <div class="semaine__open-icon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+                            <button type="button" class="semaine__duplicate" aria-label="Dupliquer cette semaine" title="Dupliquer cette semaine"><span class="glyphicon glyphicon-duplicate"></span></button><button type="button" class="semaine__delete btn-remove" aria-label="Supprimer cette semaine" title="Supprimer cette semaine"><span class="glyphicon glyphicon-trash"></span></button>
+                            <div class="semaine__open-icon" title="Afficher / masquer la semaine"><span class="glyphicon glyphicon-chevron-down"></span></div>
                         </div>
                     </div>
                     <div class="semaine__body">
@@ -495,7 +494,6 @@
                             .append(`<li class="semaine" data-date="` + escapeHtml(dateDebut) + `" data-id="` + escapeHtml(resp) + `">
                                         <div class="semaine__header" role="button" tabindex="0" aria-expanded="false">
                                             <div class="semaine__date-info">
-                                                <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
                                                 <h2>SEMAINE 1</h2>
                                                 <div class="semaine__date-range">
                                                     <div>` + date_debut + `</div>
@@ -504,8 +502,8 @@
                                                 </div>
                                             </div>
                                             <div class="semaine__general-info">
-                                                <button type="button" class="semaine__duplicate" aria-label="Dupliquer cette semaine" title="Dupliquer cette semaine"><span class="glyphicon glyphicon-duplicate"></span></button>
-                                                <div class="semaine__open-icon"><span class="glyphicon glyphicon-chevron-down"></span></div>
+                                                <button type="button" class="semaine__duplicate" aria-label="Dupliquer cette semaine" title="Dupliquer cette semaine"><span class="glyphicon glyphicon-duplicate"></span></button><button type="button" class="semaine__delete btn-remove" aria-label="Supprimer cette semaine" title="Supprimer cette semaine"><span class="glyphicon glyphicon-trash"></span></button>
+                                                <div class="semaine__open-icon" title="Afficher / masquer la semaine"><span class="glyphicon glyphicon-chevron-down"></span></div>
                                             </div>
                                         </div>
                                         <div class="semaine__body">
@@ -828,7 +826,7 @@
                     let horaire = o.find('.horaire').text();
                     horaire = horaire.split(' - ');
                     let top = (((parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1])) - (parseInt(heureDebut.split(':')[0]) * 60 + parseInt(heureDebut.split(':')[1]))) * (70 / 60)) + 50;
-                    let height = (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60)) - 3;
+                    let height = (((parseInt(horaire[1].split(':')[0]) * 60 + parseInt(horaire[1].split(':')[1])) - (parseInt(horaire[0].split(':')[0]) * 60 + parseInt(horaire[0].split(':')[1]))) * (70 / 60));
                     o.css({
                         top: top + 'px',
                         height: height + 'px',
@@ -906,7 +904,7 @@
                     let slot = col[j];
                     let colSpan = ExpandEvent(slot, i, columns);
                     slot.obj.css('left', (i / n) * 100 + '%');
-                    slot.obj.css('width', block_width * colSpan / n - 1);
+                    slot.obj.css('width', block_width * colSpan / n);
                 }
             }
         }

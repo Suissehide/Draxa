@@ -27,7 +27,10 @@ class PatientRepository extends ServiceEntityRepository
      * Patients filtrés pour la grille de la liste des patients.
      * Le tri n'est appliqué que pour les colonnes de SORTABLE ; les autres sont triées par l'appelant.
      */
-    public function createFilterQueryBuilder(?string $searchPhrase, ?string $etat, ?string $sortKey, string $sortDir): QueryBuilder
+    /**
+     * @param array{progetp?: string, diagnostic?: string, observ?: bool, divers?: bool} $filters filtres de la liste des patients
+     */
+    public function createFilterQueryBuilder(?string $searchPhrase, ?string $etat, ?string $sortKey, string $sortDir, array $filters = []): QueryBuilder
     {
         $qb = $this->createQueryBuilder('p');
 
@@ -51,6 +54,20 @@ class PatientRepository extends ServiceEntityRepository
             $qb->andWhere('p.dentree IS NULL');
         } elseif ($etat === 'out') {
             $qb->andWhere('p.dentree IS NOT NULL');
+        }
+
+        if (!empty($filters['progetp'])) {
+            $qb->andWhere('p.progetp = :progetp')->setParameter('progetp', $filters['progetp']);
+        }
+        if (!empty($filters['diagnostic'])) {
+            $qb->andWhere('p.diagnostic = :diagnostic')->setParameter('diagnostic', $filters['diagnostic']);
+        }
+        // Champs texte : « suivi à régulariser » et « Theraflow » sont actifs dès qu'ils sont remplis.
+        if (!empty($filters['observ'])) {
+            $qb->andWhere("p.observ IS NOT NULL AND p.observ <> ''");
+        }
+        if (!empty($filters['divers'])) {
+            $qb->andWhere("p.divers IS NOT NULL AND p.divers <> ''");
         }
 
         if (in_array($sortKey, self::SORTABLE, true)) {

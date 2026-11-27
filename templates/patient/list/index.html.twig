@@ -24,7 +24,27 @@
                 <label for="option-tous">Tous</label>
             </div>
         </form>
-        <div class="legend legend--card">
+        <div class="patients-filters" role="group" aria-label="Filtres">
+            <label class="sr-only" for="filter-progetp">Programme</label>
+            <select id="filter-progetp" class="form-control js-filter" data-key="progetp">
+                <option value="">Tous les programmes</option>
+                <option value="ViVa">ViVa</option>
+                <option value="ViVa module AOMI">ViVa module AOMI</option>
+            </select>
+            <label class="sr-only" for="filter-diagnostic">Diagnostic médical</label>
+            <select id="filter-diagnostic" class="form-control js-filter" data-key="diagnostic">
+                <option value="">Tous les diagnostics</option>
+                <option value="AOMI">AOMI</option>
+                <option value="AVC">AVC</option>
+                <option value="CORONAROPATHIE">Coronaropathie</option>
+                <option value="PREVENTION">Prévention</option>
+            </select>
+            <label class="filter-toggle"><input type="checkbox" class="js-filter" data-key="observ"><span class="alert-dot" aria-hidden="true"></span>Suivi à régulariser</label>
+            <label class="filter-toggle"><input type="checkbox" class="js-filter" data-key="divers"><span class="tag tag--tf">TF</span>Theraflow</label>
+            <button type="button" class="filter-reset js-filter-reset" hidden>Réinitialiser</button>
+        </div>
+        </div>
+        <div class="legend legend--card legend--inline">
             <span class="legend__item"><span class="alert-dot" aria-hidden="true"></span>Suivi à régulariser</span>
             <span class="legend__item"><span class="tag tag--tf">TF</span>Theraflow</span>
             <span class="legend__item"><span class="tag tag--aomi">AOMI</span>ViVa module AOMI</span>
@@ -32,7 +52,6 @@
             <span class="presence presence--oui presence--static"><i></i>Venu</span>
             <span class="presence presence--non presence--static"><i></i>Absent</span>
             <span class="presence presence--static"><i></i>À renseigner</span>
-        </div>
         </div>
 
         <section class="card patients-card">
@@ -58,6 +77,8 @@
 {% block javascripts %}
     <script>
         let etat = "in";
+        // Filtres mémorisés pendant la session de navigation
+        let filters = JSON.parse(sessionStorage.getItem('patientFilters') || '{}');
         const categorieLabels = {Consultation: 'Consultation', Entretien: 'Entretien', Coaching: 'Coaching PRM', Atelier: 'Atelier', Educative: 'Semaine éd.'};
 
         $("#patient-grid").bootgrid({
@@ -67,7 +88,7 @@
             statusMapping: {0: "in", 1: "out", 2: "aomi"},
             requestHandler: function (request) {
                 request.etat = etat;
-                return request;
+                return $.extend(request, filters);
             },
             url: "{{ path('patient_list') }}",
             labels: {
@@ -79,12 +100,11 @@
                     return row.observ ? '<span class="alert-dot" role="img" aria-label="Suivi à régulariser" title="Suivi à régulariser"></span>' : '';
                 },
                 "patient": function (column, row) {
-                    const ini = (String(row.nom || ' ')[0] + String(row.prenom || ' ')[0]).toUpperCase();
                     let tags = '';
                     if (row.divers) tags += '<span class="tag tag--tf" title="Theraflow">TF</span>';
                     if (row.progetp === 'ViVa module AOMI') tags += '<span class="tag tag--aomi" title="ViVa module AOMI">AOMI</span>';
                     if (row.sortie) tags += '<span class="tag tag--out">Sorti le ' + escapeHtml(row.sortie) + '</span>';
-                    return '<div class="pt"><span class="pt-avatar" aria-hidden="true">' + escapeHtml(ini) + '</span><div>'
+                    return '<div class="pt"><div>'
                         + '<div class="pt-name">' + escapeHtml(row.nom) + ' <span>' + escapeHtml(row.prenom) + '</span></div>'
                         + (tags ? '<div class="pt-tags">' + tags + '</div>' : '') + '</div></div>';
                 },
@@ -129,6 +149,29 @@
             if (e.key === 'Enter') {
                 openPatientRow(this, false);
             }
+        });
+
+        function syncFilters() {
+            $('.js-filter').each(function () {
+                const v = filters[$(this).data('key')];
+                if (this.type === 'checkbox') this.checked = v === '1'; else $(this).val(v || '');
+            });
+            $('.js-filter-reset').prop('hidden', Object.keys(filters).length === 0);
+        }
+        syncFilters();
+        $('.js-filter').on('change', function () {
+            const key = $(this).data('key');
+            const value = this.type === 'checkbox' ? (this.checked ? '1' : '') : $(this).val();
+            if (value) filters[key] = value; else delete filters[key];
+            sessionStorage.setItem('patientFilters', JSON.stringify(filters));
+            syncFilters();
+            $("#patient-grid").bootgrid('reload');
+        });
+        $('.js-filter-reset').on('click', function () {
+            filters = {};
+            sessionStorage.removeItem('patientFilters');
+            syncFilters();
+            $("#patient-grid").bootgrid('reload');
         });
 
         $(".radio-block input[type=radio]").on("change", function () {

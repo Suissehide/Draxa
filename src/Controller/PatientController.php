@@ -85,7 +85,13 @@ class PatientController extends AbstractController
             (string) $request->get('searchPhrase', ''),
             (string) $request->get('etat', 'in'),
             $sortKey,
-            $sortDir
+            $sortDir,
+            [
+                'progetp' => (string) $request->get('progetp', ''),
+                'diagnostic' => (string) $request->get('diagnostic', ''),
+                'observ' => $request->get('observ') === '1',
+                'divers' => $request->get('divers') === '1',
+            ]
         );
         $count = $patientRepository->countFiltered($qb);
 

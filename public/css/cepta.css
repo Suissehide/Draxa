@@ -900,7 +900,6 @@ ul.todo__list { max-height: none; overflow: visible; }
 .calendar table.month td.day .day-content { border-radius: 6px; font-size: 12px; padding: 4px 0; }
 .calendar table.month td.day:not(.old):not(.new) .day-content:hover { background: var(--hover-tint); }
 .calendar .calendar-today { outline: 2px solid var(--danger); outline-offset: -2px; border-radius: 6px; }
-.semaine__body .semaine__full .jour { min-width: 140px; }
 
 /* ======================================================================
    En-têtes de page uniformes : même titre, même espacement partout
@@ -925,3 +924,71 @@ ul.todo__list { max-height: none; overflow: visible; }
 .wrapper > h1, .settings > h1 { margin: 0; }
 .page-head, .agenda__bar { align-items: flex-start; }
 .page-head .page-title, .agenda__bar .page-title { padding-top: 4px; }
+
+/* ======================================================================
+   Semaines & créneaux (lot 4) : colonnes fixes + défilement horizontal
+   ====================================================================== */
+.semaine--current { box-shadow: 0 0 0 2px var(--warning); }
+.semaine--current .semaine__date-info { box-shadow: none; }
+.semaine__current-label { margin-left: 8px; padding: 1px 8px; border-radius: 999px; background: var(--warning); color: #3d2a00; font-size: 11px; font-weight: 700; letter-spacing: 0; vertical-align: 1px; }
+
+/* Actions d'en-tête : icônes seules, alignées */
+.semaine__header .semaine__general-info { gap: 4px; padding-right: 10px; }
+.semaine__header .semaine__general-info .semaine__duplicate,
+.semaine__header .semaine__general-info .semaine__delete,
+.semaine__header .semaine__general-info .semaine__open-icon { width: 40px; height: 40px; padding: 0; margin: 0; border: 0; border-radius: 10px; background: transparent; color: inherit; display: none; align-items: center; justify-content: center; font-size: 15px; cursor: pointer; }
+.semaine__header .semaine__general-info .semaine__open-icon { display: inline-flex; }
+.semaine.open .semaine__header .semaine__general-info .semaine__duplicate,
+.semaine.open .semaine__header .semaine__general-info .semaine__delete { display: inline-flex; }
+.semaine.open .semaine__header .semaine__general-info .semaine__duplicate:hover,
+.semaine.open .semaine__header .semaine__general-info .semaine__open-icon:hover { background: rgba(255, 255, 255, .16); }
+.semaine.open .semaine__header .semaine__general-info .semaine__delete:hover { background: var(--danger); }
+.semaine__header .semaine__general-info .glyphicon { top: 0; color: inherit; }
+.semaine__header .semaine__date-info { width: 46%; }
+
+/* Grille : colonnes de largeur fixe, lignes par heure */
+.semaine__body .semaine__full { display: flex; overflow-x: auto; overflow-y: visible; }
+.semaine__body .semaine__full .jour { flex: 0 0 220px; width: 220px; min-width: 220px; max-width: 220px; padding: 0; border-left: 1px solid var(--line-2); }
+.semaine__body .semaine__full .jour:hover { background-color: var(--surface-2); }
+.semaine__body .semaine__full .jour::before { content: ""; position: absolute; left: 0; right: 0; top: 50px; bottom: 0; pointer-events: none;
+    background-image: repeating-linear-gradient(to bottom, var(--line) 0, var(--line) 1px, transparent 1px, transparent 35px, var(--line-3) 35px, var(--line-3) 36px, transparent 36px, transparent 70px); }
+.semaine__body .semaine__full .jour h3 { height: 50px; margin: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--ink); border-bottom: 1px solid var(--line); }
+.semaine__body .semaine__full .hour-list { flex: 0 0 64px; min-width: 64px; padding: 50px 0 0; margin: 0; list-style: none; position: sticky; left: 0; z-index: 2; background: var(--surface); border-right: 1px solid var(--line); }
+.semaine__body .semaine__full .hour-list .hour-indicator { height: 35px; margin: 0; line-height: 16px; transform: translateY(-8px); font-size: 12px; font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: center; }
+.semaine__body .semaine__full .hour-list .hour-indicator:nth-child(even) { font-weight: 400; color: #8a949e; font-size: 11px; }
+
+/* Créneaux : collés, texte plus lisible */
+.semaine__body .semaine__full .slot { z-index: 1; padding: 5px 7px; border-radius: 6px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55); gap: 1px; overflow: hidden; }
+.semaine__body .semaine__full .slot .horaire { font-size: 12px; font-weight: 700; letter-spacing: .01em; }
+.semaine__body .semaine__full .slot .thematique { font-size: 13px; font-weight: 600; line-height: 1.25; }
+.semaine__body .semaine__full .slot .details { font-size: 12px; font-weight: 400; opacity: .95; }
+.semaine__body .semaine__full .slot .details span { font-family: var(--font); font-weight: 600; }
+.semaine__body .semaine__full .slot .btn-delete, .semaine__body .semaine__full .slot .duplicate-btn { width: 24px; height: 24px; padding: 0; border-radius: 6px; display: none; align-items: center; justify-content: center; }
+.semaine__body .semaine__full .slot:hover .btn-delete, .semaine__body .semaine__full .slot:hover .duplicate-btn,
+.semaine__body .semaine__full .slot:focus-within .btn-delete, .semaine__body .semaine__full .slot:focus-within .duplicate-btn { display: inline-flex; }
+.semaine__body .semaine__full .slot .duplicate-btn { right: 30px; }
+.semaine__body .semaine__full .slot .glyphicon { color: #fff; font-size: 11px; top: 0; }
+
+/* Patients : survol des sortis, filtres */
+#patient-grid > tbody > tr:hover > td { background-color: var(--surface-2); }
+#patient-grid > tbody > tr.out:hover > td { background-color: #eceff2; }
+.radio-block { margin: 0; }
+.radio-block label { margin: 0; border-radius: 8px !important; }
+.radio-block .radio-group { border-radius: 10px; }
+.patients-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.patients-filters select.form-control { width: auto; height: 44px; border-radius: 10px; padding-right: 30px; font-size: 14px; }
+.filter-toggle { position: relative; display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 12px; margin: 0; border: 1px solid var(--field); border-radius: 10px; background: var(--surface); font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; transition: background .15s, border-color .15s; }
+.filter-toggle:hover { background: var(--surface-2); }
+.filter-toggle input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.filter-toggle:has(input:checked) { background: var(--brand-tint); border-color: #9cc9dd; color: var(--brand-dark); }
+.filter-toggle:has(input:focus-visible) { outline: 2px solid var(--brand); outline-offset: 2px; }
+.filter-reset { height: 44px; padding: 0 10px; border: 0; border-radius: 10px; background: transparent; color: var(--brand); font-weight: 600; cursor: pointer; }
+.filter-reset:hover { background: var(--brand-tint-2); }
+.bootgrid-header .search .input-group { border-radius: 10px; }
+.bootgrid-header .search .input-group-addon { border-radius: 10px 0 0 10px !important; }
+.bootgrid-header .search .search-field { border-radius: 0 10px 10px 0 !important; height: 44px; }
+.bootgrid-header .search .input-group-addon { height: 44px; }
+.bootgrid-header .actions .btn, .bootgrid-header .actions .dropdown-toggle { border-radius: 10px !important; min-height: 44px; }
+.bootgrid-header .actions .btn-group > .btn-group { margin: 0; }
+.patients-toolbar { justify-content: flex-start; }
+.legend--inline { background: transparent; border: 0; padding: 0 2px; margin-top: -6px; }

@@ -84,6 +84,9 @@ class SmokeTest extends WebTestCase
             $data = $this->ajax('POST', '/patient/', ['current' => 1, 'rowCount' => 10, 'etat' => 'all', 'sort' => $sort]);
             $this->assertSame(2, $data['total']);
         }
+        // Filtres de la liste : aucun patient « à régulariser » ni en ViVa AOMI dans le jeu de test.
+        $this->assertSame(0, $this->ajax('POST', '/patient/', ['current' => 1, 'rowCount' => 10, 'etat' => 'all', 'observ' => '1'])['total']);
+        $this->assertSame(0, $this->ajax('POST', '/patient/', ['current' => 1, 'rowCount' => 10, 'etat' => 'all', 'progetp' => 'ViVa module AOMI'])['total']);
         $data = $this->ajax('POST', '/patient/', ['current' => 1, 'rowCount' => 10, 'etat' => 'in', 'searchPhrase' => 'Atelier']);
         $this->assertSame(1, $data['total']);
         $this->assertSame('Atelier', $data['rows'][0]['categorie']);
