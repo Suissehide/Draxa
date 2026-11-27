@@ -205,11 +205,11 @@
         <div class="legende">
             <div class="legende__type">Légende :</div>
             <div class="legende__type">
-                <span class="legende__color" style="background-color: deeppink"></span>
+                <span class="legende__color" style="background-color: var(--cat-theraflow)"></span>
                 Theraflow
             </div>
             <div class="legende__type">
-                <span class="legende__color" style="background-color: darkolivegreen"></span>
+                <span class="legende__color" style="background-color: var(--cat-viva)"></span>
                 ViVa module AOMI
             </div>
             <div class="legende__type">
@@ -243,28 +243,28 @@
                     <div>
                         <label>
                             <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: seagreen; background-color: seagreen;"></span>
+                            <span style="border-color: var(--cat-consultation); background-color: var(--cat-consultation);"></span>
                             Consultation
                         </label>
                         <label>
                             <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: rebeccapurple; background-color: rebeccapurple;"></span>
+                            <span style="border-color: var(--cat-entretien); background-color: var(--cat-entretien);"></span>
                             Entretien
                         </label>
                         <label>
                             <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: chocolate; background-color: chocolate;"></span>
+                            <span style="border-color: var(--cat-coaching); background-color: var(--cat-coaching);"></span>
+                            Coaching PRM
+                        </label>
+                        <label>
+                            <input type="checkbox" class="checkbox-round" checked="">
+                            <span style="border-color: var(--cat-atelier); background-color: var(--cat-atelier);"></span>
                             Atelier
                         </label>
                         <label>
                             <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: royalblue; background-color: royalblue;"></span>
+                            <span style="border-color: var(--cat-educative); background-color: var(--cat-educative);"></span>
                             Semaine éducative
-                        </label>
-                        <label>
-                            <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: goldenrod; background-color: goldenrod;"></span>
-                            Coaching PRM
                         </label>
                     </div>
                 </div>
@@ -546,7 +546,6 @@
                     send: send
                 },
                 success: function (res) {
-                    // console.log(res);
                 }
             });
         })
@@ -747,7 +746,7 @@
                 $(this).find('span').css('background-color', color);
             }
             categories = [];
-            let val = ['Consultation', 'Entretien', 'Atelier', 'Educative', 'Coaching'];
+            let val = ['Consultation', 'Entretien', 'Coaching', 'Atelier', 'Educative'];
             $('.lnb-item label :checkbox').each(function (i) {
                 if ($(this).prop('checked'))
                     categories.push(val[i]);

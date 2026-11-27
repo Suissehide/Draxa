@@ -37,6 +37,10 @@
                     <span class="glyphicon glyphicon-bookmark"></span>
                     Entretiens individuels
                 </a>
+                <a href="#coachings" class="js-scrollTo btn btn-primary" data-row-id="0">
+                    <span class="glyphicon glyphicon-flash"></span>
+                    Coachings PRM
+                </a>
                 <a href="#ateliers" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-scissors"></span>
                     Ateliers
@@ -44,10 +48,6 @@
                 <a href="#educatives" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-education"></span>
                     Semaines éducatives
-                </a>
-                <a href="#coachings" class="js-scrollTo btn btn-primary" data-row-id="0">
-                    <span class="glyphicon glyphicon-flash"></span>
-                    Coachings PRM
                 </a>
             </div>
         </div>
@@ -327,7 +327,7 @@
                                                         eu lieu ?</label>
                                                     <select id="patient_creation_form_consultations_{{ consultation.id }}_etat"
                                                             name="patient_creation_form[consultation][{{ consultation.id }}][etat]"
-                                                            class="form-control" style="background: gold;">
+                                                            class="form-control" style="background: var(--absent);">
                                                         <option value=""
                                                                 class="white" {% if consultation.etat == '' %} selected="selected" {% endif %}></option>
                                                         <option value="Non"
@@ -532,7 +532,7 @@
                                                         eu lieu ?</label>
                                                     <select id="patient_creation_form_entretiens_{{ entretien.id }}_etat"
                                                             name="patient_creation_form[entretien][{{ entretien.id }}][etat]"
-                                                            class="form-control" style="background: gold;">
+                                                            class="form-control" style="background: var(--absent);">
                                                         <option value=""
                                                                 class="white" {% if entretien.etat == '' %} selected="selected" {% endif %}></option>
                                                         <option value="Non"
@@ -737,7 +737,7 @@
                                                         eu lieu ?</label>
                                                     <select id="patient_creation_form_coachings_{{ coaching.id }}_etat"
                                                             name="patient_creation_form[coaching][{{ coaching.id }}][etat]"
-                                                            class="form-control" style="background: gold;">
+                                                            class="form-control" style="background: var(--absent);">
                                                         <option value=""
                                                                 class="white" {% if coaching.etat == '' %} selected="selected" {% endif %}></option>
                                                         <option value="Non"
@@ -942,7 +942,7 @@
                                                         eu lieu ?</label>
                                                     <select id="patient_creation_form_ateliers_{{ atelier.id }}_etat"
                                                             name="patient_creation_form[atelier][{{ atelier.id }}][etat]"
-                                                            class="form-control" style="background: gold;">
+                                                            class="form-control" style="background: var(--absent);">
                                                         <option value=""
                                                                 class="white" {% if atelier.etat == '' %} selected="selected" {% endif %}></option>
                                                         <option value="Non"
@@ -1106,7 +1106,7 @@
                                                         eu lieu ?</label>
                                                     <select id="patient_creation_form_educatives_{{ educative.id }}_etat"
                                                             name="patient_creation_form[educative][{{ educative.id }}][etat]"
-                                                            class="form-control" style="background: gold;">
+                                                            class="form-control" style="background: var(--absent);">
                                                         <option value=""
                                                                 class="white" {% if educative.etat == '' %} selected="selected" {% endif %}></option>
                                                         <option value="Non"

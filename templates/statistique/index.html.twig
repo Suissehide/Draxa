@@ -24,7 +24,7 @@
         </button>
         <span id="loading" style="display: none;">
             <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style="animation: spin 1s linear infinite;">
-                <circle cx="10" cy="10" r="8" stroke="#999" stroke-width="2.5" fill="none" stroke-dasharray="40 20" stroke-linecap="round"/>
+                <circle cx="10" cy="10" r="8" stroke="#767676" stroke-width="2.5" fill="none" stroke-dasharray="40 20" stroke-linecap="round"/>
             </svg>
         </span>
     </div>
@@ -640,7 +640,7 @@
                 // Ligne "Aucune donnée" pour les tableaux vides
                 $('.box table tbody').each(function() {
                     if ($(this).children().length === 0) {
-                        $(this).append('<tr><td colspan="99" class="text-center" style="color:#999; font-style:italic; padding:8px">Aucune donnée</td></tr>');
+                        $(this).append('<tr><td colspan="99" class="text-center" style="color:var(--gray-500); font-style:italic; padding:8px">Aucune donnée</td></tr>');
                     }
                 });
 

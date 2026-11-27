@@ -3,9 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="csrf-token" content="{{ csrf_token('ajax') }}">
-        <title>
-            {% block title %}Draxa{% endblock %}
-        </title>
+        <title>{% block title %}{% endblock %} – Cepta</title>
         <link rel="icon" type="image/png" href="{{ asset('img/favicon.png') }}"/>
 
         <link rel="stylesheet" href="{{ asset('css/reset.css') }}">

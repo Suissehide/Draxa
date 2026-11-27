@@ -54,16 +54,16 @@ class SlotType extends AbstractType
                 'placeholder' => '',
                 'choices' => array(
                     '' => '',
-                    'Entretien' => 'Entretien',
                     'Consultation' => 'Consultation',
+                    'Entretien' => 'Entretien',
                     'Coaching PRM' => 'Coaching',
                     'Atelier' => 'Atelier',
                     'Semaine éducative' => 'Educative',
                 ),
                 'choice_attr' => [
                     '' => ['class' => 'white', 'data-thematique' => ''],
-                    'Entretien' => ['class' => 'rebeccapurple', 'data-thematique' => 'entretien'],
                     'Consultation' => ['class' => 'seagreen', 'data-thematique' => 'consultation'],
+                    'Entretien' => ['class' => 'rebeccapurple', 'data-thematique' => 'entretien'],
                     'Coaching PRM' => ['class' => 'goldenrod', 'data-thematique' => 'coaching'],
                     'Atelier' => ['class' => 'chocolate', 'data-thematique' => 'atelier'],
                     'Semaine éducative' => ['class' => 'royalblue', 'data-thematique' => 'educative'],

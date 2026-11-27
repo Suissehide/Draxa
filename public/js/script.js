@@ -2,8 +2,6 @@
  * Script jQuery
  */
 
-console.log("ready!");
-
 $('.datepicker').datepicker({
     language: 'fr',
     format: 'dd/mm/yyyy',
@@ -13,7 +11,7 @@ $('.datepicker').datepicker({
 });
 
 /**
- * Smooth scroll
+ * Bandeau d'assistance
  */
 
 const banner = document.getElementById('banner');
@@ -42,7 +40,7 @@ $('.js-scrollTo').on('click', function () {
 });
 
 /**
- * multipage form
+ * Onglets
  */
 
 $('.nav-tabs > li a[title]').tooltip();
@@ -53,19 +51,3 @@ $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
         return false;
     }
 });
-$(".next-step").click(function (e) {
-    let active = $('.wizard .nav-tabs li.active');
-    active.next().removeClass('disabled');
-    nextTab(active);
-});
-$(".prev-step").click(function (e) {
-    let active = $('.wizard .nav-tabs li.active');
-    prevTab(active);
-});
-
-function nextTab(elem) {
-    $(elem).next().find('a[data-toggle="tab"]').click();
-}
-function prevTab(elem) {
-    $(elem).prev().find('a[data-toggle="tab"]').click();
-}
