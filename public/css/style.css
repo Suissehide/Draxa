@@ -1890,7 +1890,7 @@ nav {
 }
 
 .semaine__body .semaine__full .slot:hover .duplicate-btn,
-.semaine__body .semaine__full .slot:hover .delete-btn {
+.semaine__body .semaine__full .slot:hover .btn-delete {
     display: block;
 }
 
@@ -1900,7 +1900,7 @@ nav {
     text-overflow: ellipsis;
 }
 
-.semaine__body .semaine__full .slot .delete-btn {
+.semaine__body .semaine__full .slot .btn-delete {
     display: none;
     position: absolute;
     top: 8px;
