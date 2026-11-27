@@ -1,0 +1,30 @@
+# Cepta V2 (branche refonte-ui) : application seule, SANS base de données.
+# Elle utilise la base MySQL de la V1 en rejoignant le réseau Docker de la V1.
+#
+# Variables à définir dans Dokploy (application V2) :
+#   V1_NETWORK   nom du réseau de la V1, ex. « cepta-v1-abc123_default »
+#                (docker network ls sur le serveur, ou onglet « Advanced » de la V1 dans Dokploy)
+#   DATABASE_URL identique à la V1 (hôte « mysql », le nom du service de la V1)
+#   APP_SECRET, MAILER_URL, ETEPEA_LEGACY_URL, ETEPEA_LEGACY_TOKEN : identiques à la V1
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: deploy/Dockerfile
+    image: ${APP_IMAGE_NAME}-v2:${VERSION:-latest}
+    environment:
+      - APP_ENV=prod
+      - APP_SECRET=${APP_SECRET}
+      - DATABASE_URL=${DATABASE_URL}
+      - MAILER_URL=${MAILER_URL}
+      - ETEPEA_LEGACY_URL=${ETEPEA_LEGACY_URL:-}
+      - ETEPEA_LEGACY_TOKEN=${ETEPEA_LEGACY_TOKEN:-}
+    networks:
+      - default
+      - v1
+    restart: unless-stopped
+
+networks:
+  v1:
+    external: true
+    name: ${V1_NETWORK}
