@@ -989,3 +989,23 @@ ul.todo__list { max-height: none; overflow: visible; }
 .bootgrid-header .actions .btn-group > .btn-group { margin: 0; }
 .patients-toolbar { justify-content: flex-start; }
 .legend--inline { background: transparent; border: 0; padding: 0 2px; margin-top: -6px; }
+
+/* Tâches (lot 6) : panneau plus large, infos compactes, édition sans double bordure */
+.todo__container { width: min(540px, 100vw); }
+ul.todo__list li { display: grid; grid-template-columns: minmax(0, 1fr) 34px; column-gap: 4px; align-items: center; min-height: 0; padding: 8px 6px 8px 4px; }
+ul.todo__list li:focus-within { border-color: #9cc9dd; background: var(--surface); }
+ul.todo__list li .form-check { grid-column: 1; grid-row: 1; align-items: flex-start; }
+ul.todo__list li .cbx { padding: 4px 6px; margin: 0; flex: none; }
+.todo__button-bar { display: contents; }
+.todo__time { grid-column: 1; grid-row: 2; padding: 2px 0 0 48px; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.todo__action { margin-left: 4px; padding: 3px 6px; border-radius: 6px; line-height: 1.45; word-break: break-word; }
+.todo__action:focus, .todo__action:focus-visible { outline: none !important; box-shadow: none; background: var(--brand-tint-2); }
+.todo__delete { grid-column: 2; grid-row: 1 / span 2; align-self: center; width: 34px; height: 34px; padding: 0; margin: 0; line-height: 0; display: inline-flex; align-items: center; justify-content: center; }
+.todo__delete svg { display: block; }
+ul.todo__list li .todo__action:focus, ul.todo__list li .todo__action:focus-visible { outline: none !important; box-shadow: none !important; }
+ul.todo__list li .cbx { width: 32px; min-height: 30px; height: 30px; padding: 0; overflow: visible; }
+ul.todo__list li .inp-cbx + label::before { left: 7px; top: 6px; }
+ul.todo__list li .inp-cbx + label::after { left: 10px; top: 15px; }
+.todo__time { padding-left: 42px; padding-top: 0; }
+ul.todo__list li .todo__action[contenteditable="true"]:focus, ul.todo__list li .todo__action[contenteditable="true"]:active { border: 0; padding: 3px 6px; }
+.todo__time { margin-top: -4px; }
