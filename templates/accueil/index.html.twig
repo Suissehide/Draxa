@@ -377,9 +377,11 @@
             return null;
         }
 
+        // Liste rattachée à la modale : sinon Bootstrap reprend le focus et la recherche est impossible
         $(".js-patient").select2({
             multiple: false,
             matcher: matchCustom,
+            dropdownParent: $('#addPatient'),
         });
 
         {#    #}
