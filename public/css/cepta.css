@@ -776,3 +776,129 @@ tr.out .pt-avatar { background: #e9edf1; color: var(--muted); }
 @media (min-width: 768px) { .modal-dialog { width: 560px; } .modal-dialog.modal-lg { width: 85%; } .modal-dialog.modal-md { width: 70%; } .modal-dialog.modal-sm-wide { width: 440px; } }
 .select2-search--dropdown .select2-search__field { height: 38px; border: 1px solid var(--field) !important; border-radius: 8px; padding: 0 10px; }
 #navMenu .btn-nav, #navMenu .btn-group { margin: 0; justify-content: flex-start; }
+
+/* ======================================================================
+   Retours V2 (lot 2)
+   ====================================================================== */
+
+/* Tâches : la liste occupe toute la hauteur du volet */
+ul.todo__list { max-height: none; overflow: visible; }
+.todo__tasks { background: transparent; height: auto; }
+
+/* Pied de page */
+#footer.app-footer a { font-size: inherit; color: var(--ink-2); transition: color .15s; }
+#footer.app-footer a:hover, #footer.app-footer a:focus { color: var(--brand); text-decoration: underline; }
+.auth__credits a:hover { color: #fff; text-decoration: underline; }
+
+/* En-têtes de tableaux : survol et flèches de tri */
+.table-hover thead > tr > th:hover, .bootgrid-table th:hover, .bootgrid-table th:active { background-color: var(--line-2); }
+.table > thead > tr > th { color: var(--muted); }
+.bootgrid-table th > .column-header-anchor { color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.bootgrid-table th > .column-header-anchor > .text { margin: 0; }
+.bootgrid-table th > .column-header-anchor.sortable:hover { color: var(--ink); }
+.bootgrid-table th > .column-header-anchor > .icon { position: static; display: inline-flex; color: var(--brand); font-size: 9px; top: 0; }
+.bootgrid-table th > .column-header-anchor.sortable > .icon:not(.glyphicon-chevron-up):not(.glyphicon-chevron-down)::before { content: "\2195"; font-family: var(--font); font-size: 12px; color: #a9b4bf; opacity: 0; transition: opacity .15s; }
+.bootgrid-table th > .column-header-anchor.sortable:hover > .icon::before { opacity: 1; }
+.table th .glyphicon, .table .glyphicon { color: var(--brand); }
+
+/* Actuels / Sortis / Tous */
+.radio-block label:hover { background: rgba(255, 255, 255, .6); color: var(--ink); }
+.radio-block input[type="radio"]:checked + label:hover { background: var(--surface); }
+.radio-block label { transition: background .15s, color .15s; }
+
+/* Pagination */
+.pagination > li > a, .pagination li a { transition: background .18s ease, border-color .18s ease, color .18s ease; }
+.pagination li:not(.active):not(.disabled) a:hover { background: var(--hover-tint) !important; border-color: #b9c3cc !important; color: var(--ink) !important; }
+.pagination > .active > a:hover { background: var(--brand-dark) !important; color: #fff !important; }
+.pagination .disabled a, .pagination .disabled a:hover { background: var(--surface) !important; color: var(--ink-2) !important; cursor: default; }
+
+/* Légendes en carte (Patients, Calendrier) */
+.patients-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; }
+.legend--card { padding: 6px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; gap: 6px 14px; }
+.legend__item { display: inline-flex; align-items: center; gap: 6px; }
+.legend--card .tag { margin: 0; }
+.legend__swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.legend__swatch--today { border: 2px solid var(--danger); background: var(--surface); }
+.page-head__hint { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); max-width: 720px; }
+
+/* Statistiques : espacement entre les blocs */
+.aspect-wrapper { margin: 4px 0 0; display: flex; flex-direction: column; gap: 12px; }
+.aspect-tab { margin: 0; border-radius: var(--radius-lg); box-shadow: none; border: 1px solid var(--line); overflow: hidden; }
+.aspect-tab:hover { box-shadow: var(--shadow-sm); }
+.aspect-tab-content .stats-wrapper { padding: 0 18px 18px; }
+.aspect-tab-content .stats-wrapper > .box { border: 0; }
+.stats-box { padding: 16px 18px 18px; }
+.stats-box__title { margin: 0 0 8px; font-size: 16px; font-weight: 600; }
+.stats-box .nav-tabs { margin: 0 0 14px; }
+.stats-box .tab-content .table { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.btn-container { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 0; }
+.btn-container .input-daterange { width: auto; display: inline-table; }
+.btn-container .input-daterange .form-control { width: 120px; }
+
+/* Semaines & créneaux : une seule barre de défilement, toute la largeur */
+.settings { width: 100%; max-width: none; margin: 0; padding: 0; }
+.settings .nav-bar { border-bottom: 0; margin: 0 0 14px; padding: 0; }
+.settings .nav-bar .btn.btn-round { width: 38px; height: 38px; min-height: 38px; padding: 0; margin: 0 6px; border-radius: 10px; }
+.settings .divider { margin: 0; }
+.semaine-wrapper { max-height: none; overflow: visible; padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.semaine { width: 100%; margin: 0; border-radius: var(--radius-lg); overflow: hidden; }
+.semaine__header { min-height: 72px; }
+.semaine__header .semaine__date-info { width: 42%; border-radius: 0; padding: 14px 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; background: var(--brand-dark); }
+.semaine__header .semaine__date-info h2 { margin: 0; font-family: var(--font); font-weight: 600; font-size: 12.5px; letter-spacing: .04em; flex-basis: 100%; }
+.semaine__header .semaine__date-info .semaine__date-range { font-size: 17px; font-weight: 600; }
+.semaine.open .semaine__header .semaine__date-info { width: 100%; padding-left: 22px; border-radius: 0; }
+.semaine__header .semaine__date-info button.btn-remove { position: static; transform: none; display: none; order: 3; margin-left: auto; min-height: 36px; padding: 0 12px; border-radius: 9px; background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .45); color: #fff; }
+.semaine__header .semaine__date-info button.btn-remove:hover { background: var(--danger); border-color: var(--danger); color: #fff; }
+.semaine.open .semaine__header .semaine__date-info button.btn-remove { display: inline-flex; }
+.semaine__header .semaine__general-info .semaine__duplicate, .semaine__header .semaine__general-info .semaine__open-icon { border-radius: 9px; height: 40px; padding: 0 14px; margin-right: 6px; }
+.semaine.open .semaine__header .semaine__general-info { background: var(--brand-dark); flex: 0 0 auto; width: auto; }
+.semaine__header .semaine__general-info .semaine__duplicate:hover { background: rgba(255, 255, 255, .15); }
+.semaine__header:hover .semaine__general-info { background-color: var(--surface-2); }
+.semaine.open .semaine__header:hover .semaine__general-info { background-color: var(--brand-dark); }
+.semaine.open .semaine__body { max-height: none; }
+.semaine__body .semaine__full { overflow-x: auto; overflow-y: visible; }
+.settings .btn:hover, .soignants-page .btn:hover { filter: none; }
+.settings .btn-primary:hover { background: var(--brand-dark) !important; }
+
+/* Soignants */
+.soignants-page .page-head { align-items: flex-start; }
+.soignant__wrapper { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 18px; align-items: start; margin: 0; padding: 0; }
+@media (max-width: 900px) { .soignant__wrapper { grid-template-columns: 1fr; } }
+.list-soignant { min-height: 320px; padding: 16px; margin: 0; width: auto; }
+.list-soignant h2 { margin: 0 0 10px; padding: 0 6px; font-family: var(--font); font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.list-soignant__count { min-width: 24px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--line-3); color: var(--ink-2); font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+.list-soignant ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.soignant { display: flex; align-items: center; gap: 6px; min-height: 48px; padding: 0 6px 0 14px; margin: 0; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); font-size: 14px; font-weight: 500; color: var(--ink); cursor: pointer; transition: background .15s, border-color .15s; }
+.soignant:hover { background: var(--surface-2); border-color: var(--field); }
+.soignant.selected { background: var(--brand-tint); border-color: #9cc9dd; color: var(--brand-dark); }
+.soignant button.moveup-btn { margin-left: auto; }
+.soignant button { width: 34px; height: 34px; border: 0; border-radius: 8px; background: transparent; color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; opacity: 1; float: none; }
+.soignant button:hover { background: rgba(21, 32, 43, .06); color: var(--ink); }
+.soignant button.remove-btn { color: var(--danger); }
+.soignant button.remove-btn:only-of-type, .soignant .moveup-btn[style*="none"] + .remove-btn { margin-left: auto; }
+.soignant button .glyphicon { color: inherit; font-size: 12px; top: 0; }
+.soignant__btn-bar { display: flex; flex-direction: column; gap: 8px; padding-top: 56px; margin: 0; }
+.soignant__btn-bar .btn { min-width: 132px; justify-content: space-between; }
+.soignant__btn-bar .btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.soignant__btn-bar .btn[disabled] { opacity: .5; }
+.soignant__btn-bar .btn .glyphicon { font-size: 11px; top: 0; }
+
+/* Calendrier des années */
+.year-page .page-head { align-items: center; }
+.year-card { padding: 18px 22px 8px; }
+.year-card .calendar { padding: 0; overflow: visible; }
+.calendar .calendar-header { border: 0; margin-bottom: 18px; }
+.calendar .calendar-header table th { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink); padding: 8px 12px; border-radius: 10px; }
+.calendar .calendar-header table th:hover { background: var(--hover-tint); }
+.calendar .calendar-header .year-title:not(.year-neighbor):not(.year-neighbor2) { color: var(--brand); }
+.calendar .months-container { display: grid !important; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 1200px) { .calendar .months-container { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 800px) { .calendar .months-container { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.calendar .months-container .month-container { width: auto !important; float: none; margin: 0; padding: 12px 8px 10px; border: 1px solid var(--line-2); border-radius: 12px; background: var(--surface); }
+.calendar table.month { width: 100%; }
+.calendar table.month th.month-title { font-size: 14px; font-weight: 600; color: var(--ink); padding-bottom: 8px; text-transform: capitalize; }
+.calendar table.month th.day-header { font-size: 11px; font-weight: 600; color: var(--muted); }
+.calendar table.month td.day .day-content { border-radius: 6px; font-size: 12px; padding: 4px 0; }
+.calendar table.month td.day:not(.old):not(.new) .day-content:hover { background: var(--hover-tint); }
+.calendar .calendar-today { outline: 2px solid var(--danger); outline-offset: -2px; border-radius: 6px; }
+.semaine__body .semaine__full .jour { min-width: 140px; }

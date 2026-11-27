@@ -7,25 +7,20 @@
 {% block title %}Calendrier des années{% endblock %}
 
 {% block page_content %}
-    <div class="wrapper">
-        <h1>Calendrier des années</h1>
-        <div class="legende">
-            <div class="legende__type">Légende :</div>
-            <div class="legende__type">
-                <span class="legende__color" style="background-color: var(--brand)"></span>
-                Semaine programmée avec des créneaux
-            </div>
-            <div class="legende__type">
-                <span class="legende__color" style="background-color: var(--warning)"></span>
-                Semaine créée sans créneau
-            </div>
-            <div class="legende__type">
-                <span class="legende__color legende__color--today"></span>
-                Aujourd'hui
+    <div class="page year-page">
+        <div class="page-head">
+            <h1 class="page-title">Calendrier des années</h1>
+            <div class="legend legend--card">
+                <span class="legend__item"><span class="legend__swatch" style="background-color: var(--brand)"></span>Semaine programmée avec des créneaux</span>
+                <span class="legend__item"><span class="legend__swatch" style="background-color: var(--warning)"></span>Semaine créée sans créneau</span>
+                <span class="legend__item"><span class="legend__swatch legend__swatch--today"></span>Aujourd’hui</span>
             </div>
         </div>
+        <section class="card year-card">
+            <div class="calendar"></div>
+        </section>
+        <p class="page-head__hint">Les semaines se créent et se remplissent depuis <a href="{{ path('settings', {'year': "now"|date("Y")}) }}">Semaines &amp; créneaux</a>.</p>
     </div>
-	<div class="calendar"></div>
 {% endblock page_content %}
 
 {% block javascripts %}

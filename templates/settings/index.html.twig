@@ -58,7 +58,7 @@
                 <li class="semaine" data-date="{{ semaine.dateDebut|date("d/m/Y") }}" data-id="{{ semaine.id }}">
                     <div class="semaine__header" role="button" tabindex="0" aria-expanded="false">
                         <div class="semaine__date-info">
-                            <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
+                            <button type="button" class="btn btn-danger-outline btn-remove">Supprimer</button>
                             <h2>SEMAINE {{ counter }}</h2>
                             <div class="semaine__date-range">
                                 <div>{{ semaine.dateDebut ? semaine.dateDebut|format_datetime(pattern="d MMMM YYYY", locale='fr') : '' }}</div>

@@ -11,7 +11,7 @@
 {% block page_content %}
 
 <div class="wrapper">
-    <h1>Statistiques</h1>
+    <h1 class="page-title">Statistiques</h1>
 
     <div class="btn-container">
         <div class="input-group input-daterange">
@@ -337,8 +337,9 @@
             </div>
         </div>
 
-        <div class="box">
-            <ul class="nav nav-tabs" id="tablesTabs" style="margin-bottom:15px">
+        <div class="box stats-box">
+            <h2 class="stats-box__title">Présence par thématique</h2>
+            <ul class="nav nav-tabs" id="tablesTabs">
                 <li class="active"><a href="#tab-entretiens" data-toggle="tab">Entretiens individuels</a></li>
                 <li><a href="#tab-coachings" data-toggle="tab">Coachings PRM</a></li>
                 <li><a href="#tab-ateliers" data-toggle="tab">Ateliers</a></li>
@@ -400,8 +401,9 @@
             </div>
         </div>
 
-        <div class="box">
-            <ul class="nav nav-tabs" id="patientsTabs" style="margin-bottom:15px">
+        <div class="box stats-box">
+            <h2 class="stats-box__title">Fiches à compléter</h2>
+            <ul class="nav nav-tabs" id="patientsTabs">
                 <li class="active"><a href="#tab-missing-orientation" data-toggle="tab">Sans orientation (<span id="count-orientation">0</span>)</a></li>
                 <li><a href="#tab-missing-dedate" data-toggle="tab">Sans date d'entrée (<span id="count-dedate">0</span>)</a></li>
                 <li><a href="#tab-missing-mode" data-toggle="tab">Sans mode de PEC (<span id="count-mode">0</span>)</a></li>

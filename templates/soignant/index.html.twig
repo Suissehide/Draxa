@@ -6,21 +6,23 @@
 {% block title %}Soignants{% endblock %}
 
 {% block page_content %}
-    <div class="settings">
-        <h1>Soignants</h1>
-
-        <div class="nav-bar">
-            <div class="btn-group btn-nav">
+    <div class="page soignants-page">
+        <div class="page-head">
+            <div>
+                <h1 class="page-title">Soignants</h1>
+                <p class="page-head__hint">Les soignants actifs apparaissent dans les listes de créneaux, dans l’ordre ci-dessous. Cliquez sur un ou plusieurs noms pour les sélectionner, puis déplacez-les avec les flèches.</p>
+            </div>
+            <div class="page-head__actions">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#soignantModal">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    Ajouter une personne
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                    Ajouter un soignant
                 </button>
             </div>
         </div>
 
         <div class="soignant__wrapper">
             <div id="actif" class="list-soignant">
-                <h2>Actifs</h2>
+                <h2>Actifs <span class="list-soignant__count js-count-actif">{{ soignants|filter(s => s.status == true)|length }}</span></h2>
                 <ul>
                     {% for soignant in soignants|sort((a, b) => a.priority <=> b.priority) %}
                         {% if soignant.status == true %}
@@ -38,12 +40,12 @@
             </div>
 
             <div class="soignant__btn-bar">
-                <button type="button" disabled class="btn js-remove" aria-label="Rendre inactifs les soignants sélectionnés" title="Rendre inactifs les soignants sélectionnés"><span class="glyphicon glyphicon-chevron-right"></span></button>
-                <button type="button" disabled class="btn js-add" aria-label="Rendre actifs les soignants sélectionnés" title="Rendre actifs les soignants sélectionnés"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                <button type="button" disabled class="btn btn-default js-remove" title="Rendre inactifs les soignants sélectionnés">Désactiver <span class="glyphicon glyphicon-chevron-right"></span></button>
+                <button type="button" disabled class="btn btn-default js-add" title="Rendre actifs les soignants sélectionnés"><span class="glyphicon glyphicon-chevron-left"></span> Réactiver</button>
             </div>
 
             <div id="inactif" class="list-soignant">
-                <h2>Inactifs</h2>
+                <h2>Inactifs <span class="list-soignant__count js-count-inactif">{{ soignants|filter(s => s.status == false)|length }}</span></h2>
                 <ul>
                     {% for soignant in soignants %}
                         {% if soignant.status == false %}
@@ -72,9 +74,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
-                    <h4 class="modal-title">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        Ajouter une personne</h4>
+                    <h4 class="modal-title">Ajouter un soignant</h4>
                 </div>
                 <div class="modal-body">
                     {{ form_start(soignantForm) }}
@@ -283,6 +283,12 @@
 
 
 
+        // Compteurs Actifs / Inactifs, tenus à jour à chaque déplacement, ajout ou suppression
+        function updateSoignantCounts() {
+            $('.js-count-actif').text($('#actif li.soignant').length);
+            $('.js-count-inactif').text($('#inactif li.soignant').length);
+        }
+        new MutationObserver(updateSoignantCounts).observe(document.querySelector('.soignant__wrapper'), {childList: true, subtree: true});
     </script>
 
 {% endblock %}

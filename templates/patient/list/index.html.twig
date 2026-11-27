@@ -13,7 +13,8 @@
             </div>
         </div>
 
-        <form class="radio-block patients-toolbar" onsubmit="return false">
+        <div class="patients-toolbar">
+        <form class="radio-block" onsubmit="return false">
             <div class="radio-group" role="radiogroup" aria-label="État du patient">
                 <input type="radio" id="option-actuels" name="selector" checked>
                 <label for="option-actuels">Actuels</label>
@@ -23,6 +24,16 @@
                 <label for="option-tous">Tous</label>
             </div>
         </form>
+        <div class="legend legend--card">
+            <span class="legend__item"><span class="alert-dot" aria-hidden="true"></span>Suivi à régulariser</span>
+            <span class="legend__item"><span class="tag tag--tf">TF</span>Theraflow</span>
+            <span class="legend__item"><span class="tag tag--aomi">AOMI</span>ViVa module AOMI</span>
+            <span class="legend__item"><span class="tag tag--out">Sorti</span>Sorti du programme</span>
+            <span class="presence presence--oui presence--static"><i></i>Venu</span>
+            <span class="presence presence--non presence--static"><i></i>Absent</span>
+            <span class="presence presence--static"><i></i>À renseigner</span>
+        </div>
+        </div>
 
         <section class="card patients-card">
             <table id="patient-grid" class="table table-condensed table-hover table-clickable">
@@ -72,7 +83,7 @@
                     let tags = '';
                     if (row.divers) tags += '<span class="tag tag--tf" title="Theraflow">TF</span>';
                     if (row.progetp === 'ViVa module AOMI') tags += '<span class="tag tag--aomi" title="ViVa module AOMI">AOMI</span>';
-                    if (row.sortie) tags += '<span class="tag" style="background:#e9edf1;color:#3d4853">Sorti le ' + escapeHtml(row.sortie) + '</span>';
+                    if (row.sortie) tags += '<span class="tag tag--out">Sorti le ' + escapeHtml(row.sortie) + '</span>';
                     return '<div class="pt"><span class="pt-avatar" aria-hidden="true">' + escapeHtml(ini) + '</span><div>'
                         + '<div class="pt-name">' + escapeHtml(row.nom) + ' <span>' + escapeHtml(row.prenom) + '</span></div>'
                         + (tags ? '<div class="pt-tags">' + tags + '</div>' : '') + '</div></div>';

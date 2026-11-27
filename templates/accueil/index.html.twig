@@ -217,10 +217,8 @@
                 const d = monday.clone().add(i, 'days');
                 const key = d.format('DD/MM/YYYY');
                 const isSel = d.isSame(selected, 'day');
-                const count = weekCounts[key];
                 html += '<button type="button" class="daybar__day' + (isSel ? ' is-selected' : '') + (key === today ? ' is-today' : '') + (i > 4 ? ' is-weekend' : '') + '" data-date="' + key + '"' + (isSel ? ' aria-current="date"' : '') + '>'
                     + '<span class="daybar__dow">' + d.format('ddd') + '</span> <span class="daybar__num">' + d.format('D') + '</span>'
-                    + (count ? '<span class="daybar__count" aria-label="' + count + ' créneaux">' + count + '</span>' : '')
                     + '</button>';
             }
             $('.js-days').html(html);
@@ -406,11 +404,14 @@
                 dataType: 'json',
                 data: {id: row.data('id'), etat: next},
                 success: function () {
+                    // Met à jour toutes les lignes de ce rendez-vous (agenda du jour et recherche de créneaux)
                     const state = presenceStates[next];
-                    row.attr('data-etat', next);
-                    button.removeClass('presence--oui presence--non').addClass(state.cls)
-                        .attr('aria-label', 'Présence : ' + state.label + ' (cliquer pour changer)')
-                        .html('<i></i>' + state.label);
+                    $('.pat-row[data-id="' + row.data('id') + '"]').each(function () {
+                        $(this).attr('data-etat', next).find('.js-presence')
+                            .removeClass('presence--oui presence--non').addClass(state.cls)
+                            .attr('aria-label', 'Présence : ' + state.label + ' (cliquer pour changer)')
+                            .html('<i></i>' + state.label);
+                    });
                 },
                 complete: function () { button.prop('disabled', false); }
             });
