@@ -554,9 +554,6 @@ ul.todo__list li:hover .todo__delete, ul.todo__list li:focus-within .todo__delet
 .agenda__filters { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 20px; padding: 4px 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 12.5px; color: var(--ink-2); }
 .legend .tag { margin-left: 6px; }
-.agenda__next { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
-.agenda__next .js-next { display: contents; }
-.agenda__next-label { font-weight: 600; color: var(--muted); }
 
 .accueil-wrapper { display: flex; flex-direction: column; gap: 14px; margin: 0; }
 .slots { overflow: hidden; }

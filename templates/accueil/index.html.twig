@@ -56,11 +56,6 @@
             </div>
         </div>
 
-        {# Prochain créneau de chaque catégorie #}
-        <div class="agenda__next">
-            <span class="agenda__next-label">Prochains :</span>
-            <span class="js-next"></span>
-        </div>
 
         {# Créneaux du jour #}
         <div class="accueil-wrapper">
@@ -204,7 +199,6 @@
         moment.locale('fr');
         let selected = moment(localStorage.getItem('dateSelected') || moment().format('DD/MM/YYYY'), 'DD/MM/YYYY');
         if (!selected.isValid()) selected = moment();
-        let weekCounts = {};
 
         /* Barre des jours
         ============================================================================== */
@@ -231,7 +225,6 @@
             localStorage.setItem('dateSelected', selected.format('DD/MM/YYYY'));
             renderDays();
             ajaxAction(selected.format('DD/MM/YYYY'));
-            loadOverview();
         }
 
         $('.js-days').on('click', '.daybar__day', function () { selectDate(moment($(this).data('date'), 'DD/MM/YYYY')); });
@@ -241,27 +234,6 @@
         $('#dayPicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: 'linked', todayHighlight: true, autoclose: true})
             .on('changeDate', function (e) { selectDate(moment(e.date)); });
 
-        function loadOverview() {
-            $.ajax({
-                url: "{{ path('accueil_overview') }}",
-                type: 'POST',
-                dataType: 'json',
-                data: {date: selected.format('DD/MM/YYYY')},
-                success: function (res) {
-                    weekCounts = res.week || {};
-                    renderDays();
-                    let html = '';
-                    (res.next || []).forEach(function (n, i) {
-                        if (!n.date) return;
-                        html += '<button type="button" class="chip js-goto" data-date="' + escapeHtml(n.date) + '"><span class="cat-dot cat-dot--' + n.categorie.toLowerCase() + '"></span>'
-                            + escapeHtml(categorieLabels[n.categorie]) + ' <span class="chip__muted">' + escapeHtml(moment(n.date, 'DD/MM/YYYY').format('ddd DD/MM')) + ' ' + escapeHtml(n.heure || '') + '</span></button>';
-                    });
-                    $('.js-next').html(html || '<span class="chip__muted">Aucun créneau à venir</span>');
-                }
-            });
-        }
-
-        $('.js-next').on('click', '.js-goto', function () { selectDate(moment($(this).data('date'), 'DD/MM/YYYY')); });
 
         /* Filtres des sections (mémorisés) et repli
         ============================================================================== */
@@ -390,7 +362,6 @@
         function reloadAll() {
             ajaxAction(selected.format('DD/MM/YYYY'));
             $("#rdv-grid").bootgrid('reload');
-            loadOverview();
         }
 
         // Présence en un clic : À renseigner → Venu → Absent → À renseigner
@@ -611,6 +582,5 @@
 
         renderDays();
         ajaxAction(selected.format('DD/MM/YYYY'));
-        loadOverview();
     </script>
 {% endblock %}

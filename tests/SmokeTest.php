@@ -101,11 +101,6 @@ class SmokeTest extends WebTestCase
         $data = $this->ajax('POST', '/accueil/slot', ['current' => 1, 'rowCount' => 10, 'sort' => ['soignant' => 'asc'], 'searchPhrase' => 'Dupont']);
         $this->assertSame(1, $data['total']);
 
-        // Semaine affichée (créneaux par jour) et prochain créneau de chaque catégorie.
-        $data = $this->ajax('POST', '/accueil/overview', ['date' => $day]);
-        $this->assertSame(1, $data['week'][$day]);
-        $this->assertCount(5, $data['next']);
-
         // Présence et note de transmission modifiées depuis l'agenda.
         $rdv = $this->em->getRepository(RendezVous::class)->findOneBy([]);
         $this->assertTrue($this->ajax('POST', '/rendez_vous/etat', ['id' => $rdv->getId(), 'etat' => 'Oui']));
