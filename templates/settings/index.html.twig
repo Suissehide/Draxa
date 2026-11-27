@@ -15,8 +15,8 @@
         {% elseif slot.categorie|lower == 'coaching' %}goldenrod
         {% endif %}
     ">
-        <div class="btn-delete"><span class="glyphicon glyphicon-remove"></span></div>
-        <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
+        <button type="button" class="btn-delete" aria-label="Supprimer ce créneau" title="Supprimer ce créneau"><span class="glyphicon glyphicon-remove"></span></button>
+        <button type="button" class="duplicate-btn" aria-label="Dupliquer ce créneau" title="Dupliquer ce créneau"><span class="glyphicon glyphicon-duplicate"></span></button>
         <div class="horaire">{{ slot.heureDebut|date("H:i") }} - {{ slot.heureFin|date("H:i") }}</div>
         <div class="thematique">
             {{ slot.thematique }}
@@ -35,19 +35,19 @@
 
         <div class="nav-bar">
             <div class="divider">
-                <button id="subYear" class="btn btn-primary btn-round">
+                <button type="button" id="subYear" class="btn btn-primary btn-round" aria-label="Année précédente" title="Année précédente">
                     <span class="glyphicon glyphicon-chevron-left"></span>
                 </button>
                 <h2 class="year">{{ year }}</h2>
-                <button id="addYear" class="btn btn-primary btn-round">
+                <button type="button" id="addYear" class="btn btn-primary btn-round" aria-label="Année suivante" title="Année suivante">
                     <span class="glyphicon glyphicon-chevron-right"></span>
                 </button>
             </div>
             <div class="btn-nav">
-                <a id="semaineAddModal" class="btn btn-primary" data-toggle="modal" data-target="#semaineModal">
+                <button type="button" id="semaineAddModal" class="btn btn-primary" data-toggle="modal" data-target="#semaineModal">
                     <span class="glyphicon glyphicon-plus"></span>
                     Ajouter une semaine
-                </a>
+                </button>
             </div>
         </div>
 
@@ -55,7 +55,7 @@
             {% for semaine in semaines %}
                 {% set counter = (counter | default(0)) + 1 %}
                 <li class="semaine" data-date="{{ semaine.dateDebut|date("d/m/Y") }}" data-id="{{ semaine.id }}">
-                    <div class="semaine__header">
+                    <div class="semaine__header" role="button" tabindex="0" aria-expanded="false">
                         <div class="semaine__date-info">
                             <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
                             <h2>SEMAINE {{ counter }}</h2>
@@ -66,7 +66,7 @@
                             </div>
                         </div>
                         <div class="semaine__general-info">
-                            <div class="semaine__duplicate"><span class="glyphicon glyphicon-duplicate"></span></div>
+                            <button type="button" class="semaine__duplicate" aria-label="Dupliquer cette semaine" title="Dupliquer cette semaine"><span class="glyphicon glyphicon-duplicate"></span></button>
                             <div class="semaine__open-icon"><span class="glyphicon glyphicon-chevron-down"></span></div>
                         </div>
                     </div>
@@ -143,13 +143,13 @@
 
 
     <!-- Modal addSemaine-->
-    <div id="semaineModal" class="modal fade" role="dialog">
+    <div id="semaineModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
                     <h4 class="modal-title add">
                         <span class="glyphicon glyphicon-plus"></span>
                         Ajouter une semaine
@@ -183,7 +183,7 @@
                     </button>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
                         Annuler
                     </button>
@@ -193,13 +193,13 @@
     </div>
 
     <!-- Modal addSlot-->
-    <div id="slotModal" class="modal fade" role="dialog">
+    <div id="slotModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
                     <h4 class="modal-title modal__add">
                         <span class="glyphicon glyphicon-plus"></span>
                         Ajouter un slot
@@ -213,7 +213,7 @@
                     {{ form_start(slotForm) }}
                     {{ form_errors(slotForm) }}
 
-                    <div id="slot__error"><strong>Erreur :</strong></div>
+                    <p class="text-danger js-modal-error" role="alert" hidden></p>
 
                     <h3 data-date="">12 Mars 1997</h3>
 
@@ -245,11 +245,11 @@
                     {{ form_row(slotForm.soignant) }}
                     {{ form_row(slotForm._token) }}
                     {{ form_end(slotForm, {'render_rest' : false}) }}
-                    <button id="slot_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
-                    <button id="slot_edit" class="btn btn-primary btn-block" data-dismiss="modal">Modifier</button>
+                    <button type="button" id="slot_add" class="btn btn-primary btn-block">Ajouter</button>
+                    <button type="button" id="slot_edit" class="btn btn-primary btn-block">Modifier</button>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
                         <span class="glyphicon glyphicon-remove"></span>
                         Annuler
                     </button>
@@ -258,65 +258,7 @@
         </div>
     </div>
 
-    <!-- Modal deleteSemaine-->
-    <div id="deleteSemaineModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
 
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">
-                        <span class="glyphicon glyphicon-warning"></span>
-                        Suppression</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer cette semaine ?</p>
-                    <div class="modal-btn">
-                        <button class="btn btn-primary btn-delete">Oui</button>
-                        <button class="btn btn-danger" data-dismiss="modal">Non</button>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        Annuler
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal deleteSlot-->
-    <div id="deleteSlotModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">
-                        <span class="glyphicon glyphicon-warning"></span>
-                        Suppression</h4>
-                </div>
-                <div class="modal-body">
-                    <p>Êtes-vous sûr de vouloir supprimer ce slot ?</p>
-                    <div class="modal-btn">
-                        <button class="btn btn-primary btn-delete">Oui</button>
-                        <button class="btn btn-danger" data-dismiss="modal">Non</button>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        Annuler
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
 {% endblock %}
 
@@ -388,16 +330,6 @@
             const walk = (x - startX) * 3; //scroll-fast
             $(this).scrollLeft(scrollLeft - walk);
         });
-
-
-        /* Close modal on "Escape" pressed
-        ============================================================================== */
-        document.onkeydown = function (evt) {
-            evt = evt || window.event;
-            if (evt.keyCode === 27) {
-                $('.modal').modal('hide');
-            }
-        };
 
 
         /* Set select color
@@ -558,7 +490,7 @@
                         }).format(new_dateFin);
                         $('.semaine-wrapper')
                             .append(`<li class="semaine" data-date="` + escapeHtml(dateDebut) + `" data-id="` + escapeHtml(resp) + `">
-                                        <div class="semaine__header">
+                                        <div class="semaine__header" role="button" tabindex="0" aria-expanded="false">
                                             <div class="semaine__date-info">
                                                 <button type="button" class="btn btn-danger btn-remove">Supprimer</button>
                                                 <h2>SEMAINE 1</h2>
@@ -569,7 +501,7 @@
                                                 </div>
                                             </div>
                                             <div class="semaine__general-info">
-                                                <div class="semaine__duplicate"><span class="glyphicon glyphicon-duplicate"></span></div>
+                                                <button type="button" class="semaine__duplicate" aria-label="Dupliquer cette semaine" title="Dupliquer cette semaine"><span class="glyphicon glyphicon-duplicate"></span></button>
                                                 <div class="semaine__open-icon"><span class="glyphicon glyphicon-chevron-down"></span></div>
                                             </div>
                                         </div>
@@ -637,7 +569,7 @@
                         orderWeek();
                         setWeekNumber();
                     } else {
-                        errorAlert('impossible d\'ajouter une semaine');
+                        errorAlert('Impossible d\'ajouter la semaine.');
                     }
                 }
             });
@@ -647,7 +579,8 @@
         $('.semaine-wrapper').on('click', '.semaine__header', function () {
             let semaine = $(this).parent();
             semaine.toggleClass("open");
-            $('.semaine__header').not(this).parent().removeClass("open");
+            $('.semaine__header').not(this).attr('aria-expanded', 'false').parent().removeClass("open");
+            $(this).attr('aria-expanded', semaine.hasClass('open') ? 'true' : 'false');
             $('.jour').hide();
             $(this).find('.semaine__open-icon .glyphicon').toggleClass('glyphicon-chevron-down glyphicon-chevron-up');
             setTimeout(function () {
@@ -656,37 +589,59 @@
         })
 
 
+        // En-tête de semaine utilisable au clavier (Entrée / Espace)
+        $('.semaine-wrapper').on('keydown', '.semaine__header', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target === this) {
+                e.preventDefault();
+                $(this).trigger('click');
+            }
+        });
+
+        // Met en évidence la semaine en cours et y amène directement (sinon il faut descendre depuis janvier)
+        (function () {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            $('.semaine-wrapper .semaine').each(function () {
+                const p = String($(this).attr('data-date')).split('/');
+                const start = new Date(+p[2], +p[1] - 1, +p[0]);
+                const end = new Date(+p[2], +p[1] - 1, +p[0] + 7);
+                if (today >= start && today < end) {
+                    $(this).addClass('semaine--current');
+                    $(this).find('.semaine__date-info h2').append(' <span class="semaine__current-label">Semaine en cours</span>');
+                    this.scrollIntoView({block: 'center'});
+                    return false;
+                }
+            });
+        })();
+
         {# Delete #}
         $(".semaine-wrapper").on('click', '.semaine .btn-remove', function (e) {
             e.stopPropagation();
             let id = $(this).parents('.semaine').attr('data-id');
-            $("#deleteSemaineModal").find('.btn-delete').attr('data-id', id);
-            $("#deleteSemaineModal").modal('show');
-        });
+            confirmAction({
+                message: 'Supprimer cette semaine et tous ses créneaux ?',
+                onConfirm: function () {
+                    let url = "{{ path('semaine_delete', { 'id': 'semaine_id' }) }}";
+                    url = url.replace("semaine_id", id);
+                    $.ajax({
+                        url: url,
+                        type: "DELETE",
+                        dataType: "json",
+                        data: {},
+                        success: function (res) {
+                            if (res) {
+                                let date = $('.semaine[data-id="' + id + '"]').attr('data-date');
+                                datesSemaines.forEach(function (e, v) {
+                                    if (e['date'] === date) datesSemaines.splice(v, 1);
+                                });
 
-        $("#deleteSemaineModal").on('click', '.btn-delete', function (e) {
-            e.stopPropagation();
-            $("#deleteSemaineModal").modal('hide');
-            let id = $(this).attr('data-id');
-            let url = "{{ path('semaine_delete', { 'id': 'semaine_id' }) }}";
-            url = url.replace("semaine_id", id);
-            $.ajax({
-                url: url,
-                type: "DELETE",
-                dataType: "json",
-                data: {},
-                success: function (res) {
-                    if (res) {
-                        let date = $('.semaine[data-id="' + id + '"]').attr('data-date');
-                        datesSemaines.forEach(function (e, v) {
-                            if (e['date'] === date) datesSemaines.splice(v, 1);
-                        });
-
-                        updateDatepicker();
-                        $('.semaine[data-id="' + id + '"]').remove();
-                    } else {
-                        errorAlert('impossible de supprimer cette semaine');
-                    }
+                                updateDatepicker();
+                                $('.semaine[data-id="' + id + '"]').remove();
+                            } else {
+                                errorAlert('Impossible de supprimer cette semaine.');
+                            }
+                        }
+                    });
                 }
             });
         });
@@ -755,10 +710,10 @@
 
                         displaySlot();
                     } else {
-                        errorAlert('impossible de dupliquer ce slot');
+                        errorAlert('Impossible de dupliquer ce créneau.');
                     }
                 }, error: function (err) {
-                    errorAlert('impossible de dupliquer ce slot');
+                    errorAlert('Impossible de dupliquer ce créneau.');
                 }
             });
         });
@@ -1000,8 +955,8 @@
                 color = 'goldenrod';
             let slot = (`
                 <li class="slot" data-id="` + escapeHtml(data.id) + `" data-color="` + color + `">
-                    <div class="btn-delete"><span class="glyphicon glyphicon-remove"></span></div>
-                    <div class="duplicate-btn"><span class="glyphicon glyphicon-duplicate"></span></div>
+                    <button type="button" class="btn-delete" aria-label="Supprimer ce créneau" title="Supprimer ce créneau"><span class="glyphicon glyphicon-remove"></span></button>
+                    <button type="button" class="duplicate-btn" aria-label="Dupliquer ce créneau" title="Dupliquer ce créneau"><span class="glyphicon glyphicon-duplicate"></span></button>
                     <div class="horaire">` + escapeHtml(data.debut) + ` - ` + escapeHtml(data.fin) + `</div>
                     <div class="thematique">
             `);
@@ -1040,7 +995,28 @@
             modal.modal('show');
         });
 
+        // La modale de créneau reste ouverte tant que l'enregistrement n'a pas réussi, pour pouvoir corriger.
+        $('#slotModal').on('show.bs.modal', function () {
+            $('#slotModal .js-modal-error').prop('hidden', true);
+        });
+
+        function slotModalError(message) {
+            $('#slotModal .js-modal-error').text(message).prop('hidden', false);
+        }
+
+        function slotFormIsValid() {
+            if (!$('#slot_heureDebut').val() || !$('#slot_heureFin').val() || !$('#slot_categorie').val()) {
+                slotModalError('Renseignez l\'horaire de début, de fin et la catégorie.');
+                return false;
+            }
+            return true;
+        }
+
         $("#slot_add").click(function (e) {
+            if (!slotFormIsValid()) {
+                return;
+            }
+            const button = $(this).prop('disabled', true);
             let date = $('#slotModal .modal-body h3').attr('data-date');
             let semaineId = $('#slotModal .modal-body form').attr('data-semaineid');
             let heureDebut = $('#slot_heureDebut').val();
@@ -1073,10 +1049,17 @@
                         let slot = createSlot(res);
                         $('.semaine-wrapper .jour[data-date="' + date + '"]').append(slot);
                         $('#slotModal form')[0].reset();
+                        $('#slotModal').modal('hide');
                         displaySlot();
                     } else {
-                        errorAlert('impossible d\'ajouter un slot');
+                        slotModalError('Impossible d\'ajouter le créneau.');
                     }
+                },
+                error: function () {
+                    slotModalError('Le créneau n\'a pas été enregistré. Réessayez ou rechargez la page.');
+                },
+                complete: function () {
+                    button.prop('disabled', false);
                 }
             });
         });
@@ -1138,6 +1121,10 @@
         });
 
         $("#slot_edit").click(function () {
+            if (!slotFormIsValid()) {
+                return;
+            }
+            const button = $(this).prop('disabled', true);
             let slotId = $('#slotModal').attr('data-slotid');
             let date = $('#slotModal').attr('data-date');
             let url = "{{ path('slot_edit', { 'id': 'slot_id' }) }}";
@@ -1169,8 +1156,17 @@
                         $('.slot[data-id="' + slotId + '"]').remove();
                         let slot = createSlot(res);
                         $('.semaine-wrapper .jour[data-date="' + date + '"]').append(slot);
+                        $('#slotModal').modal('hide');
                         displaySlot();
+                    } else {
+                        slotModalError('Impossible de modifier le créneau.');
                     }
+                },
+                error: function () {
+                    slotModalError('Les modifications n\'ont pas été enregistrées. Réessayez ou rechargez la page.');
+                },
+                complete: function () {
+                    button.prop('disabled', false);
                 }
             });
         });
@@ -1180,31 +1176,28 @@
         $(".semaine-wrapper").on('click', '.slot .btn-delete', function (e) {
             e.stopPropagation();
             let id = $(this).parents('.slot').attr('data-id');
-            $("#deleteSlotModal").find('.btn-delete').attr('data-id', id);
-            $("#deleteSlotModal").modal('show');
-        });
-
-        $("#deleteSlotModal").on('click', '.btn-delete', function (e) {
-            e.stopPropagation();
-            $("#deleteSlotModal").modal('hide');
-            let id = $(this).attr('data-id');
-            let url = "{{ path('slot_delete', { 'id': 'slot_id' }) }}";
-            url = url.replace("slot_id", id);
-            $.ajax({
-                url: url,
-                type: "DELETE",
-                dataType: "json",
-                data: {},
-                success: function (resp) {
-                    if (resp) {
-                        $('.slot[data-id="' + id + '"]').remove();
-                        displaySlot();
-                    } else {
-                        errorAlert('impossible de supprimer ce slot');
-                    }
-                },
-                error: function (err) {
-                    errorAlert('impossible de supprimer ce slot');
+            confirmAction({
+                message: 'Supprimer ce créneau ?',
+                onConfirm: function () {
+                    let url = "{{ path('slot_delete', { 'id': 'slot_id' }) }}";
+                    url = url.replace("slot_id", id);
+                    $.ajax({
+                        url: url,
+                        type: "DELETE",
+                        dataType: "json",
+                        data: {},
+                        success: function (resp) {
+                            if (resp) {
+                                $('.slot[data-id="' + id + '"]').remove();
+                                displaySlot();
+                            } else {
+                                errorAlert('Impossible de supprimer ce créneau.');
+                            }
+                        },
+                        error: function () {
+                            errorAlert('Impossible de supprimer ce créneau.');
+                        }
+                    });
                 }
             });
         });
@@ -1227,10 +1220,10 @@
                         $('.slot[data-id="' + id + '"]').parents('.jour').append(newSlot);
                         displaySlot();
                     } else {
-                        errorAlert('impossible de dupliquer ce slot');
+                        errorAlert('Impossible de dupliquer ce créneau.');
                     }
                 }, error: function (err) {
-                    errorAlert('impossible de dupliquer ce slot');
+                    errorAlert('Impossible de dupliquer ce créneau.');
                 }
             });
         });
@@ -1258,14 +1251,7 @@
         /* Alert
         ============================================================================== */
 
-        var alert_pos = {{ top }};
 
-        function errorAlert(message) {
-            $('body').prepend(
-                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
-            );
-            alert_pos += 72;
-        }
 
     </script>
 

@@ -240,11 +240,11 @@
 }
 
 .cd-h-timeline .new:hover {
-	border-color: #08c1b8;
+	border-color: var(--brand);
 }
 
 .cd-h-timeline .new .glyphicon {
-	color: #08c1b8;
+	color: var(--brand);
 	position: absolute;
 	left: 8px;
 	top: 8px;
@@ -317,7 +317,7 @@
     display: block;
     font-style: italic;
     font-size: 16px;
-	color: #08c1b8;
+	color: var(--brand);
     color: var(--cd-color-2);
 	margin: 0 auto 5px;
 }

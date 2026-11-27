@@ -11,17 +11,21 @@
                         <div class="todo__task-count">4 tâches</div>
                     </div>
                 </div>
-                <button type="button" class="close">
+                <button type="button" class="close" aria-label="Fermer la liste des tâches">
                     &times;
                 </button>
             </div>
             <div class="input__flex">
                 <div class="todo__input">
                     <span class="glyphicon glyphicon-plus"></span>
+                    <label for="todo__add" class="sr-only">Nouvelle tâche</label>
                     <input type="text" id="todo__add" name="todo__add" required="required" class="form-control" placeholder="Saisissez votre tâche">
                 </div>
-                <button class="btn btn-primary todo__add">Ajouter la tâche</button>
-                <button class="btn btn-primary todo__clear">Vider la liste</button>
+                <button type="button" class="btn btn-primary todo__add">Ajouter la tâche</button>
+                <button type="button" class="btn btn-danger todo__clear">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    Vider la liste
+                </button>
             </div>
             <div class="todo__tasks">
                 <ul class="todo__list"></ul>
@@ -45,8 +49,12 @@
 
         function openTodo() {
             $('.todo__container').toggle();
-            if (open) $('.container').css({paddingTop: 340 + 'px'})
-            else $('.container').css({paddingTop: 0 + 'px'})
+            updateTodoOffset();
+        }
+
+        // Décale la page de la hauteur réelle du panneau (qui varie avec le nombre de tâches)
+        function updateTodoOffset() {
+            $('.container').css({paddingTop: (open ? $('.todo__container').outerHeight() : 0) + 'px'});
         }
 
         var tasksNb = 0
@@ -75,13 +83,15 @@
                                 </div>
                                 <div class="todo__button-bar">
                                     <div class="todo__time">` + date_task + `</div>
-                                    <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
+                                    <button type="button" class="todo__delete" aria-label="Supprimer la tâche" title="Supprimer la tâche"><i class="glyphicon glyphicon-trash"></i></button>
                                 </div>
                             </li>`
                             $(".todo__list").append(task);
                         });
+                        setTaskNotification();
+                        updateTodoOffset();
                     } else {
-                        errorAlert('impossible de récuperer la liste des tâches');
+                        errorAlert('Impossible de récupérer la liste des tâches.');
                     }
                 }
             })
@@ -106,8 +116,10 @@
             $('.todo__task-count').text(tasksNb + ((tasksNb > 1) ? ' tâches' : ' tâche'));
         }
 
+        // Le badge ne compte que les tâches restant à faire (non cochées)
         function setTaskNotification() {
-            $('.todo__notification').text((tasksNb > 9) ? '9+' : tasksNb);
+            const todo = $('.todo__list > li .inp-cbx:not(:checked)').length;
+            $('.todo__notification').text((todo > 9) ? '9+' : todo).toggle(todo > 0);
         }
 
         /***** ADD *****/
@@ -152,16 +164,17 @@
                             </div>
                             <div class="todo__button-bar">
                                 <div class="todo__time">` + time + `</div>
-                                <div class="todo__delete"><i class="glyphicon glyphicon-trash"></i></div>
+                                <button type="button" class="todo__delete" aria-label="Supprimer la tâche" title="Supprimer la tâche"><i class="glyphicon glyphicon-trash"></i></button>
                             </div>
                         </li>`
                         $(".todo__list").append(task);
+                        updateTodoOffset();
 
                         tasksNb += 1;
                         setTaskNumber();
                         setTaskNotification();
                     } else {
-                        errorAlert('impossible d\'ajouter une tâche');
+                        errorAlert('Impossible d\'ajouter la tâche.');
                     }
                 }
             })
@@ -187,32 +200,39 @@
                         setTaskNumber();
                         setTaskNotification();
                         $('li[data-id=' + taskId +']').remove();
+                        updateTodoOffset();
+                        setTaskNotification();
                     } else {
-                        errorAlert('impossible de vider la liste des tâches');
+                        errorAlert('Impossible de supprimer cette tâche.');
                     }
                 }
             })
         }
 
         $('.todo__clear').on('click', function() {
-            let r = confirm("Êtes-vous sûr de vouloir vider la liste des tâches ?");
-            if (!r) return;
-            $.ajax({
-                url: "{{ path('todo_clear') }}",
-                type: "POST",
-                dataType: "json",
-                data: {},
-                success: function (resp) {
-                    if (resp) {
-                        tasksNb = 0;
-                        setTaskNumber();
-                        setTaskNotification();
-                        $('.todo__list > li').remove();
-                    } else {
-                        errorAlert('impossible de vider la liste des tâches');
-                    }
+            confirmAction({
+                message: 'Supprimer toutes les tâches de la liste ?',
+                confirmLabel: 'Vider la liste',
+                onConfirm: function () {
+                    $.ajax({
+                        url: "{{ path('todo_clear') }}",
+                        type: "POST",
+                        dataType: "json",
+                        data: {},
+                        success: function (resp) {
+                            if (resp) {
+                                tasksNb = 0;
+                                setTaskNumber();
+                                setTaskNotification();
+                                $('.todo__list > li').remove();
+                                updateTodoOffset();
+                            } else {
+                                errorAlert('Impossible de vider la liste des tâches.');
+                            }
+                        }
+                    })
                 }
-            })
+            });
         });
 
         $('.todo__list').on('change', '.form-check input', function() {
@@ -229,44 +249,53 @@
                 },
                 success: function (resp) {
                     if (resp) {
-                        return;
+                        setTaskNotification();
                     } else {
-                        errorAlert('impossible de changer l\'état de la tâche');
+                        errorAlert('Impossible de changer l\'état de la tâche.');
                     }
                 }
             })
         });
+
+        // Enregistre le texte 600 ms après la dernière frappe (ou en quittant le champ) au lieu d'une requête par touche.
+        const editTimers = {};
+
+        function saveTask(span) {
+            let taskId = $(span).parents('li').attr('data-id');
+            let description = $(span).text();
+            clearTimeout(editTimers[taskId]);
+            delete editTimers[taskId];
+
+                $.ajax({
+                    url: "{{ path('todo_edit') }}",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        taskId: taskId,
+                        description: description
+                    },
+                    success: function (resp) {
+                        if (resp) {
+                            return;
+                        } else {
+                            errorAlert('Impossible d\'enregistrer la tâche.');
+                        }
+                    }
+                })
+        }
 
         $('.todo__list').on('keyup', '.form-check .todo__action', function() {
-            let taskId = $(this).parents('li').attr('data-id');
-            let description = $(this).text();
-
-            $.ajax({
-                url: "{{ path('todo_edit') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    taskId: taskId,
-                    description: description
-                },
-                success: function (resp) {
-                    if (resp) {
-                        return;
-                    } else {
-                        errorAlert('impossible de changer l\'état de la tâche');
-                    }
-                }
-            })
+            const span = this;
+            const taskId = $(span).parents('li').attr('data-id');
+            clearTimeout(editTimers[taskId]);
+            editTimers[taskId] = setTimeout(function () { saveTask(span); }, 600);
+        }).on('blur', '.form-check .todo__action', function() {
+            if (editTimers[$(this).parents('li').attr('data-id')]) {
+                saveTask(this);
+            }
         });
 
 
-        var alert_pos = 0;
-        function errorAlert(message) {
-            $('body').prepend(
-                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
-            );
-            alert_pos += 72;
-        }
 
         function formatDate(input) {
             let datePart = input.match(/\d+/g),

@@ -97,7 +97,7 @@
             <div class="box">
                 <div class="box-header">
                     <div>Coachings PRM</div>
-                    <span>prévues</span>
+                    <span>prévus</span>
                 </div>
                 <table id="coachings" class="table table-condensed table-striped">
                     <colgroup>
@@ -209,8 +209,20 @@
                 Theraflow
             </div>
             <div class="legende__type">
-                <span class="legende__color" style="background-color: seagreen"></span>
+                <span class="legende__color" style="background-color: darkolivegreen"></span>
                 ViVa module AOMI
+            </div>
+            <div class="legende__type">
+                <span class="pastille hotpink"></span>
+                Venu
+            </div>
+            <div class="legende__type">
+                <span class="pastille gold"></span>
+                Absent
+            </div>
+            <div class="legende__type">
+                <span class="pastille white"></span>
+                Présence non renseignée
             </div>
         </div>
 
@@ -222,9 +234,9 @@
 
             <div class="lnb-item">
                 <div class="input-group input-daterange">
-                    <input type="text" class="form-control" id="dateDebut">
+                    <input type="text" class="form-control" id="dateDebut" aria-label="Du">
                     <div class="input-group-addon">à</div>
-                    <input type="text" class="form-control" id="dateFin">
+                    <input type="text" class="form-control" id="dateFin" aria-label="Au">
                 </div>
                 <div class="filter">
                     <p>Filtrer par :</p>
@@ -288,13 +300,13 @@
     </svg>
 
     <!-- Modal addPatient-->
-    <div id="addPatient" class="modal fade" role="dialog">
+    <div id="addPatient" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
                     <h4 class="modal-title modal__add">
                         <span class="glyphicon glyphicon-plus"></span>
                         Ajouter un patient
@@ -313,7 +325,8 @@
                     </div>
                     {{ form_row(form._token) }}
                     {{ form_end(form, {'render_rest' : false}) }}
-                    <button id="patientAdd" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                    <p class="text-danger js-modal-error" role="alert" hidden></p>
+                    <button type="button" id="patientAdd" class="btn btn-primary btn-block">Ajouter</button>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -372,7 +385,18 @@
         {#    #}
         const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
 
+        let ajaxActionSeq = 0;
+
+        function setDayTablesMessage(message) {
+            $(".box tbody tr").remove();
+            $(".box tbody").append('<tr class="disabled text-center"><td colspan="7">' + message + '</td></tr>');
+        }
+
         function ajaxAction(d) {
+            // On vide les tableaux pendant le chargement pour ne jamais agir sur les créneaux d'un autre jour,
+            // et on ignore les réponses d'un jour qui n'est plus sélectionné (clics rapides).
+            const seq = ++ajaxActionSeq;
+            setDayTablesMessage('Chargement…');
             $.ajax({
                 url: "{{ path('accueil') }}",
                 type: "POST",
@@ -380,7 +404,15 @@
                 data: {
                     "date": d
                 },
+                error: function (xhr) {
+                    if (seq === ajaxActionSeq) {
+                        setDayTablesMessage('Impossible de charger les créneaux de ce jour. Rechargez la page.');
+                    }
+                },
                 success: function (res) {
+                    if (seq !== ajaxActionSeq) {
+                        return;
+                    }
                     const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun coaching PRM', 'Aucun atelier', 'Aucune semaine éducative'];
                     $(".box tbody tr").remove();
                     for (let i = 0; i < res.length; i++) {
@@ -403,7 +435,7 @@
                                 .append('<td colspan="7">' + emptyPhraseList[i] + '</td>')
                                 .appendTo('#' + anchorList[i]);
                         }
-                        sortTable(anchorList[i], 3);
+                        sortBySoignantThenTime(anchorList[i]);
                     }
                     updateWidth();
                 }
@@ -452,7 +484,7 @@
                 });
             }
             if (data.length < parseInt(place))
-                label += '<button class="js-addPatient"><i class="glyphicon glyphicon-plus"></i></button>';
+                label += '<button type="button" class="js-addPatient" aria-label="Ajouter un patient au créneau" title="Ajouter un patient au créneau"><i class="glyphicon glyphicon-plus"></i></button>';
             label += '</div>';
             return label;
         }
@@ -476,20 +508,20 @@
                 data.forEach(function (e) {
                     let checked = (e.send === 'Oui' ? 'checked' : '');
                     let notes = (e.notes ?
-                        `<button class="js-comment tooltip2" data-tooltip="` + escapeHtml(e.notes.replace(/"/g, "'")) + `" data-position="top" class="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
+                        `<button type="button" class="js-comment tooltip2 top" aria-label="Note : ` + escapeHtml(e.notes.replace(/"/g, "'")) + `" data-tooltip="` + escapeHtml(e.notes.replace(/"/g, "'")) + `" data-position="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
 
-                    let venu = "<div class=\"pastille white\"></div>";
+                    let venu = "<div class=\"pastille white\" role=\"img\" aria-label=\"Présence non renseignée\" title=\"Présence non renseignée\"></div>";
                     if (e.venu === 'Oui')
-                        venu = "<div class=\"pastille hotpink\"></div>";
+                        venu = "<div class=\"pastille hotpink\" role=\"img\" aria-label=\"Venu\" title=\"Venu\"></div>";
                     else if (e.venu === 'Non')
-                        venu = "<div class=\"pastille gold\"></div>";
+                        venu = "<div class=\"pastille gold\" role=\"img\" aria-label=\"Absent\" title=\"Absent\"></div>";
 
                     label += `
                         <div class="user-send" data-id="` + escapeHtml(e.rendezVousId) + `">
-                            <input class="inp-cbx" id="` + escapeHtml(e.rendezVousId) + `" type="checkbox" ` + checked + `/>
-                            <label class="cbx" for="` + escapeHtml(e.rendezVousId) + `"></label>
-                            <button class="js-removePatient" data-id="` + escapeHtml(e.patientId) + `"><i class="glyphicon glyphicon-minus"></i></button>
-                            <button class="js-redirect" data-id="` + escapeHtml(e.patientId) + `"><i class="glyphicon glyphicon-pencil"></i></button>
+                            <input class="inp-cbx" id="` + escapeHtml(e.rendezVousId) + `" type="checkbox" ` + checked + ` aria-label="Courrier envoyé"/>
+                            <label class="cbx" for="` + escapeHtml(e.rendezVousId) + `" title="Courrier envoyé"></label>
+                            <button type="button" class="js-removePatient" data-id="` + escapeHtml(e.patientId) + `" aria-label="Retirer du créneau" title="Retirer du créneau"><i class="glyphicon glyphicon-minus"></i></button>
+                            <button type="button" class="js-redirect" data-id="` + escapeHtml(e.patientId) + `" aria-label="Ouvrir la fiche du patient" title="Ouvrir la fiche du patient"><i class="glyphicon glyphicon-pencil"></i></button>
                             ` + venu + `
                             ` + notes + `
                         </div>
@@ -596,6 +628,7 @@
             let selected = $(this).parents('tr').find('.thematique').text();
             $('#add_patient_thematique option[value="' + selected + '"]').prop('selected', true);
             $('#add_patient_type option[value=""]').prop('selected', true);
+            $('#addPatient .js-modal-error').prop('hidden', true);
         });
 
         $('#patientAdd').on('click', function () {
@@ -603,6 +636,15 @@
             let patientId = $('#add_patient_rendezVous').val();
             let thematique = $('#add_patient_thematique').val();
             let type = $('#add_patient_type').val();
+            const button = $(this);
+            const modalError = $('#addPatient .js-modal-error');
+
+            // La modale reste ouverte tant que l'ajout n'a pas réussi, pour pouvoir corriger.
+            if (!patientId) {
+                modalError.text('Choisissez un patient.').prop('hidden', false);
+                return;
+            }
+            button.prop('disabled', true);
 
             $.ajax({
                 url: "{{ path('add_patient_slot') }}",
@@ -616,13 +658,20 @@
                 },
                 success: function (res) {
                     if (res) {
+                        $('#addPatient').modal('hide');
                         ajaxAction(dateSelected);
                         $("#rdv-grid").bootgrid('reload');
-                        successAlert('Succès: patient ajouté !');
+                        successAlert('Patient ajouté au créneau.');
                     } else {
-                        errorAlert('Erreur: ce patient est déjà inscrit !');
+                        modalError.text('Ce patient est déjà inscrit à ce créneau.').prop('hidden', false);
                     }
                 },
+                error: function () {
+                    modalError.text('L\'ajout n\'a pas été enregistré. Réessayez ou rechargez la page.').prop('hidden', false);
+                },
+                complete: function () {
+                    button.prop('disabled', false);
+                }
             });
         })
 
@@ -637,19 +686,26 @@
 
             let rendezVousId = $(this).closest('.user-send').attr('data-id');
             let slotId = $(this).closest('tr').attr('data-row-id');
-            $.ajax({
-                url: "{{ path('remove_patient_slot') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    rendezVousId: rendezVousId,
-                    slotId: slotId,
-                },
-                success: function () {
-                    ajaxAction(dateSelected);
-                    $("#rdv-grid").bootgrid('reload');
-                    successAlert('Succès: patient supprimé !');
-                    redirectToPatient(patientId, isBox, index, pastille);
+            confirmAction({
+                title: 'Retrait du créneau',
+                message: 'Retirer ce patient du créneau ? Son rendez-vous sera supprimé.',
+                confirmLabel: 'Retirer',
+                onConfirm: function () {
+                    $.ajax({
+                        url: "{{ path('remove_patient_slot') }}",
+                        type: "POST",
+                        dataType: "json",
+                        data: {
+                            rendezVousId: rendezVousId,
+                            slotId: slotId,
+                        },
+                        success: function () {
+                            ajaxAction(dateSelected);
+                            $("#rdv-grid").bootgrid('reload');
+                            successAlert('Patient retiré du créneau.');
+                            redirectToPatient(patientId, isBox, index, pastille);
+                        }
+                    });
                 }
             });
         });
@@ -749,28 +805,35 @@
 
         });
 
-        function errorAlert(msg) {
-            $('body').prepend(
-                `<div class="row alert alert-danger text-center box-shadow" style="position: relative; top: ${alert_pos}px;">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    ${msg}
-                </div>`
-            );
-            alert_pos += 72;
-        }
 
-        function successAlert(msg) {
-            $('body').prepend(
-                `<div class="row alert alert-success text-center box-shadow" style="position: relative; top: ${alert_pos}px;">
-                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-                    ${msg}
-                </div>`
-            );
-            alert_pos += 72;
-        }
 
         /* Sort table
         ============================================================================== */
+
+        // Tri par défaut : soignant, puis horaire dans la journée de chaque soignant.
+        function sortBySoignantThenTime(tableId) {
+            const tbody = document.getElementById(tableId).tBodies[0];
+            const rows = Array.from(tbody.rows).filter(r => r.cells.length > 1);
+            const key = r => r.cells[3].textContent.trim().toLowerCase() + '|' + r.cells[0].textContent.trim();
+            rows.sort((a, b) => key(a).localeCompare(key(b))).forEach(r => tbody.appendChild(r));
+            markSorted(tableId, null, null);
+        }
+
+        // Indique la colonne triée et son sens (flèche + aria-sort)
+        function markSorted(tableId, n, dir) {
+            const ths = document.getElementById(tableId).tHead.rows[0].cells;
+            Array.from(ths).forEach(th => th.removeAttribute('aria-sort'));
+            if (n !== null) {
+                ths[n].setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+            }
+        }
+
+        $('.accueil-wrapper th.sortable').attr('tabindex', 0).on('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
 
         function sortTable(tableId, n, dir = 'asc') {
             let table, rows, switching, i, x, y, shouldSwitch, switchcount = 0;
@@ -810,6 +873,7 @@
                     }
                 }
             }
+            markSorted(tableId, n, dir);
         }
 
     </script>

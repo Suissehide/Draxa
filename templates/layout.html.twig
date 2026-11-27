@@ -10,8 +10,8 @@
             </a>
             <ul class="menu">
                 <li class="menu-item">
-                    <button class="user-link user-alone" id="todo-list">
-                        <span class="glyphicon glyphicon-bell"></span>
+                    <button type="button" class="user-link user-alone" id="todo-list" aria-label="Liste des tâches" title="Liste des tâches">
+                        <span class="glyphicon glyphicon-check"></span>
                     </button>
                     <div class="todo__notification">0</div>
                 </li>
@@ -21,7 +21,7 @@
                         Accueil
                     </a>
                 </li>
-                <li class="menu-item {{ title=='Liste des patients' ? 'active' : '' }}">
+                <li class="menu-item {{ title in ['Liste des patients', 'Vue', 'Create', 'Diagnostic éducatif'] ? 'active' : '' }}">
                     <a class="user-link" href="{{ path('patient_list') }}">
                         <span class="glyphicon glyphicon-list-alt"></span>
                         Liste des patients
@@ -38,27 +38,27 @@
                 {% endif %}
 
                 {% if is_granted('ROLE_ADMIN') %}
-                    <li class="menu-item {{ title=='Settings' ? 'active' : '' }}">
-                        <button class="user-link">
+                    <li class="menu-item {{ title in ['Settings', 'Years', 'Soignants'] ? 'active' : '' }}">
+                        <button type="button" class="user-link" aria-haspopup="true">
                             <span class="glyphicon glyphicon-cog"></span>
                             Réglages
                         </button>
                         <ul class="menu-content">
                             <li class="menu-item">
                                 <a class="user-link" href="{{ path('settings', {'year': "now"|date("Y")}) }}">
-                                    <span class="glyphicon glyphicon-book"></span>
+                                    <span class="glyphicon glyphicon-calendar"></span>
                                     Gérer les semaines
                                 </a>
                             </li>
                             <li class="menu-item">
                                 <a class="user-link" href="{{ path('year') }}">
-                                    <span class="glyphicon glyphicon-book"></span>
-                                    Aperçu des années
+                                    <span class="glyphicon glyphicon-th"></span>
+                                    Calendrier des années
                                 </a>
                             </li>
                             <li class="menu-item">
                                 <a class="user-link" href="{{ path('soignant') }}">
-                                    <span class="glyphicon glyphicon-book"></span>
+                                    <span class="glyphicon glyphicon-user"></span>
                                     Gérer les soignants
                                 </a>
                             </li>
@@ -66,7 +66,7 @@
                     </li>
                 {% endif %}
                 <li class="menu-item">
-                    <a class="user-link" href="{{ path('logout') }}">
+                    <a class="user-link" href="{{ path('logout') }}" aria-label="Se déconnecter" title="Se déconnecter">
                         <span class="glyphicon glyphicon-log-out"></span>
                     </a>
                 </li>
@@ -81,16 +81,46 @@
         {% block page_content %}{% endblock %}
     </div>
     <div class="toolbar">
-        <a class="cd cd-top js-cd-top" href="#0"><span class="glyphicon glyphicon-chevron-up"></span></a>
+        <a class="cd cd-top js-cd-top" href="#0" aria-label="Revenir en haut de la page" title="Revenir en haut de la page"><span class="glyphicon glyphicon-chevron-up"></span></a>
         {% block toolbar_component %}{% endblock %}
     </div>
 
     <!-- Permanent banner -->
     <div id="banner" class="banner">
-        <button>❌</button>
+        <button type="button" aria-label="Masquer ce message" title="Masquer ce message"><span class="glyphicon glyphicon-remove"></span></button>
         Pour toute assistance, en cas d’erreur ou de dysfonctionnement de l’agenda partagé,
         contactez <span>Sabrina Bernadet</span> au <span>49357</span>
         ou <span>Gaëlle Dufau</span> au <span>23384</span>
+    </div>
+
+    <!-- Modale de confirmation commune (voir confirmAction dans top.js) -->
+    <div id="confirmModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="confirmModalTitle">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
+                    <h4 class="modal-title" id="confirmModalTitle">
+                        <span class="glyphicon glyphicon-warning-sign"></span>
+                        <span class="js-confirm-title">Suppression</span>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <p class="js-confirm-message"></p>
+                    <div class="modal-btn">
+                        <button type="button" class="btn btn-danger js-confirm-ok">
+                            <span class="glyphicon glyphicon-trash"></span>
+                            <span class="js-confirm-label">Supprimer</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left js-confirm-cancel" data-dismiss="modal">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Footer -->
@@ -98,10 +128,10 @@
         <section class="footer-minimal footer-dark" id="footer">
             <div class="footer-container footer-flex">
                 <div class="footer-copyright">
-                        <p>Design by: <a href="https://github.com/Suissehide/Draxa" target="_blank">Léo Couffinhal</a></p>
+                        <p>Conception : <a href="https://github.com/Suissehide/Draxa" target="_blank">Léo Couffinhal</a></p>
                 </div>
                 <div class="footer-copyright">
-                    <p class="text-right">© <a href="https://qwetle.fr" target="_blank">Qwetle</a> 2020 / All rights reserved</p>
+                    <p class="text-right">© <a href="https://qwetle.fr" target="_blank">Qwetle</a> 2020 – {{ "now"|date("Y") }}</p>
                 </div>
             </div>
         </section>

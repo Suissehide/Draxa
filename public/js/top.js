@@ -100,14 +100,14 @@ function navTop() {
 }
 
 /*
-* Close alerts
-*/
-
-var alert_pos = 60;
+ * Messages (succès / erreur) et confirmation : composants partagés par toutes les pages.
+ * Les succès s'effacent seuls ; les erreurs restent jusqu'à ce qu'on les ferme.
+ */
+var alert_pos = 60 + 72 * $('.alert-row .alert').length;
 setInterval(fadeOutAlert, 1000);
 
 function fadeOutAlert() {
-    $('.alert').delay(2000).fadeOut(2000, function () {
+    $('.alert:not(.alert-danger)').delay(2000).fadeOut(2000, function () {
         if (alert_pos > 60) {
             alert_pos -= 72;
         }
@@ -119,13 +119,64 @@ $('body').on('click', '.closebtn', function () {
     if (alert_pos > 60) {
         alert_pos -= 72;
     }
-    const div = $(this).parents('div');
-    div.css('opacity', '0');
+    $(this).closest('.alert').remove();
+});
+
+function showAlert(type, message) {
+    var alert = $('<div class="row alert text-center box-shadow" role="alert"></div>')
+        .addClass('alert-' + type)
+        .css('top', alert_pos + 'px')
+        .append('<button type="button" class="closebtn" aria-label="Fermer le message">&times;</button>')
+        .append(document.createTextNode(message));
+    $('body').prepend(alert);
+    alert_pos += 72;
+}
+
+function errorAlert(message) {
+    showAlert('danger', message || 'L\'action n\'a pas pu être effectuée. Rechargez la page et réessayez.');
+}
+
+function successAlert(message) {
+    showAlert('success', message);
+}
+
+/*
+ * Modale de confirmation commune (markup dans layout.html.twig) : jamais de confirm() natif.
+ * confirmAction({message, onConfirm, title?, confirmLabel?})
+ */
+function confirmAction(options) {
+    var modal = $('#confirmModal');
+    modal.find('.js-confirm-title').text(options.title || 'Suppression');
+    modal.find('.js-confirm-message').text(options.message);
+    modal.find('.js-confirm-label').text(options.confirmLabel || 'Supprimer');
+    modal.find('.js-confirm-ok').off('click').one('click', function () {
+        modal.modal('hide');
+        options.onConfirm();
+    });
+    modal.one('shown.bs.modal', function () {
+        modal.find('.js-confirm-cancel').trigger('focus');
+    });
+    modal.modal('show');
+}
+
+// Empêche le double envoi d'un formulaire classique (ex. patient créé deux fois sur un double clic).
+// Les formulaires gérés en AJAX (preventDefault) ne sont pas concernés ; on ne désactive pas le bouton
+// pour que son nom reste envoyé (isClicked côté Symfony).
+$(document).on('submit', 'form', function (e) {
+    if (e.isDefaultPrevented()) {
+        return;
+    }
+    if ($(this).data('submitting')) {
+        e.preventDefault();
+        return;
+    }
+    const form = $(this).data('submitting', true);
+    // Réautorisé après quelques secondes : téléchargement (export CSV) ou retour arrière du navigateur
     setTimeout(function () {
-        div.css('display', 'none');
-    }, 600);
-    div.remove();
-})
+        form.removeData('submitting');
+    }, 3000);
+});
+
 function escapeHtml(s) { return s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 // bootgrid renders unformatted string cells as raw HTML: escape them globally
 if (window.jQuery && jQuery.fn.bootgrid) jQuery.fn.bootgrid.Constructor.defaults.converters.string.to = escapeHtml;
@@ -211,10 +262,16 @@ function showReloadBanner(message) {
     $('body').append(banner);
 }
 
-$(document).ajaxError(function (event, xhr) {
+$(document).ajaxError(function (event, xhr, settings) {
+    if (xhr.statusText === 'abort') {
+        return;
+    }
     if (xhr.status === 401) {
         showReloadBanner('Votre session a expiré. Rechargez la page pour vous reconnecter.');
     } else if (xhr.status === 403) {
         showReloadBanner('Action refusée : la page est restée ouverte trop longtemps ou date d\'avant une mise à jour. Rechargez la page pour continuer.');
+    } else if (!settings.error) {
+        // Appel sans gestion d'erreur propre : sans ce message, l'échec passerait inaperçu.
+        errorAlert('L\'action n\'a pas été enregistrée (erreur serveur). Rechargez la page et réessayez ; si le problème persiste, contactez l\'assistance.');
     }
 });

@@ -5,13 +5,12 @@
 {% endblock %}
 
 {% block title %}
-    Vue
-    {{ patient.nom }}
+    {{ patient.nom|upper }} {{ patient.prenom }} – Fiche patient
 {% endblock %}
 
 {% block toolbar_component %}
-    <button class="cd cd-save js-cd-save"><span class="glyphicon glyphicon-floppy-disk"></span></button>
-    <a class="cd cd-back js-cd-back" href="#"><span class="glyphicon glyphicon-chevron-left"></span></a>
+    <button type="button" class="cd cd-save js-cd-save" aria-label="Enregistrer la fiche" title="Enregistrer la fiche"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+    <a class="cd cd-back js-cd-back" href="#" aria-label="Retour" title="Retour"><span class="glyphicon glyphicon-chevron-left"></span></a>
 {% endblock %}
 
 {% form_theme form 'form-theme.html.twig' %}
@@ -19,8 +18,7 @@
 {% block page_content %}
 
     <div class="wrapper scrollbar">
-        <h1 id="top">Index |
-            {{ patient.nom }}</h1>
+        <h1 id="top">{{ patient.nom|upper }} {{ patient.prenom }}</h1>
         <div class="nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
                 <a href="#" class="btn btn-default js-cd-back" id="btn-back">
@@ -196,7 +194,7 @@
                                     {% if consultation.categorie == 'Consultation' %}
                                         <li>
                                             <a class="cd-h-timeline__date" href="#0"
-                                               data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}">
+                                               data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("H:i") }}">
                                                 {{ consultation.date|format_datetime(pattern="d MMM", locale='fr') }}
                                             </a>
                                         </li>
@@ -210,14 +208,14 @@
                     <ul>
                         <li>
                             <a href="#0"
-                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Précédent</a>
                         </li>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Suivant</a>
                         </li>
                     </ul>
 
-                    <a id="js-consultation" class="new" data-toggle="modal" data-target="#rendezVousModal">
+                    <a href="#0" id="js-consultation" class="new" role="button" data-toggle="modal" data-target="#rendezVousModal" aria-label="Ajouter un rendez-vous" title="Ajouter un rendez-vous">
                         <span class="glyphicon glyphicon-plus"></span>
                     </a>
                 </div>
@@ -228,7 +226,7 @@
                             {% set counter = (counter | default(0)) + 1 %}
                             {% if consultation.categorie == 'Consultation' %}
                                 <li class="cd-h-timeline__event"
-                                    data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("h:m") }}"
+                                    data-date="{{ consultation.date|date("d/m/Y") }}T{{ consultation.heure|date("H:i") }}"
                                     data-id="{{ consultation.id }}">
                                     <h2 class="cd-h-timeline__event-title">Consultation</h2>
                                     <em class="cd-h-timeline__event-date">
@@ -402,7 +400,7 @@
                                     {% if entretien.categorie == 'Entretien' %}
                                         <li>
                                             <a class="cd-h-timeline__date" href="#0"
-                                               data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}">
+                                               data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("H:i") }}">
                                                 {{ entretien.date|format_datetime(pattern="d MMM", locale='fr') }}
                                             </a>
                                         </li>
@@ -416,14 +414,14 @@
                     <ul>
                         <li>
                             <a href="#0"
-                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Précédent</a>
                         </li>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Suivant</a>
                         </li>
                     </ul>
 
-                    <a id="js-entretien" class="new" data-toggle="modal" data-target="#rendezVousModal">
+                    <a href="#0" id="js-entretien" class="new" role="button" data-toggle="modal" data-target="#rendezVousModal" aria-label="Ajouter un rendez-vous" title="Ajouter un rendez-vous">
                         <span class="glyphicon glyphicon-plus"></span>
                     </a>
                 </div>
@@ -433,7 +431,7 @@
                         {% for entretien in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                             {% if entretien.categorie == 'Entretien' %}
                                 <li class="cd-h-timeline__event"
-                                    data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("h:m") }}"
+                                    data-date="{{ entretien.date|date("d/m/Y") }}T{{ entretien.heure|date("H:i") }}"
                                     data-id="{{ entretien.id }}">
                                     <h2 class="cd-h-timeline__event-title">Entretien</h2>
                                     <em class="cd-h-timeline__event-date">
@@ -607,7 +605,7 @@
                                     {% if coaching.categorie == 'Coaching' %}
                                         <li>
                                             <a class="cd-h-timeline__date" href="#0"
-                                               data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}">
+                                               data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("H:i") }}">
                                                 {{ coaching.date|format_datetime(pattern="d MMM", locale='fr') }}
                                             </a>
                                         </li>
@@ -621,14 +619,14 @@
                     <ul>
                         <li>
                             <a href="#0"
-                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Précédent</a>
                         </li>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Suivant</a>
                         </li>
                     </ul>
 
-                    <a id="js-coaching" class="new" data-toggle="modal" data-target="#rendezVousModal">
+                    <a href="#0" id="js-coaching" class="new" role="button" data-toggle="modal" data-target="#rendezVousModal" aria-label="Ajouter un rendez-vous" title="Ajouter un rendez-vous">
                         <span class="glyphicon glyphicon-plus"></span>
                     </a>
                 </div>
@@ -638,7 +636,7 @@
                         {% for coaching in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                             {% if coaching.categorie == 'Coaching' %}
                                 <li class="cd-h-timeline__event"
-                                    data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("h:m") }}"
+                                    data-date="{{ coaching.date|date("d/m/Y") }}T{{ coaching.heure|date("H:i") }}"
                                     data-id="{{ coaching.id }}">
                                     <h2 class="cd-h-timeline__event-title">Coaching PRM</h2>
                                     <em class="cd-h-timeline__event-date">
@@ -812,7 +810,7 @@
                                     {% if atelier.categorie == 'Atelier' %}
                                         <li>
                                             <a class="cd-h-timeline__date" href="#0"
-                                               data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}">
+                                               data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("H:i") }}">
                                                 {{ atelier.date|format_datetime(pattern="d MMM", locale='fr') }}
                                             </a>
                                         </li>
@@ -826,14 +824,14 @@
                     <ul>
                         <li>
                             <a href="#0"
-                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Précédent</a>
                         </li>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Suivant</a>
                         </li>
                     </ul>
 
-                    <a id="js-atelier" class="new" data-toggle="modal" data-target="#rendezVousModal">
+                    <a href="#0" id="js-atelier" class="new" role="button" data-toggle="modal" data-target="#rendezVousModal" aria-label="Ajouter un rendez-vous" title="Ajouter un rendez-vous">
                         <span class="glyphicon glyphicon-plus"></span>
                     </a>
                 </div>
@@ -843,7 +841,7 @@
                         {% for atelier in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                             {% if atelier.categorie == 'Atelier' %}
                                 <li class="cd-h-timeline__event"
-                                    data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("h:m") }}"
+                                    data-date="{{ atelier.date|date("d/m/Y") }}T{{ atelier.heure|date("H:i") }}"
                                     data-id="{{ atelier.id }}">
                                     <h2 class="cd-h-timeline__event-title">Atelier</h2>
                                     <em class="cd-h-timeline__event-date">
@@ -1017,7 +1015,7 @@
                                     {% if educative.categorie == 'Educative' %}
                                         <li>
                                             <a class="cd-h-timeline__date" href="#0"
-                                               data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}">
+                                               data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("H:i") }}">
                                                 {{ educative.date|format_datetime(pattern="d MMM", locale='fr') }}
                                             </a>
                                         </li>
@@ -1031,14 +1029,14 @@
                     <ul>
                         <li>
                             <a href="#0"
-                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Prev</a>
+                               class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--prev cd-h-timeline__navigation--inactive">Précédent</a>
                         </li>
                         <li>
-                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Next</a>
+                            <a href="#0" class="text-replace cd-h-timeline__navigation cd-h-timeline__navigation--next">Suivant</a>
                         </li>
                     </ul>
 
-                    <a id="js-educative" class="new" data-toggle="modal" data-target="#rendezVousModal">
+                    <a href="#0" id="js-educative" class="new" role="button" data-toggle="modal" data-target="#rendezVousModal" aria-label="Ajouter un rendez-vous" title="Ajouter un rendez-vous">
                         <span class="glyphicon glyphicon-plus"></span>
                     </a>
                 </div>
@@ -1048,7 +1046,7 @@
                         {% for educative in patient.rendezVous|sort((a, b) => b.date <=> a.date) %}
                             {% if educative.categorie == 'Educative' %}
                                 <li class="cd-h-timeline__event"
-                                    data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("h:m") }}"
+                                    data-date="{{ educative.date|date("d/m/Y") }}T{{ educative.heure|date("H:i") }}"
                                     data-id="{{ educative.id }}">
                                     <h2 class="cd-h-timeline__event-title">Semaine éducative</h2>
                                     <em class="cd-h-timeline__event-date">
@@ -1191,58 +1189,32 @@
                     <span class="glyphicon glyphicon-chevron-left"></span>
                     Retour
                 </a>
-                <a href="#0" class="btn btn-danger" data-toggle="modal" data-target="#supprModal">
+                <button type="button" class="btn btn-danger js-delete-patient">
                     <span class="glyphicon glyphicon-trash"></span>
                     Supprimer
-                </a>
+                </button>
                 {{ form_row(form.validation, {'attr': {'class': 'btn btn-primary'} }) }}
             </div>
 
             {{ form_row(form._token) }}
             {{ form_end(form, {'render_rest' : false}) }}
+            {# Hors du formulaire principal : les formulaires imbriqués sont invalides #}
+            <form id="deletePatientForm" method="post" action="{{ path('patient_delete', {'id': patient.id}) }}" hidden>
+                <input type="hidden" name="_method" value="DELETE">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ patient.id) }}">
+            </form>
         </div>
         <!-- End content -->
 
-        <!-- Modal supprPatient-->
-        <div id="supprModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">
-                            <span class="glyphicon glyphicon-warning"></span>
-                            Suppression</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Êtes-vous sûr de vouloir supprimer ce patient ?</p>
-                        <form method="post" action="{{ path('patient_delete', {'id': patient.id}) }}">
-                            <input type="hidden" name="_method" value="DELETE">
-                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ patient.id) }}">
-                            <button class="btn btn-primary btn-block-md">Oui</button>
-                            <button class="btn btn-danger btn-block-md" data-dismiss="modal">Non</button>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            Annuler
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 
         <!-- Modal addRendezVous-->
-        <div id="rendezVousModal" class="modal fade" role="dialog">
+        <div id="rendezVousModal" class="modal fade" tabindex="-1" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
                         <h4 class="modal-title">
                             <span class="glyphicon glyphicon-plus"></span>
                             Ajouter une consultation
@@ -1299,7 +1271,7 @@
                         </button>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
+                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">
                             <span class="glyphicon glyphicon-remove"></span>
                             Annuler
                         </button>
@@ -1309,33 +1281,6 @@
             </div>
         </div>
 
-        <!-- Modal Suppression-->
-        <div id="removeModal" class="modal fade" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">
-                            <span class="glyphicon glyphicon-warning"></span>
-                            Suppression</h4>
-                    </div>
-                    <div class="modal-body">
-                        <p>Êtes-vous sûr de vouloir supprimer cet élément ?</p>
-                        <button class="btn btn-primary btn-block-md" data-dismiss="modal">Oui</button>
-                        <button class="btn btn-danger btn-block-md" data-dismiss="modal">Non</button>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                            <span class="glyphicon glyphicon-remove"></span>
-                            Annuler
-                        </button>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 
         <a id="timeline_update"></a>
     </div>
@@ -1351,7 +1296,6 @@
 
         const patientId = {{ patient.id }};
 
-        var alert_pos = {{ top }};
 
         var datesConsultations = {{ dates_consultations|json_encode|raw }};
         var datesEntretiens = {{ dates_entretiens|json_encode|raw }};
@@ -1370,6 +1314,22 @@
 
         $('.js-cd-save').on('click', function () {
             $('#patient_creation_form_validation').trigger('click');
+        });
+
+        // Avertit avant de quitter la page si la fiche a des modifications non enregistrées
+        // (les rendez-vous, enregistrés à part, ne comptent pas).
+        let patientFormDirty = false;
+        const patientForm = $('#patient_creation_form_validation').closest('form');
+        patientForm.on('change input', '[name^="patient_creation_form["]', function () {
+            patientFormDirty = true;
+        }).on('submit', function () {
+            patientFormDirty = false;
+        });
+        window.addEventListener('beforeunload', function (e) {
+            if (patientFormDirty) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
         });
 
         // Utils
@@ -1490,79 +1450,76 @@
             dot.text(parseInt(datetime[0]) + " " + month[parseInt(datetime[1]) - 1]);
         })
 
-        {# Alert #}
-        function errorAlert() {
-            $('body').prepend(
-                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur !</div>'
-            );
-            alert_pos += 72;
-        }
 
-        function deleteAlert() {
-            $('body').prepend(
-                '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Suppression effectuée !</div>'
-            );
-            alert_pos += 72;
-        }
 
-        function editAlert() {
-            $('body').prepend(
-                '<div class="row alert alert-success text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Modification effectuée !</div>'
-            );
-            alert_pos += 72;
-        }
 
         {# Delete #}
         $('.cd-h-timeline').on("click", ".btn-danger", function () {
-            $("#removeModal").attr('data-id', $(this).closest('li').attr('data-id'));
-            $("#removeModal").modal();
-        });
+            let id = $(this).closest('li').attr('data-id');
+            confirmAction({
+                message: 'Supprimer ce rendez-vous ?',
+                onConfirm: function () {
+                    let btn = $('.cd-h-timeline__events li[data-id="' + id + '"] .btn-danger');
+                    let num = btn.closest('li').index();
+                    let timeline = btn.parents('.cd-h-timeline');
+                    let date = btn.closest('li').find('.datepicker').val();
 
-        $('#removeModal .btn-primary').on('click', function () {
-            let id = $('#removeModal').attr('data-id');
-            let btn = $('.cd-h-timeline__events li[data-id="' + id + '"] .btn-danger');
-            let num = btn.closest('li').index();
-            let timeline = btn.parents('.cd-h-timeline');
-            let date = btn.closest('li').find('.datepicker').val();
+                    if (btn.closest('ol').is('#events-content-consultations'))
+                        dates = datesConsultations;
+                    else if (btn.closest('ol').is('#events-content-entretiens'))
+                        dates = datesEntretiens;
+                    else if (btn.closest('ol').is('#events-content-ateliers'))
+                        dates = datesAteliers;
+                    else if (btn.closest('ol').is('#events-content-educatives'))
+                        dates = datesEducatives;
+                    else if (btn.closest('ol').is('#events-content-coachings'))
+                        dates = datesCoachings;
+                    const rdvDates = dates;
 
-            if (btn.closest('ol').is('#events-content-consultations'))
-                dates = datesConsultations;
-            else if (btn.closest('ol').is('#events-content-entretiens'))
-                dates = datesEntretiens;
-            else if (btn.closest('ol').is('#events-content-ateliers'))
-                dates = datesAteliers;
-            else if (btn.closest('ol').is('#events-content-educatives'))
-                dates = datesEducatives;
-            else if (btn.closest('ol').is('#events-content-coachings'))
-                dates = datesCoachings;
+                    let url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
+                    url = url.replace("rendezVous_id", id);
+                    // La timeline n'est mise à jour qu'une fois la suppression confirmée par le serveur.
+                    $.ajax({
+                        url: url, type: "DELETE",
+                        success: function () {
+                            let hasValue = hasValueDeep(rdvDates, date);
+                            if (!hasValue)
+                                rdvDates.push({'date': date, 'rendezVous': "0", 'place': 1});
+                            else {
+                                rdvDates.forEach(function (e, v) {
+                                    if (e.date === date)
+                                        e.place = e.place + 1;
+                                });
+                            }
 
-            let hasValue = hasValueDeep(dates, date);
-            if (!hasValue)
-                dates.push({'date': date, 'rendezVous': "0", 'place': 1});
-            else {
-                dates.forEach(function (e, v) {
-                    if (e.date === date)
-                        e.place = e.place + 1;
-                });
-            }
+                            timeline.find('ol').each(function () {
+                                $(this).find('li:nth-child(' + (num + 1) + ')').remove();
+                            });
+                            timeline.find('.cd-h-timeline__line li a').removeClass("cd-h-timeline__date--selected").addClass("cd-h-timeline__date--older-event");
+                            timeline.find('.cd-h-timeline__line li:last-child a').removeClass("cd-h-timeline__date--older-event").addClass("cd-h-timeline__date--selected");
+                            timeline.find('.cd-h-timeline__timeline__events li').removeClass("cd-h-timeline__event--selected");
+                            timeline.find('.cd-h-timeline__timeline__events li:last-child').addClass("cd-h-timeline__event--selected");
+                            resetTimeline();
 
-            timeline.find('ol').each(function () {
-                $(this).find('li:nth-child(' + (num + 1) + ')').remove();
-            });
-            timeline.find('.cd-h-timeline__line li a').removeClass("cd-h-timeline__date--selected").addClass("cd-h-timeline__date--older-event");
-            timeline.find('.cd-h-timeline__line li:last-child a').removeClass("cd-h-timeline__date--older-event").addClass("cd-h-timeline__date--selected");
-            timeline.find('.cd-h-timeline__timeline__events li').removeClass("cd-h-timeline__event--selected");
-            timeline.find('.cd-h-timeline__timeline__events li:last-child').addClass("cd-h-timeline__event--selected");
-            resetTimeline();
+                            successAlert('Rendez-vous supprimé.');
+                        },
+                        error: function () {
+                            errorAlert('Le rendez-vous n\'a pas été supprimé. Rechargez la page et réessayez.');
+                        }
+                    });
 
-            let url = "{{ path( 'rendezVous_remove', { 'id': 'rendezVous_id' }) }}";
-            url = url.replace("rendezVous_id", id);
-            $.ajax({
-                url: url, type: "DELETE", success: function () {
-                    deleteAlert()
                 }
             });
+        });
 
+        $('.js-delete-patient').on('click', function () {
+            confirmAction({
+                message: 'Supprimer définitivement ce patient et tout son suivi ?',
+                confirmLabel: 'Supprimer le patient',
+                onConfirm: function () {
+                    $('#deletePatientForm').trigger('submit');
+                }
+            });
         });
 
 
@@ -1928,7 +1885,7 @@
                     "patientId": patientId,
                 },
                 success: function () {
-                    editAlert();
+                    successAlert('Modifications enregistrées.');
                 },
                 error: function () {
                     errorAlert();

@@ -7,13 +7,14 @@
 
 {% block page_content %}
     <div class="settings">
+        <h1>Soignants</h1>
 
         <div class="nav-bar">
             <div class="btn-group btn-nav">
-                <a class="btn btn-primary" data-toggle="modal" data-target="#soignantModal">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#soignantModal">
                     <span class="glyphicon glyphicon-plus"></span>
                     Ajouter une personne
-                </a>
+                </button>
             </div>
         </div>
 
@@ -23,11 +24,11 @@
                 <ul>
                     {% for soignant in soignants|sort((a, b) => a.priority <=> b.priority) %}
                         {% if soignant.status == true %}
-                            <li class="soignant" data-id="{{ soignant.id }}">
+                            <li class="soignant" data-id="{{ soignant.id }}" tabindex="0" role="button" aria-pressed="false">
                                 {{ soignant.prenom }} {{ soignant.nom }}
-                                <button type="button" class="moveup-btn"><span
+                                <button type="button" class="moveup-btn" aria-label="Monter dans la liste" title="Monter dans la liste"><span
                                             class="glyphicon glyphicon-chevron-up"></span></button>
-                                <button type="button" class="remove-btn"><span
+                                <button type="button" class="remove-btn" aria-label="Supprimer ce soignant" title="Supprimer ce soignant"><span
                                             class="glyphicon glyphicon-remove"></span>
                                 </button>
                             </li>
@@ -37,8 +38,8 @@
             </div>
 
             <div class="soignant__btn-bar">
-                <button disabled class="btn js-remove"><span class="glyphicon glyphicon-chevron-right"></span></button>
-                <button disabled class="btn js-add"><span class="glyphicon glyphicon-chevron-left"></span></button>
+                <button type="button" disabled class="btn js-remove" aria-label="Rendre inactifs les soignants sélectionnés" title="Rendre inactifs les soignants sélectionnés"><span class="glyphicon glyphicon-chevron-right"></span></button>
+                <button type="button" disabled class="btn js-add" aria-label="Rendre actifs les soignants sélectionnés" title="Rendre actifs les soignants sélectionnés"><span class="glyphicon glyphicon-chevron-left"></span></button>
             </div>
 
             <div id="inactif" class="list-soignant">
@@ -46,12 +47,12 @@
                 <ul>
                     {% for soignant in soignants %}
                         {% if soignant.status == false %}
-                            <li class="soignant" data-id="{{ soignant.id }}">
+                            <li class="soignant" data-id="{{ soignant.id }}" tabindex="0" role="button" aria-pressed="false">
                                 {{ soignant.prenom }} {{ soignant.nom }}
-                                <button type="button" class="moveup-btn" style="display: none">
+                                <button type="button" class="moveup-btn" style="display: none" aria-label="Monter dans la liste" title="Monter dans la liste">
                                     <span class="glyphicon glyphicon-chevron-up"></span>
                                 </button>
-                                <button type="button" class="remove-btn">
+                                <button type="button" class="remove-btn" aria-label="Supprimer ce soignant" title="Supprimer ce soignant">
                                     <span class="glyphicon glyphicon-remove"></span>
                                 </button>
                             </li>
@@ -64,13 +65,13 @@
     </div>
 
     <!-- Modal addSoignant -->
-    <div id="soignantModal" class="modal fade" role="dialog">
+    <div id="soignantModal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
                     <h4 class="modal-title">
                         <span class="glyphicon glyphicon-plus"></span>
                         Ajouter une personne</h4>
@@ -83,7 +84,8 @@
 
                     {{ form_row(soignantForm._token) }}
                     {{ form_end(soignantForm, {'render_rest' : false}) }}
-                    <button id="soignant_add" class="btn btn-primary btn-block" data-dismiss="modal">Ajouter</button>
+                    <p class="text-danger js-modal-error" role="alert" hidden></p>
+                    <button type="button" id="soignant_add" class="btn btn-primary btn-block">Ajouter</button>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
@@ -131,8 +133,13 @@
         /* */
 
         $('.list-soignant').on('click', '.soignant', function (e) {
-            $(this).toggleClass('selected');
+            $(this).toggleClass('selected').attr('aria-pressed', $(this).hasClass('selected') ? 'true' : 'false');
             updateTransfertButtons();
+        }).on('keydown', '.soignant', function (e) {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target === this) {
+                e.preventDefault();
+                $(this).trigger('click');
+            }
         });
 
         function updateTransfertButtons() {
@@ -195,7 +202,7 @@
                             $('#actif li.soignant.selected .moveup-btn').hide();
                             $('#actif li.soignant.selected').appendTo('#inactif ul');
                         }
-                        $('.soignant.selected').toggleClass('selected');
+                        $('.soignant.selected').removeClass('selected').attr('aria-pressed', 'false');
                         updateTransfertButtons();
                     } else {
                         errorAlert();
@@ -208,6 +215,16 @@
         $('#soignant_add').click(function () {
             var nom = $('#soignant_nom').val();
             var prenom = $('#soignant_prenom').val();
+            const button = $(this);
+            const modalError = $('#soignantModal .js-modal-error');
+
+            // La modale reste ouverte tant que l'ajout n'a pas réussi, pour pouvoir corriger.
+            if (!nom.trim() || !prenom.trim()) {
+                modalError.text('Renseignez le prénom et le nom.').prop('hidden', false);
+                return;
+            }
+            modalError.prop('hidden', true);
+            button.prop('disabled', true);
 
             $.ajax({
                 url: "{{ path('soignant_add') }}",
@@ -220,46 +237,51 @@
                 success: function (resp) {
                     if (resp) {
                         $('#actif ul')
-                            .append(`<li class="soignant" data-id="` + escapeHtml(resp) + `">` + escapeHtml(prenom) + ' ' + escapeHtml(nom) + `<button type="button" class="moveup-btn"><span class="glyphicon glyphicon-chevron-up"><span></button><button type="button" class="remove-btn"><span class="glyphicon glyphicon-remove"><span></button></li>`)
+                            .append(`<li class="soignant" data-id="` + escapeHtml(resp) + `" tabindex="0" role="button" aria-pressed="false">` + escapeHtml(prenom) + ' ' + escapeHtml(nom) + `<button type="button" class="moveup-btn" aria-label="Monter dans la liste" title="Monter dans la liste"><span class="glyphicon glyphicon-chevron-up"></span></button><button type="button" class="remove-btn" aria-label="Supprimer ce soignant" title="Supprimer ce soignant"><span class="glyphicon glyphicon-remove"></span></button></li>`);
+                        $('#soignant_nom, #soignant_prenom').val('');
+                        $('#soignantModal').modal('hide');
                     } else {
-                        errorAlert();
+                        modalError.text('Impossible d\'ajouter ce soignant.').prop('hidden', false);
                     }
+                },
+                error: function () {
+                    modalError.text('L\'ajout n\'a pas été enregistré. Réessayez ou rechargez la page.').prop('hidden', false);
+                },
+                complete: function () {
+                    button.prop('disabled', false);
                 }
             });
         });
 
         $('.list-soignant').on('click', '.remove-btn', function (e) {
             e.stopPropagation();
-            let id = $(this).parents('.soignant').data('id');
-            let url = "{{ path('soignant_delete', { 'id': 'soignant_id' }) }}";
-            url = url.replace("soignant_id", id);
-            $.ajax({
-                url: url,
-                type: "DELETE",
-                dataType: "json",
-                data: {},
-                success: function (resp) {
-                    if (resp) {
-                        $('*[data-id="' + id + '"]').remove();
-                    } else {
-                        errorAlert('impossible de supprimer cette personne');
-                    }
+            let soignant = $(this).parents('.soignant');
+            let id = soignant.data('id');
+            confirmAction({
+                message: 'Supprimer définitivement « ' + soignant.text().trim() + ' » ?',
+                onConfirm: function () {
+                    let url = "{{ path('soignant_delete', { 'id': 'soignant_id' }) }}";
+                    url = url.replace("soignant_id", id);
+                    $.ajax({
+                        url: url,
+                        type: "DELETE",
+                        dataType: "json",
+                        data: {},
+                        success: function (resp) {
+                            if (resp) {
+                                soignant.remove();
+                            } else {
+                                errorAlert('Impossible de supprimer ce soignant.');
+                            }
+                        }
+                    });
                 }
             });
         });
 
 
-        /* Alert
-        ============================================================================== */
 
-        var alert_pos = {{ top }};
 
-        function errorAlert(message) {
-            $('body').prepend(
-                '<div class="row alert alert-danger text-center box-shadow" style="top:' + alert_pos + 'px;"><span class="closebtn" onclick="this.parentElement.style.display=\'none\';">&times;</span>Erreur : ' + message + '</div>'
-            );
-            alert_pos += 72;
-        }
 
     </script>
 

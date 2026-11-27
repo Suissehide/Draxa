@@ -7,6 +7,12 @@
     {{ parent() }}
 {% endblock form_widget_simple %}
 
+{# Listes déroulantes au même style que les autres champs #}
+{% block choice_widget_collapsed %}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' form-control')|trim}) %}
+    {{ parent() }}
+{% endblock choice_widget_collapsed %}
+
 {% block form_row %}
     {% set widget_attr = {} %}
     {% if help is not empty %}

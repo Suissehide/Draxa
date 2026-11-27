@@ -24,7 +24,7 @@ class YearController extends AbstractController
             $data[] = [
                 'startDate' => $semaine->getDateDebut()->format('d/m/Y'),
                 'endDate' => $semaine->getDateFin()->format('d/m/Y'),
-                'color' => !$semaine->getSlots()->isEmpty() ? '#07a8a0' : 'orange',
+                'color' => !$semaine->getSlots()->isEmpty() ? '#007a73' : 'orange',
             ];
         }
 

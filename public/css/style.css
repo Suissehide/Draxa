@@ -1,3 +1,11 @@
+:root {
+    /* Couleur principale : teal assez foncé pour du texte blanc dessus (contraste ≥ 4,5:1) */
+    --brand: #007a73;
+    --brand-dark: #006b65;
+    --brand-darker: #005e59;
+    --brand-tint: rgba(0, 122, 115, 0.14);
+}
+
 /*
  * CSS 
  */
@@ -45,7 +53,7 @@ h3 {
 
 a {
     font-size: 14px;
-    color: #09aaaa;
+    color: var(--brand);
 }
 
 a,
@@ -66,6 +74,18 @@ button:visited {
     box-shadow: none !important;
 }
 
+/* Focus clavier visible (la souris ne déclenche pas :focus-visible) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible,
+[contenteditable]:focus-visible {
+    outline: 2px solid var(--brand-darker) !important;
+    outline-offset: 2px;
+}
+
 .container-fluid {
     padding: 0;
 }
@@ -82,8 +102,8 @@ button:visited {
 }
 
 .btn-primary {
-    background-color: #08c1b8;
-    border-color: #09aaaa;
+    background-color: var(--brand);
+    border-color: var(--brand);
 }
 
 .btn-primary:hover,
@@ -91,15 +111,15 @@ button:visited {
 .btn-primary:focus,
 .btn-primary:hover:disabled,
 .btn-primary:active {
-    background-color: #07a8a0;
-    border-color: #07a8a0;
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
 }
 
 .btn-light.btn-primary {
     transition: 0.5s;
     background-color: transparent;
-    border-color: #07a8a0;
-    color: #07a8a0;
+    border-color: var(--brand-dark);
+    color: var(--brand-dark);
 }
 
 .btn-light.btn-primary:hover,
@@ -107,8 +127,8 @@ button:visited {
 .btn-light.btn-primary:focus,
 .btn-light.btn-primary:hover:disabled,
 .btn-light.btn-primary:active {
-    background-color: #07a8a0;
-    border-color: #07a8a0;
+    background-color: var(--brand-dark);
+    border-color: var(--brand-dark);
     color: #fff;
 }
 
@@ -127,7 +147,7 @@ button:visited {
 }
 
 .dropdown-menu > .active > a {
-    background-color: #08c1b8;
+    background-color: var(--brand);
 }
 
 .bootgrid-header .actionBar .btn-group > .btn-group .dropdown-menu .dropdown-item {
@@ -135,7 +155,7 @@ button:visited {
 }
 
 .bootgrid-header .actionBar .btn-group > .btn-group .dropdown-menu .dropdown-item:hover {
-    background-color: #07a8a0;
+    background-color: var(--brand-dark);
     color: white;
 }
 
@@ -201,7 +221,7 @@ button:visited {
 }
 
 .table thead {
-    background-color: #08c1b8;
+    background-color: var(--brand);
     font-family: Ubuntu-Bold;
 }
 
@@ -226,7 +246,7 @@ button:visited {
 }
 
 .table-hover thead > tr > th:hover {
-    background-color: #07a8a0;
+    background-color: var(--brand-dark);
 }
 
 .table .text,
@@ -240,8 +260,18 @@ button:visited {
 }
 
 .table tr:hover td {
+    background-color: var(--brand-tint);
+}
+
+/* Seules les lignes qui ouvrent quelque chose ont le curseur main */
+.table-clickable tbody tr[data-row-id]:hover td,
+.table-clickable tbody tr[data-patient-id]:hover td {
     cursor: pointer;
-    background-color: rgba(8, 193, 184, 0.314);
+}
+
+.table-clickable tbody tr[data-row-id]:focus-visible {
+    outline: 2px solid var(--brand-darker);
+    outline-offset: -2px;
 }
 
 .table > tbody > tr.out:hover > td,
@@ -328,9 +358,9 @@ button:visited {
 .pagination .next a,
 .pagination .prev a,
 .pagination .first a {
-    background-color: #08c1b8;
+    background-color: var(--brand);
     color: #fcfcfc;
-    border-color: #07a8a0;
+    border-color: var(--brand-dark);
 }
 
 .pagination .last a:hover,
@@ -338,62 +368,62 @@ button:visited {
 .pagination .prev a:hover,
 .pagination .first a:hover {
     background-color: #fcfcfc;
-    color: #08c1b8;
-    border-color: #07a8a0;
+    color: var(--brand);
+    border-color: var(--brand-dark);
 }
 
 .pagination li a {
     color: #000000;
     background-color: #fcfcfc;
-    border-color: #07a8a0;
+    border-color: var(--brand-dark);
 }
 
 .pagination li a:hover {
     color: #000000;
-    background-color: rgba(8, 193, 184, 0.314);
-    border-color: #07a8a0;
+    background-color: var(--brand-tint);
+    border-color: var(--brand-dark);
 }
 
 .pagination > .active > a {
     color: #ffffff;
-    background-color: #08c1b8;
-    border-color: #07a8a0;
+    background-color: var(--brand);
+    border-color: var(--brand-dark);
 }
 
 .pagination > .active > a:hover {
     color: #000000;
-    background-color: #08c1b8;
-    border-color: #07a8a0;
+    background-color: var(--brand);
+    border-color: var(--brand-dark);
 }
 
 .pagination .disabled a {
-    background-color: rgba(7, 190, 181, 0.314);
-    border-color: rgba(8, 193, 184, 0.314);
+    background-color: var(--brand-tint);
+    border-color: var(--brand-tint);
 }
 
 .pagination .disabled a:hover {
-    background-color: rgba(8, 193, 184, 0.314);
-    border-color: rgba(8, 193, 184, 0.314);
+    background-color: var(--brand-tint);
+    border-color: var(--brand-tint);
     color: #fcfcfc;
 }
 
 .datepicker table tr td.today {
-    background-color: rgba(7, 190, 181, 0.314);
-    border-color: #07a8a0;
+    background-color: var(--brand-tint);
+    border-color: var(--brand-dark);
 }
 
 .datepicker table tr td.today:hover {
-    background-color: #067a7a;
+    background-color: var(--brand-darker);
     color: #fff;
 }
 
 .datepicker table tr td.active.active {
-    background-color: #07a8a0;
-    border-color: #08c1b8;
+    background-color: var(--brand-dark);
+    border-color: var(--brand);
 }
 
 .datepicker table tr td.active.active:hover {
-    background-color: #067a7a;
+    background-color: var(--brand-darker);
 }
 
 .datepicker table tr td.disabled {
@@ -415,7 +445,7 @@ button:visited {
     border-radius: 50%;
     height: 10px;
     width: 10px;
-    background-color: #08c1b8;
+    background-color: var(--brand);
 }
 */
 
@@ -465,7 +495,7 @@ button:visited {
 
 .colorchange {
     color: #ccc;
-    background-image: -webkit-linear-gradient(92deg, #08c1b8, #127aeb);
+    background-image: -webkit-linear-gradient(92deg, var(--brand), #127aeb);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -557,7 +587,8 @@ nav {
     justify-content: left;
 }
 
-.menu .menu-item:hover > .menu-content {
+.menu .menu-item:hover > .menu-content,
+.menu .menu-item:focus-within > .menu-content {
     display: block;
 }
 
@@ -576,7 +607,7 @@ nav {
 }
 
 .user-link > span {
-    color: #07a8a0;
+    color: var(--brand-dark);
     font-size: 16px;
     margin-bottom: 3px;
 }
@@ -674,7 +705,7 @@ nav {
     height: 60px;
     width: 60px;
     border: none;
-    opacity: 0.5;
+    opacity: 0.85;
     -webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     -webkit-transition: opacity 0.3s 0s, visibility 0s 0.3s,
@@ -690,31 +721,31 @@ nav {
 }
 
 .cd-top {
-    background: rgba(8, 193, 184, 0.8);
+    background: var(--brand);
     visibility: hidden;
     opacity: 0;
 }
 
 .cd-top:hover {
-    background-color: #07a8a0;
+    background-color: var(--brand-dark);
     opacity: 1;
 }
 
 .cd-save {
-    background: rgba(40, 167, 69, 0.8);
+    background: #1e7e34;
 }
 
 .cd-save:hover {
-    background-color: #28a745;
+    background-color: #155d27;
     opacity: 1;
 }
 
 .cd-back {
-    background: rgba(204, 204, 204, 0.8);
+    background: #6c757d;
 }
 
 .cd-back:hover {
-    background: #ccc;
+    background: #545b62;
     opacity: 1;
 }
 
@@ -745,15 +776,17 @@ nav {
     z-index: 20;
     position: fixed;
     width: 500px;
+    max-width: calc(100% - 32px);
     padding: 10px 16px;
     border: 1px solid #8c8c8c;
     border-radius: 4px;
     bottom: 24px;
-    left: calc(50% - 250px);
-    font-size: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
     text-align: center;
-    background: #ffffff20;
-    backdrop-filter: blur(8px);
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .banner span {
@@ -796,7 +829,7 @@ nav {
 
 #footer a {
     font-size: 12px;
-    color: #08c1b8;
+    color: var(--brand);
 }
 
 #footer a:hover {
@@ -850,7 +883,7 @@ nav {
 }
 
 .footer-copyright a {
-    color: #08c1b8;
+    color: var(--brand);
 }
 
 .footer-copyright a:hover {
@@ -863,7 +896,7 @@ nav {
 .modal-header,
 .modal h4,
 .modal .close {
-    background-color: #08c1b8;
+    background-color: var(--brand);
     color: white !important;
     text-align: center;
     font-size: 30px;
@@ -913,8 +946,15 @@ nav {
     margin: 0 auto;
 }
 
-.dp-selected {
-    color: black !important;
+/* Sélecteur de jour (couleurs injectées par le plugin, d'où la spécificité renforcée) */
+.pagination a.dp-selected {
+    background-color: var(--brand) !important;
+    color: #fff !important;
+}
+
+.pagination a.dp-today:not(.dp-selected) {
+    background-color: var(--brand-tint) !important;
+    color: inherit !important;
 }
 
 .accueil-wrapper {
@@ -933,6 +973,16 @@ nav {
     background-color: #d0d0d0;
 }
 
+.accueil-wrapper .sortable[aria-sort="ascending"]::after {
+    content: " ▲";
+    font-size: 10px;
+}
+
+.accueil-wrapper .sortable[aria-sort="descending"]::after {
+    content: " ▼";
+    font-size: 10px;
+}
+
 .box {
     display: flex;
     flex-direction: column;
@@ -946,11 +996,11 @@ nav {
 
 .box-header {
     font-family: Ubuntu-bold;
-    color: #09aaaa;
+    color: var(--brand);
     font-size: 16px;
     padding: 2px 15px;
     margin: 15px 0;
-    border-left: 3px solid #09aaaa;
+    border-left: 3px solid var(--brand);
 }
 
 .box-header > div {
@@ -1124,7 +1174,7 @@ nav {
 }
 
 .user-name.progetp {
-    color: seagreen;
+    color: darkolivegreen;
 }
 
 .actions-list .user-send:not(:last-child) {
@@ -1181,7 +1231,7 @@ nav {
 }
 
 .user-list button.js-addPatient {
-    background-color: #07a8a0;
+    background-color: var(--brand-dark);
     margin-right: 8px;
     /* margin-bottom: 5px; */
 }
@@ -1230,6 +1280,16 @@ nav {
     margin-right: 5px;
 }
 
+.legende__color--today,
+.calendar .calendar-today {
+    outline: 2px solid #d9534f;
+    outline-offset: -2px;
+}
+
+.legende__type .pastille {
+    margin-right: 5px;
+}
+
 /* Login
 =================================================== */
 
@@ -1243,7 +1303,7 @@ nav {
 .login-header {
     padding: 35px 50px;
     margin-top: -80px;
-    background-color: #08c1b8;
+    background-color: var(--brand);
     color: white !important;
     text-align: center;
     font-size: 30px;
@@ -1272,12 +1332,12 @@ nav {
 
 /*
 .scrollbar {
-    scrollbar-base-color: #07a8a0;
-    scrollbar-face-color: #08c1b8;
+    scrollbar-base-color: var(--brand-dark);
+    scrollbar-face-color: var(--brand);
     // scrollbar-3dlight-color: #cc0000;
     // scrollbar-highlight-color: #cc0000;
     scrollbar-track-color: #F5F5F5;
-    scrollbar-arrow-color: #08c1b8;
+    scrollbar-arrow-color: var(--brand);
     // scrollbar-shadow-color: rgba(0, 0, 0, 0.08);
 }
 
@@ -1295,7 +1355,7 @@ nav {
 .scrollbar::-webkit-scrollbar-thumb {
     border-radius: 10px;
     box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-    background-color: #08c1b8;
+    background-color: var(--brand);
 }
 */
 
@@ -1331,14 +1391,14 @@ nav {
 }
 
 .card-add {
-    color: #08c1b8;
+    color: var(--brand);
     padding: 5px 0;
     /* margin-bottom: 20px; */
 }
 
 .card-add:hover {
     color: #fcfcfc;
-    background-color: #08c1b8;
+    background-color: var(--brand);
     -moz-transition: 0.1s all ease-in-out;
     -o-transition: 0.1s all ease-in-out;
     -webkit-transition: 0.1s all ease-in-out;
@@ -1366,7 +1426,16 @@ nav {
     margin: 10px;
 }
 
+/* Champs obligatoires (classe posée par form-theme.html.twig) */
+label.required::after {
+    content: " *";
+    color: #c9302c;
+}
+
 .closebtn {
+    background: none;
+    border: 0;
+    padding: 0;
     margin-left: 15px;
     color: inherit;
     font-family: Ubuntu-Bold;
@@ -1390,8 +1459,10 @@ nav {
 
 .radio-block input[type="radio"] {
     position: absolute;
-    visibility: hidden;
-    display: none;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
 }
 
 .radio-block label {
@@ -1412,7 +1483,7 @@ nav {
 
 .radio-block input[type="radio"]:checked + label {
     color: #fff;
-    background: #424242;
+    background: var(--brand);
 }
 
 .radio-block .radio-group {
@@ -1459,7 +1530,7 @@ nav {
     width: 10px;
     height: 10px;
     border-radius: 100%;
-    background: #07a8a0;
+    background: var(--brand-dark);
     transform: scale(0);
     transition: all 0.2s ease;
     opacity: 0.08;
@@ -1471,7 +1542,7 @@ nav {
 }
 
 .cntr input[type="radio"]:checked + .label {
-    border-color: #07a8a0;
+    border-color: var(--brand-dark);
 }
 
 .cntr input[type="radio"]:checked + .label:after {
@@ -1522,7 +1593,7 @@ nav {
     transform: translateY(-50%);
     left: 0.2em;
     font-size: 1.2em;
-    color: #08c1b8;
+    color: var(--brand);
     line-height: 0;
     transition: all 0.2s;
 }
@@ -1688,12 +1759,21 @@ nav {
     transition: 0.4s ease-in-out;
 }
 
-.semaine:hover {
-    transform: scale(1.02);
+.semaine--current .semaine__date-info {
+    box-shadow: inset 6px 0 0 #f0ad4e;
 }
 
-.semaine.open:hover {
-    transform: scale(1);
+.semaine__current-label {
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: #fff;
+    color: var(--brand-darker);
+    font-size: 12px;
+}
+
+.semaine__header:hover .semaine__general-info {
+    background-color: #f0f0f0;
 }
 
 .semaine__header {
@@ -1707,8 +1787,8 @@ nav {
     border-bottom-left-radius: 10px;
     padding: 20px 40px;
     color: #fff;
-    background-color: #07a8a0;
-    border-bottom: 1px solid #07a8a0;
+    background-color: var(--brand-dark);
+    border-bottom: 1px solid var(--brand-dark);
     font-family: Ubuntu-Bold;
     transition: 0.2s ease-in-out;
 }
@@ -1726,7 +1806,7 @@ nav {
 }
 
 .semaine__header .semaine__date-info h2 {
-    color: #ccc;
+    color: rgba(255, 255, 255, 0.85);
     font-size: 14px;
     margin-bottom: 5px;
     margin-top: 0;
@@ -1759,7 +1839,7 @@ nav {
 }
 
 .divider .line {
-    background-color: #07a8a0;
+    background-color: var(--brand-dark);
     height: 3px;
     width: 40px;
     margin-right: 10px;
@@ -1781,6 +1861,9 @@ nav {
 
 .semaine__header .semaine__general-info .semaine__open-icon,
 .semaine__header .semaine__general-info .semaine__duplicate {
+    background: none;
+    border: 0;
+    color: inherit;
     padding: 0 20px;
     display: flex;
     align-items: center;
@@ -1854,7 +1937,7 @@ nav {
     flex: 1;
     position: relative;
     max-width: calc((100% / 7));
-    min-width: 300px;
+    min-width: 220px;
     min-height: 200px;
     padding: 20px 0;
     transition: 0.2s ease-in-out;
@@ -1881,17 +1964,34 @@ nav {
     color: white;
     padding: 5px;
     border-radius: 5px;
-    font-size: 11px;
+    font-size: 12px;
     transition: 0.1s ease-in-out;
 }
 
-.semaine__body .semaine__full .slot:hover {
-    padding: 5px 24px 5px 5px;
+/* Fonds clairs (coaching, atelier) : texte foncé pour rester lisible */
+.semaine__body .semaine__full .slot[data-color*="goldenrod"],
+.semaine__body .semaine__full .slot[data-color*="goldenrod"] .details span,
+.semaine__body .semaine__full .slot[data-color*="chocolate"],
+.semaine__body .semaine__full .slot[data-color*="chocolate"] .details span {
+    color: #1a1a1a;
 }
 
+/* Actions visibles au survol et au clavier ; elles recouvrent le texte sans le décaler */
 .semaine__body .semaine__full .slot:hover .duplicate-btn,
-.semaine__body .semaine__full .slot:hover .btn-delete {
+.semaine__body .semaine__full .slot:hover .btn-delete,
+.semaine__body .semaine__full .slot:focus-within .duplicate-btn,
+.semaine__body .semaine__full .slot:focus-within .btn-delete {
     display: block;
+}
+
+.semaine__body .semaine__full .slot .btn-delete,
+.semaine__body .semaine__full .slot .duplicate-btn {
+    padding: 2px 4px;
+    border: 0;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    line-height: 1;
 }
 
 .semaine__body .semaine__full .slot > div {
@@ -1903,15 +2003,15 @@ nav {
 .semaine__body .semaine__full .slot .btn-delete {
     display: none;
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 4px;
+    right: 4px;
 }
 
 .semaine__body .semaine__full .slot .duplicate-btn {
     display: none;
     position: absolute;
-    top: 28px;
-    right: 8px;
+    top: 4px;
+    right: 26px;
 }
 
 .semaine__body .semaine__full .slot .horaire {
@@ -1964,9 +2064,7 @@ nav {
     margin: 0 15px;
 }
 
-#slot__error {
-    display: none;
-    color: red;
+.js-modal-error {
     margin-bottom: 10px;
 }
 
@@ -2002,9 +2100,19 @@ nav {
     transition: 0.2s ease-in-out;
 }
 
+.soignant:hover {
+    background-color: #eee;
+}
+
 .soignant.selected {
-    background-color: #07a8a0;
+    background-color: var(--brand-dark);
     color: white;
+}
+
+.list-soignant ul:not(:has(li))::after {
+    content: "Aucun soignant";
+    color: #777;
+    font-style: italic;
 }
 
 .list-soignant .soignant:not(:last-child) {
@@ -2032,7 +2140,7 @@ nav {
 }
 
 .soignant button:hover {
-    color: #07a8a0;
+    color: var(--brand-dark);
 }
 
 .soignant.selected button:hover {
@@ -2052,7 +2160,7 @@ nav {
 }
 
 .soignant__btn-bar button.active {
-    background-color: #09aaaa;
+    background-color: var(--brand);
     color: #fcfcfc;
 }
 
@@ -2105,7 +2213,7 @@ nav {
 }
 
 .todo__title h3 {
-    color: #07a8a0;
+    color: var(--brand-dark);
     font-size: 24px;
     margin-bottom: 5px;
     margin-top: 0;
@@ -2211,8 +2319,9 @@ ul.todo__list li .cbx {
 }
 
 .todo__delete {
+    background: none;
+    border: 0;
     opacity: 0;
-    visibility: hidden;
     margin-top: 1px;
     color: red;
     cursor: pointer;
@@ -2224,9 +2333,9 @@ ul.todo__list li .cbx {
     color: darkred;
 }
 
-ul.todo__list li:hover .todo__delete {
+ul.todo__list li:hover .todo__delete,
+ul.todo__list li:focus-within .todo__delete {
     opacity: 1;
-    visibility: visible;
 }
 
 .todo__action {
@@ -2237,7 +2346,7 @@ ul.todo__list li:hover .todo__delete {
 
 [contenteditable="true"]:active,
 [contenteditable="true"]:focus {
-    border: 1px solid #07a8a0;
+    border: 1px solid var(--brand-dark);
     border-radius: 3px;
     outline: none;
     padding: 4px 4px;
@@ -2259,7 +2368,7 @@ ul.todo__list li:hover .todo__delete {
     right: 5px;
     width: 16px;
     height: 16px;
-    font-size: 10px;
+    font-size: 11px;
     background-color: red;
     border-radius: 50%;
     color: white;
@@ -2285,7 +2394,7 @@ ul.todo__list li:hover .todo__delete {
 }
 
 .calendar table.month th.day-header {
-    color: #07a8a0;
+    color: var(--brand-dark);
 }
 
 /* Select2
@@ -2418,7 +2527,7 @@ ul.todo__list li:hover .todo__delete {
 }
 
 .inp-cbx:checked + label::before {
-    border-color: #07a8a0;
+    border-color: var(--brand-dark);
 }
 
 .inp-cbx:not(:checked) + label::after,
@@ -2428,7 +2537,7 @@ ul.todo__list li:hover .todo__delete {
     top: 15px;
     left: 9px;
     font-size: 16px;
-    color: #07a8a0;
+    color: var(--brand-dark);
     line-height: 0;
     transition: all 0.2s;
 }
@@ -2449,13 +2558,10 @@ ul.todo__list li:hover .todo__delete {
 }
 
 .cbx:hover span:first-child {
-    border-color: #07a8a0;
+    border-color: var(--brand-dark);
 }
 
-.inp-cbx {
-    position: absolute;
-    visibility: hidden;
-}
+
 
 .inp-cbx:checked + .cbx span:first-child svg {
     stroke-dashoffset: 0;
@@ -2557,7 +2663,20 @@ ul.todo__list li:hover .todo__delete {
 }
 
 input[type="checkbox"].checkbox-round {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+/* Cases et boutons radio masqués visuellement mais toujours atteignables au clavier :
+   le focus est reporté sur le libellé qui les dessine. */
+.inp-cbx:focus-visible + label,
+.radio-block input[type="radio"]:focus-visible + label,
+input[type="checkbox"].checkbox-round:focus-visible + span {
+    outline: 2px solid var(--brand-darker);
+    outline-offset: 2px;
 }
 
 input[type="checkbox"].checkbox-round + span {
@@ -2638,7 +2757,7 @@ input[type="checkbox"].checkbox-round + span {
     padding: 10px 15px;
     border-radius: 5px;
     text-decoration: none;
-    min-width: 700px;
+    min-width: min(700px, 90vw);
     white-space: break-spaces;
     text-align: left;
 }
@@ -2747,7 +2866,16 @@ input[type="checkbox"].checkbox-round + span {
 }
 
 .aspect-input {
-    display: none;
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    margin: 0;
+}
+
+.aspect-input:focus-visible ~ .aspect-content {
+    outline: 2px solid var(--brand-darker);
+    outline-offset: -2px;
 }
 
 .aspect-input:checked ~ .aspect-content + .aspect-tab-content {
@@ -2813,7 +2941,7 @@ input[type="checkbox"].checkbox-round + span {
 .aspect-name {
     display: inline-block;
     font-family: Ubuntu-bold;
-    color: #09aaaa;
+    color: var(--brand);
     font-size: 16px;
     margin-left: 16px;
     font-weight: 500;
@@ -3043,7 +3171,7 @@ input[type="checkbox"].checkbox-round + span {
 }
 
 .switch .checkbox:checked + .toggle-thumb {
-    background-color: #08c1b8;
+    background-color: var(--brand);
 }
 
 .switch .checkbox:checked + .toggle-thumb > svg {
