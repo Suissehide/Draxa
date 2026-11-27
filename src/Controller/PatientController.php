@@ -118,6 +118,8 @@ class PatientController extends AbstractController
                 'status' => $patient->getDentree() ? 1 : ($patient->getProgetp() === 'ViVa module AOMI' ? 2 : 0),
                 'observ' => $patient->getObserv() ? 1 : 0,
                 'divers' => $patient->getDivers() ? 1 : 0,
+                'progetp' => $patient->getProgetp() ?? '',
+                'sortie' => $patient->getDentree()?->format('d/m/Y') ?? '',
             ];
         }
 

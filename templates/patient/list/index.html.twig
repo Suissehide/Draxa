@@ -1,99 +1,92 @@
 {% extends 'layout.html.twig' %}
+{% import '_icons.html.twig' as icons %}
 
-{% block title %}Liste des patients{% endblock %}
+{% block title %}Patients{% endblock %}
 
 {% block page_content %}
-    <div class="wrapper">
-        <h1>Liste des patients</h1>
-        <div>
-            <div class="nav-bar clearfix">
-                <div class="pull-left">
-                    <a href="{{ path('patient_add') }}" class="btn btn-primary" id="command-add" data-row-id="0">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        Nouveau patient
-                    </a>
-                </div>
-                <div class="pull-right">
-                    <form action="{{ path('csv') }}" method="post">
-                        <button type="submit" class="btn btn-primary" id="command-export">
-                            <span class="glyphicon glyphicon-save"></span>
-                            Exporter CSV
-                        </button>
-                    </form>
-                </div>
+    <div class="page">
+        <div class="page-head">
+            <h1 class="page-title">Patients</h1>
+            <div class="page-head__actions">
+                <a href="{{ path('csv') }}" class="btn btn-default" id="command-export">{{ icons.icon('download', 17) }} Exporter CSV</a>
+                <a href="{{ path('patient_add') }}" class="btn btn-primary" id="command-add" data-row-id="0">{{ icons.icon('plus', 17) }} Nouveau patient</a>
             </div>
+        </div>
 
-            <div class="separator"></div>
-            <form class="radio-block">
-                <div class="radio-group">
-                    <input type="radio" id="option-tous" name="selector">
-                    <label for="option-tous">Tous</label>
-                    <input type="radio" id="option-actuels" name="selector" checked>
-                    <label for="option-actuels">Actuels</label>
-                    <input type="radio" id="option-sortis" name="selector">
-                    <label for="option-sortis">Sortis</label>
-                </div>
-            </form>
-            <table id="patient-grid" class="table table-condensed table-hover table-striped table-clickable">
+        <form class="radio-block patients-toolbar" onsubmit="return false">
+            <div class="radio-group" role="radiogroup" aria-label="État du patient">
+                <input type="radio" id="option-actuels" name="selector" checked>
+                <label for="option-actuels">Actuels</label>
+                <input type="radio" id="option-sortis" name="selector">
+                <label for="option-sortis">Sortis</label>
+                <input type="radio" id="option-tous" name="selector">
+                <label for="option-tous">Tous</label>
+            </div>
+        </form>
+
+        <section class="card patients-card">
+            <table id="patient-grid" class="table table-condensed table-hover table-clickable">
                 <thead>
                 <tr>
-                    <th data-column-id="observ" data-formatter="observ" data-sortable="false" data-width="33px"></th>
-                    <th data-column-id="divers" data-formatter="divers" data-sortable="false" data-width="33px"></th>
+                    <th data-column-id="observ" data-formatter="observ" data-sortable="false" data-width="34px"></th>
                     <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">Id</th>
-                    <th data-column-id="nom" data-width="10%">Nom</th>
-                    <th data-column-id="prenom" data-width="10%">Prénom</th>
-                    <th data-column-id="tel1" data-width="14%">Téléphone</th>
-                    <th data-column-id="etp" data-width="12%">Point final parcours ETP</th>
-                    <th data-column-id="objectif" data-width="15%" data-searchable="false">Objectif</th>
-                    <th data-column-id="date" data-width="10%">Date</th>
-                    <th data-column-id="categorie" data-width="10%">Catégorie</th>
-                    <th data-column-id="thematique" data-width="15%">Thématique</th>
-                    <th data-column-id="venu" data-formatter="venu" data-sortable="false" data-width="33px"></th>
-
+                    <th data-column-id="nom" data-formatter="patient" data-width="24%">Patient</th>
+                    <th data-column-id="tel1" data-width="13%">Téléphone</th>
+                    <th data-column-id="date" data-formatter="next" data-width="22%">Prochain rendez-vous</th>
+                    <th data-column-id="objectif" data-searchable="false">Objectif</th>
+                    <th data-column-id="etp" data-width="13%">Point final ETP</th>
+                    <th data-column-id="venu" data-formatter="venu" data-sortable="false" data-width="150px">Présence</th>
                     <th data-column-id="status" data-visible="false" data-searchable="false">Status</th>
                 </tr>
                 </thead>
             </table>
-        </div>
+        </section>
     </div>
 {% endblock %}
 
 {% block javascripts %}
     <script>
         let etat = "in";
+        const categorieLabels = {Consultation: 'Consultation', Entretien: 'Entretien', Coaching: 'Coaching PRM', Atelier: 'Atelier', Educative: 'Semaine éd.'};
 
-        const grid = $("#patient-grid").bootgrid({
-            rowCount: [
-                100, 25, -1
-            ],
+        $("#patient-grid").bootgrid({
+            rowCount: [100, 25, -1],
             columnSelection: false,
             ajax: true,
-            statusMapping: {
-                0: "in",
-                1: "out",
-                2: "aomi",
-            },
+            statusMapping: {0: "in", 1: "out", 2: "aomi"},
             requestHandler: function (request) {
                 request.etat = etat;
                 return request;
             },
             url: "{{ path('patient_list') }}",
+            labels: {
+                all: 'Tous', infos: '{{ '{{' }}ctx.start{{ '}}' }}–{{ '{{' }}ctx.end{{ '}}' }} sur {{ '{{' }}ctx.total{{ '}}' }} patients',
+                loading: 'Chargement…', noResults: 'Aucun patient', refresh: 'Actualiser', search: 'Nom, prénom, téléphone…'
+            },
             formatters: {
                 "observ": function (column, row) {
-                    if (row.observ)
-                        return "<div class=\"pastille\"></div>";
+                    return row.observ ? '<span class="alert-dot" role="img" aria-label="Suivi à régulariser" title="Suivi à régulariser"></span>' : '';
                 },
-                "divers": function (column, row) {
-                    if (row.divers)
-                        return "<div class=\"glyphicon glyphicon-star\"></div>";
+                "patient": function (column, row) {
+                    const ini = (String(row.nom || ' ')[0] + String(row.prenom || ' ')[0]).toUpperCase();
+                    let tags = '';
+                    if (row.divers) tags += '<span class="tag tag--tf" title="Theraflow">TF</span>';
+                    if (row.progetp === 'ViVa module AOMI') tags += '<span class="tag tag--aomi" title="ViVa module AOMI">AOMI</span>';
+                    if (row.sortie) tags += '<span class="tag" style="background:#e9edf1;color:#3d4853">Sorti le ' + escapeHtml(row.sortie) + '</span>';
+                    return '<div class="pt"><span class="pt-avatar" aria-hidden="true">' + escapeHtml(ini) + '</span><div>'
+                        + '<div class="pt-name">' + escapeHtml(row.nom) + ' <span>' + escapeHtml(row.prenom) + '</span></div>'
+                        + (tags ? '<div class="pt-tags">' + tags + '</div>' : '') + '</div></div>';
+                },
+                "next": function (column, row) {
+                    if (!row.date) return '<span class="chip__muted">—</span>';
+                    return '<div class="next-rdv"><span>' + escapeHtml(row.date) + '</span><small><span class="cat-dot cat-dot--' + escapeHtml(String(row.categorie).toLowerCase()) + '"></span>'
+                        + escapeHtml(categorieLabels[row.categorie] || row.categorie) + (row.thematique ? ' · ' + escapeHtml(row.thematique) : '') + '</small></div>';
                 },
                 "venu": function (column, row) {
-                    if (row.venu === 'Oui')
-                        return "<div class=\"pastille hotpink\"></div>";
-                    else if (row.venu === 'Non')
-                        return "<div class=\"pastille gold\"></div>";
-                    else if (row.date)
-                        return "<div class=\"pastille white\"></div>";
+                    if (row.venu === 'Oui') return '<span class="presence presence--oui presence--display"><i></i>Venu</span>';
+                    if (row.venu === 'Non') return '<span class="presence presence--non presence--display"><i></i>Absent</span>';
+                    if (row.date) return '<span class="presence presence--display"><i></i>À renseigner</span>';
+                    return '';
                 }
             }
         }).on("loaded.rs.jquery.bootgrid", function () {

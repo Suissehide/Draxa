@@ -105,6 +105,46 @@ class RendezVousController extends AbstractController
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
+    /** Présence (« A-t-il eu lieu ? ») modifiée en un clic depuis l'agenda : '', 'Oui' ou 'Non'. */
+    #[Route(path: '/etat', name: 'rendezVous_etat', methods: 'POST')]
+    public function rendezVous_etat(Request $request): JsonResponse
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(false, Response::HTTP_BAD_REQUEST);
+        }
+
+        $etat = (string) $request->request->get('etat', '');
+        $rendezVous = $this->em->getRepository(RendezVous::class)->find((int) $request->request->get('id'));
+        if (!$rendezVous || !in_array($etat, ['', 'Oui', 'Non'], true)) {
+            return new JsonResponse(false, Response::HTTP_NOT_FOUND);
+        }
+
+        $rendezVous->setEtat($etat === '' ? null : $etat);
+        $this->em->flush();
+
+        return new JsonResponse(true);
+    }
+
+    /** Note de transmission modifiée depuis l'agenda. */
+    #[Route(path: '/notes', name: 'rendezVous_notes', methods: 'POST')]
+    public function rendezVous_notes(Request $request): JsonResponse
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(false, Response::HTTP_BAD_REQUEST);
+        }
+
+        $rendezVous = $this->em->getRepository(RendezVous::class)->find((int) $request->request->get('id'));
+        if (!$rendezVous) {
+            return new JsonResponse(false, Response::HTTP_NOT_FOUND);
+        }
+
+        $notes = trim((string) $request->request->get('notes', ''));
+        $rendezVous->setNotes($notes === '' ? null : $notes);
+        $this->em->flush();
+
+        return new JsonResponse(true);
+    }
+
     #[Route(path: '/send', name: 'rendezVous_send', methods: 'POST')]
     public function rendezVous_send(Request $request): JsonResponse
     {

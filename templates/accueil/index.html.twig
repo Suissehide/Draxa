@@ -1,879 +1,615 @@
 {% extends 'layout.html.twig' %}
+{% import '_icons.html.twig' as icons %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
 {% endblock %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Agenda{% endblock %}
+
+{% set categories = [
+    {'key': 'consultations', 'cat': 'Consultation', 'label': 'Consultations', 'short': 'Consultation', 'empty': 'Aucune consultation ce jour'},
+    {'key': 'entretiens', 'cat': 'Entretien', 'label': 'Entretiens individuels', 'short': 'Entretien', 'empty': 'Aucun entretien ce jour'},
+    {'key': 'coachings', 'cat': 'Coaching', 'label': 'Coachings PRM', 'short': 'Coaching PRM', 'empty': 'Aucun coaching PRM ce jour'},
+    {'key': 'ateliers', 'cat': 'Atelier', 'label': 'Ateliers', 'short': 'Atelier', 'empty': 'Aucun atelier ce jour'},
+    {'key': 'educatives', 'cat': 'Educative', 'label': 'Semaines éducatives', 'short': 'Semaine éducative', 'empty': 'Aucune semaine éducative ce jour'}
+] %}
 
 {% block page_content %}
-    <div class="wrapper">
+    <div class="page agenda">
 
-        <div class="date-wrapper">
-            <div id="paginator"></div>
+        {# Barre des jours : un clic par jour #}
+        <div class="agenda__bar">
+            <h1 class="page-title">Agenda</h1>
+            <div class="daybar">
+                <button type="button" class="daybar__nav js-week-prev" aria-label="Semaine précédente">{{ icons.icon('chevron-left') }}</button>
+                <div class="daybar__days js-days" role="group" aria-label="Jours de la semaine"></div>
+                <button type="button" class="daybar__nav js-week-next" aria-label="Semaine suivante">{{ icons.icon('chevron-right') }}</button>
+                <span class="daybar__sep" aria-hidden="true"></span>
+                <label class="daybar__picker" title="Choisir une date">
+                    <span class="sr-only">Choisir une date</span>
+                    {{ icons.icon('calendar') }}
+                    <input type="text" id="dayPicker" readonly>
+                </label>
+                <button type="button" class="btn btn-soft js-today">Aujourd’hui</button>
+            </div>
+        </div>
+        <p class="agenda__date js-day-label" aria-live="polite"></p>
+
+        {# Filtres : cases colorées + légende #}
+        <div class="agenda__filters">
+            <div class="checkrow" role="group" aria-label="Catégories affichées">
+                {% for c in categories %}
+                    <label class="check check--{{ c.cat|lower }}">
+                        <input type="checkbox" class="js-section-filter" value="{{ c.key }}" checked>
+                        <span class="check__box" aria-hidden="true"></span>
+                        {{ c.short }} <span class="check__count js-count-{{ c.key }}"></span>
+                    </label>
+                {% endfor %}
+            </div>
+            <div class="legend">
+                <span class="presence presence--oui presence--static"><i></i>Venu</span>
+                <span class="presence presence--non presence--static"><i></i>Absent</span>
+                <span class="presence presence--static"><i></i>Non renseigné</span>
+                <span class="tag tag--tf">TF</span> Theraflow
+                <span class="tag tag--aomi">AOMI</span> ViVa module AOMI
+            </div>
         </div>
 
+        {# Prochain créneau de chaque catégorie #}
+        <div class="agenda__next">
+            <span class="agenda__next-label">Prochains :</span>
+            <span class="js-next"></span>
+        </div>
+
+        {# Créneaux du jour #}
         <div class="accueil-wrapper">
-
-            {# Consultations #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Consultations</div>
-                    <span>prévues</span>
-                </div>
-                <table id="consultations" class="table table-condensed table-striped">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col style="width: 155px;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th data-column-id="slot_horaire" onclick="sortTable('consultations', 0)"
-                                class="sortable">Horaire
-                            </th>
-                            <th data-column-id="slot_thematique" onclick="sortTable('consultations', 1)"
-                                class="sortable">Thématique
-                            </th>
-                            <th data-column-id="slot_location" onclick="sortTable('consultations', 2)"
-                                class="sortable">Lieu
-                            </th>
-                            <th data-column-id="slot_soignant" onclick="sortTable('consultations', 3)"
-                                class="sortable">Soignant
-                            </th>
-                            <th data-column-id="slot_patient">Patient</th>
-                            <th data-column-id="slot_type">Type</th>
-                            <th data-column-id="slot_type">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            {# Entretiens individuels #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Entretiens</div>
-                    <span>prévus</span>
-                </div>
-                <table id="entretiens" class="table table-condensed table-striped">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col style="width: 155px;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th data-column-id="slot_horaire" onclick="sortTable('entretiens', 0)"
-                                class="sortable">Horaire
-                            </th>
-                            <th data-column-id="slot_thematique" onclick="sortTable('entretiens', 1)"
-                                class="sortable">Thématique
-                            </th>
-                            <th data-column-id="slot_location" onclick="sortTable('entretiens', 2)"
-                                class="sortable">Lieu
-                            </th>
-                            <th data-column-id="slot_soignant" onclick="sortTable('entretiens', 3)"
-                                class="sortable">Soignant
-                            </th>
-                            <th data-column-id="slot_patient">Patient</th>
-                            <th data-column-id="slot_type">Type</th>
-                            <th data-column-id="slot_type">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            {# Coachings PRM #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Coachings PRM</div>
-                    <span>prévus</span>
-                </div>
-                <table id="coachings" class="table table-condensed table-striped">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col style="width: 155px;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th data-column-id="slot_horaire" onclick="sortTable('coachings', 0)"
-                                class="sortable">Horaire
-                            </th>
-                            <th data-column-id="slot_thematique" onclick="sortTable('coachings', 1)"
-                                class="sortable">Thématique
-                            </th>
-                            <th data-column-id="slot_location" onclick="sortTable('coachings', 2)"
-                                class="sortable">Lieu
-                            </th>
-                            <th data-column-id="slot_soignant" onclick="sortTable('coachings', 3)"
-                                class="sortable">Soignant
-                            </th>
-                            <th data-column-id="slot_patient">Patient</th>
-                            <th data-column-id="slot_type">Type</th>
-                            <th data-column-id="slot_type">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            {# Ateliers #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Ateliers</div>
-                    <span>prévus</span>
-                </div>
-                <table id="ateliers" class="table table-condensed table-striped">
-                    <colgroup>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col>
-                        <col style="width: 155px;">
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th data-column-id="slot_horaire" onclick="sortTable('ateliers', 0)"
-                                class="sortable">Horaire
-                            </th>
-                            <th data-column-id="slot_thematique" onclick="sortTable('ateliers', 1)"
-                                class="sortable">Thématique
-                            </th>
-                            <th data-column-id="slot_location" onclick="sortTable('ateliers', 2)"
-                                class="sortable">Lieu
-                            </th>
-                            <th data-column-id="slot_soignant" onclick="sortTable('ateliers', 3)"
-                                class="sortable">Soignant
-                            </th>
-                            <th data-column-id="slot_patient">Patient</th>
-                            <th data-column-id="slot_type">Type</th>
-                            <th data-column-id="slot_type">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-
-            {# Semaines éducatives #}
-            <div class="box">
-                <div class="box-header">
-                    <div>Semaines éducatives</div>
-                    <span>prévues</span>
-                </div>
-                <table id="educatives" class="table table-condensed table-striped">
-                    <thead>
-                    <tr>
-                        <th data-column-id="slot_horaire" onclick="sortTable('educatives', 0)"
-                            class="sortable">Horaire
-                        </th>
-                        <th data-column-id="slot_thematique" onclick="sortTable('educatives', 1)"
-                            class="sortable">Thématique
-                        </th>
-                        <th data-column-id="slot_location" onclick="sortTable('educatives', 2)"
-                            class="sortable">Lieu
-                        </th>
-                        <th data-column-id="slot_soignant" onclick="sortTable('educatives', 3)"
-                            class="sortable">Soignant
-                        </th>
-                        <th data-column-id="slot_patient">Patient</th>
-                        <th data-column-id="slot_type">Type</th>
-                        <th data-column-id="slot_type">Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            {% for c in categories %}
+                <section class="slots box" id="{{ c.key }}" data-anchor="{{ c.key }}" data-index="{{ loop.index0 }}">
+                    <button type="button" class="slots__head cat--{{ c.cat|lower }}" aria-expanded="true">
+                        <span class="cat-square" aria-hidden="true"></span>
+                        <h2>{{ c.label }}</h2>
+                        <span class="slots__summary js-summary"></span>
+                        <span class="slots__chev" aria-hidden="true">{{ icons.icon('chevron-up', 16) }}</span>
+                    </button>
+                    <div class="slots__body">
+                        <div class="slots__scroll">
+                            <div class="slots__grid">
+                                <div class="slot-row slot-row--head" aria-hidden="true">
+                                    <span>Horaire</span><span>Thématique</span><span>Lieu</span><span>Soignant</span>
+                                    <span class="pat-row pat-row--head"><span>Patients</span><span>Type</span><span>Présence</span><span>Courrier</span><span class="text-right">Actions</span></span>
+                                </div>
+                                <div class="js-slots" data-empty="{{ c.empty }}"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            {% endfor %}
         </div>
 
-        <div class="legende">
-            <div class="legende__type">Légende :</div>
-            <div class="legende__type">
-                <span class="legende__color" style="background-color: var(--cat-theraflow)"></span>
-                Theraflow
-            </div>
-            <div class="legende__type">
-                <span class="legende__color" style="background-color: var(--cat-viva)"></span>
-                ViVa module AOMI
-            </div>
-            <div class="legende__type">
-                <span class="pastille hotpink"></span>
-                Venu
-            </div>
-            <div class="legende__type">
-                <span class="pastille gold"></span>
-                Absent
-            </div>
-            <div class="legende__type">
-                <span class="pastille white"></span>
-                Présence non renseignée
-            </div>
-        </div>
-
-        <div class="separator">
-            <span class="separator-text">Rechercher un créneau</span>
-        </div>
-        <div>
-
-
-            <div class="lnb-item">
+        {# Recherche de créneaux #}
+        <section class="card search-slots">
+            <div class="search-slots__head">
+                <h2>Rechercher un créneau</h2>
                 <div class="input-group input-daterange">
                     <input type="text" class="form-control" id="dateDebut" aria-label="Du">
                     <div class="input-group-addon">à</div>
                     <input type="text" class="form-control" id="dateFin" aria-label="Au">
                 </div>
-                <div class="filter">
-                    <p>Filtrer par :</p>
-                    <div>
-                        <label>
-                            <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: var(--cat-consultation); background-color: var(--cat-consultation);"></span>
-                            Consultation
+                <div class="checkrow" role="group" aria-label="Catégories recherchées">
+                    {% for c in categories %}
+                        <label class="check check--{{ c.cat|lower }}">
+                            <input type="checkbox" class="js-grid-filter" value="{{ c.cat }}" checked>
+                            <span class="check__box" aria-hidden="true"></span>
+                            {{ c.short }}
                         </label>
-                        <label>
-                            <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: var(--cat-entretien); background-color: var(--cat-entretien);"></span>
-                            Entretien
-                        </label>
-                        <label>
-                            <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: var(--cat-coaching); background-color: var(--cat-coaching);"></span>
-                            Coaching PRM
-                        </label>
-                        <label>
-                            <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: var(--cat-atelier); background-color: var(--cat-atelier);"></span>
-                            Atelier
-                        </label>
-                        <label>
-                            <input type="checkbox" class="checkbox-round" checked="">
-                            <span style="border-color: var(--cat-educative); background-color: var(--cat-educative);"></span>
-                            Semaine éducative
-                        </label>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
-
-
-            <table id="rdv-grid" class="table table-condensed table-hover table-striped">
+            <table id="rdv-grid" class="table table-condensed table-hover">
                 <thead>
                 <tr>
                     <th data-column-id="id" data-type="numeric" data-identifier="true" data-visible="false">ID</th>
-                    <th data-column-id="categorie" data-width="33px" data-formatter="categorie" data-sortable="false"></th>
-                    <th data-column-id="date" data-width="90px">Date</th>
-                    <th data-column-id="horaire" data-width="100px" data-css-class='horaire'>Horaire</th>
-                    <th data-column-id="thematique" data-width="15%" data-css-class='thematique'>Thématique</th>
-                    <th data-column-id="location" data-width="10%">Lieu</th>
-                    <th data-column-id="soignant" data-width="10%" data-sortable="false">Soignant</th>
-                    <th data-column-id="patient" data-width="20%" data-formatter="patient" data-sortable="false">Patient</th>
-                    <th data-column-id="type" data-width="10%" data-formatter="type" data-sortable="false">Type</th>
-                    <th data-column-id="action" data-width="146px" data-formatter="action" data-sortable="false">Actions</th>
+                    <th data-column-id="categorie" data-width="40px" data-formatter="categorie" data-sortable="false"></th>
+                    <th data-column-id="date" data-width="100px">Date</th>
+                    <th data-column-id="horaire" data-width="122px" data-css-class="horaire">Horaire</th>
+                    <th data-column-id="thematique" data-width="18%" data-css-class="thematique">Thématique</th>
+                    <th data-column-id="location" data-width="11%">Lieu</th>
+                    <th data-column-id="soignant" data-width="12%" data-sortable="false">Soignant</th>
+                    <th data-column-id="patient" data-formatter="patient" data-sortable="false">Patients</th>
                 </tr>
                 </thead>
-                <tbody>
-                </tbody>
+                <tbody></tbody>
             </table>
-        </div>
+        </section>
     </div>
 
-    <!--SVG Sprites-->
-    <svg class="inline-svg">
-        <symbol id="check" viewbox="0 0 12 10">
-            <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-        </symbol>
-    </svg>
-
-    <!-- Modal addPatient-->
-    <div id="addPatient" class="modal fade" tabindex="-1" role="dialog">
+    <!-- Modale : inscrire un patient au créneau -->
+    <div id="addPatient" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addPatientTitle">
         <div class="modal-dialog">
-
-            <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">&times;</button>
-                    <h4 class="modal-title modal__add">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        Ajouter un patient
-                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">{{ icons.icon('close', 18) }}</button>
+                    <h4 class="modal-title" id="addPatientTitle">Inscrire au créneau</h4>
+                    <p class="modal-subtitle js-add-slot-label"></p>
                 </div>
                 <div class="modal-body">
                     {{ form_start(form) }}
                     {{ form_errors(form) }}
 
                     {{ form_row(form.rendezVous) }}
-                    <div class="js-hide">
-                        {{ form_row(form.thematique) }}
-                    </div>
-                    <div class="js-hide">
-                        {{ form_row(form.type) }}
+                    <div class="modal-grid">
+                        <div class="js-hide">
+                            {{ form_row(form.thematique) }}
+                        </div>
+                        <div class="js-hide">
+                            {{ form_row(form.type) }}
+                        </div>
                     </div>
                     {{ form_row(form._token) }}
                     {{ form_end(form, {'render_rest' : false}) }}
                     <p class="text-danger js-modal-error" role="alert" hidden></p>
-                    <button type="button" id="patientAdd" class="btn btn-primary btn-block">Ajouter</button>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-default pull-left" data-dismiss="modal">
-                        <span class="glyphicon glyphicon-remove"></span>
-                        Annuler
-                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <button type="button" id="patientAdd" class="btn btn-primary">Inscrire</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Modale : note de transmission -->
+    <div id="noteModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="noteModalTitle">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer">{{ icons.icon('close', 18) }}</button>
+                    <h4 class="modal-title" id="noteModalTitle">Note de transmission</h4>
+                    <p class="modal-subtitle js-note-patient"></p>
+                </div>
+                <div class="modal-body">
+                    <label for="noteText" class="sr-only">Note de transmission</label>
+                    <textarea id="noteText" class="form-control" rows="4"></textarea>
+                    <p class="text-danger js-note-error" role="alert" hidden></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary js-note-save">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
+
 {% block javascripts %}
     <script src="{{ asset('js/select2.min.js') }}"></script>
 
     <script>
         const thematiques = {{ thematiques|json_encode|raw }};
+        const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
+        const categorieList = ['Consultation', 'Entretien', 'Coaching', 'Atelier', 'Educative'];
+        const categorieLabels = {Consultation: 'Consultation', Entretien: 'Entretien', Coaching: 'Coaching PRM', Atelier: 'Atelier', Educative: 'Semaine éd.'};
+        const presenceStates = {
+            '': {label: 'À renseigner', cls: '', next: 'Oui'},
+            'Oui': {label: 'Venu', cls: 'presence--oui', next: 'Non'},
+            'Non': {label: 'Absent', cls: 'presence--non', next: ''}
+        };
+        const ICON = {
+            edit: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></svg>',
+            close: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+            note: '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4z"/></svg>',
+            noteAdd: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H8l-4 4zM12 8v5M9.5 10.5h5"/></svg>'
+        };
 
-        let dateSelected = localStorage.getItem('dateSelected') ? localStorage.getItem('dateSelected') : moment(new Date()).format('DD/MM/YYYY');
-        let categorie = 'Consultation';
+        moment.locale('fr');
+        let selected = moment(localStorage.getItem('dateSelected') || moment().format('DD/MM/YYYY'), 'DD/MM/YYYY');
+        if (!selected.isValid()) selected = moment();
+        let weekCounts = {};
 
-        let options = {
-            selectedDateFormat: 'DD/MM/YYYY',
-            selectedDate: dateSelected,
-            onSelectedDateChanged: function (event, date) {
-                dateSelected = moment(date).format('DD/MM/YYYY');
-                localStorage.setItem('dateSelected', dateSelected);
-                ajaxAction(dateSelected);
-            },
-            language: 'fr',
-            showCalendar: true
+        /* Barre des jours
+        ============================================================================== */
+
+        function renderDays() {
+            const monday = selected.clone().startOf('isoWeek');
+            const today = moment().format('DD/MM/YYYY');
+            let html = '';
+            for (let i = 0; i < 7; i++) {
+                const d = monday.clone().add(i, 'days');
+                const key = d.format('DD/MM/YYYY');
+                const isSel = d.isSame(selected, 'day');
+                const count = weekCounts[key];
+                html += '<button type="button" class="daybar__day' + (isSel ? ' is-selected' : '') + (key === today ? ' is-today' : '') + (i > 4 ? ' is-weekend' : '') + '" data-date="' + key + '"' + (isSel ? ' aria-current="date"' : '') + '>'
+                    + '<span class="daybar__dow">' + d.format('ddd') + '</span> <span class="daybar__num">' + d.format('D') + '</span>'
+                    + (count ? '<span class="daybar__count" aria-label="' + count + ' créneaux">' + count + '</span>' : '')
+                    + '</button>';
+            }
+            $('.js-days').html(html);
+            const label = selected.format('dddd D MMMM YYYY');
+            $('.js-day-label').text(label.charAt(0).toUpperCase() + label.slice(1));
         }
-        $('#paginator').datepaginator(options);
 
-        {#  SELECT2  #}
-        function matchCustom(params, data) {
-            if ($.trim(params.term) === '') {
-                return data;
-            }
-
-            if (typeof data.text === 'undefined') {
-                return null;
-            }
-
-            if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
-                return $.extend({}, data, true);
-            }
-            return null;
+        function selectDate(m) {
+            selected = m.clone();
+            localStorage.setItem('dateSelected', selected.format('DD/MM/YYYY'));
+            renderDays();
+            ajaxAction(selected.format('DD/MM/YYYY'));
+            loadOverview();
         }
 
-        $(".js-patient").select2({
-            multiple: false,
-            matcher: matchCustom,
+        $('.js-days').on('click', '.daybar__day', function () { selectDate(moment($(this).data('date'), 'DD/MM/YYYY')); });
+        $('.js-week-prev').on('click', function () { selectDate(selected.clone().subtract(7, 'days')); });
+        $('.js-week-next').on('click', function () { selectDate(selected.clone().add(7, 'days')); });
+        $('.js-today').on('click', function () { selectDate(moment()); });
+        $('#dayPicker').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: 'linked', todayHighlight: true, autoclose: true})
+            .on('changeDate', function (e) { selectDate(moment(e.date)); });
+
+        function loadOverview() {
+            $.ajax({
+                url: "{{ path('accueil_overview') }}",
+                type: 'POST',
+                dataType: 'json',
+                data: {date: selected.format('DD/MM/YYYY')},
+                success: function (res) {
+                    weekCounts = res.week || {};
+                    renderDays();
+                    let html = '';
+                    (res.next || []).forEach(function (n, i) {
+                        if (!n.date) return;
+                        html += '<button type="button" class="chip js-goto" data-date="' + escapeHtml(n.date) + '"><span class="cat-dot cat-dot--' + n.categorie.toLowerCase() + '"></span>'
+                            + escapeHtml(categorieLabels[n.categorie]) + ' <span class="chip__muted">' + escapeHtml(moment(n.date, 'DD/MM/YYYY').format('ddd DD/MM')) + ' ' + escapeHtml(n.heure || '') + '</span></button>';
+                    });
+                    $('.js-next').html(html || '<span class="chip__muted">Aucun créneau à venir</span>');
+                }
+            });
+        }
+
+        $('.js-next').on('click', '.js-goto', function () { selectDate(moment($(this).data('date'), 'DD/MM/YYYY')); });
+
+        /* Filtres des sections (mémorisés) et repli
+        ============================================================================== */
+
+        const hidden = JSON.parse(localStorage.getItem('agendaHidden') || '[]');
+        $('.js-section-filter').each(function () {
+            if (hidden.indexOf(this.value) > -1) {
+                this.checked = false;
+                $('#' + this.value).hide();
+            }
+        }).on('change', function () {
+            $('#' + this.value).toggle(this.checked);
+            const list = $('.js-section-filter:not(:checked)').map(function () { return this.value; }).get();
+            localStorage.setItem('agendaHidden', JSON.stringify(list));
         });
 
-        {#    #}
-        const anchorList = ['consultations', 'entretiens', 'coachings', 'ateliers', 'educatives'];
+        $('.slots__head').on('click', function () {
+            const section = $(this).closest('.slots');
+            section.toggleClass('is-collapsed');
+            $(this).attr('aria-expanded', !section.hasClass('is-collapsed'));
+        });
+
+        /* Chargement des créneaux du jour
+        ============================================================================== */
 
         let ajaxActionSeq = 0;
+        let dayData = [[], [], [], [], []];
 
-        function setDayTablesMessage(message) {
-            $(".box tbody tr").remove();
-            $(".box tbody").append('<tr class="disabled text-center"><td colspan="7">' + message + '</td></tr>');
+        function setDayMessage(message) {
+            $('.js-slots').html('<p class="slots__empty">' + escapeHtml(message) + '</p>');
         }
 
         function ajaxAction(d) {
-            // On vide les tableaux pendant le chargement pour ne jamais agir sur les créneaux d'un autre jour,
-            // et on ignore les réponses d'un jour qui n'est plus sélectionné (clics rapides).
+            // On ignore les réponses d'un jour qui n'est plus sélectionné (clics rapides).
             const seq = ++ajaxActionSeq;
-            setDayTablesMessage('Chargement…');
+            setDayMessage('Chargement…');
             $.ajax({
                 url: "{{ path('accueil') }}",
                 type: "POST",
                 dataType: "json",
-                data: {
-                    "date": d
-                },
-                error: function (xhr) {
-                    if (seq === ajaxActionSeq) {
-                        setDayTablesMessage('Impossible de charger les créneaux de ce jour. Rechargez la page.');
-                    }
+                data: {"date": d},
+                error: function () {
+                    if (seq === ajaxActionSeq) setDayMessage('Impossible de charger les créneaux de ce jour. Rechargez la page.');
                 },
                 success: function (res) {
-                    if (seq !== ajaxActionSeq) {
-                        return;
-                    }
-                    const emptyPhraseList = ['Aucune consultation', 'Aucun entretien', 'Aucun coaching PRM', 'Aucun atelier', 'Aucune semaine éducative'];
-                    $(".box tbody tr").remove();
-                    for (let i = 0; i < res.length; i++) {
-                        if (res[i].length > 0) {
-                            $.each(res[i], function (index, val) {
-                                $('<tr data-row-id="' + escapeHtml(val.id) + '" class="text-left">')
-                                    .append(`
-                                        <td class="horaire">` + escapeHtml(val.horaire) + `</td>
-                                        <td class="thematique">` + escapeHtml(val.thematique) + `</td>
-                                        <td>` + escapeHtml(val.location) + `</td>
-                                        <td>` + escapeHtml(val.soignant) + `</td>
-                                        <td>` + displayPatient(val.patients, val.place) + `</td>
-                                        <td>` + displayPatientType(val.patients) + `</td>
-                                        <td>` + displayPatientActions(val.patients) + `</td>
-                                    `)
-                                    .appendTo('#' + anchorList[i]);
-                            });
-                        } else {
-                            $('<tr class="disabled text-center">')
-                                .append('<td colspan="7">' + emptyPhraseList[i] + '</td>')
-                                .appendTo('#' + anchorList[i]);
-                        }
-                        sortBySoignantThenTime(anchorList[i]);
-                    }
-                    updateWidth();
+                    if (seq !== ajaxActionSeq) return;
+                    dayData = res;
+                    renderDay();
                 }
             });
         }
 
-        ajaxAction(dateSelected);
+        function slotKey(s) {
+            // Tri par défaut : soignant puis horaire
+            return (s.soignant || '').toLowerCase() + '|' + s.horaire;
+        }
 
-        /*
+        function renderDay() {
+            for (let i = 0; i < anchorList.length; i++) {
+                const section = $('#' + anchorList[i]);
+                const slots = (dayData[i] || []).slice().sort(function (a, b) { return slotKey(a).localeCompare(slotKey(b)); });
+                const nbPatients = slots.reduce(function (n, s) { return n + s.patients.length; }, 0);
+                section.toggleClass('is-empty', slots.length === 0);
+                section.find('.js-summary').text(slots.length
+                    ? slots.length + ' créneau' + (slots.length > 1 ? 'x' : '') + ' · ' + nbPatients + ' patient' + (nbPatients > 1 ? 's' : '')
+                    : section.find('.js-slots').data('empty'));
+                $('.js-count-' + anchorList[i]).text(slots.length || '');
+                section.find('.js-slots').html(slots.map(renderSlot).join(''));
+            }
+        }
+
+        function renderSlot(s) {
+            const left = parseInt(s.place) - s.patients.length;
+            const places = s.patients.length + ' / ' + s.place;
+            let html = '<div class="slot-row" data-row-id="' + escapeHtml(s.id) + '" data-categorie="' + escapeHtml(s.categorie) + '" data-thematique="' + escapeHtml(s.thematique) + '" data-place="' + escapeHtml(s.place) + '">'
+                + '<span class="slot-row__time">' + escapeHtml((s.horaire || '').split(' - ')[0]) + '<small>' + escapeHtml((s.horaire || '').split(' - ')[1] || '') + '</small></span>'
+                + '<span class="slot-row__them thematique">' + escapeHtml(s.thematique) + '</span>'
+                + '<span class="slot-row__muted">' + escapeHtml(s.location) + '</span>'
+                + '<span class="slot-row__muted">' + escapeHtml(s.soignant) + '</span>'
+                + '<div class="slot-row__patients">';
+            s.patients.forEach(function (p) { html += renderPatient(p); });
+            if (left > 0) {
+                html += '<button type="button" class="link-btn js-addPatient">+ Inscrire un patient <span class="chip__muted">· ' + places + ' — ' + left + ' place' + (left > 1 ? 's' : '') + ' libre' + (left > 1 ? 's' : '') + '</span></button>';
+            } else if (s.patients.length === 0) {
+                html += '<span class="slot-row__full">Aucune place</span>';
+            }
+            return html + '</div></div>';
+        }
+
+        function renderPatient(p, compact) {
+            const state = presenceStates[p.venu] || presenceStates[''];
+            const name = escapeHtml(p.nom) + ' ' + escapeHtml(p.prenom);
+            const note = p.notes
+                ? '<button type="button" class="note-btn js-note" title="' + escapeHtml(p.notes) + '" aria-label="Modifier la note : ' + escapeHtml(p.notes) + '">' + ICON.note + '<span>' + escapeHtml(p.notes) + '</span></button>'
+                : '<button type="button" class="icon-btn icon-btn--sm icon-btn--muted js-note" title="Ajouter une note" aria-label="Ajouter une note de transmission">' + ICON.noteAdd + '</button>';
+            if (compact) {
+                return '<div class="pat-row pat-row--compact" data-id="' + escapeHtml(p.rendezVousId) + '" data-patient="' + escapeHtml(p.patientId) + '" data-etat="' + escapeHtml(p.venu) + '" data-notes="' + escapeHtml(p.notes || '') + '">'
+                    + '<span class="pat-row__name"><a href="#" class="js-redirect" data-id="' + escapeHtml(p.patientId) + '">' + name + '</a>'
+                    + (p.theraflow ? '<span class="tag tag--tf" title="Theraflow">TF</span>' : '')
+                    + (p.progetp === 'ViVa module AOMI' ? '<span class="tag tag--aomi" title="ViVa module AOMI">AOMI</span>' : '') + '</span>'
+                    + '<span><button type="button" class="presence js-presence ' + state.cls + '" aria-label="Présence : ' + state.label + ' (cliquer pour changer)" title="Cliquer pour changer"><i></i>' + state.label + '</button></span>'
+                    + '<span class="pat-row__actions"><button type="button" class="icon-btn icon-btn--danger js-removePatient" data-id="' + escapeHtml(p.patientId) + '" aria-label="Retirer ' + name + ' du rendez-vous" title="Retirer du rendez-vous">' + ICON.close + '</button></span></div>';
+            }
+            return '<div class="pat-row user-send" data-id="' + escapeHtml(p.rendezVousId) + '" data-patient="' + escapeHtml(p.patientId) + '" data-etat="' + escapeHtml(p.venu) + '" data-notes="' + escapeHtml(p.notes || '') + '">'
+                + '<span class="pat-row__name"><a href="#" class="js-redirect" data-id="' + escapeHtml(p.patientId) + '">' + name + '</a>'
+                + (p.theraflow ? '<span class="tag tag--tf" title="Theraflow">TF</span>' : '')
+                + (p.progetp === 'ViVa module AOMI' ? '<span class="tag tag--aomi" title="ViVa module AOMI">AOMI</span>' : '')
+                + note + '</span>'
+                + '<span class="pat-row__type">' + escapeHtml(p.type) + '</span>'
+                + '<span><button type="button" class="presence js-presence ' + state.cls + '" aria-label="Présence : ' + state.label + ' (cliquer pour changer)" title="Cliquer pour changer"><i></i>' + state.label + '</button></span>'
+                + '<label class="pat-row__mail" title="Courrier envoyé"><input class="mail-cbx" type="checkbox" data-id="' + escapeHtml(p.rendezVousId) + '" ' + (p.send === 'Oui' ? 'checked' : '') + ' aria-label="Courrier envoyé"></label>'
+                + '<span class="pat-row__actions">'
+                + '<a href="#" class="icon-btn js-redirect" data-id="' + escapeHtml(p.patientId) + '" aria-label="Ouvrir la fiche de ' + name + '" title="Ouvrir la fiche">' + ICON.edit + '</a>'
+                + '<button type="button" class="icon-btn icon-btn--danger js-removePatient" data-id="' + escapeHtml(p.patientId) + '" aria-label="Retirer ' + name + ' du rendez-vous" title="Retirer du rendez-vous">' + ICON.close + '</button>'
+                + '</span></div>';
+        }
+
+        /* Actions sur un patient (agenda du jour et recherche)
         ============================================================================== */
 
-        let $table = $('table'),
-            $headCells = $('table:first thead tr').children(),
-            headWidth;
+        function anchorOf(el) {
+            const cat = $(el).closest('[data-categorie]').data('categorie');
+            return anchorList[categorieList.indexOf(cat)] || '';
+        }
 
-        // Get the tbody columns width array
-        headWidth = $headCells.map(function () {
-            return $(this).data('width');
-        }).get();
+        function reloadAll() {
+            ajaxAction(selected.format('DD/MM/YYYY'));
+            $("#rdv-grid").bootgrid('reload');
+            loadOverview();
+        }
 
-        // Set the width of thead columns
-        function updateWidth() {
-            $table.find('tbody tr').each(function (i, v) {
-                $(v).children().each(function (j, s) {
-                    $(s).width(headWidth[j]);
-                });
+        // Présence en un clic : À renseigner → Venu → Absent → À renseigner
+        $(document).on('click', '.js-presence', function () {
+            const row = $(this).closest('.pat-row');
+            const next = (presenceStates[row.attr('data-etat')] || presenceStates['']).next;
+            const button = $(this).prop('disabled', true);
+            $.ajax({
+                url: "{{ path('rendezVous_etat') }}",
+                type: 'POST',
+                dataType: 'json',
+                data: {id: row.data('id'), etat: next},
+                success: function () {
+                    const state = presenceStates[next];
+                    row.attr('data-etat', next);
+                    button.removeClass('presence--oui presence--non').addClass(state.cls)
+                        .attr('aria-label', 'Présence : ' + state.label + ' (cliquer pour changer)')
+                        .html('<i></i>' + state.label);
+                },
+                complete: function () { button.prop('disabled', false); }
             });
-        }
+        });
 
-        updateWidth();
-
-        function displayPatient(data, place) {
-            let label = '';
-            label += '<div class="user-list" data-place="' + escapeHtml(place) + '">';
-            if (data.length !== 0) {
-                data.forEach(function (e) {
-                    let theraflow = e.theraflow ? ' theraflow' : '';
-                    let progetp = e.progetp === 'ViVa module AOMI' ? ' progetp' : '';
-                    label += `
-                        <div class="user-label" data-id="` + escapeHtml(e.rendezVousId) + `">
-                            <div class="user-name` + theraflow + progetp + `" title="` + escapeHtml(e.nom) + ` ` + escapeHtml(e.prenom) + `">
-                                ` + escapeHtml(e.nom) + ` ` + escapeHtml(e.prenom) + `
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-            if (data.length < parseInt(place))
-                label += '<button type="button" class="js-addPatient" aria-label="Ajouter un patient au créneau" title="Ajouter un patient au créneau"><i class="glyphicon glyphicon-plus"></i></button>';
-            label += '</div>';
-            return label;
-        }
-
-        function displayPatientType(data) {
-            let label = '<ul class="type-list">';
-            if (data.length !== 0) {
-                data.forEach(function (e) {
-                    label += `
-                        <li>` + escapeHtml(e.type) + `</div>
-                    `;
-                });
-            }
-            label += '</ul>';
-            return label;
-        }
-
-        function displayPatientActions(data) {
-            let label = '<div class="actions-list">';
-            if (data.length !== 0) {
-                data.forEach(function (e) {
-                    let checked = (e.send === 'Oui' ? 'checked' : '');
-                    let notes = (e.notes ?
-                        `<button type="button" class="js-comment tooltip2 top" aria-label="Note : ` + escapeHtml(e.notes.replace(/"/g, "'")) + `" data-tooltip="` + escapeHtml(e.notes.replace(/"/g, "'")) + `" data-position="top"><i class="glyphicon glyphicon-paperclip"></i></button>` : ``);
-
-                    let venu = "<div class=\"pastille white\" role=\"img\" aria-label=\"Présence non renseignée\" title=\"Présence non renseignée\"></div>";
-                    if (e.venu === 'Oui')
-                        venu = "<div class=\"pastille hotpink\" role=\"img\" aria-label=\"Venu\" title=\"Venu\"></div>";
-                    else if (e.venu === 'Non')
-                        venu = "<div class=\"pastille gold\" role=\"img\" aria-label=\"Absent\" title=\"Absent\"></div>";
-
-                    label += `
-                        <div class="user-send" data-id="` + escapeHtml(e.rendezVousId) + `">
-                            <input class="inp-cbx" id="` + escapeHtml(e.rendezVousId) + `" type="checkbox" ` + checked + ` aria-label="Courrier envoyé"/>
-                            <label class="cbx" for="` + escapeHtml(e.rendezVousId) + `" title="Courrier envoyé"></label>
-                            <button type="button" class="js-removePatient" data-id="` + escapeHtml(e.patientId) + `" aria-label="Retirer du créneau" title="Retirer du créneau"><i class="glyphicon glyphicon-minus"></i></button>
-                            <button type="button" class="js-redirect" data-id="` + escapeHtml(e.patientId) + `" aria-label="Ouvrir la fiche du patient" title="Ouvrir la fiche du patient"><i class="glyphicon glyphicon-pencil"></i></button>
-                            ` + venu + `
-                            ` + notes + `
-                        </div>
-                    `;
-                });
-            }
-            label += '</div>';
-            return label;
-        }
-
-        $('tbody ').on('click', '.inp-cbx', function (e) {
-            e.stopPropagation();
-
-            let id = $(this).attr('id');
-            let send = $(this).is(":checked") ? 'Oui' : 'Non';
+        // Courrier envoyé
+        $(document).on('change', '.pat-row .mail-cbx', function () {
             $.ajax({
                 url: "{{ path('rendezVous_send') }}",
                 type: "POST",
                 dataType: "json",
-                data: {
-                    id: id,
-                    send: send
-                },
-                success: function (res) {
-                }
+                data: {id: $(this).data('id'), send: this.checked ? 'Oui' : 'Non'}
             });
-        })
-
-        /* 
-        ============================================================================== */
-
-        $('tbody').on('click', '.js-redirect', function () {
-            let isBox = !$(this).parents('table').is('#rdv-grid');
-            let index, pastille;
-            if (isBox)
-                index = $(this).parents('.box').index();
-            else
-                pastille = $(this).parents('tr').find('td:first-child .pastille');
-            redirectToPatient($(this).attr('data-id'), isBox, index, pastille);
         });
 
-        function redirectToPatient(patientId, isBox, index, pastille) {
-            let anchor = "";
-            if (!isBox) {
-                if (pastille.hasClass('seagreen'))
-                    anchor = 'consultations';
-                else if (pastille.hasClass('rebeccapurple'))
-                    anchor = 'entretiens';
-                else if (pastille.hasClass('chocolate'))
-                    anchor = 'ateliers';
-                else if (pastille.hasClass('royalblue'))
-                    anchor = 'educatives';
-                else if (pastille.hasClass('goldenrod'))
-                    anchor = 'coachings';
-            } else {
-                anchor = anchorList[index];
-            }
+        // Note de transmission
+        let noteRow = null;
+        $(document).on('click', '.js-note', function () {
+            noteRow = $(this).closest('.pat-row');
+            $('.js-note-patient').text(noteRow.find('.pat-row__name a').text());
+            $('#noteText').val(noteRow.attr('data-notes'));
+            $('.js-note-error').prop('hidden', true);
+            $('#noteModal').modal('show');
+        });
+        $('#noteModal').on('shown.bs.modal', function () { $('#noteText').trigger('focus'); });
+        $('.js-note-save').on('click', function () {
+            const button = $(this).prop('disabled', true);
+            $.ajax({
+                url: "{{ path('rendezVous_notes') }}",
+                type: 'POST',
+                dataType: 'json',
+                data: {id: noteRow.data('id'), notes: $('#noteText').val()},
+                success: function () {
+                    $('#noteModal').modal('hide');
+                    reloadAll();
+                    successAlert('Note enregistrée.');
+                },
+                error: function () { $('.js-note-error').text('La note n\'a pas été enregistrée. Réessayez.').prop('hidden', false); },
+                complete: function () { button.prop('disabled', false); }
+            });
+        });
+
+        // Ouvrir la fiche du patient, positionnée sur la bonne catégorie
+        $(document).on('click', '.js-redirect', function (e) {
+            e.preventDefault();
+            redirectToPatient($(this).data('id'), anchorOf(this));
+        });
+
+        function redirectToPatient(patientId, anchor) {
             $.ajax({
                 url: "{{ path('redirect_vue_patient') }}",
                 type: "POST",
                 dataType: "json",
-                data: {
-                    id: patientId,
-                    anchor: anchor
-                },
-                success: function (res) {
-                    window.location.href = res;
-                }
+                data: {id: patientId, anchor: anchor},
+                success: function (res) { window.location.href = res; }
             });
         }
 
-        $('tbody').on('click', '.js-addPatient', function () {
-            let id = $(this).closest('tr').attr('data-row-id');
-            let len = $(this).closest('.user-list').find('.user-label').length;
-            let place = $(this).closest('.user-list').attr('data-place');
-            $('#patientAdd').attr('data-id', id);
-            $('#patientAdd').attr('data-place', parseInt(place) - parseInt(len));
-            $('#addPatient').modal('show');
-
-            $('.js-hide').show();
-            let index = 0;
-
-            let tableParent = $(this).parents('table');
-            if (tableParent.is('#rdv-grid')) {
-                if ($(this).parents('tr').find('.pastille').hasClass('rebeccapurple')) index = 1;
-                if ($(this).parents('tr').find('.pastille').hasClass('chocolate')) index = 2;
-                if ($(this).parents('tr').find('.pastille').hasClass('goldenrod')) index = 3;
-                if ($(this).parents('tr').find('.pastille').hasClass('royalblue')) { index = 4; $('.js-hide').hide(); }
-            } else {
-                if (tableParent.is('#entretiens')) index = 1;
-                if (tableParent.is('#ateliers')) index = 2;
-                if (tableParent.is('#coachings')) index = 3;
-                if (tableParent.is('#educatives')) { index = 4; $('.js-hide').hide(); }
-            }
-
-            $('#add_patient_thematique').empty().append('<option value=""></option>');
-            $.each(thematiques[index], function (key, value) {
-                $('#add_patient_thematique')
-                    .append($("<option></option>")
-                        .attr("value", value)
-                        .text(value));
-            });
-            let selected = $(this).parents('tr').find('.thematique').text();
-            $('#add_patient_thematique option[value="' + selected + '"]').prop('selected', true);
-            $('#add_patient_type option[value=""]').prop('selected', true);
-            $('#addPatient .js-modal-error').prop('hidden', true);
-        });
-
-        $('#patientAdd').on('click', function () {
-            let slotId = $(this).attr('data-id');
-            let patientId = $('#add_patient_rendezVous').val();
-            let thematique = $('#add_patient_thematique').val();
-            let type = $('#add_patient_type').val();
-            const button = $(this);
-            const modalError = $('#addPatient .js-modal-error');
-
-            // La modale reste ouverte tant que l'ajout n'a pas réussi, pour pouvoir corriger.
-            if (!patientId) {
-                modalError.text('Choisissez un patient.').prop('hidden', false);
-                return;
-            }
-            button.prop('disabled', true);
-
-            $.ajax({
-                url: "{{ path('add_patient_slot') }}",
-                type: "POST",
-                dataType: "json",
-                data: {
-                    patientId: patientId,
-                    slotId: slotId,
-                    thematique: thematique,
-                    type: type
-                },
-                success: function (res) {
-                    if (res) {
-                        $('#addPatient').modal('hide');
-                        ajaxAction(dateSelected);
-                        $("#rdv-grid").bootgrid('reload');
-                        successAlert('Patient ajouté au créneau.');
-                    } else {
-                        modalError.text('Ce patient est déjà inscrit à ce créneau.').prop('hidden', false);
-                    }
-                },
-                error: function () {
-                    modalError.text('L\'ajout n\'a pas été enregistré. Réessayez ou rechargez la page.').prop('hidden', false);
-                },
-                complete: function () {
-                    button.prop('disabled', false);
-                }
-            });
-        })
-
-        $('tbody').on('click', '.js-removePatient', function () {
-            let patientId = $(this).attr('data-id');
-            let isBox = !$(this).parents('table').is('#rdv-grid');
-            let index, pastille;
-            if (isBox)
-                index = $(this).parents('.box').index();
-            else
-                pastille = $(this).parents('tr').find('td:first-child .pastille');
-
-            let rendezVousId = $(this).closest('.user-send').attr('data-id');
-            let slotId = $(this).closest('tr').attr('data-row-id');
+        // Retirer du rendez-vous
+        $(document).on('click', '.js-removePatient', function () {
+            const patientId = $(this).data('id');
+            const anchor = anchorOf(this);
+            const rendezVousId = $(this).closest('.pat-row').data('id');
+            const slotId = $(this).closest('[data-row-id]').data('row-id');
+            const name = $(this).closest('.pat-row').find('.pat-row__name a').text();
             confirmAction({
-                title: 'Retrait du créneau',
-                message: 'Retirer ce patient du créneau ? Son rendez-vous sera supprimé.',
+                title: 'Retirer ' + name + ' ?',
+                message: 'Son rendez-vous sera supprimé de sa fiche.',
                 confirmLabel: 'Retirer',
                 onConfirm: function () {
                     $.ajax({
                         url: "{{ path('remove_patient_slot') }}",
                         type: "POST",
                         dataType: "json",
-                        data: {
-                            rendezVousId: rendezVousId,
-                            slotId: slotId,
-                        },
+                        data: {rendezVousId: rendezVousId, slotId: slotId},
                         success: function () {
-                            ajaxAction(dateSelected);
-                            $("#rdv-grid").bootgrid('reload');
-                            successAlert('Patient retiré du créneau.');
-                            redirectToPatient(patientId, isBox, index, pastille);
+                            reloadAll();
+                            successAlert('Patient retiré du rendez-vous.');
+                            redirectToPatient(patientId, anchor);
                         }
                     });
                 }
             });
         });
 
-        $('tbody').on('click', function () {
-            categorie = 'Consultation';
-            if ($(this).closest('table').is("#entretiens"))
-                categorie = 'Entretien';
-            else if ($(this).closest('table').is("#ateliers"))
-                categorie = 'Atelier';
+        // Inscrire un patient
+        $(".js-patient").select2({
+            multiple: false,
+            dropdownParent: $('#addPatient'),
+            width: '100%',
+            matcher: function (params, data) {
+                if ($.trim(params.term) === '') return data;
+                if (typeof data.text === 'undefined') return null;
+                return data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1 ? $.extend({}, data, true) : null;
+            }
         });
 
+        $(document).on('click', '.js-addPatient', function () {
+            const row = $(this).closest('[data-row-id]');
+            const index = categorieList.indexOf(row.data('categorie'));
+            $('#patientAdd').attr('data-id', row.data('row-id'));
+            $('.js-add-slot-label').text(categorieLabels[row.data('categorie')] + ' · ' + row.find('.thematique').first().text());
+            $('.js-hide').toggle(index !== 4);
 
-        /* RDV
+            $('#add_patient_thematique').empty().append('<option value=""></option>');
+            $.each(thematiques[index] || [], function (key, value) {
+                $('#add_patient_thematique').append($("<option></option>").attr("value", value).text(value));
+            });
+            $('#add_patient_thematique option').filter(function () { return this.value === String(row.data('thematique')); }).prop('selected', true);
+            $('#add_patient_type option[value=""]').prop('selected', true);
+            $('#addPatient .js-modal-error').prop('hidden', true);
+            $('#addPatient').modal('show');
+        });
+        $('#addPatient').on('shown.bs.modal', function () { $('.js-patient').select2('open'); });
+
+        $('#patientAdd').on('click', function () {
+            const button = $(this);
+            const modalError = $('#addPatient .js-modal-error');
+            const patientId = $('#add_patient_rendezVous').val();
+            // La modale reste ouverte tant que l'ajout n'a pas réussi, pour pouvoir corriger.
+            if (!patientId) {
+                modalError.text('Choisissez un patient.').prop('hidden', false);
+                return;
+            }
+            button.prop('disabled', true);
+            $.ajax({
+                url: "{{ path('add_patient_slot') }}",
+                type: "POST",
+                dataType: "json",
+                data: {
+                    patientId: patientId,
+                    slotId: button.attr('data-id'),
+                    thematique: $('#add_patient_thematique').val(),
+                    type: $('#add_patient_type').val()
+                },
+                success: function (res) {
+                    if (res) {
+                        $('#addPatient').modal('hide');
+                        reloadAll();
+                        successAlert('Patient inscrit au créneau.');
+                    } else {
+                        modalError.text('Ce patient est déjà inscrit à ce créneau.').prop('hidden', false);
+                    }
+                },
+                error: function () {
+                    modalError.text('L\'inscription n\'a pas été enregistrée. Réessayez ou rechargez la page.').prop('hidden', false);
+                },
+                complete: function () { button.prop('disabled', false); }
+            });
+        });
+
+        /* Recherche de créneaux
         ============================================================================== */
 
-        $('.input-daterange').datepicker({
-            language: 'fr',
-            format: 'dd/mm/yyyy',
-            todayBtn: true,
-            todayHighlight: false,
-            autoclose: false
-        });
-
+        $('.input-daterange').datepicker({language: 'fr', format: 'dd/mm/yyyy', todayBtn: true, todayHighlight: false, autoclose: false});
         $('#dateDebut').datepicker('setDate', new Date());
-        let endDate = moment().endOf('year').format('DD/MM/YYYY');
-        $('#dateFin').datepicker('setDate', endDate);
+        $('#dateFin').datepicker('setDate', moment().endOf('year').format('DD/MM/YYYY'));
         $('.input-daterange input').datepicker('update');
 
-        let categories = [];
-        $('.lnb-item label').click(function () {
-            let checkbox = $(this).find("input[type='checkbox']");
-            if (checkbox.prop('checked')) {
-                checkbox.prop('checked', false);
-                $(this).find('span').css('background-color', 'transparent');
-            } else {
-                checkbox.prop('checked', true);
-                let color = $(this).find('span').css('border-color');
-                $(this).find('span').css('background-color', color);
-            }
-            categories = [];
-            let val = ['Consultation', 'Entretien', 'Coaching', 'Atelier', 'Educative'];
-            $('.lnb-item label :checkbox').each(function (i) {
-                if ($(this).prop('checked'))
-                    categories.push(val[i]);
-            });
+        let categories = categorieList.slice();
+        $('.js-grid-filter').on('change', function () {
+            categories = $('.js-grid-filter:checked').map(function () { return this.value; }).get();
             $("#rdv-grid").bootgrid('reload');
         });
-
         $('.input-daterange input').on('changeDate', function () {
             $('.input-daterange').datepicker('update');
             $("#rdv-grid").bootgrid('reload');
         });
 
         $("#rdv-grid").bootgrid({
-            rowCount: [
-                25, 50, -1
-            ],
+            rowCount: [25, 50, -1],
             columnSelection: false,
             ajax: true,
-            ajaxSettings: {
-                method: "POST",
-                cache: false
-            },
+            ajaxSettings: {method: "POST", cache: false},
             post: function () {
-                return {
-                    categories: categories,
-                    dateDebut: $('#dateDebut').val(),
-                    dateFin: $('#dateFin').val()
-                };
+                // Aucune case cochée : on n'affiche rien plutôt que tout
+                return {categories: categories.length ? categories : ['-'], dateDebut: $('#dateDebut').val(), dateFin: $('#dateFin').val()};
             },
             url: "{{ path('slot_list') }}",
+            labels: {
+                all: 'Tous', infos: '{{ '{{' }}ctx.start{{ '}}' }}–{{ '{{' }}ctx.end{{ '}}' }} sur {{ '{{' }}ctx.total{{ '}}' }} créneaux',
+                loading: 'Chargement…', noResults: 'Aucun créneau sur cette période', refresh: 'Actualiser', search: 'Rechercher'
+            },
             formatters: {
                 "categorie": function (column, row) {
-                    if (row.categorie === 'Entretien')
-                        return "<div class=\"pastille rebeccapurple\"></div>";
-                    else if (row.categorie === 'Atelier')
-                        return "<div class=\"pastille chocolate\"></div>";
-                    else if (row.categorie === 'Consultation')
-                        return "<div class=\"pastille seagreen\"></div>";
-                    else if (row.categorie === 'Educative')
-                        return "<div class=\"pastille royalblue\"></div>";
-                    else if (row.categorie === 'Coaching')
-                        return "<div class=\"pastille goldenrod\"></div>";
+                    return '<span class="cat-dot cat-dot--' + String(row.categorie).toLowerCase() + '" title="' + escapeHtml(categorieLabels[row.categorie] || row.categorie) + '"></span>';
                 },
                 "patient": function (column, row) {
-                    return displayPatient(row.patients, row.place)
-                },
-                "type": function (column, row) {
-                    return displayPatientType(row.patients)
-                },
-                "action": function (column, row) {
-                    return displayPatientActions(row.patients)
+                    let html = '<div class="grid-patients" data-row-id="' + escapeHtml(row.id) + '" data-categorie="' + escapeHtml(row.categorie) + '" data-thematique="' + escapeHtml(row.thematique) + '"><span class="thematique" hidden>' + escapeHtml(row.thematique) + '</span>';
+                    row.patients.forEach(function (p) { html += renderPatient(p, true); });
+                    const left = parseInt(row.place) - row.patients.length;
+                    if (left > 0) html += '<button type="button" class="link-btn js-addPatient">+ Inscrire <span class="chip__muted">· ' + row.patients.length + ' / ' + row.place + '</span></button>';
+                    return html + '</div>';
                 }
-            }
-        }).on("loaded.rs.jquery.bootgrid", function () {
-
-        });
-
-
-
-        /* Sort table
-        ============================================================================== */
-
-        // Tri par défaut : soignant, puis horaire dans la journée de chaque soignant.
-        function sortBySoignantThenTime(tableId) {
-            const tbody = document.getElementById(tableId).tBodies[0];
-            const rows = Array.from(tbody.rows).filter(r => r.cells.length > 1);
-            const key = r => r.cells[3].textContent.trim().toLowerCase() + '|' + r.cells[0].textContent.trim();
-            rows.sort((a, b) => key(a).localeCompare(key(b))).forEach(r => tbody.appendChild(r));
-            markSorted(tableId, null, null);
-        }
-
-        // Indique la colonne triée et son sens (flèche + aria-sort)
-        function markSorted(tableId, n, dir) {
-            const ths = document.getElementById(tableId).tHead.rows[0].cells;
-            Array.from(ths).forEach(th => th.removeAttribute('aria-sort'));
-            if (n !== null) {
-                ths[n].setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
-            }
-        }
-
-        $('.accueil-wrapper th.sortable').attr('tabindex', 0).on('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
             }
         });
 
-        function sortTable(tableId, n, dir = 'asc') {
-            let table, rows, switching, i, x, y, shouldSwitch, switchcount = 0;
-            table = document.getElementById(tableId);
-            switching = true;
-
-            while (switching) {
-                switching = false;
-                rows = table.rows;
-
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-
-                    x = rows[i].getElementsByTagName("TD")[n];
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-
-                    if (dir === "asc") {
-                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    } else if (dir === "desc") {
-                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-                }
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount === 0 && dir === "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-            markSorted(tableId, n, dir);
-        }
-
+        renderDays();
+        ajaxAction(selected.format('DD/MM/YYYY'));
+        loadOverview();
     </script>
 {% endblock %}

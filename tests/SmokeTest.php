@@ -98,6 +98,21 @@ class SmokeTest extends WebTestCase
         $data = $this->ajax('POST', '/accueil/slot', ['current' => 1, 'rowCount' => 10, 'sort' => ['soignant' => 'asc'], 'searchPhrase' => 'Dupont']);
         $this->assertSame(1, $data['total']);
 
+        // Semaine affichée (créneaux par jour) et prochain créneau de chaque catégorie.
+        $data = $this->ajax('POST', '/accueil/overview', ['date' => $day]);
+        $this->assertSame(1, $data['week'][$day]);
+        $this->assertCount(5, $data['next']);
+
+        // Présence et note de transmission modifiées depuis l'agenda.
+        $rdv = $this->em->getRepository(RendezVous::class)->findOneBy([]);
+        $this->assertTrue($this->ajax('POST', '/rendez_vous/etat', ['id' => $rdv->getId(), 'etat' => 'Oui']));
+        $this->assertTrue($this->ajax('POST', '/rendez_vous/notes', ['id' => $rdv->getId(), 'notes' => 'À rappeler']));
+        $this->em->clear();
+        $rdv = $this->em->find(RendezVous::class, $rdv->getId());
+        $this->assertSame(['Oui', 'À rappeler'], [$rdv->getEtat(), $rdv->getNotes()]);
+        $this->client->xmlHttpRequest('POST', '/rendez_vous/etat', ['id' => $rdv->getId(), 'etat' => 'Peut-être'], [], ['HTTP_X_CSRF_TOKEN' => $this->csrf]);
+        $this->assertResponseStatusCodeSame(404);
+
         // Ajout d'un patient au créneau, doublon refusé.
         $this->assertNotFalse($this->ajax('POST', '/accueil/add_patient_slot', ['slotId' => $slot->getId(), 'patientId' => $patient->getId() + 1]));
         $this->assertFalse($this->ajax('POST', '/accueil/add_patient_slot', ['slotId' => $slot->getId(), 'patientId' => $patient->getId() + 1]));

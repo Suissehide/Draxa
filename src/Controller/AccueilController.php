@@ -98,6 +98,60 @@ class AccueilController extends AbstractController
         ];
     }
 
+    /**
+     * Données d'accompagnement de l'agenda : nombre de créneaux par jour de la semaine affichée
+     * et prochain créneau de chaque catégorie après le jour sélectionné.
+     */
+    #[Route(path: '/overview', name: 'accueil_overview', methods: 'POST')]
+    public function overview(Request $request): JsonResponse
+    {
+        if (!$request->isXmlHttpRequest()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        }
+        $day = \DateTime::createFromFormat('!d/m/Y', (string) $request->request->get('date'));
+        if (!$day) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
+        }
+
+        $monday = (clone $day)->modify('-' . ((int) $day->format('N') - 1) . ' days');
+        $sunday = (clone $monday)->modify('+6 days')->setTime(23, 59, 59);
+        $repository = $this->em->getRepository(Slot::class);
+
+        $week = [];
+        for ($d = clone $monday; $d <= $sunday; $d->modify('+1 day')) {
+            $week[$d->format('d/m/Y')] = 0;
+        }
+        foreach ($repository->findByDate($monday, $sunday) as $slot) {
+            $key = $slot->getDate()?->format('d/m/Y');
+            if (isset($week[$key])) {
+                ++$week[$key];
+            }
+        }
+
+        $next = [];
+        $after = (clone $day)->setTime(23, 59, 59);
+        foreach (self::CATEGORIES as $categorie) {
+            $slot = $repository->createQueryBuilder('s')
+                ->where('s.categorie = :categorie')
+                ->andWhere('s.date > :after')
+                ->setParameter('categorie', $categorie)
+                ->setParameter('after', $after)
+                ->orderBy('s.date', 'ASC')
+                ->addOrderBy('s.heureDebut', 'ASC')
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+            $next[] = $slot ? [
+                'categorie' => $categorie,
+                'date' => $slot->getDate()?->format('d/m/Y'),
+                'heure' => $slot->getHeureDebut()?->format('H:i'),
+                'thematique' => $slot->getThematique() ?? '',
+            ] : ['categorie' => $categorie, 'date' => null];
+        }
+
+        return new JsonResponse(['week' => $week, 'next' => $next]);
+    }
+
     #[Route(path: '/slot', name: 'slot_list', methods: 'POST')]
     public function slot_list(Request $request): Response
     {

@@ -1,10 +1,45 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <div class="auth">
+        <section class="auth__brand">
+            <div class="auth__logo">
+                <img src="{{ asset('img/logo-cepta.svg') }}" alt="" width="44" height="44">
+                <span>Cepta</span>
+            </div>
+            <div class="auth__pitch">
+                <h1>L’agenda partagé du programme ETP</h1>
+                <p>Créneaux, parcours des patients et présences : toute l’équipe éducative travaille sur la même journée.</p>
+            </div>
+            <div class="auth__preview" aria-hidden="true">
+                <div class="auth__slot">
+                    <span class="auth__time">09:00</span>
+                    <span class="auth__what"><strong>Consultation diététicienne</strong><small><i class="cat-dot cat-dot--consultation"></i>Consultation · Salle 2</small></span>
+                    <span class="presence presence--oui"><i></i>Venu</span>
+                </div>
+                <div class="auth__slot auth__slot--2">
+                    <span class="auth__time">09:30</span>
+                    <span class="auth__what"><strong>Motivation tabac</strong><small><i class="cat-dot cat-dot--entretien"></i>Entretien · Salle 1</small></span>
+                    <span class="presence presence--non"><i></i>Absent</span>
+                </div>
+                <div class="auth__slot auth__slot--3">
+                    <span class="auth__time">14:00</span>
+                    <span class="auth__what"><strong>Cuisine Mise en pratique</strong><small>Atelier · 3 / 6 places</small></span>
+                </div>
+            </div>
+            <div class="auth__spacer"></div>
+            <p class="auth__credits">
+                <span>Conception : <a href="https://github.com/Suissehide/Draxa" target="_blank" rel="noopener">Léo Couffinhal</a></span>
+                <span>© <a href="https://qwetle.fr" target="_blank" rel="noopener">Qwetle</a> 2020 – {{ "now"|date("Y") }}</span>
+            </p>
+        </section>
 
-<div>
-    {% block user_content %}
-    {% endblock user_content %}
-</div>
-
+        <section class="auth__form">
+            <div class="auth__card">
+                {% block user_content %}
+                {% endblock user_content %}
+                {% include '_assistance.html.twig' with {'variant': 'auth'} %}
+            </div>
+        </section>
+    </div>
 {% endblock %}

@@ -17,14 +17,35 @@
 
 {% block page_content %}
 
-    <div class="wrapper scrollbar">
-        <h1 id="top">{{ patient.nom|upper }} {{ patient.prenom }}</h1>
+    <div class="wrapper patient-page">
+        <p class="breadcrumb-lite"><a href="{{ path('patient_list') }}">Patients</a><span aria-hidden="true">/</span><span>{{ patient.nom|upper }} {{ patient.prenom }}</span></p>
+        <header class="patient-head">
+            <div class="patient-head__id">
+                <span class="patient-head__avatar" aria-hidden="true">{{ (patient.nom|default(' ')|first ~ patient.prenom|default(' ')|first)|upper }}</span>
+                <div>
+                    <div class="patient-head__title">
+                        <h1 id="top">{{ patient.nom|upper }} {{ patient.prenom }}</h1>
+                        <span class="patient-head__tags">
+                            {% if patient.progetp %}<span class="tag tag--prog">{{ patient.progetp }}</span>{% endif %}
+                            {% if patient.divers %}<span class="tag tag--tf">Theraflow</span>{% endif %}
+                            {% if patient.observ %}<span class="tag tag--alert">Suivi à régulariser</span>{% endif %}
+                            {% if patient.dentree %}<span class="tag tag--out">Sorti le {{ patient.dentree|date('d/m/Y') }}</span>{% endif %}
+                        </span>
+                    </div>
+                    <div class="patient-head__meta">
+                        {% if patient.sexe or patient.date %}<span>{{ patient.sexe == 'homme' ? 'M.' : (patient.sexe == 'femme' ? 'Mme' : '') }}{% if patient.date %} · né{{ patient.sexe == 'femme' ? 'e' }} le {{ patient.date|date('d/m/Y') }}{% endif %}</span>{% endif %}
+                        {% if patient.tel1 %}<span>{{ patient.tel1 }}</span>{% endif %}
+                        {% if patient.email %}<span>{{ patient.email }}</span>{% endif %}
+                        {% if patient.soignantReferent %}<span>Référent : <strong>{{ patient.soignantReferent }}</strong></span>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="patient-head__actions">
+                <button type="button" class="btn btn-primary js-cd-save">Enregistrer</button>
+            </div>
+        </header>
         <div class="nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
-                <a href="#" class="btn btn-default js-cd-back" id="btn-back">
-                    <span class="glyphicon glyphicon-chevron-left"></span>
-                    Retour
-                </a>
                 <a href="#details" class="js-scrollTo btn btn-primary" data-row-id="0">
                     <span class="glyphicon glyphicon-search"></span>
                     Informations
@@ -57,24 +78,21 @@
             {{ form_start(form) }}
             {{ form_errors(form) }}
 
+            <h2 class="form-section-title">Suivi</h2>
             <div class="row">
-                <div class="col-md-12">
-                    {{ form_row(form.soignantReferent, {'required': false}) }}
+                <div class="col-md-4">
+                    {{ form_row(form.soignantReferent, {'required': false, 'attr': {'rows': 2}}) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.observ, {'required': false, 'attr': {'rows': 2, 'placeholder': 'Vide si rien à régulariser'}}) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.divers, {'required': false, 'attr': {'rows': 2, 'placeholder': 'Vide si non suivi Theraflow'}}) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_row(form.observ, {'required': false}) }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    {{ form_row(form.divers, {'required': false}) }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    {{ form_row(form.notes, {'required': false}) }}
+                    {{ form_row(form.notes, {'required': false, 'attr': {'rows': 3}}) }}
                 </div>
             </div>
             <div class="separator">

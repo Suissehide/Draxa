@@ -1,0 +1,7 @@
+{% import '_icons.html.twig' as icons %}
+<div class="assistance assistance--{{ variant|default('sidebar') }}" role="note" aria-label="Assistance agenda partagé">
+    <p class="assistance__title">{{ icons.icon('help', 16) }}{{ variant|default('sidebar') == 'sidebar' ? 'Assistance agenda' : 'Assistance agenda partagé' }}</p>
+    <p class="assistance__text">{{ variant|default('sidebar') == 'sidebar' ? 'Erreur ou dysfonctionnement ? Contactez :' : 'En cas d’erreur ou de dysfonctionnement, contactez :' }}</p>
+    <a class="assistance__contact" href="tel:49357"><span>Sabrina Bernadet</span><strong>{{ icons.icon('phone', 13) }}49357</strong></a>
+    <a class="assistance__contact" href="tel:23384"><span>Gaëlle Dufau</span><strong>{{ icons.icon('phone', 13) }}23384</strong></a>
+</div>

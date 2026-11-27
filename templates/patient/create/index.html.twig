@@ -26,24 +26,21 @@
         <div class="content">
             {{ form_start(form) }}
             {{ form_errors(form) }}
+            <h2 class="form-section-title">Suivi</h2>
             <div class="row">
-                <div class="col-md-12">
-                    {{ form_row(form.soignantReferent) }}
+                <div class="col-md-4">
+                    {{ form_row(form.soignantReferent, {'required': false, 'attr': {'rows': 2}}) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.observ, {'required': false, 'attr': {'rows': 2, 'placeholder': 'Vide si rien à régulariser'}}) }}
+                </div>
+                <div class="col-md-4">
+                    {{ form_row(form.divers, {'required': false, 'attr': {'rows': 2, 'placeholder': 'Vide si non suivi Theraflow'}}) }}
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
-                    {{ form_row(form.observ) }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    {{ form_row(form.divers) }}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    {{ form_row(form.notes) }}
+                    {{ form_row(form.notes, {'required': false, 'attr': {'rows': 3}}) }}
                 </div>
             </div>
             <div class="separator">

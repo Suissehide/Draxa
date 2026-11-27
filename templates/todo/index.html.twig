@@ -1,60 +1,75 @@
 {% block todo %}
 
-    <div class="todo__container">
+    <div class="todo__scrim" hidden></div>
+    <aside class="todo__container" id="todo-panel" role="dialog" aria-modal="false" aria-labelledby="todo-title" hidden>
         <div class="todo__content">
             <div class="todo__header">
                 <div class="todo__title">
-                    <h3>Liste des tâches</h3>
-                    <div class="todo__flex">
-                        <div class="todo__date">01/01/2022</div>
-                        ●
-                        <div class="todo__task-count">4 tâches</div>
-                    </div>
+                    <h2 id="todo-title">Tâches</h2>
+                    <p class="todo__flex"><span class="todo__task-count">0 tâche</span> · <span class="todo__date">01/01/2022</span></p>
                 </div>
-                <button type="button" class="close" aria-label="Fermer la liste des tâches">
-                    &times;
+                <button type="button" class="close" aria-label="Fermer les tâches">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
                 </button>
             </div>
             <div class="input__flex">
-                <div class="todo__input">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <label for="todo__add" class="sr-only">Nouvelle tâche</label>
-                    <input type="text" id="todo__add" name="todo__add" required="required" class="form-control" placeholder="Saisissez votre tâche">
-                </div>
-                <button type="button" class="btn btn-primary todo__add">Ajouter la tâche</button>
-                <button type="button" class="btn btn-danger todo__clear">
-                    <span class="glyphicon glyphicon-trash"></span>
-                    Vider la liste
-                </button>
+                <label for="todo__add" class="sr-only">Nouvelle tâche</label>
+                <input type="text" id="todo__add" name="todo__add" required="required" class="form-control" placeholder="Saisissez une tâche puis Entrée…">
+                <button type="button" class="btn btn-primary todo__add">Ajouter</button>
+            </div>
+            <div class="todo__filters" role="tablist" aria-label="Filtrer les tâches">
+                <button type="button" role="tab" class="todo__filter is-active" data-filter="todo" aria-selected="true">À faire <span class="js-count-todo">0</span></button>
+                <button type="button" role="tab" class="todo__filter" data-filter="done" aria-selected="false">Terminées <span class="js-count-done">0</span></button>
+                <button type="button" role="tab" class="todo__filter" data-filter="all" aria-selected="false">Toutes</button>
             </div>
             <div class="todo__tasks">
-                <ul class="todo__list"></ul>
+                <ul class="todo__list" data-filter="todo"></ul>
+                <p class="todo__empty" hidden>Aucune tâche ici.</p>
+            </div>
+            <div class="todo__footer">
+                <button type="button" class="btn btn-danger-outline todo__clear">Vider la liste</button>
             </div>
         </div>
-    </div>
+    </aside>
 
 {% endblock %}
 
 {% block todo_javascripts %}
 
     <script type="text/javascript">
-        let open = localStorage.getItem('openTodo') === 'true';
-        if (open) openTodo();
+        // Panneau latéral des tâches : s'ouvre depuis le bouton en haut du menu.
+        let open = false;
 
-        $('#todo-list, .todo__content .close').on('click', function() {
-            localStorage.setItem('openTodo', !open);
-            open = !open;
-            openTodo();
-        })
-
-        function openTodo() {
-            $('.todo__container').toggle();
-            updateTodoOffset();
+        function setTodoOpen(value) {
+            open = value;
+            $('.todo__container, .todo__scrim').prop('hidden', !open);
+            $('#todo-list').attr('aria-expanded', open).toggleClass('is-active', open);
+            if (open) $('#todo__add').trigger('focus');
         }
 
-        // Décale la page de la hauteur réelle du panneau (qui varie avec le nombre de tâches)
+        $('#todo-list').on('click', function () { setTodoOpen(!open); });
+        $('.todo__content .close, .todo__scrim').on('click', function () { setTodoOpen(false); });
+        $(document).on('keydown', function (e) {
+            if (open && e.key === 'Escape') setTodoOpen(false);
+        });
+
+        // Filtre À faire / Terminées / Toutes (côté navigateur)
+        $('.todo__filter').on('click', function () {
+            $('.todo__filter').removeClass('is-active').attr('aria-selected', 'false');
+            $(this).addClass('is-active').attr('aria-selected', 'true');
+            $('.todo__list').attr('data-filter', $(this).data('filter'));
+            updateTodoOffset();
+        });
+
+        // Compteurs des filtres et message « liste vide »
         function updateTodoOffset() {
-            $('.container').css({paddingTop: (open ? $('.todo__container').outerHeight() : 0) + 'px'});
+            const done = $('.todo__list > li .inp-cbx:checked').length;
+            const todo = $('.todo__list > li').length - done;
+            $('.js-count-todo').text(todo);
+            $('.js-count-done').text(done);
+            const filter = $('.todo__list').attr('data-filter');
+            const visible = filter === 'all' ? todo + done : (filter === 'done' ? done : todo);
+            $('.todo__empty').prop('hidden', visible > 0);
         }
 
         var tasksNb = 0
@@ -83,12 +98,13 @@
                                 </div>
                                 <div class="todo__button-bar">
                                     <div class="todo__time">` + date_task + `</div>
-                                    <button type="button" class="todo__delete" aria-label="Supprimer la tâche" title="Supprimer la tâche"><i class="glyphicon glyphicon-trash"></i></button>
+                                    <button type="button" class="todo__delete" aria-label="Supprimer la tâche" title="Supprimer la tâche"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
                                 </div>
                             </li>`
                             $(".todo__list").append(task);
                         });
                         setTaskNotification();
+                        updateTodoOffset();
                         updateTodoOffset();
                     } else {
                         errorAlert('Impossible de récupérer la liste des tâches.');
@@ -135,14 +151,12 @@
             addTask();
         });
 
-        $('.todo__input .glyphicon').on('click', function() {
-            addTask();
-        })
 
         function addTask() {
             let today = new Date();
             let time = new Intl.DateTimeFormat("fr-FR", { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }).format(today);
             let text = $('#todo__add').val();
+            if (!$.trim(text)) return;
 
             $('#todo__add').val('');
 
@@ -164,7 +178,7 @@
                             </div>
                             <div class="todo__button-bar">
                                 <div class="todo__time">` + time + `</div>
-                                <button type="button" class="todo__delete" aria-label="Supprimer la tâche" title="Supprimer la tâche"><i class="glyphicon glyphicon-trash"></i></button>
+                                <button type="button" class="todo__delete" aria-label="Supprimer la tâche" title="Supprimer la tâche"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></button>
                             </div>
                         </li>`
                         $(".todo__list").append(task);
@@ -250,6 +264,7 @@
                 success: function (resp) {
                     if (resp) {
                         setTaskNotification();
+                        updateTodoOffset();
                     } else {
                         errorAlert('Impossible de changer l\'état de la tâche.');
                     }
