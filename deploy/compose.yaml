@@ -21,6 +21,8 @@ services:
       - APP_SECRET
       - DATABASE_URL
       - MAILER_URL
+      - ETEPEA_LEGACY_URL
+      - ETEPEA_LEGACY_TOKEN
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.${APP_IMAGE_NAME}.rule=Host(`${TRAEFIK_HOST}`)"

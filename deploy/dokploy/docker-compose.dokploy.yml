@@ -9,6 +9,8 @@ services:
       - APP_SECRET=${APP_SECRET}
       - DATABASE_URL=${DATABASE_URL}
       - MAILER_URL=${MAILER_URL}
+      - ETEPEA_LEGACY_URL=${ETEPEA_LEGACY_URL:-}
+      - ETEPEA_LEGACY_TOKEN=${ETEPEA_LEGACY_TOKEN:-}
     depends_on:
       mysql:
         condition: service_healthy
