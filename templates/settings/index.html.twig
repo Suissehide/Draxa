@@ -739,9 +739,11 @@
             return null;
         }
 
+        // Liste rattachée à la modale : sinon Bootstrap reprend le focus et la recherche est impossible
         $(".js-patient").select2({
             multiple: false,
             matcher: matchCustom,
+            dropdownParent: $('#slotModal'),
         });
 
         {#      #}
@@ -759,10 +761,10 @@
             let thematique = $("#slot_categorie option:selected").attr('data-thematique');
             if (thematique === 'atelier' || thematique === 'educative' || thematique === 'coaching') {
                 let length = parseInt($('#slot_place').val());
-                $(".js-patient").select2({multiple: true, matcher: matchCustom, maximumSelectionLength: length});
+                $(".js-patient").select2({multiple: true, matcher: matchCustom, maximumSelectionLength: length, dropdownParent: $('#slotModal')});
                 $(".js-patient").val(null).trigger('change');
             } else {
-                $(".js-patient").select2({multiple: false, matcher: matchCustom});
+                $(".js-patient").select2({multiple: false, matcher: matchCustom, dropdownParent: $('#slotModal')});
                 $(".js-patient").val(null).trigger('change');
                 $("#slot_place").val(1);
             }
