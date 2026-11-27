@@ -3049,3 +3049,22 @@ input[type="checkbox"].checkbox-round + span {
 .switch .checkbox:checked + .toggle-thumb > svg {
     transform: translateX(13px);
 }
+
+/* Message « rechargez la page » (public/js/top.js) : reste affiché, au-dessus de tout */
+.reload-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2000;
+    padding: 12px 20px;
+    background: #f0ad4e;
+    color: #222;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.reload-banner .btn {
+    margin-left: 15px;
+}

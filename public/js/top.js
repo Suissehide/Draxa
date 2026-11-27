@@ -194,3 +194,27 @@ function isInExistingWeek(list, date) {
         return days;
     })[calendarDayKey(date)] === true;
 }
+
+/*
+ * Appel AJAX refusé parce que la session a expiré (401) ou que la page date d'avant une mise à jour
+ * ou d'une ancienne session (403, jeton CSRF) : sans ce message, les listes restent vides sans explication.
+ */
+function showReloadBanner(message) {
+    if (document.getElementById('reload-banner')) {
+        return;
+    }
+    var banner = $('<div id="reload-banner" class="reload-banner" role="alert"></div>');
+    banner.append($('<span></span>').text(message));
+    banner.append($('<button type="button" class="btn btn-default btn-sm">Recharger la page</button>').on('click', function () {
+        window.location.reload();
+    }));
+    $('body').append(banner);
+}
+
+$(document).ajaxError(function (event, xhr) {
+    if (xhr.status === 401) {
+        showReloadBanner('Votre session a expiré. Rechargez la page pour vous reconnecter.');
+    } else if (xhr.status === 403) {
+        showReloadBanner('Action refusée : la page est restée ouverte trop longtemps ou date d\'avant une mise à jour. Rechargez la page pour continuer.');
+    }
+});

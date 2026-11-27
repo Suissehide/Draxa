@@ -20,6 +20,7 @@ security:
         main:
             lazy: true
             provider: user_provider
+            entry_point: App\Security\AjaxAwareEntryPoint
             form_login:
                 login_path: login
                 check_path: login

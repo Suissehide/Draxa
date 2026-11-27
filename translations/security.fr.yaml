@@ -1,0 +1,8 @@
+# Messages d'erreur de la page de connexion (remplacent ceux fournis par Symfony).
+'Invalid credentials.': 'Identifiant ou mot de passe incorrect.'
+'Invalid CSRF token.': 'La page de connexion était ouverte depuis trop longtemps. Merci de réessayer.'
+'Authentication request could not be processed due to a system problem.': 'Connexion impossible pour le moment (problème technique). Réessayez dans quelques minutes.'
+'Authentication credentials could not be found.': 'Veuillez saisir votre identifiant et votre mot de passe.'
+'Too many failed login attempts, please try again later.': 'Trop de tentatives de connexion. Réessayez plus tard.'
+'Too many failed login attempts, please try again in %minutes% minute.': 'Trop de tentatives de connexion. Réessayez dans %minutes% minute.'
+'Too many failed login attempts, please try again in %minutes% minutes.': 'Trop de tentatives de connexion. Réessayez dans %minutes% minutes.'

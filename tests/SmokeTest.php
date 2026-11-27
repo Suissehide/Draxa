@@ -53,6 +53,19 @@ class SmokeTest extends WebTestCase
         $tool->createSchema($metadata);
 
         [$patient, $slot, $semaine] = $this->seed();
+        // Non connecté : page → connexion, appel AJAX → 401 (le script affiche alors « rechargez la page »).
+        $this->client->request('GET', '/accueil/');
+        $this->assertResponseRedirects('/login');
+        $this->client->xmlHttpRequest('POST', '/patient/', ['current' => 1]);
+        $this->assertResponseStatusCodeSame(401);
+
+        // Mauvais mot de passe : message en français, identifiant conservé.
+        $form = $this->client->request('GET', '/login')->selectButton('Se connecter')->form(['_username' => 'admin', '_password' => 'mauvais']);
+        $this->client->submit($form);
+        $page = $this->client->followRedirect();
+        $this->assertSelectorTextContains('.alert-msg', 'Identifiant ou mot de passe incorrect.');
+        $this->assertSame('admin', $page->filter('#inputUsername')->attr('value'));
+
         $this->login();
 
         // CSRF : jeton lu dans la page comme le fait le navigateur ; sans jeton → 403, GET sur une action → 405.
