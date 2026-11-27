@@ -32,7 +32,15 @@
 
 {% block page_content %}
     <div class="settings">
-        <h1 class="page-title settings__title">Semaines &amp; créneaux</h1>
+        <div class="page-head">
+            <h1 class="page-title">Semaines &amp; créneaux</h1>
+            <div class="page-head__actions">
+                <button type="button" id="semaineAddModal" class="btn btn-primary" data-toggle="modal" data-target="#semaineModal">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    Ajouter une semaine
+                </button>
+            </div>
+        </div>
 
         <div class="nav-bar">
             <div class="divider">
@@ -42,12 +50,6 @@
                 <h2 class="year">{{ year }}</h2>
                 <button type="button" id="addYear" class="btn btn-primary btn-round" aria-label="Année suivante" title="Année suivante">
                     <span class="glyphicon glyphicon-chevron-right"></span>
-                </button>
-            </div>
-            <div class="btn-nav">
-                <button type="button" id="semaineAddModal" class="btn btn-primary" data-toggle="modal" data-target="#semaineModal">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    Ajouter une semaine
                 </button>
             </div>
         </div>

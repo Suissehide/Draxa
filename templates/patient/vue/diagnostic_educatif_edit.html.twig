@@ -17,8 +17,11 @@
 
 {% block page_content %}
 
-    <div class="wrapper scrollbar">
-        <h1 id="top">Diagnostic éducatif | {{ patient.nom }}</h1>
+    <div class="wrapper">
+        <p class="breadcrumb-lite"><a href="{{ path('patient_list') }}">Patients</a><span aria-hidden="true">/</span><a href="{{ path('patient_vue', {'id': patient.id}) }}">{{ patient.nom|upper }} {{ patient.prenom }}</a><span aria-hidden="true">/</span><span>Diagnostic éducatif</span></p>
+        <div class="page-head">
+            <h1 class="page-title" id="top">Diagnostic éducatif <span class="page-title__sub">{{ patient.nom|upper }} {{ patient.prenom }}</span></h1>
+        </div>
         <div class="nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
                 <a href="#" class="btn btn-default js-cd-back" id="btn-back">

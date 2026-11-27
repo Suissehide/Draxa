@@ -8,7 +8,10 @@
 
 {% block page_content %}
     <div class="wrapper">
-        <h1 id="top">Nouveau patient</h1>
+        <p class="breadcrumb-lite"><a href="{{ path('patient_list') }}">Patients</a><span aria-hidden="true">/</span><span>Nouveau patient</span></p>
+        <div class="page-head">
+            <h1 class="page-title" id="top">Nouveau patient</h1>
+        </div>
 
         <div class="nav-bar" id="navMenu">
             <div class="btn-group btn-nav">
