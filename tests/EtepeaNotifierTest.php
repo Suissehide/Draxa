@@ -42,7 +42,22 @@ class EtepeaNotifierTest extends TestCase
         $this->assertSame([], $logger->records);
     }
 
-    public function testFailuresOnlyLogAWarning(): void
+    public function testAcceptsTheApiRoot(): void
+    {
+        $urls = [];
+        $client = new MockHttpClient(function (string $method, string $url) use (&$urls) {
+            $urls[] = $url;
+
+            return new MockResponse('', ['http_code' => 204]);
+        });
+        foreach (['https://etepea.test', 'https://etepea.test/', 'https://etepea.test/legacy-appointments/'] as $base) {
+            (new EtepeaNotifier($client, $this->logger(), $base, 'secret'))->rendezVousCree($this->rdv());
+        }
+
+        $this->assertSame(array_fill(0, 3, 'https://etepea.test/legacy-appointments'), $urls);
+    }
+
+    public function testFailuresAreLoggedAsErrors(): void
     {
         $logger = $this->logger();
         $responses = [new MockResponse('', ['http_code' => 401]), new MockResponse('', ['error' => 'timeout'])];
@@ -51,7 +66,7 @@ class EtepeaNotifierTest extends TestCase
         $notifier->rendezVousCree($this->rdv());
         $notifier->rendezVousCree($this->rdv());
 
-        $this->assertSame(['warning', 'warning'], array_column($logger->records, 0));
+        $this->assertSame(['error', 'error'], array_column($logger->records, 0));
     }
 
     public function testDisabledWhenNotConfigured(): void

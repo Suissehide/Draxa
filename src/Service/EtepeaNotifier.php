@@ -10,11 +10,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 /**
  * Temporaire : pousse chaque rendez-vous créé vers Etepea, qui l'affiche « à reporter à la main ».
  * Sans URL ou sans jeton (variables vides), rien n'est envoyé.
- * Un échec ne fait jamais échouer la création dans Draxa : il est seulement journalisé.
+ * Un échec ne fait jamais échouer la création dans Draxa : il est journalisé en erreur (seul niveau écrit en prod).
  */
 class EtepeaNotifier
 {
     private const TYPES = ['tel' => 'telephonic', 'ambu' => 'ambulatory', 'hospit' => 'hospital'];
+    private const PATH = '/legacy-appointments';
 
     public function __construct(
         private HttpClientInterface $httpClient,
@@ -29,9 +30,14 @@ class EtepeaNotifier
         if ($this->url === '' || $this->token === '') {
             return;
         }
+        // Accepte aussi la racine de l'API.
+        $url = rtrim($this->url, '/');
+        if (!str_ends_with($url, self::PATH)) {
+            $url .= self::PATH;
+        }
 
         try {
-            $response = $this->httpClient->request('POST', $this->url, [
+            $response = $this->httpClient->request('POST', $url, [
                 'headers' => ['X-Etepea-Token' => $this->token],
                 'json' => self::payload($rdv),
                 'timeout' => 2,
@@ -39,10 +45,10 @@ class EtepeaNotifier
             ]);
             $status = $response->getStatusCode();
             if ($status !== 204) {
-                $this->logger->warning('Envoi du RDV à Etepea refusé', ['rdv' => $rdv->getId(), 'statut' => $status]);
+                $this->logger->error('Envoi du RDV à Etepea refusé', ['rdv' => $rdv->getId(), 'statut' => $status]);
             }
         } catch (\Throwable $e) {
-            $this->logger->warning('Envoi du RDV à Etepea échoué', ['rdv' => $rdv->getId(), 'erreur' => $e->getMessage()]);
+            $this->logger->error('Envoi du RDV à Etepea échoué', ['rdv' => $rdv->getId(), 'erreur' => $e->getMessage()]);
         }
     }
 
