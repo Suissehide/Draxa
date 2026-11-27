@@ -5,7 +5,12 @@
 {% block body %}
     <nav class="barMenu">
         <div class="nav-container">
-            <a class="title" href="{{ path('accueil') }}">
+            <a class="title" href="{{ path('accueil') }}" aria-label="Cepta – accueil">
+                <svg class="title__logo" viewBox="0 0 28 28" aria-hidden="true" focusable="false">
+                    <rect width="28" height="28" rx="7" fill="var(--brand)"/>
+                    <path d="M18.5 9.2a6.5 6.5 0 1 0 0 9.6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+                    <circle cx="19.2" cy="14" r="1.9" fill="var(--brand-light)"/>
+                </svg>
                 Cepta
             </a>
             <ul class="menu">
@@ -86,11 +91,14 @@
     </div>
 
     <!-- Permanent banner -->
-    <div id="banner" class="banner">
-        <button type="button" aria-label="Masquer ce message" title="Masquer ce message"><span class="glyphicon glyphicon-remove"></span></button>
-        Pour toute assistance, en cas d’erreur ou de dysfonctionnement de l’agenda partagé,
-        contactez <span>Sabrina Bernadet</span> au <span>49357</span>
-        ou <span>Gaëlle Dufau</span> au <span>23384</span>
+    <div id="banner" class="banner" role="note">
+        <span class="glyphicon glyphicon-earphone banner__icon" aria-hidden="true"></span>
+        <p class="banner__text">
+            Un problème avec l’agenda partagé ?
+            <span class="banner__contact">Sabrina Bernadet <span class="banner__tel">49357</span></span>
+            <span class="banner__contact">Gaëlle Dufau <span class="banner__tel">23384</span></span>
+        </p>
+        <button type="button" class="banner__close" aria-label="Masquer ce message pendant une heure" title="Masquer pendant une heure"><span class="glyphicon glyphicon-remove"></span></button>
     </div>
 
     <!-- Modale de confirmation commune (voir confirmAction dans top.js) -->

@@ -19,7 +19,7 @@ const hideUntil = localStorage.getItem('hideNotificationUntil');
 const now = Date.now();
 
 if (!hideUntil || now >= Number(hideUntil)) {
-    banner.style.display = 'block';
+    banner.style.display = 'flex';
 }
 
 $('#banner').on('click', 'button', function () {

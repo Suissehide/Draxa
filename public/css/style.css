@@ -1,10 +1,11 @@
 :root {
-    /* Couleur principale : teal assez foncé pour du texte blanc dessus (contraste ≥ 4,5:1) */
-    --brand: #007a73;
-    --brand-dark: #006b65;
-    --brand-darker: #005e59;
-    --brand-tint: rgba(0, 122, 115, 0.14);
-    --hover-tint: rgba(0, 122, 115, 0.06);
+    /* Couleur principale : bleu océan assez foncé pour du texte blanc dessus (contraste ≥ 4,5:1) */
+    --brand: #0a6a96;
+    --brand-dark: #095d84;
+    --brand-darker: #085274;
+    --brand-light: #6cb8dc; /* sur fond sombre (barre de navigation, pied de page) : contraste ≥ 4,5:1 */
+    --brand-tint: rgba(10, 106, 150, 0.14);
+    --hover-tint: rgba(10, 106, 150, 0.06);
 
     /* Gris */
     --gray-50: #f7f7f7;   /* fond de page, zones secondaires */
@@ -53,6 +54,10 @@
     --radius: 5px;
     --radius-lg: 10px;
     --radius-pill: 999px;
+
+    /* Colonne de page commune (barre du haut, tâches, contenu, pied de page) */
+    --page-width: 1080px;
+    --page-gutter: 20px;
 
     /* Ombres */
     --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -138,6 +143,17 @@ textarea:focus-visible,
 [contenteditable]:focus-visible {
     outline: 2px solid var(--brand-darker) !important;
     outline-offset: 2px;
+}
+
+/* Pas de contour au clic souris (Bootstrap en met un sur a:focus) : seulement au clavier */
+:focus:not(:focus-visible) {
+    outline: none !important;
+}
+
+/* Sur fond sombre, le contour de focus doit rester visible */
+nav :focus-visible,
+#footer :focus-visible {
+    outline-color: var(--brand-light) !important;
 }
 
 .container-fluid {
@@ -568,15 +584,30 @@ nav {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 1080px;
+    max-width: var(--page-width);
     margin: 0 auto;
+    padding: 0 var(--page-gutter);
 }
 
 .title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     text-transform: none;
     font-size: var(--fs-2xl);
     color: var(--gray-300);
-    padding: 0 15px;
+    padding: 0 15px 0 0;
+}
+
+.title:hover,
+.title:focus {
+    color: #fff;
+}
+
+.title__logo {
+    flex: none;
+    width: 28px;
+    height: 28px;
 }
 
 .menu {
@@ -646,7 +677,7 @@ nav {
 }
 
 .user-link > span {
-    color: var(--brand-dark);
+    color: var(--brand-light);
     font-size: var(--fs-md);
     margin-bottom: 3px;
 }
@@ -814,32 +845,71 @@ nav {
     display: none;
     z-index: 20;
     position: fixed;
-    width: 500px;
-    max-width: calc(100% - 32px);
-    padding: 10px 16px;
-    border: 1px solid var(--gray-500);
-    border-radius: var(--radius-sm);
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 16px;
+    bottom: 46px; /* au-dessus du pied de page (30px) */
+    max-width: min(340px, calc(100% - 32px));
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 8px 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: blur(14px) saturate(1.4);
+    backdrop-filter: blur(14px) saturate(1.4);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06), var(--shadow);
+    color: var(--gray-700);
     font-size: var(--fs-xs);
-    text-align: center;
-    background: #fff;
-    box-shadow: var(--shadow);
+    line-height: 1.45;
+    opacity: 0.85;
+    transition: opacity 0.2s ease-in-out;
 }
 
-.banner span {
-    font-weight: bold;
+.banner:hover,
+.banner:focus-within {
+    opacity: 1;
 }
 
-.banner button {
-    position: absolute;
-    right: 6px;
-    top: 6px;
-    background-color: transparent;
-    padding: 2px;
+.banner__icon {
+    flex: none;
+    margin-top: 2px;
+    color: var(--brand);
+}
+
+.banner__text {
+    margin: 0;
+}
+
+.banner__contact {
+    display: block;
+    font-family: var(--font-bold);
+    color: var(--gray-900);
+}
+
+.banner__tel {
+    margin-left: 4px;
+    color: var(--brand);
+    font-variant-numeric: tabular-nums;
+}
+
+.banner__close {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
     border: none;
     border-radius: 50%;
+    background: transparent;
+    color: var(--gray-500);
+    font-size: var(--fs-xs);
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.banner__close:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: var(--gray-900);
 }
 
 /* footer minimal
@@ -873,7 +943,7 @@ body > .container {
 
 #footer a {
     font-size: var(--fs-xs);
-    color: var(--brand);
+    color: var(--brand-light);
 }
 
 #footer a:hover {
@@ -907,9 +977,9 @@ body > .container {
     flex-flow: wrap;
     justify-content: space-between;
     align-items: center;
-    max-width: 1080px;
+    max-width: var(--page-width);
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 var(--page-gutter);
 }
 
 .footer-copyright {
@@ -922,7 +992,7 @@ body > .container {
 }
 
 .footer-copyright a {
-    color: var(--brand);
+    color: var(--brand-light);
 }
 
 .footer-copyright a:hover {
@@ -977,8 +1047,8 @@ body > .container {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 1080px;
-    padding: 0 20px 50px;
+    max-width: var(--page-width);
+    padding: 0 var(--page-gutter) 50px;
 }
 
 .date-wrapper {
@@ -1958,13 +2028,20 @@ label.required::after {
 /* Soignant
 =================================================== */
 
+.settings > h1 {
+    max-width: var(--page-width);
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 var(--page-gutter);
+}
+
 .soignant__wrapper {
     display: flex;
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 1080px;
-    padding: 0 20px 50px;
+    max-width: var(--page-width);
+    padding: 0 var(--page-gutter) 50px;
 }
 
 .list-soignant {
@@ -2072,7 +2149,8 @@ label.required::after {
 .todo__content {
     margin-left: auto;
     margin-right: auto;
-    max-width: 1080px;
+    max-width: var(--page-width);
+    padding: 0 var(--page-gutter);
 }
 
 .todo__content .close {
